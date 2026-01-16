@@ -1,0 +1,130 @@
+==============================================
+=== WhiteURLScan v1.7.4 ===
+=== BY: white1434  GitHub: https://github.com/white1434/WhiteURLScan
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-17 00:07:12
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: None
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'www.baidu.com', 'claude.com', 'github.com'}
+=== 白域名单: {'code.claude.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/url_extration_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.gif', '.flac', '.dmg', '.swf', '.xml', '.png', '.tiff', '.wmv', '.ppt', '.aac', '.doc', '.bmp', '.7z', '.json', '.gz', '.pptx', '.mp4', '.js', '.jpg', '.jpeg', '.wav', '.mov', '.css', '.mp3', '.bz2', '.woff2', '.webm', '.xls', '.ico', '.webp', '.zip', '.map', '.eot', '.ttf', '.xlsx', '.avi', '.exe', '.woff', '.tar', '.ogg', '.otf', '.flv', '.pdf', '.rar', '.dll', '.apk', '.docx', '.bin', '.iso', '.svg', '.mkv', '.txt'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/docs/en/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+==============================================
+=== 锚点链接爬取模式已启用 ===
+=== 文档输出目录: documentation_output/auto-detected:latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 检测到CSV文件已存在且有内容，跳过URL扫描 ===
+=== 使用 -force-scan 1 可强制刷新CSV文件 ===
+=== 从CSV文件读取起始URL: https://code.claude.com/docs/en/skills ===
+=== 从起始URL自动设置文档名称: code_claude_com ===
+=== 第二步：从CSV文件提取锚点链接 ===
+从CSV文件读取到 1 个URL
+
+============================================================
+开始提取文档锚点链接（仅TOC目录）
+CSV文件: results/url_extration_list.csv
+输出目录: documentation_output/code_claude_com:latest
+URL数量: 1
+============================================================
+
+✓ Agent Skills - Claude Code Docs... (37 anchors)
+
+============================================================
+提取完成统计
+============================================================
+总计URL: 1
+成功提取: 1
+失败: 0
+无锚点: 0
+过滤重复: 37
+总锚点数: 37
+============================================================
+
+==============================================
+=== WhiteURLScan v1.7.4 ===
+=== BY: white1434  GitHub: https://github.com/white1434/WhiteURLScan
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-17 00:13:35
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: None
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'github.com', 'www.baidu.com', 'claude.com'}
+=== 白域名单: {'code.claude.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/url_extration_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.doc', '.svg', '.avi', '.wmv', '.xls', '.pdf', '.rar', '.mov', '.dll', '.mkv', '.webm', '.exe', '.7z', '.bmp', '.jpeg', '.apk', '.woff2', '.zip', '.xlsx', '.map', '.json', '.eot', '.jpg', '.gif', '.tiff', '.ttf', '.gz', '.css', '.dmg', '.webp', '.flac', '.bz2', '.swf', '.tar', '.ppt', '.png', '.txt', '.mp4', '.xml', '.pptx', '.js', '.iso', '.mp3', '.ogg', '.flv', '.aac', '.bin', '.woff', '.docx', '.otf', '.wav', '.ico'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/docs/en/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+==============================================
+=== 锚点链接爬取模式已启用 ===
+=== 文档输出目录: documentation_output/auto-detected:latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 检测到CSV文件已存在且有内容，跳过URL扫描 ===
+=== 使用 -force-scan 1 可强制刷新CSV文件 ===
+=== 从CSV文件读取起始URL: https://code.claude.com/docs/en/skills ===
+=== 从起始URL自动设置文档名称: code_claude_com ===
+=== 第二步：从CSV文件提取锚点链接 ===
+从CSV文件读取到 1 个URL
+
+============================================================
+开始提取文档锚点链接（仅TOC目录）
+CSV文件: results/url_extration_list.csv
+输出目录: documentation_output/code_claude_com:latest
+URL数量: 1
+============================================================
+
+✓ Agent Skills - Claude Code Docs... (33 anchors)
+
+============================================================
+提取完成统计
+============================================================
+总计URL: 1
+成功提取: 1
+失败: 0
+无锚点: 0
+过滤重复: 0
+总锚点数: 33
+============================================================
+

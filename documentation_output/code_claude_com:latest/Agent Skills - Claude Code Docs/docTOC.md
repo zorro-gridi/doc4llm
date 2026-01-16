@@ -2,9 +2,8 @@
 
 原文链接: https://code.claude.com/docs/en/skills
 
-提取的锚点数量: 33
+提取的锚点数量: 32
 
-- 0.0.0.1. Skip to main content：https://code.claude.com/docs/en/skills#content-area
 ## 1. Create your first Skill：https://code.claude.com/docs/en/skills#create-your-first-skill
 
 ## 2. How Skills work：https://code.claude.com/docs/en/skills#how-skills-work

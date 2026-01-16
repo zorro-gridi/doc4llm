@@ -154,12 +154,12 @@
   "toc_filter": {
     "merge_mode": "extend",
     "toc_class_patterns": [
-      ""
+      ".toc"
     ],
     "toc_link_class_patterns": [],
     "toc_parent_class_patterns": [],
     "content_area_patterns": [
-      "#table-of-contents-layout"
+      "#table-of-contents-content"
     ],
     "non_toc_link_patterns": [],
     "toc_end_markers": [
