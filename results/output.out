@@ -1,0 +1,327 @@
+==============================================
+=== WhiteURLScan v1.7.4 ===
+=== BY: white1434  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-16 23:52:07
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: None
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'claude.com', 'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'code.claude.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/url_extration_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.wav', '.tar', '.woff2', '.js', '.gif', '.gz', '.iso', '.map', '.ogg', '.mp3', '.doc', '.docx', '.txt', '.xlsx', '.exe', '.webm', '.mp4', '.bin', '.xls', '.pdf', '.jpeg', '.ttf', '.mov', '.apk', '.wmv', '.zip', '.flac', '.mkv', '.ppt', '.rar', '.swf', '.dmg', '.json', '.xml', '.dll', '.7z', '.css', '.svg', '.bmp', '.flv', '.png', '.otf', '.avi', '.tiff', '.bz2', '.pptx', '.ico', '.eot', '.jpg', '.woff', '.aac', '.webp'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/docs/en/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+==============================================
+=== 文档爬取模式已启用 ===
+=== 文档输出目录: documentation_output/auto-detected:latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 检测到CSV文件已存在且有内容，跳过URL扫描 ===
+=== 使用 -force-scan 1 可强制刷新CSV文件 ===
+=== 从CSV文件读取起始URL: https://code.claude.com/docs/en/skills ===
+=== 第二步：从CSV文件爬取文档内容 ===
+使用增强版过滤器（支持 content_end_markers）
+
+============================================================
+开始爬取文档站点
+起始URL: https://code.claude.com/docs/en/skills
+输出目录: documentation_output/code_claude_com:latest
+最大深度: 10
+============================================================
+
+从CSV文件读取URL列表...
+从CSV文件读取到 50 个URL
+开始批量爬取 50 个URL...
+
+转换了 91 个相对链接为绝对链接
+检测到文档框架: mintlify
+转换了 75 个相对链接为绝对链接
+检测到文档框架: mintlify
+转换了 73 个相对链接为绝对链接转换了 82 个相对链接为绝对链接转换了 73 个相对链接为绝对链接找到主要内容区域: <div>
+找到主要内容区域: <div>转换了 79 个相对链接为绝对链接
+转换了 101 个相对链接为绝对链接检测到文档框架: mintlify转换了 86 个相对链接为绝对链接
+转换了 72 个相对链接为绝对链接转换了 88 个相对链接为绝对链接
+
+
+转换了 85 个相对链接为绝对链接转换了 81 个相对链接为绝对链接
+检测到文档框架: mintlify检测到文档框架: mintlify转换了 91 个相对链接为绝对链接转换了 90 个相对链接为绝对链接
+
+转换了 68 个相对链接为绝对链接检测到文档框架: mintlify
+
+转换了 78 个相对链接为绝对链接
+转换了 81 个相对链接为绝对链接
+转换了 83 个相对链接为绝对链接转换了 62 个相对链接为绝对链接转换了 75 个相对链接为绝对链接转换了 99 个相对链接为绝对链接转换了 74 个相对链接为绝对链接转换了 78 个相对链接为绝对链接转换了 93 个相对链接为绝对链接转换了 78 个相对链接为绝对链接
+
+检测到文档框架: mintlify检测到文档框架: mintlify
+转换了 91 个相对链接为绝对链接
+
+
+检测到文档框架: mintlify转换了 99 个相对链接为绝对链接转换了 121 个相对链接为绝对链接移除了 2 个非正文区块
+转换了 81 个相对链接为绝对链接检测到文档框架: mintlify
+检测到文档框架: mintlify
+
+
+检测到文档框架: mintlify检测到文档框架: mintlify
+
+
+
+
+
+
+找到主要内容区域: <div>检测到文档框架: mintlify
+检测到文档框架: mintlify
+找到主要内容区域: <div>检测到文档框架: mintlify检测到文档框架: mintlify
+
+检测到文档框架: mintlify
+检测到文档框架: mintlify找到主要内容区域: <div>检测到文档框架: mintlify
+
+检测到文档框架: mintlify检测到文档框架: mintlify找到主要内容区域: <div>找到主要内容区域: <div>找到主要内容区域: <div>检测到文档框架: mintlify
+
+
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+
+
+检测到文档框架: mintlify找到主要内容区域: <div>
+
+检测到文档框架: mintlify检测到文档框架: mintlify
+检测到文档框架: mintlify
+
+
+
+
+转换了 83 个相对链接为绝对链接
+
+找到主要内容区域: <div>
+找到主要内容区域: <div>找到主要内容区域: <div>移除了 0 个可能的日志输出区块移除了 12 个非正文区块找到主要内容区域: <div>
+
+检测到文档框架: mintlify
+
+找到主要内容区域: <div>找到主要内容区域: <div>
+找到主要内容区域: <div>
+
+找到主要内容区域: <div>
+找到主要内容区域: <div>移除了 0 个可能的日志输出区块
+找到主要内容区域: <div>
+
+移除了 76 个非正文区块
+找到主要内容区域: <div>
+找到主要内容区域: <div>
+
+
+
+✓ Output styles - Claude Code Docs -> Output styles - Claude Code Docs/找到主要内容区域: <div>
+
+
+✓ Analytics - Claude Code Docs -> Analytics - Claude Code Docs/
+
+找到主要内容区域: <div>移除了 0 个可能的日志输出区块移除了 132 个非正文区块找到主要内容区域: <div>检测到文档框架: mintlify
+
+找到主要内容区域: <div>
+
+
+
+
+
+
+找到主要内容区域: <div>找到主要内容区域: <div>移除了 93 个非正文区块
+
+
+
+✓ Manage costs effectively - Claude Code Docs -> Manage costs effectively - Claude Code Docs/
+移除了 0 个可能的日志输出区块
+找到主要内容区域: <div>
+
+移除了 0 个可能的日志输出区块移除了 237 个非正文区块
+✓ Legal and compliance - Claude Code Docs -> Legal and compliance - Claude Code Docs/移除了 333 个非正文区块
+移除了 437 个非正文区块
+移除了 693 个非正文区块转换了 78 个相对链接为绝对链接✓ Data usage - Claude Code Docs -> Data usage - Claude Code Docs/移除了 0 个可能的日志输出区块找到主要内容区域: <div>
+移除了 0 个可能的日志输出区块
+
+
+
+
+移除了 2 个非正文区块✓ Claude Code on desktop - Claude Code Docs -> Claude Code on desktop - Claude Code Docs/
+移除了 0 个可能的日志输出区块
+检测到文档框架: mintlify✓ Security - Claude Code Docs -> Security - Claude Code Docs/移除了 0 个可能的日志输出区块转换了 89 个相对链接为绝对链接
+移除了 4 个非正文区块
+
+
+
+
+转换了 72 个相对链接为绝对链接
+移除了 8 个非正文区块移除了 0 个可能的日志输出区块
+移除了 0 个可能的日志输出区块移除了 14 个非正文区块转换了 77 个相对链接为绝对链接
+
+[ContentPostProcess] 检测到结束标识: ## Next steps
+转换了 79 个相对链接为绝对链接✓ CLI reference - Claude Code Docs -> CLI reference - Claude Code Docs/
+
+移除了 16 个非正文区块检测到文档框架: mintlify
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+
+✓ Claude Code in Slack - Claude Code Docs -> Claude Code in Slack - Claude Code Docs/转换了 81 个相对链接为绝对链接移除了 4 个非正文区块
+
+移除了 0 个可能的日志输出区块移除了 0 个可能的日志输出区块
+
+
+移除了 0 个可能的日志输出区块检测到文档框架: mintlify[ContentPostProcess] 检测到结束标识: ## Next steps
+检测到文档框架: mintlify✓ Run Claude Code programmatically - Claude Code Doc -> Run Claude Code programmatically - Claude Code Docs/
+
+
+转换了 73 个相对链接为绝对链接转换了 85 个相对链接为绝对链接移除了 2 个非正文区块
+
+找到主要内容区域: <div>检测到文档框架: mintlify移除了 0 个非正文区块
+转换了 80 个相对链接为绝对链接
+转换了 75 个相对链接为绝对链接✓ Use Claude Code in VS Code - Claude Code Docs -> Use Claude Code in VS Code - Claude Code Docs/
+
+[ContentPostProcess] 检测到结束标识: ## Next steps
+
+[ContentPostProcess] 检测到结束标识: ## Next steps找到主要内容区域: <div>
+找到主要内容区域: <div>
+
+检测到文档框架: mintlify
+
+✓ Manage Claude's memory - Claude Code Docs -> Manage Claude's memory - Claude Code Docs/移除了 0 个可能的日志输出区块检测到文档框架: mintlify移除了 0 个可能的日志输出区块
+
+
+
+
+
+检测到文档框架: mintlify移除了 0 个可能的日志输出区块
+✓ Claude Code overview - Claude Code Docs -> Claude Code overview - Claude Code Docs/
+找到主要内容区域: <div>
+✓ Enterprise deployment overview - Claude Code Docs -> Enterprise deployment overview - Claude Code Docs/
+转换了 75 个相对链接为绝对链接
+
+[ContentPostProcess] 检测到结束标识: ## Next steps✓ Identity and Access Management - Claude Code Docs -> Identity and Access Management - Claude Code Docs/找到主要内容区域: <div>✓ Use Claude Code with Chrome (beta) - Claude Code D -> Use Claude Code with Chrome (beta) - Claude Code Docs/
+
+
+找到主要内容区域: <div>
+
+检测到文档框架: mintlify
+转换了 71 个相对链接为绝对链接找到主要内容区域: <div>
+
+移除了 132 个非正文区块
+✓ Agent Skills - Claude Code Docs -> Agent Skills - Claude Code Docs/转换了 73 个相对链接为绝对链接
+
+转换了 86 个相对链接为绝对链接
+移除了 150 个非正文区块检测到文档框架: mintlify移除了 0 个可能的日志输出区块检测到文档框架: mintlify找到主要内容区域: <div>转换了 71 个相对链接为绝对链接移除了 2 个非正文区块
+
+找到主要内容区域: <div>
+移除了 14 个非正文区块
+
+
+
+移除了 0 个可能的日志输出区块移除了 0 个可能的日志输出区块
+转换了 72 个相对链接为绝对链接
+移除了 0 个可能的日志输出区块
+
+找到主要内容区域: <div>✓ JetBrains IDEs - Claude Code Docs -> JetBrains IDEs - Claude Code Docs/
+
+✓ Checkpointing - Claude Code Docs -> Checkpointing - Claude Code Docs/
+
+找到主要内容区域: <div>✓ Claude Code on the web - Claude Code Docs -> Claude Code on the web - Claude Code Docs/检测到文档框架: mintlify
+
+
+
+检测到文档框架: mintlify
+
+
+检测到文档框架: mintlify✓ Development containers - Claude Code Docs -> Development containers - Claude Code Docs/
+
+找到主要内容区域: <div>
+找到主要内容区域: <div>
+转换了 71 个相对链接为绝对链接
+找到主要内容区域: <div>
+检测到文档框架: mintlify
+
+转换了 25 个相对链接为绝对链接
+找到主要内容区域: <div>
+找到主要内容区域: <main>转换了 101 个相对链接为绝对链接转换了 67 个相对链接为绝对链接
+
+
+检测到文档框架: mintlify
+检测到文档框架: mintlify
+移除了 60 个非正文区块
+移除了 0 个可能的日志输出区块
+✓ Enterprise network configuration - Claude Code Doc -> Enterprise network configuration - Claude Code Docs/移除了 62 个非正文区块找到主要内容区域: <div>
+
+
+移除了 0 个可能的日志输出区块
+✓ claude-code/CHANGELOG.md at main · anthropics/clau -> claude-codeCHANGELOG.md at main · anthropicsclaude-code · GitHub/
+找到主要内容区域: <div>
+移除了 69 个非正文区块
+移除了 96 个非正文区块
+移除了 0 个可能的日志输出区块
+移除了 0 个可能的日志输出区块
+✓ Optimize your terminal setup - Claude Code Docs -> Optimize your terminal setup - Claude Code Docs/
+✓ Get started with Claude Code hooks - Claude Code D -> Get started with Claude Code hooks - Claude Code Docs/移除了 98 个非正文区块
+
+移除了 0 个可能的日志输出区块
+移除了 188 个非正文区块
+✓ Troubleshooting - Claude Code Docs -> Troubleshooting - Claude Code Docs/
+移除了 190 个非正文区块移除了 0 个可能的日志输出区块
+
+
+移除了 0 个可能的日志输出区块移除了 0 个可能的日志输出区块✓ Discover and install prebuilt plugins through mark -> Discover and install prebuilt plugins through marketplaces - Claude Code Docs/
+
+移除了 712 个非正文区块移除了 712 个非正文区块✓ Monitoring - Claude Code Docs -> Monitoring - Claude Code Docs/
+
+
+
+移除了 716 个非正文区块
+移除了 0 个可能的日志输出区块移除了 0 个可能的日志输出区块
+移除了 724 个非正文区块
+✓ Claude Code on Microsoft Foundry - Claude Code Doc -> Claude Code on Microsoft Foundry - Claude Code Docs/
+移除了 0 个可能的日志输出区块✓ Sandboxing - Claude Code Docs -> Sandboxing - Claude Code Docs/移除了 0 个可能的日志输出区块移除了 729 个非正文区块
+移除了 731 个非正文区块
+✓ Interactive mode - Claude Code Docs -> Interactive mode - Claude Code Docs/移除了 729 个非正文区块
+
+✓ Model configuration - Claude Code Docs -> Model configuration - Claude Code Docs/
+
+移除了 0 个可能的日志输出区块
+
+移除了 735 个非正文区块
+移除了 0 个可能的日志输出区块✓ LLM gateway configuration - Claude Code Docs -> LLM gateway configuration - Claude Code Docs/
+
+✓ Set up Claude Code - Claude Code Docs -> Set up Claude Code - Claude Code Docs/移除了 0 个可能的日志输出区块
+
+移除了 739 个非正文区块[ContentPostProcess] 检测到结束标识: ## Next steps
+
+
+
+✓ Create plugins - Claude Code Docs -> Create plugins - Claude Code Docs/移除了 0 个可能的日志输出区块移除了 0 个可能的日志输出区块
+
+✓ Claude Code on Google Vertex AI - Claude Code Docs -> Claude Code on Google Vertex AI - Claude Code Docs/
+
+[ContentPostProcess] 检测到结束标识: ## Next steps
+✓ Slash commands - Claude Code Docs -> Slash commands - Claude Code Docs/
+✓ Claude Code overview - Claude Code Docs -> Claude Code overview - Claude Code Docs/
+移除了 743 个非正文区块
+移除了 0 个可能的日志输出区块
+✓ Claude Code on Amazon Bedrock - Claude Code Docs -> Claude Code on Amazon Bedrock - Claude Code Docs/
+移除了 751 个非正文区块
+移除了 751 个非正文区块
+移除了 0 个可能的日志输出区块
+移除了 0 个可能的日志输出区块

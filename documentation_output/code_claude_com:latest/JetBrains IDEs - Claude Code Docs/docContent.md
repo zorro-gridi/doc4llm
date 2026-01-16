@@ -29,9 +29,7 @@ The Claude Code plugin works with most JetBrains IDEs, including:
 
 ### Marketplace Installation
 
-Find and install the [Claude Code plugin](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-) from the JetBrains marketplace and restart your IDE. If you haven’t installed Claude Code yet, see [our quickstart guide](https://code.claude.com/docs/en/quickstart) for installation instructions.
-
-After installing the plugin, you may need to restart your IDE completely for it to take effect.
+Find and install the [Claude Code plugin](https://plugins.jetbrains.com/plugin/27310-claude-code-beta-) from the JetBrains marketplace and restart your IDE. If you haven’t installed Claude Code yet, see [our quickstart guide](https://code.claude.com/docs/en/quickstart) for installation instructions. After installing the plugin, you may need to restart your IDE completely for it to take effect.
 
 ## Usage
 
@@ -89,15 +87,11 @@ This allows the ESC key to properly interrupt Claude Code operations.
 
 ### Remote Development
 
-When using JetBrains Remote Development, you must install the plugin in the remote host via **Settings → Plugin (Host)**.
-
-The plugin must be installed on the remote host, not on your local client machine.
+When using JetBrains Remote Development, you must install the plugin in the remote host via **Settings → Plugin (Host)**. The plugin must be installed on the remote host, not on your local client machine.
 
 ### WSL Configuration
 
-WSL users may need additional configuration for IDE detection to work properly. See our [WSL troubleshooting guide](https://code.claude.com/docs/en/troubleshooting#jetbrains-ide-not-detected-on-wsl2) for detailed setup instructions.
-
-WSL configuration may require:
+WSL users may need additional configuration for IDE detection to work properly. See our [WSL troubleshooting guide](https://code.claude.com/docs/en/troubleshooting#jetbrains-ide-not-detected-on-wsl2) for detailed setup instructions. WSL configuration may require:
 
   * Proper terminal configuration
   * Networking mode adjustments

@@ -49,9 +49,7 @@ When you start a task on Claude Code on the web:
 
 ## Moving tasks between web and terminal
 
-You can start tasks on the web and continue them in your terminal, or send tasks from your terminal to run on the web. Web sessions persist even if you close your laptop, and you can monitor them from anywhere including the Claude iOS app.
-
-Session handoff is one-way: you can pull web sessions into your terminal, but you can’t push an existing terminal session to the web. The `&` prefix creates a _new_ web session with your current conversation context.
+You can start tasks on the web and continue them in your terminal, or send tasks from your terminal to run on the web. Web sessions persist even if you close your laptop, and you can monitor them from anywhere including the Claude iOS app. Session handoff is one-way: you can pull web sessions into your terminal, but you can’t push an existing terminal session to the web. The `&` prefix creates a _new_ web session with your current conversation context.
 
 ### From terminal to web
 
@@ -69,25 +67,19 @@ This creates a new web session on claude.ai with your current conversation conte
 
 #### Tips for background tasks
 
-**Plan locally, execute remotely** : For complex tasks, start Claude in plan mode to collaborate on the approach before sending work to the web:
-
-
+**Plan locally, execute remotely** : For complex tasks, start Claude in plan mode to collaborate on the approach before sending work to the web: CopyAsk AI
     
     
     claude --permission-mode plan
     
 
-In plan mode, Claude can only read files and explore the codebase. Once you’re satisfied with the plan, send it to the web for autonomous execution:
-
-
+In plan mode, Claude can only read files and explore the codebase. Once you’re satisfied with the plan, send it to the web for autonomous execution: CopyAsk AI
     
     
     & Execute the migration plan we discussed
     
 
-This pattern gives you control over the strategy while letting Claude execute autonomously in the cloud. **Run tasks in parallel** : Each `&` command creates its own web session that runs independently. You can kick off multiple tasks and they’ll all run simultaneously in separate sessions:
-
-
+This pattern gives you control over the strategy while letting Claude execute autonomously in the cloud. **Run tasks in parallel** : Each `&` command creates its own web session that runs independently. You can kick off multiple tasks and they’ll all run simultaneously in separate sessions: CopyAsk AI
     
     
     & Fix the flaky test in auth.spec.ts
@@ -110,9 +102,7 @@ When you teleport a session, Claude verifies you’re in the correct repository,
 
 #### Requirements for teleporting
 
-Teleport checks these requirements before resuming a session. If any requirement isn’t met, you’ll see an error or be prompted to resolve the issue.
-
-Requirement| Details  
+Teleport checks these requirements before resuming a session. If any requirement isn’t met, you’ll see an error or be prompted to resolve the issue. | Requirement| Details  
 ---|---  
 Clean git state| Your working directory must have no uncommitted changes. Teleport prompts you to stash changes if needed.  
 Correct repository| You must run `--teleport` from a checkout of the same repository, not a fork.  

@@ -121,6 +121,10 @@ Plugin| Bundled with [plugins](https://code.claude.com/docs/en/plugins)| Anyone 
   
 If two Skills have the same name, the higher row wins: managed overrides personal, personal overrides project, and project overrides plugin.
 
+#### Automatic discovery from nested directories
+
+When you work with files in subdirectories, Claude Code automatically discovers Skills from nested `.claude/skills/` directories. For example, if you’re editing a file in `packages/frontend/`, Claude Code also looks for Skills in `packages/frontend/.claude/skills/`. This supports monorepo setups where packages have their own Skills.
+
 ### When to use Skills versus other options
 
 Claude Code offers several ways to customize behavior. The key difference: **Skills are triggered automatically by Claude** based on your request, while slash commands require you to type `/command` explicitly.
@@ -178,6 +182,30 @@ Field| Required| Description
 `hooks`| No| Define hooks scoped to this Skill’s lifecycle. Supports `PreToolUse`, `PostToolUse`, and `Stop` events.  
 `user-invocable`| No| Controls whether the Skill appears in the slash command menu. Does not affect the [`Skill` tool](https://code.claude.com/docs/en/slash-commands#skill-tool) or automatic discovery. Defaults to `true`. See Control Skill visibility.  
   
+#### Available string substitutions
+
+Skills support string substitution for dynamic values in the Skill content:
+
+Variable| Description  
+---|---  
+`$ARGUMENTS`| All arguments passed when invoking the Skill. If `$ARGUMENTS` is not present in the content, arguments are appended as `ARGUMENTS: <value>`.  
+`${CLAUDE_SESSION_ID}`| The current session ID. Useful for logging, creating session-specific files, or correlating Skill output with sessions.  
+  
+**Example using substitutions:**
+
+
+    
+    
+    ---
+    name: session-logger
+    description: Log activity for this session
+    ---
+    
+    Log the following to logs/${CLAUDE_SESSION_ID}.log:
+    
+    $ARGUMENTS
+    
+
 See the [best practices guide](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices) for complete authoring guidance including validation rules.
 
 ### Update or delete a Skill

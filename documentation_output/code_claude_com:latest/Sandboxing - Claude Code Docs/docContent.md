@@ -199,5 +199,5 @@ For implementation details and source code, visit the [GitHub repository](https:
   * [Security](https://code.claude.com/docs/en/security) \- Comprehensive security features and best practices
   * [IAM](https://code.claude.com/docs/en/iam) \- Permission configuration and access control
   * [Settings](https://code.claude.com/docs/en/settings) \- Complete configuration reference
-  * [CLI reference](https://code.claude.com/docs/en/cli-reference) \- Command-line options including `-sb`
+  * [CLI reference](https://code.claude.com/docs/en/cli-reference) \- Command-line options
 

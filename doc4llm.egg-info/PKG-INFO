@@ -5,10 +5,10 @@ Summary: Web URL扫描和信息安全收集工具 - A powerful web URL scanning 
 Author-email: white1434 <white1434@users.noreply.github.com>
 Maintainer-email: white1434 <white1434@users.noreply.github.com>
 License-Expression: MIT
-Project-URL: Homepage, https://github.com/white1434/WhiteURLScan
-Project-URL: Documentation, https://github.com/white1434/WhiteURLScan/blob/main/README.md
-Project-URL: Repository, https://github.com/white1434/WhiteURLScan.git
-Project-URL: Issues, https://github.com/white1434/WhiteURLScan/issues
+Project-URL: Homepage, https://github.com/zorro-gridi/doc4llm
+Project-URL: Documentation, https://github.com/zorro-gridi/doc4llm/blob/main/README.md
+Project-URL: Repository, https://github.com/zorro-gridi/doc4llm.git
+Project-URL: Issues, https://github.com/zorro-gridi/doc4llm/issues
 Keywords: url-scanner,web-scanner,security-testing,reconnaissance,asset-discovery,vulnerability-scanner,web-crawler,information-gathering,penetration-testing,security-tools
 Classifier: Development Status :: 4 - Beta
 Classifier: Environment :: Console
@@ -93,7 +93,7 @@ pip install requests beautifulsoup4 tldextract colorama
 - `-scope`   URL扫描范围模式 0主域 1外部一次 2全放开 3白名单模式
 - `-danger`  危险接口过滤（1开启，0关闭）
 - `-fuzz`   自定义 URL 拼接
-  
+
 ## 配置说明
 
 首次运行会自动生成 `config.json`，可根据实际需求修改：
@@ -224,4 +224,4 @@ URL 扫描范围模式 0 主域、 1 外部链接只访问一次 、2 无限制 
 
 ## 联系方式
 
-如有建议或问题，欢迎反馈！ 
+如有建议或问题，欢迎反馈！

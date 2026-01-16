@@ -80,8 +80,92 @@ Permission rules use the format: `Tool` or `Tool(optional-specifier)` A rule tha
 
 #### Permission modes
 
+Claude Code supports several permission modes that can be set as the `defaultMode` in [settings files](https://code.claude.com/docs/en/settings#settings-files):## 
+
+Authentication methods
+
+Setting up Claude Code requires access to Anthropic models. For teams, you can set up Claude Code access in one of these ways:
+
+  * [Claude for Teams or Enterprise](https://code.claude.com/docs/en/setup#for-teams-and-organizations) (recommended)
+  * [Claude Console with team billing](https://code.claude.com/docs/en/setup#for-teams-and-organizations)
+  * [Amazon Bedrock](https://code.claude.com/docs/en/amazon-bedrock)
+  * [Google Vertex AI](https://code.claude.com/docs/en/google-vertex-ai)
+  * [Microsoft Foundry](https://code.claude.com/docs/en/microsoft-foundry)
+
+### Claude for Teams or Enterprise (recommended)
+
+[Claude for Teams](https://claude.com/pricing#team-&-enterprise) and [Claude for Enterprise](https://anthropic.com/contact-sales) provide the best experience for organizations using Claude Code. Team members get access to both Claude Code and Claude on the web with centralized billing and team management.
+
+  * **Claude for Teams** : Self-service plan with collaboration features, admin tools, and billing management. Best for smaller teams.
+  * **Claude for Enterprise** : Adds SSO, domain capture, role-based permissions, compliance API, and managed policy settings for organization-wide Claude Code configurations. Best for larger organizations with security and compliance requirements.
+
+**To set up Claude Code access:**
+
+  1. Subscribe to [Claude for Teams](https://claude.com/pricing#team-&-enterprise) or contact sales for [Claude for Enterprise](https://anthropic.com/contact-sales)
+  2. Invite team members from the admin dashboard
+  3. Team members install Claude Code and log in with their Claude.ai accounts
+
+### Claude Console authentication
+
+For organizations that prefer API-based billing, you can set up access through the Claude Console. **To set up Claude Code access for your team via Claude Console:**
+
+  1. Use your existing Claude Console account or create a new Claude Console account
+  2. You can add users through either method below:
+     * Bulk invite users from within the Console (Console -> Settings -> Members -> Invite)
+     * [Set up SSO](https://support.claude.com/en/articles/13132885-setting-up-single-sign-on-sso)
+  3. When inviting users, they need one of the following roles:
+     * “Claude Code” role means users can only create Claude Code API keys
+     * “Developer” role means users can create any kind of API key
+  4. Each invited user needs to complete these steps:
+     * Accept the Console invite
+     * [Check system requirements](https://code.claude.com/docs/en/setup#system-requirements)
+     * [Install Claude Code](https://code.claude.com/docs/en/setup#installation)
+     * Login with Console account credentials
+
+### Cloud provider authentication
+
+**To set up Claude Code access for your team via Bedrock, Vertex, or Azure:**
+
+  1. Follow the [Bedrock docs](https://code.claude.com/docs/en/amazon-bedrock), [Vertex docs](https://code.claude.com/docs/en/google-vertex-ai), or [Microsoft Foundry docs](https://code.claude.com/docs/en/microsoft-foundry)
+  2. Distribute the environment variables and instructions for generating cloud credentials to your users. Read more about how to [manage configuration here](https://code.claude.com/docs/en/settings).
+  3. Users can [install Claude Code](https://code.claude.com/docs/en/setup#installation)
+
+## Access control and permissions
+
+We support fine-grained permissions so that you’re able to specify exactly what the agent is allowed to do (e.g. run tests, run linter) and what it is not allowed to do (e.g. update cloud infrastructure). These permission settings can be checked into version control and distributed to all developers in your organization, as well as customized by individual developers.
+
+### Permission system
+
+Claude Code uses a tiered permission system to balance power and safety:
+
+Tool Type| Example| Approval Required| ”Yes, don’t ask again” Behavior  
+---|---|---|---  
+Read-only| File reads, Grep| No| N/A  
+Bash Commands| Shell execution| Yes| Permanently per project directory and command  
+File Modification| Edit/write files| Yes| Until session end  
+  
+### Configuring permissions
+
+You can view & manage Claude Code’s tool permissions with `/permissions`. This UI lists all permission rules and the settings.json file they are sourced from.
+
+  * **Allow** rules will allow Claude Code to use the specified tool without further manual approval.
+  * **Ask** rules will ask the user for confirmation whenever Claude Code tries to use the specified tool. Ask rules take precedence over allow rules.
+  * **Deny** rules will prevent Claude Code from using the specified tool. Deny rules take precedence over allow and ask rules.
+  * **Additional directories** extend Claude’s file access to directories beyond the initial working directory.
+  * **Default mode** controls Claude’s permission behavior when encountering new requests.
+
+Permission rules use the format: `Tool` or `Tool(optional-specifier)` A rule that is just the tool name matches any use of that tool. For example, adding `Bash` to the list of allow rules would allow Claude Code to use the Bash tool without requiring user approval.
+
+#### Permission modes
+
 Claude Code supports several permission modes that can be set as the `defaultMode` in [settings files](https://code.claude.com/docs/en/settings#settings-files):
 
+Mode| Description  
+---|---  
+`default`| Standard behavior - prompts for permission on first use of each tool  
+`acceptEdits`| Automatically accepts file edit permissions for the session  
+`plan`| Plan Mode - Claude can analyze but not modify files or execute commands  
+  
 Mode| Description  
 ---|---  
 `default`| Standard behavior - prompts for permission on first use of each tool  

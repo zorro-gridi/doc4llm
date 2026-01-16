@@ -64,10 +64,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/white1434/WhiteURLScan"
-Documentation = "https://github.com/white1434/WhiteURLScan/blob/main/README.md"
-Repository = "https://github.com/white1434/WhiteURLScan.git"
-Issues = "https://github.com/white1434/WhiteURLScan/issues"
+Homepage = "https://github.com/zorro-gridi/doc4llm"
+Documentation = "https://github.com/zorro-gridi/doc4llm/blob/main/README.md"
+Repository = "https://github.com/zorro-gridi/doc4llm.git"
+Issues = "https://github.com/zorro-gridi/doc4llm/issues"
 
 [project.scripts]
 doc4llm = "doc4llm.cli:main"

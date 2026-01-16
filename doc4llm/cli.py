@@ -114,7 +114,7 @@ class ArgumentParser:
 
     VERSION = "1.7.4"
     AUTHOR = "white1434"
-    GITHUB_URL = "https://github.com/white1434/WhiteURLScan"
+    GITHUB_URL = "https://github.com/zorro-gridi/doc4llm"
 
     @staticmethod
     def parse():

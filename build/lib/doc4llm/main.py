@@ -286,7 +286,7 @@ def _print_program_info():
     """打印程序信息"""
     print(f"{Fore.YELLOW}=============================================={Style.RESET_ALL}")
     print(f"{Fore.YELLOW}=== WhiteURLScan v1.7.4 ===")
-    print(f"{Fore.YELLOW}=== BY: white1434  GitHub: https://github.com/white1434/WhiteURLScan")
+    print(f"{Fore.YELLOW}=== BY: white1434  GitHub: https://github.com/zorro-gridi/doc4llm")
     print(f"{Fore.YELLOW}=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示")
     print(f"{Fore.CYAN}=== 所有输出将同时记录到 results/output.out 文件中")
     print(f"{Fore.CYAN}=== 扫描开始时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
