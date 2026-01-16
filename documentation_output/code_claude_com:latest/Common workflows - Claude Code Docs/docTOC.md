@@ -41,7 +41,7 @@
 
 ## 12. Use extended thinking (thinking mode)：https://code.claude.com/docs/en/common-workflows#use-extended-thinking-thinking-mode
 
-### 12.1. Per-request thinking with ultrathink：https://code.claude.com/docs/en/common-workflows#per-request-thinking-with-ultrathink
+### 12.1. Configure thinking mode：https://code.claude.com/docs/en/common-workflows#configure-thinking-mode
 
 ### 12.2. How extended thinking token budgets work：https://code.claude.com/docs/en/common-workflows#how-extended-thinking-token-budgets-work
 
@@ -72,4 +72,3 @@
 ## 17. Ask Claude about its capabilities：https://code.claude.com/docs/en/common-workflows#ask-claude-about-its-capabilities
 
 ### 17.1. Example questions：https://code.claude.com/docs/en/common-workflows#example-questions
-

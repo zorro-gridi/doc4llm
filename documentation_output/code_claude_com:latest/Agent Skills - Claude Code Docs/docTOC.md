@@ -2,7 +2,7 @@
 
 原文链接: https://code.claude.com/docs/en/skills
 
-提取的锚点数量: 31
+提取的锚点数量: 33
 
 - 0.0.0.1. Skip to main content：https://code.claude.com/docs/en/skills#content-area
 ## 1. Create your first Skill：https://code.claude.com/docs/en/skills#create-your-first-skill
@@ -11,6 +11,8 @@
 
 ### 2.1. Where Skills live：https://code.claude.com/docs/en/skills#where-skills-live
 
+#### 2.1.1. Automatic discovery from nested directories：https://code.claude.com/docs/en/skills#automatic-discovery-from-nested-directories
+
 ### 2.2. When to use Skills versus other options：https://code.claude.com/docs/en/skills#when-to-use-skills-versus-other-options
 
 ## 3. Configure Skills：https://code.claude.com/docs/en/skills#configure-skills
@@ -18,6 +20,8 @@
 ### 3.1. Write SKILL.md：https://code.claude.com/docs/en/skills#write-skill-md
 
 #### 3.1.1. Available metadata fields：https://code.claude.com/docs/en/skills#available-metadata-fields
+
+#### 3.1.2. Available string substitutions：https://code.claude.com/docs/en/skills#available-string-substitutions
 
 ### 3.2. Update or delete a Skill：https://code.claude.com/docs/en/skills#update-or-delete-a-skill
 

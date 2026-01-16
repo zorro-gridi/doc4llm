@@ -2,7 +2,7 @@
 
 原文链接: https://code.claude.com/docs/en/mcp
 
-提取的锚点数量: 48
+提取的锚点数量: 52
 
 - 0.0.0.1. Skip to main content：https://code.claude.com/docs/en/mcp#content-area
 ## 1. What you can do with MCP：https://code.claude.com/docs/en/mcp#what-you-can-do-with-mcp
@@ -59,43 +59,51 @@
 
 ### 11.1. Reference MCP resources：https://code.claude.com/docs/en/mcp#reference-mcp-resources
 
-## 12. Use MCP prompts as slash commands：https://code.claude.com/docs/en/mcp#use-mcp-prompts-as-slash-commands
+## 12. Scale with MCP Tool Search：https://code.claude.com/docs/en/mcp#scale-with-mcp-tool-search
 
-### 12.1. Execute MCP prompts：https://code.claude.com/docs/en/mcp#execute-mcp-prompts
+### 12.1. How it works：https://code.claude.com/docs/en/mcp#how-it-works
 
-## 13. Managed MCP configuration：https://code.claude.com/docs/en/mcp#managed-mcp-configuration
+### 12.2. For MCP server authors：https://code.claude.com/docs/en/mcp#for-mcp-server-authors
 
-### 13.1. Option 1: Exclusive control with managed-mcp.json：https://code.claude.com/docs/en/mcp#option-1%3A-exclusive-control-with-managed-mcp-json
+### 12.3. Configure tool search：https://code.claude.com/docs/en/mcp#configure-tool-search
 
-### 13.2. Option 2: Policy-based control with allowlists and denylists：https://code.claude.com/docs/en/mcp#option-2%3A-policy-based-control-with-allowlists-and-denylists
+## 13. Use MCP prompts as slash commands：https://code.claude.com/docs/en/mcp#use-mcp-prompts-as-slash-commands
 
-#### 13.2.1. Restriction options：https://code.claude.com/docs/en/mcp#restriction-options
+### 13.1. Execute MCP prompts：https://code.claude.com/docs/en/mcp#execute-mcp-prompts
 
-#### 13.2.2. Example configuration：https://code.claude.com/docs/en/mcp#example-configuration
+## 14. Managed MCP configuration：https://code.claude.com/docs/en/mcp#managed-mcp-configuration
 
-#### 13.2.3. How command-based restrictions work：https://code.claude.com/docs/en/mcp#how-command-based-restrictions-work
+### 14.1. Option 1: Exclusive control with managed-mcp.json：https://code.claude.com/docs/en/mcp#option-1%3A-exclusive-control-with-managed-mcp-json
 
-#### 13.2.4. How URL-based restrictions work：https://code.claude.com/docs/en/mcp#how-url-based-restrictions-work
+### 14.2. Option 2: Policy-based control with allowlists and denylists：https://code.claude.com/docs/en/mcp#option-2%3A-policy-based-control-with-allowlists-and-denylists
 
-#### 13.2.5. Allowlist behavior (allowedMcpServers)：https://code.claude.com/docs/en/mcp#allowlist-behavior-allowedmcpservers
+#### 14.2.1. Restriction options：https://code.claude.com/docs/en/mcp#restriction-options
 
-#### 13.2.6. Denylist behavior (deniedMcpServers)：https://code.claude.com/docs/en/mcp#denylist-behavior-deniedmcpservers
+#### 14.2.2. Example configuration：https://code.claude.com/docs/en/mcp#example-configuration
 
-#### 13.2.7. Important notes：https://code.claude.com/docs/en/mcp#important-notes
+#### 14.2.3. How command-based restrictions work：https://code.claude.com/docs/en/mcp#how-command-based-restrictions-work
 
-### 13.3. ​：https://code.claude.com/docs/en/mcp#option-1:-add-a-remote-http-server
+#### 14.2.4. How URL-based restrictions work：https://code.claude.com/docs/en/mcp#how-url-based-restrictions-work
 
-### 13.4. ​：https://code.claude.com/docs/en/mcp#option-2:-add-a-remote-sse-server
+#### 14.2.5. Allowlist behavior (allowedMcpServers)：https://code.claude.com/docs/en/mcp#allowlist-behavior-allowedmcpservers
 
-### 13.5. ​：https://code.claude.com/docs/en/mcp#option-3:-add-a-local-stdio-server
+#### 14.2.6. Denylist behavior (deniedMcpServers)：https://code.claude.com/docs/en/mcp#denylist-behavior-deniedmcpservers
 
-### 13.6. ​：https://code.claude.com/docs/en/mcp#example:-monitor-errors-with-sentry
+#### 14.2.7. Important notes：https://code.claude.com/docs/en/mcp#important-notes
 
-### 13.7. ​：https://code.claude.com/docs/en/mcp#example:-connect-to-github-for-code-reviews
+### 14.3. ​：https://code.claude.com/docs/en/mcp#option-1:-add-a-remote-http-server
 
-### 13.8. ​：https://code.claude.com/docs/en/mcp#example:-query-your-postgresql-database
+### 14.4. ​：https://code.claude.com/docs/en/mcp#option-2:-add-a-remote-sse-server
 
-### 13.9. ​：https://code.claude.com/docs/en/mcp#option-1:-exclusive-control-with-managed-mcp-json
+### 14.5. ​：https://code.claude.com/docs/en/mcp#option-3:-add-a-local-stdio-server
 
-### 13.10. ​：https://code.claude.com/docs/en/mcp#option-2:-policy-based-control-with-allowlists-and-denylists
+### 14.6. ​：https://code.claude.com/docs/en/mcp#example:-monitor-errors-with-sentry
+
+### 14.7. ​：https://code.claude.com/docs/en/mcp#example:-connect-to-github-for-code-reviews
+
+### 14.8. ​：https://code.claude.com/docs/en/mcp#example:-query-your-postgresql-database
+
+### 14.9. ​：https://code.claude.com/docs/en/mcp#option-1:-exclusive-control-with-managed-mcp-json
+
+### 14.10. ​：https://code.claude.com/docs/en/mcp#option-2:-policy-based-control-with-allowlists-and-denylists
 
