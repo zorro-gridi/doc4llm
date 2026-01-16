@@ -1,0 +1,51 @@
+URL,Status,Title,Length,Redirects,Depth,Sensitive Types,Sensitive Counts,Sensitive Details,Is Duplicate
+https://code.claude.com/docs/en/skills,200,Agent Skills - Claude Code Docs,908545,接口,,0,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/setup,200,Set up Claude Code - Claude Code Docs,797103,接口,,1,Windows路径,2,Windows路径:C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe\\\; g:\\\,否
+https://code.claude.com/docs/en/data-usage,200,Data usage - Claude Code Docs,480862,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/overview,200,Claude Code overview - Claude Code Docs,523465,接口,,1,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/discover-plugins,200,Discover and install prebuilt plugins through marketplaces - Claude Code Docs,721355,接口,,1,邮箱|Windows路径,1|1,邮箱:git@gitlab.com|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/security,200,Security - Claude Code Docs,493547,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/cli-reference,200,CLI reference - Claude Code Docs,588127,接口,,1,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/output-styles,200,Output styles - Claude Code Docs,471289,接口,,1,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/legal-and-compliance,200,Legal and compliance - Claude Code Docs,431541,接口,,1,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/headless,200,Run Claude Code programmatically - Claude Code Docs,579161,接口,,1,Authorization|Windows路径,1|1,Authorization:Basic usage|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/third-party-integrations,200,Enterprise deployment overview - Claude Code Docs,587289,接口,,1,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/analytics,200,Analytics - Claude Code Docs,454445,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/troubleshooting,200,Troubleshooting - Claude Code Docs,745014,接口,,1,内网IP|Windows路径,1|4,"内网IP:('172.21.123.456', '21')|Windows路径:C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe\\\; C:\\\\Users\\\\YourName\; g:\\\; C:\\\\Program Files\\\\ClaudeCode\\\\\",否
+https://code.claude.com/docs/en/plugins,200,Create plugins - Claude Code Docs,778859,接口,,1,Basic认证|Authorization|Windows路径,1|1|1,Basic认证:basic plugins|Authorization:basic plugins|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/costs,200,Manage costs effectively - Claude Code Docs,498177,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/memory,200,Manage Claude's memory - Claude Code Docs,591154,接口,,1,Authorization|Windows路径,1|2,Authorization:Basic structure|Windows路径:C:\\\\Program Files\\\\ClaudeCode\\\\CLAUDE.md\; g:\\\,否
+https://code.claude.com/docs/en/hooks-guide,200,Get started with Claude Code hooks - Claude Code Docs,841323,接口,,1,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/slash-commands,200,Slash commands - Claude Code Docs,857453,接口,,1,Authorization|Windows路径,1|2,Authorization:Basic command|Windows路径:s:\\\; g:\\\,否
+https://code.claude.com/docs/en/plugin-marketplaces,200,Create and distribute a plugin marketplace - Claude Code Docs,997453,接口,,1,邮箱|Windows路径,2|1,邮箱:enterprise@example.com; devtools@example.com|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/monitoring-usage,200,Monitoring - Claude Code Docs,826139,接口,,2,Authorization|Windows路径,3|1,Authorization:Bearer token; Bearer your-token; Bearer company-token|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/iam,200,Identity and Access Management - Claude Code Docs,547859,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/chrome,200,Use Claude Code with Chrome (beta) - Claude Code Docs,569664,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/sub-agents,200,Create custom subagents - Claude Code Docs,1068379,接口,,1,Basic认证|Authorization|Windows路径,1|1|1,Basic认证:basic environment|Authorization:basic environment|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/mcp,200,Connect Claude Code to tools via MCP - Claude Code Docs,1235329,接口,,1,邮箱|Authorization|数据库连接|Windows路径,2|3|1|2,邮箱:pass@prod.db.com; test@example.com|Authorization:Bearer your-token; Bearer token; Basic syntax|数据库连接:postgresql|Windows路径:C:\\\\Program Files\\\\ClaudeCode\\\\managed-mcp.json\; g:\\\,否
+https://code.claude.com/docs/en/desktop,200,Claude Code on desktop - Claude Code Docs,495285,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/claude-code-on-the-web,200,Claude Code on the web - Claude Code Docs,732537,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/settings,200,Claude Code settings - Claude Code Docs,1303139,接口,,1,邮箱|Windows路径,3|3,邮箱:u003cnoreply@anthropic.com; git@git.example.com; u003cai@example.com|Windows路径:C:\\\\Program Files\\\\ClaudeCode\\\\managed-settings.json\; g:\\\; C:\\\\Program Files\\\\ClaudeCode\\\\\,否
+https://code.claude.com/docs/en/vs-code,200,Use Claude Code in VS Code - Claude Code Docs,586233,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/slack,200,Claude Code in Slack - Claude Code Docs,538466,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/gitlab-ci-cd,200,Claude Code GitLab CI/CD - Claude Code Docs,764529,接口,,3,OSS云存储桶|Windows路径,2|1,OSS云存储桶:; AccessKeyId|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/jetbrains,200,JetBrains IDEs - Claude Code Docs,498644,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/hooks,200,Hooks reference - Claude Code Docs,1713501,接口,,1,Authorization|Windows路径,1|1,Authorization:Basic Troubleshooting|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/github-actions,200,Claude Code GitHub Actions - Claude Code Docs,990181,接口,,3,Basic认证|Authorization|Windows路径,1|2|1,Basic认证:basic information|Authorization:Basic workflow; basic information:|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/quickstart,200,Quickstart - Claude Code Docs,717613,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/checkpointing,200,Checkpointing - Claude Code Docs,454313,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/interactive-mode,200,Interactive mode - Claude Code Docs,598039,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/common-workflows,200,Common workflows - Claude Code Docs,1280174,接口,,3,Windows路径,3,Windows路径:s:\\\; g:\\\; n:\\\,否
+https://code.claude.com/docs/en/devcontainer,200,Development containers - Claude Code Docs,457017,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/sandboxing,200,Sandboxing - Claude Code Docs,554167,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/network-config,200,Enterprise network configuration - Claude Code Docs,518030,接口,,2,内网IP|IP地址|Basic认证|Authorization|Windows路径,1|1|1|2|1,"内网IP:('192.168.1.1', '')|IP地址:192.168.1.1|Basic认证:basic authentication|Authorization:basic authentication; Basic authentication|Windows路径:g:\\\",否
+https://code.claude.com/docs/en/llm-gateway,200,LLM gateway configuration - Claude Code Docs,570588,接口,,2,Authorization|Windows路径,1|1,Authorization:Basic LiteLLM|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/google-vertex-ai,200,Claude Code on Google Vertex AI - Claude Code Docs,532323,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/plugins-reference,200,Plugins reference - Claude Code Docs,1040499,接口,,2,邮箱|Windows路径,2|1,邮箱:author@example.com; dev@company.com|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/amazon-bedrock,200,Claude Code on Amazon Bedrock - Claude Code Docs,636402,接口,,3,OSS云存储桶|Windows路径,3|1,OSS云存储桶:access-key; ; AccessKeyId|Windows路径:g:\\\,否
+https://code.claude.com/docs/en/microsoft-foundry,200,Claude Code on Microsoft Foundry - Claude Code Docs,496710,接口,,3,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/terminal-config,200,Optimize your terminal setup - Claude Code Docs,455133,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/statusline,200,Status line configuration - Claude Code Docs,860918,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/model-config,200,Model configuration - Claude Code Docs,496306,接口,,2,Windows路径,1,Windows路径:g:\\\,否
+https://code.claude.com/docs/en/changelog,200,claude-code/CHANGELOG.md at main · anthropics/claude-code · GitHub,557317,接口,,4,企业注册号|内网IP|IP地址|Facebook客户端ID|AWS S3|AWS S3 URL|Windows路径,1|1|10|1|1|1|2,"企业注册号:729464999999999|内网IP:('10.436.55.096', '')|IP地址:1.5.75.75; 1.7.75.75; 012.076.024.148; 09.047.171.125; 5.5.75.75; 138.112.25.25; 05.053.096.108; 002.002.004.004; 4.084.75.75; 05.015.098.042|Facebook客户端ID:('fb', ':app_id"" content=')|AWS S3:github-cloud.s3.amazonaws.com|AWS S3 URL:github-cloud.s3.amazonaws.com|Windows路径:C:\\Program Files\\ClaudeCode\u003c/code\u003e if it exists. Support for \u003ccode\u003eC; C:\\ProgramData\\ClaudeCode\\managed-settings.json\u003c/code\u003e - administrators should migrate to \u003ccode\u003eC",否
+https://code.claude.com/docs/en/,200,Claude Code overview - Claude Code Docs,523465,接口,,3,Windows路径,1,Windows路径:g:\\\,否
