@@ -151,7 +151,7 @@ User: "Agent Skills 和 Custom Skills 的区别"
 ### Step 1: Query Optimization (Optional)
 
 ```python
-from doc4llm.tool.md_doc_extractor import QueryOptimizer
+from doc4llm.tool.md_doc_retrieval import QueryOptimizer
 
 optimizer = QueryOptimizer()
 optimized = optimizer.optimize(user_query, max_queries=3)
@@ -166,7 +166,7 @@ optimized = optimizer.optimize(user_query, max_queries=3)
 ### Step 2: Document Search
 
 ```python
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, AgenticDocMatcher
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, AgenticDocMatcher
 
 extractor = MarkdownDocExtractor()
 matcher = AgenticDocMatcher(extractor)
@@ -179,7 +179,7 @@ results = matcher.match(query, max_results=5)
 
 ```python
 # Extract content from top results
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
 
 extractor = MarkdownDocExtractor()
 
@@ -209,7 +209,7 @@ Synthesize answer with citations:
 ### Step 1: Query Decomposition
 
 ```python
-from doc4llm.tool.md_doc_extractor import ChainReasoner, MarkdownDocExtractor, AgenticDocMatcher
+from doc4llm.tool.md_doc_retrieval import ChainReasoner, MarkdownDocExtractor, AgenticDocMatcher
 
 extractor = MarkdownDocExtractor()
 matcher = AgenticDocMatcher(extractor)
@@ -397,7 +397,7 @@ This might be due to:
 # Step 1: No decomposition needed (simple question)
 
 # Step 2: Search
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, AgenticDocMatcher
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, AgenticDocMatcher
 
 extractor = MarkdownDocExtractor()
 matcher = AgenticDocMatcher(extractor)
@@ -439,7 +439,7 @@ Based on the documentation, hooks are configured in the `.claude/hooks.json` fil
 **Your Response:**
 ```python
 # Step 1: Decompose (complex question with conjunction)
-from doc4llm.tool.md_doc_extractor import ChainReasoner, MarkdownDocExtractor, AgenticDocMatcher
+from doc4llm.tool.md_doc_retrieval import ChainReasoner, MarkdownDocExtractor, AgenticDocMatcher
 
 extractor = MarkdownDocExtractor()
 matcher = AgenticDocMatcher(extractor)

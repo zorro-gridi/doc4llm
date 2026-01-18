@@ -40,7 +40,7 @@ Hooks are automation scripts...
 ## Quick Start
 
 ```python
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, ExtractionResult
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
 
 # Directory mode (default: md_docs)
 extractor = MarkdownDocExtractor()
@@ -130,7 +130,7 @@ Returns an `ExtractionResult` dataclass with:
 
 **Critical for Multi-Document Scenarios:**
 ```python
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, ExtractionResult
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
 
 extractor = MarkdownDocExtractor()
 

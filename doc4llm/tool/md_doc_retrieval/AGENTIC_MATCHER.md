@@ -50,7 +50,7 @@
 ### 快速开始
 
 ```python
-from doc4llm.tool.md_doc_extractor import agentic_search
+from doc4llm.tool.md_doc_retrieval import agentic_search
 
 # 一行代码完成 agentic 搜索
 results = agentic_search("skills", base_dir="md_docs")
@@ -62,7 +62,7 @@ for r in results:
 ### 完整配置
 
 ```python
-from doc4llm.tool.md_doc_extractor import (
+from doc4llm.tool.md_doc_retrieval import (
     MarkdownDocExtractor,
     AgenticDocMatcher
 )

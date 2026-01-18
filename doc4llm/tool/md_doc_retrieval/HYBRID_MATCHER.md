@@ -61,7 +61,7 @@
 ### 快速开始
 
 ```python
-from doc4llm.tool.md_doc_extractor import hybrid_search
+from doc4llm.tool.md_doc_retrieval import hybrid_search
 
 # 一行代码，自动选择策略
 result = hybrid_search("skills", base_dir="md_docs")
@@ -79,7 +79,7 @@ if result['enhancement'].triggered:
 ### 完整配置
 
 ```python
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, HybridMatcher
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, HybridMatcher
 
 extractor = MarkdownDocExtractor(base_dir="md_docs")
 

@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from .doc_extractor import MarkdownDocExtractor
 from . import utils
+from .bm25_matcher import BM25Matcher, BM25Config
 
 
 @dataclass
@@ -166,9 +167,10 @@ class ProgressiveRetriever:
 
     def _search_previews(self, query: str, doc_set: Optional[str] = None) -> List[MatchResult]:
         """
-        Stage 3: Search content previews.
+        Stage 3: Search content previews using BM25.
 
-        Reads first N lines of documents to find content-level matches.
+        Reads first N lines of documents and uses BM25 ranking for
+        content-level matching with proper term frequency and IDF weighting.
         """
         results: List[MatchResult] = []
 
@@ -185,39 +187,67 @@ class ProgressiveRetriever:
         else:
             docs_to_search = doc_structure
 
-        query_lower = query.lower()
-        query_terms = query_lower.split()
+        # Collect all document previews
+        previews_by_doc: Dict[str, str] = {}
+        doc_keys_by_title: Dict[str, str] = {}
 
         for doc_key, titles in docs_to_search.items():
             for title in titles:
-                # Skip if already found by title/TOC
-                # (this will be handled by deduplication later)
-
                 # Read preview
                 preview = self._read_preview(doc_key, title, max_lines=50)
-                if not preview:
-                    continue
+                if preview:
+                    doc_id = f"{doc_key}::{title}"
+                    previews_by_doc[doc_id] = preview
+                    doc_keys_by_title[doc_id] = doc_key
 
-                # Check if query terms appear in preview
-                preview_lower = preview.lower()
-                matched_terms = [t for t in query_terms if t in preview_lower]
+        if not previews_by_doc:
+            return results
 
-                if matched_terms:
-                    # Calculate similarity based on term coverage
-                    term_coverage = len(matched_terms) / len(query_terms)
-                    similarity = 0.3 + (term_coverage * 0.4)  # Base 0.3, max 0.7
+        # Use BM25 for ranking
+        bm25_config = BM25Config(
+            k1=1.2,  # Standard term frequency saturation
+            b=0.75,  # Standard length normalization
+            min_token_length=2,
+            lowercase=True
+        )
 
-                    results.append(MatchResult(
-                        title=title,
-                        similarity=similarity,
-                        match_type="content_preview",
-                        doc_name_version=doc_key,
-                        source="preview",
-                        content_preview=preview[:200] + "..." if len(preview) > 200 else preview
-                    ))
+        matcher = BM25Matcher(bm25_config)
+        matcher.build_index(previews_by_doc)
 
-        # Sort and limit
+        # Search and convert results
+        bm25_results = matcher.search(
+            query,
+            top_k=self.config["preview_max_results"],
+            min_score=0.1  # Minimum BM25 score threshold
+        )
+
+        # Convert BM25 results to MatchResult
+        # Normalize BM25 scores to 0.3-0.7 range for consistency
+        max_score = max([r[1] for r in bm25_results]) if bm25_results else 1.0
+
+        for doc_id, bm25_score in bm25_results:
+            title = doc_id.split("::", 1)[1] if "::" in doc_id else doc_id
+            doc_key = doc_keys_by_title.get(doc_id, doc_set or "")
+
+            # Normalize score to 0.3-0.7 range for preview source
+            normalized_score = 0.3 + (bm25_score / max_score * 0.4) if max_score > 0 else 0.3
+
+            # Get content preview
+            preview = previews_by_doc.get(doc_id, "")
+            content_preview = preview[:200] + "..." if len(preview) > 200 else preview
+
+            results.append(MatchResult(
+                title=title,
+                similarity=normalized_score,
+                match_type="content_preview_bm25",
+                doc_name_version=doc_key,
+                source="preview",
+                content_preview=content_preview
+            ))
+
+        # Sort by similarity descending
         results.sort(key=lambda r: r.similarity, reverse=True)
+
         return results[:self.config["preview_max_results"]]
 
     def _read_toc(self, doc_key: str, title: str) -> Optional[str]:

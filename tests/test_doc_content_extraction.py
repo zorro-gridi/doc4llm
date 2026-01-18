@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
 
 
 # Test file paths

@@ -1,20 +1,33 @@
 """
-Markdown document extraction tool for doc4llm.
+Markdown document retrieval tool for doc4llm.
 
-This is a sub-package providing tools for extracting content from markdown documents
-stored in the md_docs directory structure.
+This is a sub-package providing tools for retrieving content from markdown documents
+stored in the md_docs directory structure. Previously named md_doc_extractor.
+
+The package has been renamed to md_doc_retrieval to better reflect its comprehensive
+functionality including extraction, matching, query optimization, chain reasoning,
+and conversation memory.
 
 Example:
-    >>> from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
+    >>> from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
     >>> extractor = MarkdownDocExtractor()
     >>> content = extractor.extract_by_title("Agent Skills - Claude Code Docs")
 
+Basic matching:
+    >>> from doc4llm.tool.md_doc_retrieval import BasicDocMatcher
+    >>> matcher = BasicDocMatcher(search_mode="exact")
+    >>> result = matcher.match("Agent Skills", ["Agent Skills", "Slash Commands"])
+
 Agentic matching:
-    >>> from doc4llm.tool.md_doc_extractor import AgenticDocMatcher
+    >>> from doc4llm.tool.md_doc_retrieval import AgenticDocMatcher
     >>> matcher = AgenticDocMatcher(extractor)
     >>> results = matcher.match("skills")
 """
 
+from .basic_matcher import (
+    BasicDocMatcher,
+    MatchResult as BasicMatchResult,
+)
 from .doc_extractor import MarkdownDocExtractor, ExtractionResult
 from .agentic_matcher import (
     AgenticDocMatcher,
@@ -73,6 +86,9 @@ __all__ = [
     # Main extractor class
     "MarkdownDocExtractor",
     "ExtractionResult",  # Multi-document extraction result with metadata (v2.5.0)
+    # Basic matcher (v3.0.0)
+    "BasicDocMatcher",
+    "BasicMatchResult",
     # Agentic matcher (v2.0.0)
     "AgenticDocMatcher",
     "ProgressiveRetriever",
@@ -121,4 +137,4 @@ __all__ = [
     "SearchHelpers",
 ]
 
-__version__ = "2.6.0"
+__version__ = "3.0.0"

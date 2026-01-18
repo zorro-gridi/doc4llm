@@ -1,6 +1,6 @@
 ---
 name: doc-retriever
-description: "Documentation retrieval orchestrator using a four-phase progressive disclosure workflow. **Use proactively** when user needs to query, search, or extract content from markdown documentation. **Trigger keywords**: 'use contextZ' or 'use contextz' (case-insensitive). Returns properly cited results with source URLs and file paths."
+description: "Documentation retrieval orchestrator using a four-phase progressive disclosure workflow. **Use proactively** when user needs to query, search、 extract content from markdown documentation or use keywords **'use contextZ' or 'use contextz'** to submit a query. Final: returns properly cited results with source URLs and file paths."
 skills:
   - md-doc-query-optimizer
   - md-doc-searcher
@@ -188,7 +188,7 @@ Output:
 **CRITICAL:** For multi-document extraction, you MUST use the new `extract_by_titles_with_metadata()` method:
 
 ```python
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, ExtractionResult
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
 
 extractor = MarkdownDocExtractor()
 
@@ -576,7 +576,7 @@ Found: "Hooks reference", "Get started with Claude Code hooks"
 
 [Phase 2: Invoke md-doc-reader with extract_by_titles_with_metadata()]
 ```python
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, ExtractionResult
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
 
 extractor = MarkdownDocExtractor()
 

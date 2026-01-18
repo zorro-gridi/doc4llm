@@ -14,8 +14,8 @@ import tempfile
 from pathlib import Path
 from unittest import TestCase
 
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
-from doc4llm.tool.md_doc_extractor.utils import (
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+from doc4llm.tool.md_doc_retrieval.utils import (
     calculate_similarity,
     extract_toc_sections,
     semantic_match_toc_sections,

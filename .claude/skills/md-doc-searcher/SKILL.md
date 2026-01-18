@@ -59,7 +59,7 @@ This follows the **progressive disclosure** principle: discover structure first 
 This skill now leverages helper functions for deterministic operations, while preserving LLM semantic understanding for core matching logic.
 
 ```python
-from doc4llm.tool.md_doc_extractor import SearchHelpers
+from doc4llm.tool.md_doc_retrieval import SearchHelpers
 
 # Path construction
 SearchHelpers.build_toc_glob_pattern(doc_set)      # → "md_docs/<doc_set>/*/docTOC.md"
@@ -220,7 +220,7 @@ After listing TOC files, use semantic understanding to match the user's query:
 
 **Helper for section extraction:**
 ```python
-from doc4llm.tool.md_doc_extractor.utils import extract_toc_sections, semantic_match_toc_sections
+from doc4llm.tool.md_doc_retrieval.utils import extract_toc_sections, semantic_match_toc_sections
 
 # Extract sections from docTOC.md content
 sections = extract_toc_sections(toc_content, query="hooks", max_sections=20)
@@ -253,7 +253,7 @@ When Level 1 semantic matching returns **0 results OR low-quality matches** (max
 
 **Use helper to build command:**
 ```python
-from doc4llm.tool.md_doc_extractor import SearchHelpers
+from doc4llm.tool.md_doc_retrieval import SearchHelpers
 
 # First extract keywords
 keywords = SearchHelpers.extract_keywords("how to configure hooks for deployment")

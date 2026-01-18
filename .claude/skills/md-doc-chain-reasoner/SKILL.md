@@ -31,8 +31,8 @@ Use this skill when:
 ## Quick Start
 
 ```python
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, AgenticDocMatcher
-from doc4llm.tool.md_doc_extractor.chain_reasoner import ChainReasoner
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, AgenticDocMatcher
+from doc4llm.tool.md_doc_retrieval.chain_reasoner import ChainReasoner
 
 # Initialize components
 extractor = MarkdownDocExtractor()

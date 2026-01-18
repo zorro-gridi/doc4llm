@@ -3,7 +3,7 @@
 Markdown Document Extractor Script for md-doc-reader skill.
 
 This script extracts content from markdown documents by title using the
-MarkdownDocExtractor from doc4llm.tool.md_doc_extractor.
+MarkdownDocExtractor from doc4llm.tool.md_doc_retrieval.
 
 Usage:
     python extract_md_doc.py --title "Agent Skills - Claude Code Docs"
@@ -95,7 +95,7 @@ def main():
 
     try:
         # Import the extractor
-        from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
+        from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
 
         # Create extractor from config or with parameters
         if args.config:

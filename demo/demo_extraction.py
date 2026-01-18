@@ -4,7 +4,7 @@
 import re
 from pathlib import Path
 
-from doc4llm.tool.md_doc_extractor import (
+from doc4llm.tool.md_doc_retrieval import (
     MarkdownDocExtractor,
     extract_section_by_title,
 )

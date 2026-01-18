@@ -3,6 +3,9 @@ Markdown document extractor for doc4llm documentation output.
 
 This module provides the main MarkdownDocExtractor class for extracting content
 from markdown documents stored in the md_docs directory structure.
+
+Matching functionality is delegated to BasicDocMatcher for better separation
+of concerns.
 """
 import json
 import re
@@ -12,6 +15,7 @@ from typing import Any, Dict, List
 
 from ...scanner.utils import DebugMixin
 from . import utils
+from .basic_matcher import BasicDocMatcher
 from .exceptions import (
     BaseDirectoryNotFoundError,
     ConfigurationError,
@@ -212,6 +216,14 @@ class MarkdownDocExtractor(DebugMixin):
         # Cache for document structure
         self._doc_structure: Dict[str, List[str]] | None = None
 
+        # Initialize BasicDocMatcher for matching operations
+        self._matcher = BasicDocMatcher(
+            search_mode=search_mode,
+            case_sensitive=case_sensitive,
+            fuzzy_threshold=fuzzy_threshold,
+            max_results=max_results,
+        )
+
         if not self._single_file_mode:
             self._debug_print(f"Initialized with base_dir: {self.base_dir}")
             self._debug_print(f"Search mode: {self.search_mode}")
@@ -279,58 +291,6 @@ class MarkdownDocExtractor(DebugMixin):
                 f"Failed to read file: {e}"
             )
 
-    def _find_exact_match(
-        self,
-        title: str,
-        titles: List[str]
-    ) -> str | None:
-        """Find an exact title match.
-
-        Args:
-            title: The title to search for
-            titles: List of available titles
-
-        Returns:
-            The matched title or None if not found
-        """
-        normalized_query = utils.normalize_title(title)
-
-        for available_title in titles:
-            normalized_available = utils.normalize_title(available_title)
-
-            if self.case_sensitive:
-                if normalized_query == normalized_available:
-                    return available_title
-            else:
-                if normalized_query.lower() == normalized_available.lower():
-                    return available_title
-
-        return None
-
-    def _find_partial_match(
-        self,
-        title: str,
-        titles: List[str]
-    ) -> List[str]:
-        """Find all partial (substring) matches.
-
-        Args:
-            title: The title to search for
-            titles: List of available titles
-
-        Returns:
-            List of titles containing the query as a substring
-        """
-        normalized_query = utils.normalize_title(title).lower()
-        matches = []
-
-        for available_title in titles:
-            normalized_available = utils.normalize_title(available_title).lower()
-            if normalized_query in normalized_available:
-                matches.append(available_title)
-
-        return matches
-
     def extract_by_title(self, title: str | None = None) -> str | None:
         """Extract content for a single document title.
 
@@ -377,7 +337,8 @@ class MarkdownDocExtractor(DebugMixin):
                 raise InvalidTitleError(title, "Title cannot be empty")
 
             # Check if title matches the extracted file title
-            matched_title = self._find_exact_match(title, [file_title])
+            match_result = self._matcher.match(title, [file_title])
+            matched_title = match_result.title if match_result else None
 
             if matched_title:
                 self._debug_print(f"Title matched in single file mode: '{matched_title}'")
@@ -408,10 +369,11 @@ class MarkdownDocExtractor(DebugMixin):
         doc_name_version = None  # Initialize before fallback
 
         if self.search_mode in ("exact", "case_insensitive"):
-            matched_title = self._find_exact_match(title, all_titles)
+            match_result = self._matcher.match(title, all_titles)
+            matched_title = match_result.title if match_result else None
 
         elif self.search_mode == "partial":
-            matches = self._find_partial_match(title, all_titles)
+            matches = self._matcher.find_partial_match(title, all_titles)
             if matches:
                 matched_title = matches[0]  # Return first match
 
@@ -639,15 +601,15 @@ class MarkdownDocExtractor(DebugMixin):
             assert file_title is not None, "Single file title must be set in single file mode"
 
             if self.search_mode in ("exact", "case_insensitive"):
-                match = self._find_exact_match(title, [file_title])
-                if match:
+                match_result = self._matcher.match(title, [file_title])
+                if match_result:
                     return [{
                         "title": file_title,
                         "similarity": 1.0,
                         "doc_name_version": "single_file",
                     }]
             elif self.search_mode == "partial":
-                matches = self._find_partial_match(title, [file_title])
+                matches = self._matcher.find_partial_match(title, [file_title])
                 if matches:
                     return [{
                         "title": file_title,
@@ -681,10 +643,11 @@ class MarkdownDocExtractor(DebugMixin):
         results: List[Dict[str, Any]] = []
 
         if self.search_mode in ("exact", "case_insensitive"):
-            match = self._find_exact_match(title, [t for t, _ in all_titles_with_doc])
-            if match:
+            all_titles = [t for t, _ in all_titles_with_doc]
+            match_result = self._matcher.match(title, all_titles)
+            if match_result:
                 for t, doc_key in all_titles_with_doc:
-                    if t == match:
+                    if t == match_result.title:
                         results.append({
                             "title": t,
                             "similarity": 1.0,
@@ -693,7 +656,8 @@ class MarkdownDocExtractor(DebugMixin):
                         break
 
         elif self.search_mode == "partial":
-            matches = self._find_partial_match(title, [t for t, _ in all_titles_with_doc])
+            all_titles = [t for t, _ in all_titles_with_doc]
+            matches = self._matcher.find_partial_match(title, all_titles)
             for t, doc_key in all_titles_with_doc:
                 if t in matches:
                     results.append({
@@ -801,8 +765,8 @@ class MarkdownDocExtractor(DebugMixin):
             assert file_title is not None, "Single file title must be set in single file mode"
 
             # Check if title matches the single file title
-            matched_title = self._find_exact_match(title, [file_title])
-            if not matched_title:
+            match_result = self._matcher.match(title, [file_title])
+            if not match_result:
                 return None
 
             path = Path(file_path)
@@ -882,10 +846,11 @@ class MarkdownDocExtractor(DebugMixin):
         matched_title = None
 
         if mode in ("exact", "case_insensitive"):
-            matched_title = self._find_exact_match(title, all_titles)
+            match_result = self._matcher.match(title, all_titles, mode=mode)
+            matched_title = match_result.title if match_result else None
 
         elif mode == "partial":
-            matches = self._find_partial_match(title, all_titles)
+            matches = self._matcher.find_partial_match(title, all_titles)
             if matches:
                 matched_title = matches[0]
 
@@ -1050,7 +1015,8 @@ class MarkdownDocExtractor(DebugMixin):
         results: List[Dict[str, Any]] = []
 
         # Strategy 1: Exact match (weight 1.0)
-        exact_match = self._find_exact_match(query, [t for t, _ in titles_to_search])
+        all_titles = [t for t, _ in titles_to_search]
+        exact_match = self._matcher.find_exact_match(query, all_titles)
         if exact_match:
             for t, doc_key in titles_to_search:
                 if t == exact_match:
@@ -1063,7 +1029,7 @@ class MarkdownDocExtractor(DebugMixin):
                     break
 
         # Strategy 2: Partial match (weight 0.8)
-        partial_matches = self._find_partial_match(query, [t for t, _ in titles_to_search])
+        partial_matches = self._matcher.find_partial_match(query, all_titles)
         for t, doc_key in titles_to_search:
             if t in partial_matches and t != exact_match:
                 # Calculate similarity based on substring position

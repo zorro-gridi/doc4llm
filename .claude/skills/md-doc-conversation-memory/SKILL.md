@@ -22,7 +22,7 @@ Enable context-aware document retrieval by:
 ## Quick Start
 
 ```python
-from doc4llm.tool.md_doc_extractor import ConversationMemory
+from doc4llm.tool.md_doc_retrieval import ConversationMemory
 
 # Initialize memory
 memory = ConversationMemory(storage_dir=".claude/memory")
@@ -282,7 +282,7 @@ When used with the `doc-qa-agentic` agent:
 
 ```python
 # In doc-qa-agentic agent:
-from doc4llm.tool.md_doc_extractor import ConversationMemory
+from doc4llm.tool.md_doc_retrieval import ConversationMemory
 
 # Initialize memory
 memory = ConversationMemory()
