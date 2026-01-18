@@ -12,6 +12,31 @@ context: fork
 
 Extract content from markdown documents in the doc4llm md_docs directory structure using the `MarkdownDocExtractor`.
 
+## Output Language Requirement
+
+**CRITICAL: When extracting content, maintain the original language of the document.**
+
+- **Preserve original content language** - Do not translate document content
+- **Chinese documents** - Return in Chinese as stored
+- **English documents** - Return in English as stored
+- **Technical terms** - Keep original terminology in parentheses when helpful
+- **Code examples** - Always preserve original language (don't translate code)
+
+**When this skill is invoked independently (not through doc-retriever agent):**
+- Default to returning content in the **original document language**
+- If user requests translation or explanation, respond in **Chinese by default**
+
+**Example:**
+```markdown
+# Input Document (English)
+## Hooks Configuration
+Hooks are automation scripts...
+
+# Output (preserve English)
+## Hooks Configuration
+Hooks are automation scripts...
+```
+
 ## Quick Start
 
 ```python

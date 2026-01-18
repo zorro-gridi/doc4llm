@@ -67,6 +67,7 @@ from .utils import (
     parse_doc_structure,
     sanitize_filename,
 )
+from .search_helpers import SearchHelpers
 
 __all__ = [
     # Main extractor class
@@ -116,6 +117,8 @@ __all__ = [
     "extract_doc_name_and_version",
     "extract_title_from_md_file",
     "extract_section_by_title",
+    # Search helpers (v2.6.0)
+    "SearchHelpers",
 ]
 
-__version__ = "2.1.0"
+__version__ = "2.6.0"
