@@ -1,5 +1,5 @@
 """
-WhiteURLScan - Web URL扫描和信息安全收集工具
+doc4llm - Web URL扫描和信息安全收集工具
 主入口文件
 """
 import argparse
@@ -285,8 +285,8 @@ def main():
 def _print_program_info():
     """打印程序信息"""
     print(f"{Fore.YELLOW}=============================================={Style.RESET_ALL}")
-    print(f"{Fore.YELLOW}=== WhiteURLScan v1.7.4 ===")
-    print(f"{Fore.YELLOW}=== BY: white1434  GitHub: https://github.com/zorro-gridi/doc4llm")
+    print(f"{Fore.YELLOW}=== doc4llm v.1.0.0 ===")
+    print(f"{Fore.YELLOW}=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm")
     print(f"{Fore.YELLOW}=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示")
     print(f"{Fore.CYAN}=== 所有输出将同时记录到 results/output.out 文件中")
     print(f"{Fore.CYAN}=== 扫描开始时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -310,7 +310,7 @@ def _parse_arguments():
     """解析命令行参数"""
     try:
         parser = argparse.ArgumentParser(
-            description="WhiteURLScan 扫描工具",
+            description="doc4llm 扫描工具",
             epilog="提示: 使用 -force-scan 而非 -force_scan（参数名用连字符）",
             formatter_class=argparse.RawDescriptionHelpFormatter
         )
@@ -431,13 +431,14 @@ def _load_config(config_file='doc4llm/config/config.json'):
             "exclude_fuzzy": ["/blog/", "/news/", "/community/", "/forum/"],
             # 标题过滤配置
             "title_filter_list": ["Page Not Found"],
+            "title_cleanup_patterns": [],
             # 状态码过滤配置
             "status_code_filter": [404, 503, 502, 504, 403, 401, 500],
             # 文档爬取模式配置
             "mode": 0,  # 0=仅爬取CSV, 1=抓取文档内容, 2=抓取锚点链接, 3=依次执行内容爬取和锚点提取
             "force_scan": 0,  # mode 1/2/3时，是否强制启动URL扫描器（0：CSV不为空则跳过，1：强制扫描）
             "results_dir": "results",  # 结果文件保存目录
-            "doc_dir": "documentation_output",
+            "doc_dir": "md_docs",
             "doc_name": None,
             "doc_version": "latest",
             "toc_url_filters": {
@@ -514,6 +515,7 @@ def _create_config(args, config_data, get_config_value):
         exclude_fuzzy=get_config_value('exclude_fuzzy'),
         # 标题过滤参数
         title_filter_list=get_config_value('title_filter_list'),
+        title_cleanup_patterns=get_config_value('title_cleanup_patterns'),
         # 状态码过滤参数
         status_code_filter=get_config_value('status_code_filter'),
         # 文档爬取模式参数
@@ -634,6 +636,7 @@ def _scan_multiple_urls(config, url_file, get_config_value):
                     exclude_fuzzy=get_config_value('exclude_fuzzy'),
                     # 标题过滤参数
                     title_filter_list=get_config_value('title_filter_list'),
+                    title_cleanup_patterns=get_config_value('title_cleanup_patterns'),
                     # 状态码过滤参数
                     status_code_filter=get_config_value('status_code_filter'),
                     # 文档爬取模式参数

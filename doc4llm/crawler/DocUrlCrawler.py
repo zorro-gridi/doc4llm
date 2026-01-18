@@ -136,6 +136,25 @@ class DocUrlCrawler(DebugMixin):
 
         return full_path
 
+    def _clean_title(self, title: str) -> str:
+        """
+        清理页面标题，移除配置的指定文本
+
+        Args:
+            title: 原始页面标题
+
+        Returns:
+            str: 清理后的标题（已strip首尾空白符）
+        """
+        if not title:
+            return title
+
+        cleaned = title
+        for pattern in self.config.title_cleanup_patterns:
+            cleaned = cleaned.replace(pattern, '')
+
+        return cleaned.strip()
+
     def _is_in_toc(self, a_tag) -> bool:
         """
         判断锚点链接是否在目录（TOC）区域
@@ -303,6 +322,9 @@ class DocUrlCrawler(DebugMixin):
             # 提取页面标题
             soup = BeautifulSoup(html_content, 'html.parser')
             page_title = self.content_filter.get_page_title(final_url, soup)
+
+            # 清理标题
+            page_title = self._clean_title(page_title)
 
             return html_content, page_title
 

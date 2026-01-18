@@ -5,7 +5,7 @@ Standard Content Filter Module
 提供基础的网页内容过滤功能，适用于大多数传统网站结构。
 使用 extend 模式合并自定义配置，保留默认选择器。
 
-Author: WhiteURLScan Team
+Author: doc4llm Team
 """
 
 import os

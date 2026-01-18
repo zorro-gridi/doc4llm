@@ -9,10 +9,10 @@ description = "Web URL扫描和信息安全收集工具 - A powerful web URL sca
 readme = "README.md"
 license = "MIT"
 authors = [
-    {name = "white1434", email = "white1434@users.noreply.github.com"}
+    {name = "Zorro", email = "Zorro@users.noreply.github.com"}
 ]
 maintainers = [
-    {name = "white1434", email = "white1434@users.noreply.github.com"}
+    {name = "Zorro", email = "Zorro@users.noreply.github.com"}
 ]
 keywords = [
     "url-scanner",

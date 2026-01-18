@@ -1,4 +1,4 @@
-# WhiteURLScan 配置参数说明文档
+# doc4llm 配置参数说明文档
 
 本文档详细说明 `config.json` 中所有配置参数的作用、应用场景和配置方法。
 
@@ -473,7 +473,7 @@ python -m doc4llm -u https://docs.example.com -mode 2 -force-scan 1
 
 | 参数 | 类型 | 默认值 |
 |------|------|--------|
-| 文档输出目录 | string | `"documentation_output"` |
+| 文档输出目录 | string | `"md_docs"` |
 
 **作用**：文档内容的保存目录
 
@@ -1306,7 +1306,7 @@ python -m doc4llm -u https://docs.example.com -mode 3 -enable-inline-extraction 
 两种模式的输出文件结构完全相同：
 
 ```
-documentation_output/
+md_docs/
 └── <doc_name>:<doc_version>/
     ├── <页面1标题>/
     │   ├── docContent.md    # 文档正文内容
@@ -1373,7 +1373,7 @@ documentation_output/
   "mode": 2,
   "force_scan": 0,
   "results_dir": "results",
-  "doc_dir": "documentation_output",
+  "doc_dir": "md_docs",
   "doc_name": null,
   "doc_version": "latest",
   "toc_url_filters": {
@@ -1480,7 +1480,7 @@ python -m doc4llm -u https://example.com -scope 3
 
 **文档版本**: v1.2
 **更新日期**: 2026-01-16
-**项目**: WhiteURLScan
+**项目**: doc4llm
 
 ## 更新日志
 

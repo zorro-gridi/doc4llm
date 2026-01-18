@@ -227,6 +227,42 @@ class ContentExtractor(DebugMixin):
         """
         return self.content_filter.sanitize_filename(title, is_directory=is_directory)
 
+    def _clean_title(self, title: str) -> str:
+        """
+        清理页面标题，移除配置的指定文本
+
+        Args:
+            title: 原始页面标题
+
+        Returns:
+            str: 清理后的标题（已strip首尾空白符）
+        """
+        if not title:
+            return title
+
+        cleaned = title
+        for pattern in self.config.title_cleanup_patterns:
+            cleaned = cleaned.replace(pattern, '')
+
+        return cleaned.strip()
+
+    def _should_skip_title(self, title: str) -> bool:
+        """
+        检查页面标题是否匹配过滤规则
+
+        Args:
+            title: 页面标题
+
+        Returns:
+            bool: 是否应跳过此标题
+        """
+        if not title:
+            return False
+        for filter_title in self.config.title_filter_list:
+            if title.lower() == filter_title.lower():
+                return True
+        return False
+
     def extract_inline(self, result: Dict, response, mode: int):
         """
         主入口：从扫描结果中提取内容和/或TOC
@@ -250,6 +286,15 @@ class ContentExtractor(DebugMixin):
 
         url = result.get('url', '')
         title = result.get('title', '')
+
+        # === 标题清理 ===
+        title = self._clean_title(title)
+
+        # === 标题过滤检查 ===
+        if self._should_skip_title(title):
+            if self.debug_mode:
+                self._debug_print(f"因标题匹配过滤规则跳过提取: {url} (标题: {title})")
+            return
 
         # 检查是否已爬取
         if self._is_url_already_crawled(url):
@@ -300,6 +345,9 @@ class ContentExtractor(DebugMixin):
             # 提取页面标题（如果传入的title为空）
             if not title:
                 title = self.content_filter.get_page_title(url, soup)
+
+            # 清理标题
+            title = self._clean_title(title)
 
             # 转换相对链接为绝对链接
             link_processor = LinkProcessor(url)
@@ -663,6 +711,9 @@ class ContentExtractor(DebugMixin):
             if not title:
                 soup = BeautifulSoup(html_content, 'html.parser')
                 title = self.content_filter.get_page_title(url, soup)
+
+            # 清理标题
+            title = self._clean_title(title)
 
             # 提取锚点链接
             anchor_links = self._extract_anchor_links(html_content, url)

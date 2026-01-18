@@ -19,22 +19,22 @@ pip install -r requirements.txt
 
 **Single URL:**
 ```bash
-python WhiteURLScan.py -u https://example.com -workers 20 -delay 1 -timeout 8 -depth 3
+python doc4llm.py -u https://example.com -workers 20 -delay 1 -timeout 8 -depth 3
 ```
 
 **Batch URL file:**
 ```bash
-python WhiteURLScan.py -f url.txt -workers 20 -delay 1 -timeout 8 -depth 3
+python doc4llm.py -f url.txt -workers 20 -delay 1 -timeout 8 -depth 3
 ```
 
 **Fuzz mode (custom URL concatenation):**
 ```bash
-python WhiteURLScan.py -f url.txt -fuzz 1 -proxy http://127.0.0.1:8080
+python doc4llm.py -f url.txt -fuzz 1 -proxy http://127.0.0.1:8080
 ```
 
 **Whitelist mode:**
 ```bash
-python WhiteURLScan.py -f url.txt -fuzz 1 -scope 3 -danger 1 -proxy http://127.0.0.1:8080
+python doc4llm.py -f url.txt -fuzz 1 -scope 3 -danger 1 -proxy http://127.0.0.1:8080
 ```
 
 ### Command-Line Arguments

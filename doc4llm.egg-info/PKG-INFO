@@ -2,8 +2,8 @@ Metadata-Version: 2.4
 Name: doc4llm
 Version: 2.0.0
 Summary: Web URL扫描和信息安全收集工具 - A powerful web URL scanning and information collection tool
-Author-email: white1434 <white1434@users.noreply.github.com>
-Maintainer-email: white1434 <white1434@users.noreply.github.com>
+Author-email: Zorro <Zorro@users.noreply.github.com>
+Maintainer-email: Zorro <Zorro@users.noreply.github.com>
 License-Expression: MIT
 Project-URL: Homepage, https://github.com/zorro-gridi/doc4llm
 Project-URL: Documentation, https://github.com/zorro-gridi/doc4llm/blob/main/README.md
@@ -43,185 +43,315 @@ Requires-Dist: flake8>=4.0.0; extra == "dev"
 Requires-Dist: mypy>=0.950; extra == "dev"
 Dynamic: license-file
 
-# doc4llm - 文档爬取工具
+# doc4llm
 
-## 项目简介
+> A powerful documentation crawler for LLM training data collection
 
-doc4llm 是一款功能强大的文档爬取与内容转换工具，专为 LLM 训练数据采集而设计。它支持多线程并发爬取、智能路径拼接、内容过滤、HTML 转 Markdown 等多种功能，可以将文档网站转换为结构化的 Markdown 格式。
+## Overview
 
-## 主要功能
+doc4llm is a documentation crawler designed for collecting and converting web documentation into structured Markdown format for LLM training data. It features recursive URL scanning, intelligent path concatenation, content filtering, and HTML-to-Markdown conversion with multi-threaded concurrent execution.
 
-- **递归扫描**：自动扫描网站所有可达 URL，并去除重复项。
-- **智能路径拼接**：识别并拼接各种相对/绝对路径，包括自定义基地址、API 路由、路径路由拼接（fuzz 模式）。
-- **敏感信息检测**：检测页面中的敏感信息，如身份证号、手机号、API 密钥等。
-- **URL 收集**：自动收集 URL，并统计访问结果。
-- **高效扫描**：多线程并发扫描，速度快，支持批量 URL 扫描。
-- **实时输出**：实时彩色输出，结果自动保存为 CSV 文件。
-- **自定义设置**：支持自定义请求头、代理、黑名单域名、扩展名过滤等。
-- **调试日志**：提供丰富的调试与日志输出，方便问题排查和优化。
+## Features
 
-## 安装依赖
+### Core Capabilities
 
-建议使用 Python 3.7 及以上版本。
+- **Recursive URL Scanning**: Automatically discovers and scans all reachable URLs with duplicate detection
+- **Smart Path Concatenation**: Handles relative/absolute paths, API routes, and custom base URL concatenation
+- **Content Filtering**: Removes navigation, footers, and non-content blocks from documentation
+- **HTML to Markdown**: Converts web pages to clean Markdown format
+- **Multi-threaded Execution**: Concurrent scanning for improved performance
+- **Sensitive Data Detection**: Regex-based detection of sensitive information (API keys, credentials, etc.)
+- **Framework Presets**: Built-in support for Mintlify, Docusaurus, VitePress, and GitBook
+
+### Modes of Operation
+
+| Mode | Description |
+|------|-------------|
+| **0** | URL scan only - outputs to CSV file |
+| **1** | Document content crawling - saves Markdown files |
+| **2** | Anchor link extraction - extracts TOC links |
+| **3** | Combined mode - executes content crawl and anchor extraction |
+
+### URL Scope Modes
+
+| Mode | Behavior |
+|------|----------|
+| **0** | Main domain only - records external URLs |
+| **1** | External links visited once (no recursion on external domains) |
+| **2** | Unlimited - scans all links recursively |
+| **3** | Whitelist mode - only scans domains in `whitelist_domains` |
+
+## Installation
 
 ```bash
 pip install -r requirements.txt
 ```
 
-**主要依赖包：**
+### Requirements
+
+- Python 3.7+
 - requests
 - beautifulsoup4
 - tldextract
 - colorama
+- html2text
 
-如缺少依赖，可手动安装：
+## Quick Start
 
-```bash
-pip install requests beautifulsoup4 tldextract colorama
-```
-## 运行参数
-
-- `-u`       起始URL
-- `-f`       批量URL文件
-- `-delay`    延迟时间（秒）
-- `-workers` 最大线程数（如 30）
-- `-timeout` 请求超时（秒）
-- `-depth`   最大递归深度
-- `-out`     实时输出文件路径
-- `-proxy`   代理（如 http://127.0.0.1:8080）
-- `-debug`   调试模式（1开启，0关闭）
-- `-scope`   URL扫描范围模式 0主域 1外部一次 2全放开 3白名单模式
-- `-danger`  危险接口过滤（1开启，0关闭）
-- `-fuzz`   自定义 URL 拼接
-
-## 配置说明
-
-首次运行会自动生成 `config.json`，可根据实际需求修改：
-
-- `start_url`：起始扫描 URL
-- `max_workers`：最大线程数
-- `timeout`：请求超时时间（秒）
-- `max_depth`：最大递归深度（深度过大爬取所有链接后将直接结束程序）
-- `output_file`：实时输出结果文件
-- `blacklist_domains`：黑名单域名
-- `extension_blacklist`：过滤的文件扩展名
-- `max_urls`：最大扫描 URL 数量
-- `smart_concatenation`：智能 URL 拼接
-- `debug_mode`：调试模式（0 关闭，1 开启）
-- `scope`：URL 扫描范围模式 0 主域、 1 外部链接只访问一次 、2 无限制 、3 白名单模式（只访问白名单域名）
-- `whitelist_domains`：白名单域名（scope=3 时使用）
-- `danger_api_list`：危险 API 过滤列表
-- `is_duplicate`：是否输出重复链接（返回内容相同即视为重复，0 关闭 1 开启）
-- `custom_base_url`：自定义基地址列表（fuzz 模式下生效）
-- `path_route`：自定义路径路由列表（fuzz 模式下生效）
-- `api_route`：自定义 API 路由列表（fuzz 模式下生效）
-- `fuzz`：是否启用自定义 URL 拼接参数（0 关闭，1 启用）
-- 其他参数详见 config.json
-
-## 使用方法
-
-### 1. 单个 URL 扫描
+### Basic URL Scan
 
 ```bash
 python -m doc4llm -u https://example.com -workers 20 -delay 1 -timeout 8 -depth 3
 ```
 
-![运行](https://raw.githubusercontent.com/white1434/WhiteURLScan/refs/heads/main/images/1.jpg)
-![运行](https://raw.githubusercontent.com/white1434/WhiteURLScan/refs/heads/main/images/2.jpg)
-![运行](https://raw.githubusercontent.com/white1434/WhiteURLScan/refs/heads/main/images/3.jpg)
-
-### 2. 批量 URL 扫描
-
-将多个 URL 写入 `url.txt`，每行一个，然后：
+### Document Crawling (Mode 3 - Recommended)
 
 ```bash
-python -m doc4llm -f url.txt -workers 20 -delay 1 -timeout 8 -depth 3
+python -m doc4llm -u https://docs.example.com -mode 3 -force-scan 1
 ```
 
-### 3. 启用自定义 URL 拼接（fuzz 模式）
+### Batch URL File
 
 ```bash
-python -m doc4llm -f url.txt -fuzz 1 -proxy http://127.0.0.1:8080
+python -m doc4llm -f urls.txt -workers 20 -delay 1 -timeout 8 -depth 3
 ```
 
-需要在配置文件中配置自定义参数custom_base_url、path_route、api_route
-如下会自动拼接，`https://example.com/#/扫描到的路径` ， `https://example.com/melody/api/v1/扫描到的路径`
-```bash
-  "custom_base_url": ["https://example.com/"],
-  "path_route": ["/#/"],
-  "api_route": ["/melody/api/v1"],
-```
-### 4. 自定义扫描范围（scope 模式）
+### With Proxy
 
 ```bash
-python -m doc4llm -f url.txt -fuzz 1 -scope 3 -danger 1 -proxy http://127.0.0.1:8080
+python -m doc4llm -u https://example.com -proxy http://127.0.0.1:8080
 ```
 
-URL 扫描范围模式 0 主域、 1 外部链接只访问一次 、2 无限制 、3 白名单模式（只访问白名单域名）
+### Fuzz Mode (Custom URL Concatenation)
 
-如目标为: `https://example.com/`:
-- `-scope 0` : 只扫描`example.com`域名（或ip），会记录外链到文件中
-- `-scope 1` : 扫描`example.com`域名（或ip）之外的不重复链接一次（不在外域递归）
-- `-scope 2` : 扫描所有链接，停止只看`-depth`深度（会在外站递归）和`max_urls`限制
-- `-scope 3` : 扫描白名单域名（需配置白名单参数），只扫描`whitelist_domains`白名单内域名
+```bash
+python -m doc4llm -f urls.txt -fuzz 1 -scope 3
+```
 
+## Command Line Arguments
 
-## 输出说明
+| Argument | Description | Default |
+|----------|-------------|---------|
+| `-u` | Starting URL | - |
+| `-f` | Batch URL file path | - |
+| `-config` | Config file path | `doc4llm/config/config.json` |
+| `-workers` | Max thread count | 30 |
+| `-delay` | Delay between requests (seconds) | 0.1 |
+| `-timeout` | Request timeout (seconds) | 20 |
+| `-depth` | Max recursion depth | 5 |
+| `-out` | Real-time output file path | `results/实时输出文件.csv` |
+| `-proxy` | Proxy URL | - |
+| `-debug` | Debug mode (1=on, 0=off) | 0 |
+| `-scope` | URL scope mode (0/1/2/3) | 0 |
+| `-danger` | Dangerous API filter (1=on, 0=off) | 1 |
+| `-fuzz` | Enable custom URL concatenation (1=on, 0=off) | 0 |
+| `-mode` | Crawl mode (0/1/2/3) | 0 |
+| `-force-scan` | Force URL scan refresh (mode 1/2/3) | 0 |
+| `-doc-dir` | Document output directory | `md_docs` |
+| `-doc-name` | Document name (overrides auto-detect) | - |
+| `-doc-version` | Document version tag | `latest` |
+| `-doc-depth` | Max document crawl depth | 10 |
+| `-doc-toc-selector` | TOC CSS selector (e.g., `.toc`, `#navigation`) | - |
 
-- 实时扫描结果会输出到控制台，并保存到 `results/` 目录下的 CSV 文件
-- 外部 URL 访问结果也会自动追加到报告文件
-- 日志文件为 `results/output.out`
+## Configuration
 
-![运行结果](https://raw.githubusercontent.com/white1434/WhiteURLScan/refs/heads/main/images/4.jpg)
+First run generates `doc4llm/config/config.json` automatically:
 
-![运行结果](https://raw.githubusercontent.com/white1434/WhiteURLScan/refs/heads/main/images/5.jpg)
+```json
+{
+  "start_url": null,
+  "max_workers": 30,
+  "timeout": 20,
+  "max_depth": 5,
+  "delay": 0.1,
+  "proxy": null,
+  "blacklist_domains": ["www.w3.org", "www.baidu.com", "github.com"],
+  "whitelist_domains": [],
+  "extension_blacklist": [".css", ".mp4"],
+  "max_urls": 10000,
+  "url_scope_mode": 0,
+  "danger_filter_enabled": 1,
+  "danger_api_list": ["del", "delete", "insert", "logout"],
+  "is_duplicate": 0,
+  "fuzz": 0,
+  "custom_base_url": [],
+  "path_route": [],
+  "api_route": [],
+  "mode": 0,
+  "force_scan": 0,
+  "doc_dir": "md_docs",
+  "doc_name": null,
+  "doc_version": "latest",
+  "doc_max_depth": 10,
+  "doc_timeout": 30,
+  "output_file": "results/实时输出文件.csv",
+  "results_dir": "results",
+  "output_log_file": "results/output.out",
+  "debug_log_file": "results/debug.log",
+  "log_max_lines": 10000,
+  "content_filter": {
+    "merge_mode": "extend",
+    "documentation_preset": null,
+    "non_content_selectors": [],
+    "fuzzy_keywords": [],
+    "log_levels": [],
+    "meaningless_content": [],
+    "content_end_markers": [],
+    "content_preserve_selectors": [],
+    "code_container_selectors": []
+  },
+  "toc_filter": {
+    "merge_mode": "extend",
+    "toc_class_patterns": [],
+    "toc_link_class_patterns": [],
+    "toc_parent_class_patterns": [],
+    "content_area_patterns": [],
+    "non_toc_link_patterns": [],
+    "toc_end_markers": []
+  }
+}
+```
 
-## 常见问题与建议
+### Content Filter Configuration
 
-- 建议合理设置线程数、递归深度、延迟时间，避免对目标站点造成压力
-- 递归深度过大时，程序会扫描所有页面链接后自动结束，注意最大 URL 数量限制
-- 敏感信息检测基于正则表达式，结果仅供参考，欢迎补充
-- fuzz 模式（需配置自定义参数）适合接口批量爆破、路径探测等高级用法，普通扫描建议关闭
-- 请勿将本工具用于非法用途
+The `content_filter` section allows customization of content extraction:
 
-## TODO
-- [x] 多线程功能
-- [x] 代理功能
-- [x] 正则匹配功能
-- [x] 文件保存功能
-- [x] 参数配置功能
-- [x] 敏感信息检测功能
-- [x] 危险接口过滤功能
-- [x] 域名黑名单检测功能
-- [x] 域名白名单模式
-- [x] 自定义请求头功能
-- [x] 自定义 base url 进行拼接（需启用 fuzz 模式）
-- [x] 自定义 fuzz 列表（需启用 fuzz 模式）
-- [x] 自定义 api 路径（需启用 fuzz 模式）
-- [x] webpack 打包网站 js 提取（暂时只匹配 chunk.a2d74a98.1ea71fd1.js 格式，且固定为 /static/js/chunk.a2d74a98.1ea71fd1.js 路径 ）
-- [x] 多链接扫描结果汇总
-- [ ] 指纹识别功能
-- [ ] POST 请求检测
-- [ ] 动态 api 加载
-- [ ] 浏览器模拟访问
-- [ ] 网页返回类型细分
-- [ ] 优化敏感信息匹配
-- [ ] 优化路径匹配 （HAE规则误报太多，等待优化）
-- [ ] 优化拼接方式
-- [ ] 优化代码结构
+| Option | Description |
+|--------|-------------|
+| `merge_mode` | `"extend"` to add to defaults, `"replace"` to override |
+| `documentation_preset` | Framework preset: `"mintlify"`, `"docusaurus"`, `"vitepress"`, `"gitbook"` |
+| `non_content_selectors` | CSS selectors to remove (nav, footer, etc.) |
+| `fuzzy_keywords` | Keywords for fuzzy matching class/id |
+| `content_end_markers` | Patterns marking end of main content (e.g., "Next steps") |
 
-## 参考与致谢
-- AI 编写
-- https://github.com/pingc0y/URLFinder
-- https://github.com/gh0stkey/HaE
-- https://github.com/momosecurity/FindSomething
-- https://github.com/Str1am/Auto_JsFinder
-- https://github.com/Threezh1/JSFinder
-- https://github.com/GerbenJavado/LinkFinder
-- https://github.com/ttstormxx/jjjjjjjjjjjjjs
-- https://github.com/0x727/ChkApi_0x727
-- https://github.com/Snow-Mountain-Passengers/Rotor-Goddess
+## Output Structure
 
-## 联系方式
+### URL Scan Results
 
-如有建议或问题，欢迎反馈！
+```
+results/
+├── 实时输出文件.csv          # Main scan results
+├── all_results_YYYYMMDD.csv  # Batch scan summary
+├── output.out                # Console output log
+└── debug.log                 # Debug log (when debug_mode=1)
+```
+
+### Document Output (Mode 1/3)
+
+```
+md_docs/
+└── <doc_name>:<doc_version>/
+    ├── Page 1 Title/
+    │   └── docContent.md
+    ├── Page 2 Title/
+    │   └── docContent.md
+    └── ...
+```
+
+## Architecture
+
+### Package Structure
+
+```
+doc4llm/
+├── __init__.py           # Package exports
+├── __main__.py           # Entry point for `python -m doc4llm`
+├── cli.py               # Main CLI interface
+├── main.py              # Alternative entry point
+├── scanner/             # URL scanning module
+│   ├── config.py        # ScannerConfig
+│   ├── scanner.py       # UltimateURLScanner
+│   ├── url_matcher.py   # URLMatcher
+│   ├── url_utils.py     # URLConcatenator
+│   ├── sensitive_detector.py  # SensitiveDetector
+│   ├── output_handler.py      # OutputHandler
+│   └── utils.py         # Utilities
+├── crawler/             # Document crawling
+│   ├── DocUrlCrawler.py       # Anchor link extraction
+│   └── DocContentCrawler.py   # Content crawling
+├── extractor/           # Web content extraction
+│   └── WebContentExtractor.py
+├── link_processor/      # Link processing
+│   └── LinkProcessor.py
+├── convertor/           # HTML to Markdown
+│   └── MarkdownConverter.py
+└── filter/              # Content filtering
+    ├── base.py          # BaseContentFilter
+    ├── standard.py      # ContentFilter
+    ├── enhanced.py      # EnhancedContentFilter
+    ├── config.py        # Filter configurations
+    └── factory.py       # FilterFactory
+```
+
+### Key Classes
+
+| Class | Purpose |
+|-------|---------|
+| `UltimateURLScanner` | Main URL scanner with connection pooling |
+| `ScannerConfig` | Configuration management |
+| `DocContentCrawler` | Document content crawler |
+| `DocUrlCrawler` | Anchor/TOC link extractor |
+| `ContentFilter` | Standard content filter |
+| `EnhancedContentFilter` | Advanced filter with framework detection |
+| `MarkdownConverter` | HTML to Markdown conversion |
+
+## Usage Examples
+
+### Scan a Documentation Site
+
+```bash
+# Full pipeline: scan URLs, extract content, extract TOC
+python -m doc4llm -u https://docs.example.com -mode 3 -force-scan 1 -workers 20
+```
+
+### Reuse Existing CSV
+
+```bash
+# Skip URL scan if CSV exists and has content
+python -m doc4llm -u https://docs.example.com -mode 3 -force-scan 0
+```
+
+### Custom Document Name
+
+```bash
+python -m doc4llm -u https://docs.example.com -mode 1 -doc-name mydocs -doc-version v1.0
+```
+
+### Scope-Limited Scanning
+
+```bash
+# Only scan main domain
+python -m doc4llm -u https://example.com -scope 0
+
+# Scan with external links (no recursion)
+python -m doc4llm -u https://example.com -scope 1
+
+# Whitelist mode
+python -m doc4llm -u https://example.com -scope 3
+```
+
+## Development
+
+### Entry Points
+
+- `python -m doc4llm` - Main CLI entry point
+- `python doc4llm/cli.py` - Direct CLI execution
+- `python doc4llm/main.py` - Alternative entry point
+
+### Testing
+
+```bash
+# Run with debug mode
+python -m doc4llm -u https://example.com -debug 1
+
+# Check debug log
+cat results/debug.log
+```
+
+## License
+
+MIT License
+
+## Author
+
+Zorro - [GitHub](https://github.com/zorro-gridi/doc4llm)

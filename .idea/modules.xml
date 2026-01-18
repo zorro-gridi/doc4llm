@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/WhiteURLScan.iml" filepath="$PROJECT_DIR$/.idea/WhiteURLScan.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/doc4llm.iml" filepath="$PROJECT_DIR$/.idea/doc4llm.iml" />
     </modules>
   </component>
 </project>

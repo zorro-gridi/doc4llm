@@ -1,6 +1,6 @@
 {
   "start_url": null,
-  "proxy": "http://127.0.0.1:7890",
+  "proxy": null,
   "delay": 0.1,
   "max_workers": 30,
   "timeout": 20,
@@ -119,6 +119,11 @@
   "title_filter_list": [
     "Page Not Found"
   ],
+  "title_cleanup_patterns": [
+    "- Claude Code Docs",
+    "| Claude Code Docs",
+    "— Claude Code Docs"
+  ],
   "status_code_filter": [
     404,
     503,
@@ -131,8 +136,8 @@
   "mode": 0,
   "force_scan": 0,
   "results_dir": "results",
-  "doc_dir": "documentation_output",
-  "doc_name": null,
+  "doc_dir": "md_docs",
+  "doc_name": "Claude_Code_Docs",
   "doc_version": "latest",
   "toc_url_filters": {
     "subdomains": [
@@ -154,12 +159,12 @@
   "toc_filter": {
     "merge_mode": "extend",
     "toc_class_patterns": [
-      ""
+      ".toc"
     ],
     "toc_link_class_patterns": [],
     "toc_parent_class_patterns": [],
     "content_area_patterns": [
-      "#table-of-contents-layout"
+      "#table-of-contents-content"
     ],
     "non_toc_link_patterns": [],
     "toc_end_markers": [
@@ -187,6 +192,22 @@
       "#content-area"
     ],
     "code_container_selectors": []
+  },
+  "tool": {
+    "markdown_extractor": {
+      "default_search_mode": "exact",
+      "case_sensitive": false,
+      "max_results": 10,
+      "fuzzy_threshold": 0.6,
+      "enable_fallback": false,
+      "fallback_modes": [
+        "case_insensitive",
+        "partial",
+        "fuzzy"
+      ],
+      "compress_threshold": 1000,
+      "enable_compression": false
+    }
   },
   "output_log_file": "results/output.out",
   "debug_log_file": "results/debug.log",

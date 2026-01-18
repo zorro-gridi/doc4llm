@@ -102,7 +102,7 @@ python -m doc4llm -f urls.txt -fuzz 1 -scope 3
 | `-fuzz` | Enable custom URL concatenation (1=on, 0=off) | 0 |
 | `-mode` | Crawl mode (0/1/2/3) | 0 |
 | `-force-scan` | Force URL scan refresh (mode 1/2/3) | 0 |
-| `-doc-dir` | Document output directory | `documentation_output` |
+| `-doc-dir` | Document output directory | `md_docs` |
 | `-doc-name` | Document name (overrides auto-detect) | - |
 | `-doc-version` | Document version tag | `latest` |
 | `-doc-depth` | Max document crawl depth | 10 |
@@ -134,7 +134,7 @@ First run generates `doc4llm/config/config.json` automatically:
   "api_route": [],
   "mode": 0,
   "force_scan": 0,
-  "doc_dir": "documentation_output",
+  "doc_dir": "md_docs",
   "doc_name": null,
   "doc_version": "latest",
   "doc_max_depth": 10,
@@ -194,7 +194,7 @@ results/
 ### Document Output (Mode 1/3)
 
 ```
-documentation_output/
+md_docs/
 └── <doc_name>:<doc_version>/
     ├── Page 1 Title/
     │   └── docContent.md

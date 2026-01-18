@@ -1,7 +1,7 @@
 # 内容过滤器配置文档
 # Content Filter Configuration Guide
 
-本文档详细说明 WhiteURLScan 内容过滤器的配置选项和使用方法。
+本文档详细说明 doc4llm 内容过滤器的配置选项和使用方法。
 
 ---
 

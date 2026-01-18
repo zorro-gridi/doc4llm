@@ -6,8 +6,6 @@ MANIFEST.in
 README.md
 pyproject.toml
 requirements.txt
-./doc4llm/WebTextCrawlerTest.py
-./doc4llm/WhiteURLScan.py
 ./doc4llm/__init__.py
 ./doc4llm/__main__.py
 ./doc4llm/cli.py
@@ -32,6 +30,7 @@ requirements.txt
 ./doc4llm/link_processor/LinkProcessor.py
 ./doc4llm/link_processor/__init__.py
 ./doc4llm/scanner/__init__.py
+./doc4llm/scanner/async_extractor.py
 ./doc4llm/scanner/config.py
 ./doc4llm/scanner/content_extractor.py
 ./doc4llm/scanner/output_handler.py
@@ -40,8 +39,13 @@ requirements.txt
 ./doc4llm/scanner/url_matcher.py
 ./doc4llm/scanner/url_utils.py
 ./doc4llm/scanner/utils.py
-doc4llm/WebTextCrawlerTest.py
-doc4llm/WhiteURLScan.py
+./doc4llm/tool/__init__.py
+./doc4llm/tool/md_doc_extractor/__init__.py
+./doc4llm/tool/md_doc_extractor/agentic_matcher.py
+./doc4llm/tool/md_doc_extractor/doc_extractor.py
+./doc4llm/tool/md_doc_extractor/exceptions.py
+./doc4llm/tool/md_doc_extractor/hybrid_matcher.py
+./doc4llm/tool/md_doc_extractor/utils.py
 doc4llm/__init__.py
 doc4llm/__main__.py
 doc4llm/cli.py
@@ -72,6 +76,7 @@ doc4llm/filter/example/enhanced_filter_example.py
 doc4llm/link_processor/LinkProcessor.py
 doc4llm/link_processor/__init__.py
 doc4llm/scanner/__init__.py
+doc4llm/scanner/async_extractor.py
 doc4llm/scanner/config.py
 doc4llm/scanner/content_extractor.py
 doc4llm/scanner/output_handler.py
@@ -80,3 +85,14 @@ doc4llm/scanner/sensitive_detector.py
 doc4llm/scanner/url_matcher.py
 doc4llm/scanner/url_utils.py
 doc4llm/scanner/utils.py
+doc4llm/tool/__init__.py
+doc4llm/tool/md_doc_extractor/__init__.py
+doc4llm/tool/md_doc_extractor/agentic_matcher.py
+doc4llm/tool/md_doc_extractor/doc_extractor.py
+doc4llm/tool/md_doc_extractor/exceptions.py
+doc4llm/tool/md_doc_extractor/hybrid_matcher.py
+doc4llm/tool/md_doc_extractor/utils.py
+tests/test_agentic_matcher.py
+tests/test_doc_content_extraction.py
+tests/test_doc_extractor.py
+tests/test_hybrid_matcher.py

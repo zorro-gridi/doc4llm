@@ -109,6 +109,20 @@ class UltimateURLScanner(DebugMixin):
         self.sensitive_detector = SensitiveDetector(self.config.sensitive_patterns, self.config.debug_mode)
         self.output_handler = OutputHandler(self.config)
 
+        # 初始化异步提取器（当启用内联提取时）
+        self._async_extractor = None
+        if self.config.enable_inline_extraction and self.config.mode in [1, 2, 3]:
+            from .async_extractor import AsyncContentExtractor
+            # CPU工作线程数：默认为核心数，或配置的1/4（扫描线程与CPU线程的比例约4:1）
+            cpu_workers = max(2, min(8, self.config.max_workers // 4))
+            self._async_extractor = AsyncContentExtractor(
+                self.config,
+                cpu_workers=cpu_workers,
+                batch_size=50  # 批量写入50个文件
+            )
+            if self.debug_mode:
+                self._debug_print(f"异步提取器已初始化: {cpu_workers} 个CPU线程")
+
     def _check_request_limits(self):
         """检查请求限制，返回是否应该继续处理"""
         # 检查URL数量限制
@@ -713,6 +727,8 @@ class UltimateURLScanner(DebugMixin):
         """
         在扫描过程中实时提取内容和TOC，避免重复HTTP请求
 
+        使用异步非阻塞方式：将任务放入队列，由专门的CPU线程池处理
+
         仅在 mode=1/2/3 且 enable_inline_extraction=1 时执行
 
         Args:
@@ -731,19 +747,36 @@ class UltimateURLScanner(DebugMixin):
         if not response or response.status_code != 200:
             return
 
-        try:
-            from .content_extractor import ContentExtractor
+        # 使用异步提取器（非阻塞）
+        if self._async_extractor:
+            try:
+                # 非阻塞地将任务加入队列
+                self._async_extractor.queue_task(
+                    url=result.get('url', ''),
+                    title=result.get('title', ''),
+                    html_content=response.text,
+                    mode=self.config.mode
+                )
 
-            # 延迟初始化提取器（第一次调用时创建）
-            if not hasattr(self, '_content_extractor'):
-                self._content_extractor = ContentExtractor(self.config)
+                if self.debug_mode and self._async_extractor.get_queue_size() > 100:
+                    self._debug_print(f"[async_extraction] 队列积压: {self._async_extractor.get_queue_size()} 个任务")
 
-            # 执行内联提取
-            self._content_extractor.extract_inline(result, response, mode=self.config.mode)
+            except Exception as e:
+                if self.debug_mode:
+                    self._debug_print(f"异步提取任务入队失败: {e}")
+        else:
+            # 回退到旧的同步提取方式（向后兼容）
+            try:
+                from .content_extractor import ContentExtractor
 
-        except Exception as e:
-            if self.config.debug_mode:
-                self._debug_print(f"内联提取失败: {e}")
+                if not hasattr(self, '_content_extractor'):
+                    self._content_extractor = ContentExtractor(self.config)
+
+                self._content_extractor.extract_inline(result, response, mode=self.config.mode)
+
+            except Exception as e:
+                if self.debug_mode:
+                    self._debug_print(f"内联提取失败: {e}")
 
     def _realtime_output_result(self, result):
         """实时输出结果"""
@@ -898,6 +931,12 @@ class UltimateURLScanner(DebugMixin):
             stats = self.get_request_stats()
             self._debug_print(f"[start_scan] 初始配置: 最大请求数={stats['max_requests']}, 最大URL数={stats['max_urls']}")
 
+        # 启动异步提取器
+        if self._async_extractor:
+            self._async_extractor.start()
+            if self.config.debug_mode:
+                self._debug_print(f"[start_scan] 异步提取器已启动")
+
         try:
             # 添加起始URL到队列
             self.url_queue.put((self.config.start_url, 0))
@@ -970,6 +1009,14 @@ class UltimateURLScanner(DebugMixin):
                 if self.config.debug_mode:
                     self._debug_print(f"[start_scan] 异常退出时清理连接池失败: {type(cleanup_e).__name__}: {cleanup_e}")
             raise
+
+        finally:
+            # 停止异步提取器并打印统计
+            if self._async_extractor:
+                if self.config.debug_mode:
+                    self._debug_print(f"[start_scan] 等待异步提取器完成...")
+                self._async_extractor.stop()
+                self._async_extractor.print_statistics()
 
     def generate_report(self, report_file="full_report.csv"):
         """生成最终报告"""

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to WhiteURLScan will be documented in this file.
+All notable changes to doc4llm will be documented in this file.
 
 ## [2.2.0] - 2026-01-16
 

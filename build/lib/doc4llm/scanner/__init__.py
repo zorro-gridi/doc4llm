@@ -1,7 +1,8 @@
 """
-WhiteURLScan Scanner Package
+doc4llm Scanner Package
 URL扫描和信息收集工具
 """
+from .async_extractor import AsyncContentExtractor
 from .config import ScannerConfig
 from .output_handler import OutputHandler, OutputLogger
 from .scanner import UltimateURLScanner
@@ -23,6 +24,8 @@ __all__ = [
     'ScannerConfig',
     'OutputHandler',
     'OutputLogger',
+    # Async extractor (new high-performance architecture)
+    'AsyncContentExtractor',
     # Utility classes
     'URLMatcher',
     'URLConcatenator',

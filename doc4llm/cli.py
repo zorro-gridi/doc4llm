@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WhiteURLScan CLI Module
+doc4llm CLI Module
 命令行接口模块
 
 提供结构化的命令行接口，支持多种扫描模式：
@@ -74,7 +74,7 @@ class CLIConfig:
         "mode": 0,
         "force_scan": 0,
         "results_dir": "results",
-        "doc_dir": "documentation_output",
+        "doc_dir": "md_docs",
         "doc_name": None,
         "doc_version": "latest",
         "toc_url_filters": {
@@ -113,14 +113,14 @@ class ArgumentParser:
     """命令行参数解析器"""
 
     VERSION = "1.7.4"
-    AUTHOR = "white1434"
+    AUTHOR = "Zorro"
     GITHUB_URL = "https://github.com/zorro-gridi/doc4llm"
 
     @staticmethod
     def parse():
         """解析命令行参数"""
         parser = argparse.ArgumentParser(
-            description="WhiteURLScan 扫描工具",
+            description="doc4llm 扫描工具",
             epilog="提示: 使用 -force-scan 而非 -force_scan（参数名用连字符）",
             formatter_class=argparse.RawDescriptionHelpFormatter
         )
@@ -159,7 +159,7 @@ class ArgumentParser:
     def print_program_info():
         """打印程序信息"""
         print(f"{Fore.YELLOW}=============================================={Style.RESET_ALL}")
-        print(f"{Fore.YELLOW}=== WhiteURLScan v{ArgumentParser.VERSION} ===")
+        print(f"{Fore.YELLOW}=== doc4llm v{ArgumentParser.VERSION} ===")
         print(f"{Fore.YELLOW}=== BY: {ArgumentParser.AUTHOR}  GitHub: {ArgumentParser.GITHUB_URL}")
         print(f"{Fore.YELLOW}=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示")
         print(f"{Fore.CYAN}=== 所有输出将同时记录到 results/output.out 文件中")
@@ -275,6 +275,7 @@ class ConfigBuilder:
             fuzz=get_value('fuzz', 0),
             exclude_fuzzy=get_value('exclude_fuzzy'),
             title_filter_list=get_value('title_filter_list'),
+            title_cleanup_patterns=get_value('title_cleanup_patterns'),
             status_code_filter=get_value('status_code_filter'),
             mode=get_value('mode', 0),
             force_scan=get_value('force_scan', 0),
@@ -433,7 +434,7 @@ class ScannerRunner:
                                 'smart_concatenation', 'debug_mode', 'url_scope_mode',
                                 'danger_filter_enabled', 'danger_api_list', 'allowed_api_list',
                                 'is_duplicate', 'custom_base_url', 'path_route', 'api_route',
-                                'fuzz', 'exclude_fuzzy', 'title_filter_list', 'status_code_filter',
+                                'fuzz', 'exclude_fuzzy', 'title_filter_list', 'title_cleanup_patterns', 'status_code_filter',
                                 'mode', 'force_scan', 'results_dir', 'doc_dir', 'doc_name',
                                 'doc_version', 'toc_url_filters', 'doc_max_depth', 'doc_timeout',
                                 'output_log_file', 'debug_log_file', 'log_max_lines', 'toc_filter',

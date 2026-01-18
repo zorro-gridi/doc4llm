@@ -1,0 +1,180 @@
+---
+name: md-doc-reader
+description: Extract content from markdown documents by title in the doc4llm md_docs directory structure. Use this skill when Claude needs to read documentation pages that were previously scraped and converted to markdown, query specific titles within documentation sets, extract content from doc4llm's md_docs/ directory or individual .md files, or search and list available documentation titles. Supports exact, case-insensitive, fuzzy, and partial matching modes.
+allowed-tools:
+  - Read
+  - Glob
+  - Bash
+---
+
+# Markdown Document Reader
+
+Extract content from markdown documents in the doc4llm md_docs directory structure using the `MarkdownDocExtractor`.
+
+## Quick Start
+
+```python
+from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
+
+# Directory mode (default: md_docs)
+extractor = MarkdownDocExtractor()
+content = extractor.extract_by_title("Agent Skills - Claude Code Docs")
+
+# Single file mode
+extractor = MarkdownDocExtractor(single_file_path="/path/to/file.md")
+content = extractor.extract_by_title()
+
+# With fallback enabled (tries multiple search modes)
+extractor = MarkdownDocExtractor(enable_fallback=True)
+content = extractor.extract_by_title("Agent Skils")  # Typo still works!
+
+# With compression for large documents
+extractor = MarkdownDocExtractor(enable_compression=True, compress_threshold=500)
+result = extractor.extract_with_compression("Large Doc", query="API reference")
+```
+
+## Using the Bundled Script
+
+The `scripts/extract_md_doc.py` script provides CLI access to the extractor:
+
+```bash
+# List available documents
+python scripts/extract_md_doc.py --list
+
+# Extract by title (exact match)
+python scripts/extract_md_doc.py --title "Agent Skills - Claude Code Docs"
+
+# Search with fuzzy matching
+python scripts/extract_md_doc.py --title "agent skills" --search-mode fuzzy
+
+# Single file mode
+python scripts/extract_md_doc.py --title "Guide" --file /path/to/file.md
+
+# Search for matches
+python scripts/extract_md_doc.py --title "skills" --search
+
+# Output as JSON
+python scripts/extract_md_doc.py --title "Guide" --json
+```
+
+## Search Modes
+
+| Mode | Description |
+|------|-------------|
+| `exact` | Requires exact title match |
+| `case_insensitive` | Case-insensitive exact match |
+| `fuzzy` | Fuzzy string matching with similarity threshold |
+| `partial` | Matches titles containing query as substring |
+
+## API Methods
+
+### `extract_by_title(title: str) -> str | None`
+
+Extract content for a single document title. Returns `None` if not found.
+
+**New in v2.0:** Supports automatic fallback to other search modes when `enable_fallback=True`.
+
+### `extract_by_titles(titles: List[str]) -> Dict[str, str]`
+
+Extract content for multiple document titles.
+
+### `search_documents(title: str) -> List[Dict]`
+
+Search for documents matching a title pattern. Returns list with keys: `title`, `similarity`, `doc_name_version`.
+
+### `extract_by_title_with_candidates(title: str, max_candidates: int = 5, min_threshold: float = 0.5) -> List[Dict]`
+
+**New in v2.0:** Extract multiple candidate documents matching the query. Returns list with keys:
+- `title`: Document title
+- `similarity`: Similarity score (0.0 to 1.0)
+- `doc_name_version`: Document name and version
+- `content_preview`: First 200 characters of content
+
+Useful when you want to present multiple options to the user.
+
+```python
+candidates = extractor.extract_by_title_with_candidates("agent skills", max_candidates=5)
+for c in candidates:
+    print(f"{c['title']} (similarity: {c['similarity']:.2f})")
+```
+
+### `semantic_search_titles(query: str, doc_set: str = None, max_results: int = 10) -> List[Dict]`
+
+**New in v2.0:** Semantic search across document titles using multiple search strategies. Combines exact match, partial match, and fuzzy matching. Returns list with keys:
+- `title`: Document title
+- `similarity`: Similarity score (0.0 to 1.0)
+- `match_type`: Type of match ("exact", "partial", "fuzzy")
+- `doc_name_version`: Document name and version
+
+```python
+results = extractor.semantic_search_titles("skill", max_results=10)
+for r in results:
+    print(f"{r['title']} ({r['match_type']}, similarity: {r['similarity']:.2f})")
+```
+
+### `extract_with_compression(title: str, query: str = None, summarize_prompt: str = None) -> Dict`
+
+**New in v2.0:** Extract document content with automatic compression for large documents. Returns dict with keys:
+- `title`: Document title
+- `content`: Document content (compressed or original)
+- `line_count`: Number of lines in content
+- `compressed`: Whether compression was applied
+- `compression_ratio`: Compression ratio (0.0 to 1.0)
+- `compression_method`: Method used ("query_based", "smart_truncate", or None)
+
+```python
+result = extractor.extract_with_compression("Large Doc", query="API reference")
+if result['compressed']:
+    print(f"Compressed: {result['compression_ratio']:.0%}")
+```
+
+### `list_available_documents(doc_name_version: str = None) -> List[str]`
+
+List all available document titles.
+
+### `get_document_info(title: str) -> Dict | None`
+
+Get detailed information about a document.
+
+## Configuration
+
+Load from `doc4llm/config/config.json`:
+
+```python
+extractor = MarkdownDocExtractor.from_config()
+```
+
+Config structure:
+```json
+{
+  "tool": {
+    "markdown_extractor": {
+      "base_dir": "md_docs",
+      "default_search_mode": "exact",
+      "case_sensitive": false,
+      "max_results": 10,
+      "fuzzy_threshold": 0.6,
+      "enable_fallback": false,
+      "fallback_modes": ["case_insensitive", "partial", "fuzzy"],
+      "compress_threshold": 1000,
+      "enable_compression": false
+    }
+  }
+}
+```
+
+**New Configuration Options:**
+- `enable_fallback`: Enable automatic fallback to other search modes on failure (default: false)
+- `fallback_modes`: List of search modes to try as fallback (default: ["case_insensitive", "partial", "fuzzy"])
+- `compress_threshold`: Line count threshold for content compression (default: 1000)
+- `enable_compression`: Enable automatic content compression for large documents (default: false)
+
+## Directory Structure
+
+Expected format:
+```
+md_docs/
+└── <doc_name>:<doc_version>/
+    └── <PageTitle>/
+        └── docContent.md
+```

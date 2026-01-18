@@ -1,5 +1,5 @@
 """
-WhiteURLScan - Web URL扫描和信息安全收集工具
+doc4llm - Web URL扫描和信息安全收集工具
 
 A comprehensive web security testing tool for URL scanning,
 asset discovery, and reconnaissance.
@@ -21,6 +21,7 @@ from .scanner import (
     handle_exceptions,
     output_lock,
 )
+from .tool import MarkdownDocExtractor
 
 __version__ = '2.0.0'
 __all__ = [
@@ -46,4 +47,6 @@ __all__ = [
     # Extractors & Processors
     'WebContentExtractor',
     'LinkProcessor',
+    # Tool
+    'MarkdownDocExtractor',
 ]

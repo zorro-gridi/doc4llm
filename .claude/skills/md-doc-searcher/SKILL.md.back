@@ -1,0 +1,735 @@
+---
+name: md-doc-searcher
+description: Search and discover markdown documents in the doc4llm md_docs directory using semantic understanding. Use this skill when Claude needs to find documents matching a query, list available documentation, search document titles by understanding user intent, or discover which documentation sets contain relevant content. Returns list of relevant document titles.
+allowed-tools:
+  - Read
+  - Glob
+  - Bash
+---
+
+# Markdown Document Searcher
+
+Search and discover markdown documents in the doc4llm md_docs directory structure using semantic matching.
+
+This skill focuses on **document discovery** - finding which documents match your query. For content extraction, use the `md-doc-reader` skill.
+
+## Quick Start (Recommended: AgenticDocMatcher API)
+
+When a user requests document search, use the **AgenticDocMatcher API** for intelligent multi-stage retrieval:
+
+```python
+from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
+from doc4llm.tool.md_doc_extractor.agentic_matcher import AgenticDocMatcher
+
+# Initialize
+extractor = MarkdownDocExtractor()
+matcher = AgenticDocMatcher(extractor, debug_mode=True)
+
+# Perform agentic search
+results = matcher.match(query="hooks configuration", doc_set="code_claude_com:latest", max_results=10)
+
+# Results include enhanced metadata:
+# - title, similarity, match_type, doc_name_version
+# - source (title/toc/preview)
+# - sections_matched (for TOC results)
+# - content_preview (for preview results)
+```
+
+**Why use AgenticDocMatcher?**
+- ✅ **Automatic progressive retrieval** (Title → TOC → Content Preview)
+- ✅ **Reflective re-ranking** with quality assessment
+- ✅ **Auto-expansion** when results are unsatisfactory
+- ✅ **Multi-factor scoring** (similarity + source + coverage)
+- ✅ **Deduplication** across retrieval stages
+
+---
+
+## AgenticDocMatcher Result Format
+
+The `matcher.match()` method returns a list of dictionaries with enhanced metadata:
+
+```python
+[
+    {
+        "title": "Hooks reference",
+        "similarity": 0.92,
+        "match_type": "toc_section",
+        "doc_name_version": "code_claude_com:latest",
+        "source": "toc",              # "title", "toc", or "preview"
+        "sections_matched": [         # For TOC matches
+            "Configure hooks",
+            "Deployment hooks"
+        ],
+        "content_preview": "..."      # For preview matches
+    },
+    # ... more results
+]
+```
+
+### Understanding Source Types
+
+| Source | Description | Quality |
+|--------|-------------|---------|
+| `title` | Matched on document title | ⭐⭐⭐ Highest |
+| `toc` | Matched on TOC section titles | ⭐⭐ Medium-High |
+| `preview` | Matched on content preview | ⭐⭐ Medium |
+
+### Understanding Match Types
+
+| Match Type | Description |
+|------------|-------------|
+| `exact` | Exact title match |
+| `partial` | Partial/substring match |
+| `fuzzy` | Fuzzy string match |
+| `toc_section` | Matched in TOC content |
+| `content_preview` | Matched in document preview |
+
+---
+
+## AgenticDocMatcher Workflow
+
+The matcher automatically performs a **4-phase progressive retrieval**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 1: Progressive Retrieval                              │
+│  ├─ Stage 1: Title matching (fast)                          │
+│  ├─ Stage 2: TOC section matching (if needed)               │
+│  └─ Stage 3: Content preview matching (if needed)           │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 2: Reflective Re-ranking                              │
+│  ├─ Deduplication (by title)                                │
+│  ├─ Multi-factor scoring                                    │
+│  └─ Diversity boost                                         │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 3: Quality Assessment                                 │
+│  ├─ Result count check                                      │
+│  ├─ Similarity threshold check                              │
+│  └─ Source diversity check                                 │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Phase 4: Auto-expansion (if unsatisfactory)                │
+│  └─ Alternative query generation                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Satisfaction Criteria
+
+The matcher evaluates results as **satisfactory** if:
+1. At least 3 results found
+2. Max similarity ≥ 0.7
+3. Multiple source types represented
+
+**If unsatisfactory**: Automatically expands search with alternative queries.
+
+---
+
+## Configuration
+
+You can customize the matcher behavior:
+
+```python
+config = {
+    "max_turns": 3,              # Max retrieval stages
+    "min_results": 3,            # Min results for satisfaction
+    "min_similarity": 0.6,       # Min similarity for inclusion
+    "high_quality_threshold": 0.7,  # Threshold for satisfaction
+    "title_max_results": 5,      # Max title matches
+    "toc_max_results": 10,       # Max TOC matches
+    "preview_max_results": 8,    # Max preview matches
+    "diversity_boost": 0.1,      # Boost for diverse sources
+    "source_weights": {          # Source reliability weights
+        "title": 1.0,
+        "toc": 0.95,
+        "preview": 0.8
+    }
+}
+
+matcher = AgenticDocMatcher(extractor, config=config)
+```
+
+---
+
+## Usage Examples
+
+### Example 1: Basic Search
+
+```python
+# Search for hooks-related documents
+results = matcher.match("hooks configuration", max_results=5)
+
+for r in results:
+    print(f"{r['title']} ({r['source']}, sim={r['similarity']:.2f})")
+    if r.get('sections_matched'):
+        print(f"  Sections: {', '.join(r['sections_matched'])}")
+```
+
+**Output:**
+```
+Hooks reference (toc, sim=0.92)
+  Sections: Configure hooks, Deployment hooks
+Get started with Claude Code hooks (toc, sim=0.85)
+  Sections: Setup hooks, Using hooks
+```
+
+### Example 2: Cross-Set Search
+
+```python
+# Search across all documentation sets
+results = matcher.match("deployment", doc_set=None, max_results=10)
+```
+
+### Example 3: Debug Mode
+
+```python
+# Enable debug output to see retrieval process
+matcher = AgenticDocMatcher(extractor, debug_mode=True)
+results = matcher.match("API authentication")
+
+# Debug output:
+# [AgenticDocMatcher] === Agentic Matching for: 'API authentication' ===
+# [ProgressiveRetriever] [Stage 1] Searching titles for: 'API authentication'
+# [ProgressiveRetriever]   → Found 2 title matches
+# [ProgressiveRetriever] [Stage 2] Expanding to TOC sections
+# ...
+```
+
+---
+
+### Legacy Manual Workflow
+
+For debugging or when the API is unavailable, you can use the manual workflow:
+
+1. **List documentation sets** - Use `ls -1 md_docs/` and **filter based on user's query intent**
+2. **Select target set** - Choose the most relevant documentation set
+3. **List document directories** - Use `Glob` or `Bash(ls)` in the selected set
+4. **Read docTOC.md files** - Use `Read` tool to get table of contents for context
+5. **Semantic matching** - Use language understanding to match query with document titles
+6. **Return title list** - Provide list of relevant document titles
+
+**Example:**
+```
+User: "查找关于配置 Claude Code 的文档"
+
+Step 1: List and filter doc sets
+  → Available: Claude_Code_Docs:latest, Python_Docs:3.11, ...
+  → Filter: User mentioned "Claude Code" → Select Claude_Code_Docs:latest
+
+Step 2-6: Search within Claude_Code_Docs:latest
+  → Semantic match for "配置" (configuration)
+  → Results:
+    - Claude Code settings
+    - Model configuration
+```
+
+## Discovery Workflow
+
+### Step 1: Identify Documentation Set with Intent Filtering
+
+First, list available documentation sets and **filter based on user's query intent**:
+
+```bash
+# List all available documentation sets
+ls -1 md_docs/
+
+# Example output:
+# Claude_Code_Docs:latest/
+# Python_Docs:3.11/
+# React_Docs:v18/
+# Another_Doc:v1.0/
+```
+
+**Intent-Based Filtering:**
+- If user mentions "Claude", "Claude Code" → Filter to `*Claude*` sets
+- If user mentions "Python" → Filter to `*Python*` sets
+- If user mentions specific framework → Filter to matching sets
+- If no specific mention → Ask user to clarify or search all sets
+
+**Examples:**
+
+| User Query | Filter To | Reason |
+|------------|-----------|--------|
+| "Claude Code 中关于 skills 的文档" | `Claude_Code_Docs:latest` | User explicitly mentioned Claude Code |
+| "Python 异常处理文档" | `*Python*` | User mentioned Python |
+| "如何配置 hooks" | `Claude_Code_Docs:latest` (context) | "hooks" suggests Claude Code context |
+| "所有关于 deployment 的文档" | Ask user | Multiple sets may contain deployment info |
+
+**Commands for filtered listing:**
+```bash
+# List all sets (for context)
+ls -1 md_docs/
+
+# Filter by pattern (e.g., Claude-related)
+ls -1 md_docs/ | grep -i claude
+
+# Or use Glob
+md_docs/*Claude*/
+```
+
+**Important:** Always search within a **specific documentation set** to ensure accurate results. If multiple sets match the query, ask the user to confirm which one to search.
+
+### Step 2: List Document Directories in Specified Set
+
+Use `Glob` or `Bash(find)` to discover document directories **within the specified set**:
+
+```bash
+# Method 1: Using find with path restriction
+find md_docs/Claude_Code_Docs:latest -type d -mindepth 1
+
+# Method 2: Using Glob pattern
+md_docs/Claude_Code_Docs:latest/*/
+
+# Expected structure:
+# md_docs/<doc_name>:<doc_version>/<PageTitle>/
+```
+
+**Key point:** Specify the full path including the documentation set to limit search scope.
+
+### Step 3: Semantic Matching (via Prompt)
+
+After listing directories, use **semantic understanding via prompt instructions** to match the user's query:
+
+1. **Read docTOC.md files** - For better context, read table of contents from each document
+2. **Use new TOC processing utilities** - Extract and match TOC sections using the new utility functions
+3. **Semantic matching** - Use your language understanding to match query intent with document content
+4. **Return matching directories** - List relevant document paths based on semantic relevance
+
+**Important:** Do NOT rely on simple keyword matching. Use your semantic understanding to:
+- Match related concepts (e.g., "configuration" → "settings", "setup")
+- Understand domain-specific terminology
+- Consider context and user intent
+
+**New in v2.0:** TOC Processing Utilities
+
+The `utils` module now provides enhanced TOC processing functions:
+
+```python
+from doc4llm.tool.md_doc_extractor.utils import extract_toc_sections, semantic_match_toc_sections
+
+# Extract sections from docTOC.md content
+sections = extract_toc_sections(toc_content, query="hooks", max_sections=20)
+# Returns: [{'level': 2, 'title': 'Configure hooks', 'anchor': 'configure-hooks', 'line_number': 5}]
+
+# Or semantic match existing sections
+matched = semantic_match_toc_sections(sections, "hooks")
+# Returns sections sorted by relevance score
+```
+
+**TOC Extraction Workflow:**
+1. Read `docTOC.md` file using `Read` tool
+2. Parse sections using `extract_toc_sections()` - extracts level, title, anchor, line_number
+3. Optionally filter by query or relevance using `semantic_match_toc_sections()`
+4. Return matched sections with relevance scores
+
+**Benefits:**
+- Structured TOC parsing with metadata
+- Semantic matching on section titles
+- Anchor link generation for navigation
+- Line number tracking for debugging
+
+### Step 3.5: Progressive Fallback Strategy (NEW)
+
+When Level 1 semantic matching returns **0 results OR low-quality matches** (max_similarity < 0.7), automatically invoke fallback levels:
+
+#### Level 1: Semantic Title Matching (Default)
+- Current implementation
+- Fast path for well-titled documents
+- **Quality threshold:** `max_similarity >= 0.7` to return results
+
+#### Level 2: TOC Content Grep (Fallback)
+
+**Trigger:** Level 1 returns 0 results **OR** `max_similarity < 0.7` (low quality matches)
+
+**Command:**
+```bash
+# Extract core keywords from query and grep TOC files
+grep -r -i "core_keyword" md_docs/<doc_set>/*/docTOC.md
+```
+
+**Keyword Extraction Rules:**
+- Remove stop words: the, a, an, how, to, for, with, by, from, at, on, in, about
+- Preserve technical terms: API, hooks, JWT, OAuth, CLI, SDK, HTTP, etc.
+- Use root form: configure → config, authenticate → auth, deploy → deployment
+
+**Example:**
+```
+Query: "how to configure hooks for deployment"
+Keywords extracted: configure, hooks, deployment
+Grep command: grep -r -iE "(configure|hooks|deployment)" md_docs/<doc_set>/*/docTOC.md
+```
+
+#### Level 3: Cross-Set + Full Content (Last Resort)
+
+**Trigger:** Level 2 returns 0 results
+
+**Commands:**
+```bash
+# Cross-set TOC search
+grep -r -i "keyword" md_docs/*/docTOC.md
+
+# If still empty, content search
+grep -r -i "keyword" md_docs/*/docContent.md
+```
+
+**Note:** This is the slowest but provides maximum recall. Only invoke when Level 1 and Level 2 both return 0 results.
+
+### Step 4: Delegate to md-doc-reader
+
+Once relevant directories are found, delegate content extraction to `md-doc-reader` skill.
+
+## Semantic Search Instructions
+
+When performing document search, follow these guidelines:
+
+### 1. Intent Filtering at Documentation Set Level
+
+First level of filtering - determine which documentation set to search:
+
+**Filtering Strategies:**
+
+| Strategy | When to Use | Example |
+|----------|-------------|---------|
+| **Explicit mention** | User names the framework | "Python" → `*Python*` sets |
+| **Domain-specific terms** | Unique terminology maps to specific set | "hooks" → Claude Code |
+| **Context inference** | Current session context | Previous question about React → React docs |
+| **Ask user** | Ambiguous or multiple matches | "deployment" → Ask which project |
+
+**Commands:**
+```bash
+# List all doc sets
+ls -1 md_docs/
+
+# Filter by pattern
+ls -1 md_docs/ | grep -i python
+
+# Check if specific set exists
+ls -1 md_docs/ | grep -i claude
+```
+
+### 2. Use Semantic Understanding, Not Keyword Matching
+
+**❌ Avoid:** Simple keyword/substring matching
+**✅ Use:** Language understanding to match concepts and context
+
+### 3. Read docTOC.md for Context
+
+Before matching, read the `docTOC.md` file to understand the document structure:
+```
+Read: md_docs/<doc_set>/<PageTitle>/docTOC.md
+```
+
+### 4. Consider Synonyms and Related Concepts
+
+| User Query | Should Match |
+|------------|--------------|
+| "how to configure" | Settings, Configuration, Setup, Preferences |
+| "deployment" | Enterprise deployment, Install, Setup |
+| "security" | Authentication, Authorization, Security settings |
+| "API" | API reference, Connect, Integration |
+
+### 5. Return Format
+
+Return results as a list of document titles with relevance notes:
+
+```
+Found N relevant document(s) in <doc_set>:
+
+1. **Document Title** - Relevance: why it matches
+2. **Another Title** - Relevance: contains section about topic
+...
+```
+
+## Directory Structure
+
+Expected format:
+```
+md_docs/
+└── <doc_name>:<doc_version>/
+    └── <PageTitle>/
+        ├── docContent.md    # Main content
+        └── docTOC.md        # Table of contents
+```
+
+Each `<PageTitle>` directory represents one document page.
+
+## Progressive Fallback Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    SEARCH REQUEST                            │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+              ┌───────────────────────────────┐
+              │  Level 1: Title Semantic Match │
+              │  - List directories            │
+              │  - Semantic understanding      │
+              │  - Fast: O(k) where k = matches│
+              │  - Threshold: max_sim >= 0.7   │
+              └───────────────────────────────┘
+                              │
+              ┌───────────────┴───────────────┐
+              │                               │
+        [Results > 0 AND                 [Results = 0 OR
+         max_sim >= 0.7]                  max_sim < 0.7]
+              │                               │
+              ▼                               ▼
+        Return Results              ┌───────────────────────────────┐
+                                    │  Level 2: TOC Grep Fallback   │
+                                    │  - grep -r across TOC files   │
+                                    │  - Balanced: O(1) operation   │
+                                    └───────────────────────────────┘
+                                              │
+                                    ┌─────────┴─────────┐
+                                    │                   │
+                              [Results > 0]      [Results = 0]
+                                    │                   │
+                                    ▼                   ▼
+                              Return Results    ┌───────────────────────────────┐
+                                                  │  Level 3: Max Recall         │
+                                                  │  - Cross-set TOC + Content   │
+                                                  │  - Slowest but comprehensive│
+                                                  └───────────────────────────────┘
+                                                            │
+                                                            ▼
+                                                  Return any results found
+```
+
+## Delegation Pattern
+
+This skill is designed to work with the `doc-retriever` agent for document discovery tasks:
+
+1. **Discovery Phase** (this skill): Find matching document directories
+2. **Extraction Phase** (`md-doc-reader` skill): Extract content from found documents
+
+When the `doc-retriever` agent needs to find documents:
+
+1. **List available doc sets** - Use `ls -1 md_docs/`
+2. **Apply intent filtering** - Filter doc sets based on user's query:
+   - Explicit mentions (e.g., "Claude" → `*Claude*`)
+   - Domain-specific terms (e.g., "hooks" → Claude Code context)
+   - Ask user if ambiguous
+3. **List directories in selected set** - Use `Glob` or `Bash(ls)` with full path
+4. **Read docTOC.md for context** - Use `Read` tool to get table of contents
+5. **Apply semantic matching** - Use language understanding, NOT simple keyword matching
+6. **Return matching titles** - Provide list of semantically relevant document titles
+7. **Delegate to md-doc-reader** - Extract content from found documents
+
+**Critical:** Always specify the documentation set path when listing directories:
+- ✅ `find md_docs/Claude_Code_Docs:latest -type d -mindepth 1`
+- ❌ `find md_docs -type d -mindepth 2` (too broad, searches all sets)
+
+## Workflow Example
+
+**User query:** "在 Claude_Code_Docs:latest 中查找关于 skills 的文档"
+
+**Step 1:** 列出文档集并根据意图过滤
+```bash
+# 列出所有文档集
+ls -1 md_docs/
+# Output:
+# Claude_Code_Docs:latest
+# Python_Docs:3.11
+# React_Docs:v18
+
+# 根据用户意图过滤：用户明确提到 "Claude_Code_Docs:latest"
+# 目标文档集: Claude_Code_Docs:latest
+```
+
+**Step 2:** 在指定文档集中列出所有目录
+```bash
+ls -1 md_docs/Claude_Code_Docs:latest/
+
+# Returns:
+# Agent Skills/
+# CLI reference/
+# Hooks reference/
+# ...
+```
+
+**Step 3:** 语义匹配（通过 Prompt 指令）
+
+读取相关文档的 `docTOC.md` 获取更多上下文：
+```bash
+# Read md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md
+```
+
+使用语义理解进行匹配：
+- 查询 "skills" → 匹配 "Agent Skills"
+- 考虑上下文：用户想要了解 Agent Skills 相关内容
+- 返回匹配的文档标题列表
+
+**返回结果格式：**
+```
+Found 1 relevant document(s):
+
+1. **Agent Skills** - Relevance: Direct match for "skills" query
+```
+
+**Step 4:** 委托给 md-doc-reader 提取内容
+```python
+# 使用 md-doc-reader skill 提取内容
+from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
+extractor = MarkdownDocExtractor()
+content = extractor.extract_by_title("Agent Skills")
+```
+
+### Workflow Example: Progressive Fallback in Action
+
+**User query:** "查找如何配置 hooks 进行部署"
+*(Query: "Find how to configure hooks for deployment")*
+
+**Step 1:** 列出文档集并根据意图过滤
+```bash
+ls -1 md_docs/
+# Output: Claude_Code_Docs:latest
+# 目标文档集: Claude_Code_Docs:latest
+```
+
+**Step 2:** 在指定文档集中列出所有目录
+```bash
+ls -1 md_docs/Claude_Code_Docs:latest/
+# Returns many directories, but none directly match "configure hooks for deployment"
+```
+
+**Step 3:** 语义匹配（Level 1）
+```bash
+# Semantic match on titles
+# Result: Found 1 match with low similarity (max_sim = 0.5)
+# Example: "Hooks" → similarity: 0.5
+```
+
+**Decision:** max_sim (0.5) < threshold (0.7) → **Trigger Level 2 fallback**
+
+**Step 3.5:** 触发渐进式回退策略
+
+**Level 1 quality insufficient → 进入 Level 2**
+
+提取核心关键词: `configure`, `hooks`, `deployment`
+
+```bash
+# Level 2: TOC grep fallback
+grep -r -iE "(configure|hooks|deployment)" md_docs/Claude_Code_Docs:latest/*/docTOC.md
+```
+
+**Result:** Found matches in TOC files
+```
+md_docs/Claude_Code_Docs:latest/Hooks reference/docTOC.md:   ## Configure hooks
+md_docs/Claude_Code_Docs:latest/Get started with Claude Code hooks/docTOC.md:   ## Deployment hooks
+```
+
+**返回结果:**
+```
+Found 2 relevant document(s) via Level 2 fallback:
+
+1. **Hooks reference** - Relevance: TOC contains "Configure hooks" section
+2. **Get started with Claude Code hooks** - Relevance: TOC contains "Deployment hooks" section
+```
+
+**Level 3 未触发** (Level 2 已返回结果)
+
+**Step 4:** 委托给 md-doc-reader 提取内容
+
+---
+
+**⚠️ Updated Logic (v2.1):** Level 2 is now triggered when:
+1. **No results** (results = 0), OR
+2. **Low quality matches** (max_similarity < 0.7)
+
+This ensures better matching by falling back to TOC content search when title-only matching produces insufficient results.
+
+---
+
+## More Intent Filtering Examples
+
+**Example 1: Explicit framework mention**
+```
+User: "查找 Python 中关于装饰器的文档"
+
+Intent filtering:
+  → User mentioned "Python"
+  → Filter doc sets to: *Python*
+  → Selected: Python_Docs:3.11
+
+Results:
+  - Python Decorators
+  - Functions (contains decorator info)
+```
+
+**Example 2: Implicit context**
+```
+User: "如何配置 hooks"
+
+Intent analysis:
+  → "hooks" is Claude Code specific terminology
+  → Filter doc sets to: *Claude*
+  → Selected: Claude_Code_Docs:latest
+
+Results:
+  - Hooks reference
+  - Get started with Claude Code hooks
+```
+
+**Example 3: Ambiguous query**
+```
+User: "查找关于部署的文档"
+
+Intent analysis:
+  → "deployment" is generic term
+  → Multiple doc sets may contain this info
+  → Ask user: "您想查找哪个项目的部署文档？"
+  → User clarifies: "Claude Code"
+  → Proceed with Claude_Code_Docs:latest
+```
+
+## Search Scope Control
+
+**Important:** Always limit searches to a specific documentation set:
+
+| Method | Command | Scope |
+|--------|---------|-------|
+| **Incorrect** | `find md_docs -type d -mindepth 2` | Searches ALL documentation sets |
+| **Correct** | `find md_docs/Claude_Code_Docs:latest -type d -mindepth 1` | Searches ONLY specified set |
+| **Correct** | Glob pattern `md_docs/Claude_Code_Docs:latest/*/` | Searches ONLY specified set |
+
+**Why this matters:**
+- Prevents cross-contamination between different documentation sets
+- Ensures accurate semantic matching within the correct domain
+- Improves search performance by reducing search space
+
+## Keyword Extraction for Fallback Searches
+
+When invoking Level 2 or Level 3 fallback, extract core keywords from user query:
+
+### Extraction Rules
+
+| Rule | Example | Extracted Keywords |
+|------|---------|-------------------|
+| Remove stop words | "how to configure hooks" | configure, hooks |
+| Preserve technical terms | "API authentication with JWT" | API, authentication, JWT |
+| Use root forms | "deploying, deployed, deployment" | deploy |
+| Remove question words | "what is the best way to" | best, way |
+| Split compound terms | "webhook configuration" | webhook, configuration |
+
+### Stop Words to Remove
+
+**Common stop words:** the, a, an, and, or, but, is, are, was, were, to, for, with, by, from, at, on, in, about, how, what, where, when, why, which, that, this, these, those
+
+**Preserve:** API, CLI, SDK, HTTP, JWT, OAuth, hooks, config, deploy, auth, token, endpoint, webhook, middleware, etc.
+
+### Extraction Examples
+
+| User Query | Extracted Keywords | Grep Command |
+|------------|-------------------|--------------|
+| "how to configure hooks for deployment" | configure, hooks, deployment | `grep -r -iE "(configure|hooks|deployment)"` |
+| "API authentication with JWT tokens" | API, authentication, JWT, tokens | `grep -r -iE "(API|authentication|JWT|tokens)"` |
+| "what is the best way to deploy" | best, way, deploy | `grep -r -iE "(best|way|deploy)"` |
+| "webhook configuration guide" | webhook, configuration, guide | `grep -r -iE "(webhook|configuration|guide)"` |

@@ -28,6 +28,7 @@ class ScannerConfig(DebugMixin):
                  exclude_fuzzy=None,
                  # 标题过滤参数
                  title_filter_list=None,
+                 title_cleanup_patterns=None,
                  # 状态码过滤参数
                  status_code_filter=None,
                  # 文档爬取模式参数
@@ -86,6 +87,7 @@ class ScannerConfig(DebugMixin):
 
         # 标题过滤配置
         self.title_filter_list = title_filter_list or ['Page Not Found']
+        self.title_cleanup_patterns = title_cleanup_patterns or []
 
         # 状态码过滤配置
         self.status_code_filter = status_code_filter or [404, 503, 502, 504, 403, 401, 500]
@@ -95,7 +97,7 @@ class ScannerConfig(DebugMixin):
         # force_scan: 在mode 1/2时，是否强制启动URL扫描器（默认0：如果CSV不为空则跳过扫描，1：强制扫描）
         self.mode = int(mode)
         self.force_scan = int(force_scan or 0)
-        self.doc_dir = doc_dir or 'documentation_output'
+        self.doc_dir = doc_dir or md_docs
         self.doc_name = doc_name
         self.doc_version = doc_version or 'latest'
         self.toc_url_filters = toc_url_filters or {}
