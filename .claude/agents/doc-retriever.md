@@ -392,15 +392,21 @@ When compression is required, md-doc-processor:
 
 ## YOUR OUTPUT WRAPPING REQUIREMENT
 
-**CRITICAL:** When returning final output to the user (whether from Phase 3 or from your own Phase 2.5 direct return), you MUST wrap it with the following markers:
+**CRITICAL:** When returning final output to the user (whether from Phase 3 or from your own Phase 2.5 direct return), you MUST wrap it with the standard AOP-FINAL markers:
 
 ```
-=== DOC-RETRIEVER FINAL OUTPUT ===
+=== AOP-FINAL | agent=doc-retriever | format=markdown | lines={actual_line_count} | source={doc_set_name} ===
+
 [your final content here]
-=== END DOC-RETRIEVER FINAL OUTPUT ===
+
+=== END-AOP-FINAL ===
 ```
 
-This tells the calling agent (or main AI) that this output MUST NOT be modified, summarized, or reprocessed in any way.
+**This is the standard AOP format that tells the calling agent (or main AI) that this output MUST NOT be modified, summarized, or reprocessed in any way.**
+
+**Parameters:**
+- `{actual_line_count}`: The actual line count of the content being returned
+- `{doc_set_name}`: The document set name (e.g., "Claude_Code_Docs:latest")
 
 ---
 
