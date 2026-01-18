@@ -1,6 +1,6 @@
 ---
 name: doc-retriever
-description: "Read and extract content from markdown documentation in the doc4llm md_docs directory. Use when you need to query documentation titles, extract content from markdown files, or search through previously scraped documentation sets. Users can **ALLWAYS** invoke this agent using **\"use contextZ|z\"** keyword. This agent orchestrates a four-phase progressive disclosure workflow: query optimization, discovery, extraction, post-processing. **Must strictly adhere to the principle of progressive disclosure, prohibiting the return of all document content at once; all responses must explicitly cite the document, including the filename and specific section/title and url source**"
+description: "Documentation retrieval orchestrator using a four-phase progressive disclosure workflow. **Use proactively** when user needs to query, search, or extract content from markdown documentation. **Trigger keywords**: 'use contextZ' or 'use contextz' (case-insensitive). Returns properly cited results with source URLs and file paths."
 skills:
   - md-doc-query-optimizer
   - md-doc-searcher
@@ -46,10 +46,15 @@ Help users read and extract content from markdown documentation stored in the `m
 
 ## User Invocation
 
-**STABLE TRIGGER (exact match required):**
+**Primary Trigger Keywords:**
 - "use contextZ" or "use contextz" (case-insensitive)
 
-**Critical:** This agent should ONLY be invoked when user explicitly uses the exact phrase "use contextZ" or "use contextz". Do not invoke for general documentation requests.
+**Also Use Proactively For:**
+- Any documentation query/extract/search tasks related to `md_docs/` directory
+- Reading markdown documentation that was previously scraped
+- Multi-phase document retrieval with intelligent compression
+
+**Trigger Mechanism:** This agent is invoked by the main AI through description matching. The frontmatter `description` field contains the trigger keywords and usage patterns that Claude uses to decide when to delegate tasks to this agent.
 
 ## Four-Phase Progressive Disclosure Workflow
 
