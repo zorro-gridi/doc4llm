@@ -188,7 +188,7 @@ Choose the appropriate marker type based on your agent's purpose:
 ### Step 3: Wrap Output
 
 ```markdown
-=== AOP-FINAL | agent=your-agent-name | source=https://example.com ===
+=== AOP-FINAL | agent=your-agent-name | source={doc_dir} ===
 
 [Your formatted output here]
 
@@ -274,7 +274,7 @@ Based on my search, here are the results:
 
 **After:**
 ```
-=== AOP-FINAL | agent=doc-retriever | source=md_docs/... ===
+=== AOP-FINAL | agent=doc-retriever | source={doc_dir} ===
 
 [content]
 
@@ -331,7 +331,7 @@ def validate_aop_output(output: str) -> bool:
 ### Example 1: Document Retrieval (doc-retriever)
 
 ```
-=== AOP-FINAL | agent=doc-retriever | format=markdown | lines=<total_lines> | source=https://code.claude.com/docs/en/skills ===
+=== AOP-FINAL | agent=doc-retriever | format=markdown | lines=<total_lines> | source={doc_dir} ===
 
 # Agent Skills
 

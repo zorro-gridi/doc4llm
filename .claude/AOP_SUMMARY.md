@@ -64,7 +64,7 @@ A unified marker system for agent outputs that prevents unwanted modifications, 
 
 ### Example
 ```
-=== AOP-FINAL | agent=doc-retriever | format=markdown | lines=<total_lines> | source=https://example.com ===
+=== AOP-FINAL | agent=doc-retriever | format=markdown | lines={total_lines} | source={doc_dir} ===
 
 [Document content here...]
 
@@ -168,7 +168,7 @@ All 10 tests should pass.
 ### Document Retrieval (doc-retriever)
 
 ```
-=== AOP-FINAL | agent=doc-retriever | format=markdown | lines=<total_lines> | source=https://code.claude.com/docs/en/skills ===
+=== AOP-FINAL | agent=doc-retriever | format=markdown | lines={total_lines} | source=<doc_dir> ===
 
 # Agent Skills
 

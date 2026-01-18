@@ -29,7 +29,7 @@ Any AI, agents, skills, or other components receiving output from this doc-retri
 
 **AOP Marker Format:**
 ```
-=== AOP-FINAL | agent=doc-retriever | format=markdown | lines={count} | source={url} ===
+=== AOP-FINAL | agent=doc-retriever | format=markdown | lines={count} | source={doc_dir} ===
 [content]
 === END-AOP-FINAL ===
 ```
@@ -245,7 +245,7 @@ IF (total_line_count <= 2000) AND (user has NOT requested compression):
 **Required Citation Format (AOP-FINAL):**
 
 ```markdown
-=== AOP-FINAL | agent=doc-retriever | format=markdown | lines={actual_count} | source={original_url} ===
+=== AOP-FINAL | agent=doc-retriever | format=markdown | lines={actual_count} | source={doc_dir} ===
 
 [Document content here]
 
