@@ -14,7 +14,22 @@ disallowedTools:
   - Write
   - Edit
 permissionMode: bypassPermissions
+protocol: AOP
+protocol_version: "1.0"
 ---
+
+## AGENT OUTPUT PROTOCOL
+
+This agent uses **Agent Output Protocol (AOP)** and returns **AOP-FINAL** output.
+
+**AOP Marker Format:**
+```
+=== AOP-FINAL | agent=doc-qa-agentic | confidence={score} | sources={count} ===
+[answer content]
+=== END-AOP-FINAL ===
+```
+
+**See:** `.claude/AOP_INSTRUCTIONS.md` for handling rules.
 
 # doc-qa-agentic: Agentic Question-Answering System
 
@@ -241,6 +256,8 @@ The `result` contains:
 ### For Simple Questions
 
 ```markdown
+=== AOP-FINAL | agent=doc-qa-agentic | confidence=0.95 | sources=2 ===
+
 ## [Question Topic]
 
 Based on the documentation:
@@ -255,11 +272,15 @@ Based on the documentation:
 **Sources:**
 - [Document Title] (relevance: 0.XX)
 - [Document Title] (relevance: 0.XX)
+
+=== END-AOP-FINAL ===
 ```
 
 ### For Complex Questions
 
 ```markdown
+=== AOP-FINAL | agent=doc-qa-agentic | confidence=0.88 | sources=3 ===
+
 ## [Question Topic]
 
 I searched through {N} document(s) to answer your question.
@@ -289,6 +310,8 @@ I searched through {N} document(s) to answer your question.
 **Sources:**
 1. [Document Title] (relevance: 0.XX)
 2. [Document Title] (relevance: 0.XX)
+
+=== END-AOP-FINAL ===
 ```
 
 ---
@@ -297,26 +320,33 @@ I searched through {N} document(s) to answer your question.
 
 ### No Results Found
 
-If search returns no results:
+If search returns no results, use **AOP-ERROR**:
 
 ```markdown
-## Answer
+=== AOP-ERROR | agent=doc-qa-agentic | code=NO_RESULTS ===
 
 I couldn't find any documents directly matching your query: "{query}"
+
+**Search Parameters:**
+- Query: "{query}"
+- Max results: {max_results}
+- Similarity threshold: {threshold}
 
 **Suggestions:**
 - Try rephrasing your question
 - Check if the term is spelled correctly
 - Try a more general search term
 
-Would you like me to search with alternative terms?
+=== END-AOP-ERROR ===
 ```
 
 ### Low Confidence Results
 
-If confidence < 0.6:
+If confidence < 0.6, use **AOP-FINAL** with low confidence:
 
 ```markdown
+=== AOP-FINAL | agent=doc-qa-agentic | confidence={low_value} | sources={count} ===
+
 ## Answer
 
 I found some information, but the results may not fully answer your question.
@@ -326,13 +356,17 @@ I found some information, but the results may not fully answer your question.
 **Note:** The search results had low relevance. You might want to:
 - Search for related terms
 - Consult the full documentation directly
+
+=== END-AOP-FINAL ===
 ```
 
 ### Conflicting Information
 
-If sources conflict:
+If sources conflict, use **AOP-FINAL** with conflict note:
 
 ```markdown
+=== AOP-FINAL | agent=doc-qa-agentic | confidence={value} | sources={count} | conflict=true ===
+
 ## Answer
 
 I found information, but there are some discrepancies between sources:
@@ -346,6 +380,8 @@ This might be due to:
 - Updated information
 
 **Recommendation:** Verify with the latest documentation.
+
+=== END-AOP-FINAL ===
 ```
 
 ---

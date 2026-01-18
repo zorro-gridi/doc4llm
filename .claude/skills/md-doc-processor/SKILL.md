@@ -59,6 +59,27 @@ You receive the following from the doc-retriever agent:
 2. **Complete document content** - Full markdown content from md-doc-reader
 3. **Line count** - Number of lines in the document
 
+## Output Language Requirement
+
+**CRITICAL: Your output must be in Chinese by default**
+
+- **Default language**: Chinese (中文)
+- **Title and headings**: Chinese
+- **Explanatory text**: Chinese
+- **Code examples**: Keep original language (don't translate code)
+- **Technical terms**: Keep English terms in parentheses when first introduced
+
+**Example:**
+```markdown
+# Hooks 参考指南
+
+## 概述
+Hooks 是在工作流特定时间点运行的自动化脚本...
+
+## 配置部署 (Configuration for Deployment)
+[Content...]
+```
+
 ## Decision Workflow
 
 ```
@@ -202,18 +223,18 @@ Compressed Output (~2000 lines with notice)
 When performing intelligent compression, structure output as:
 
 ```markdown
-# [Document Title]
+# [文档标题]
 
-## Overview
-[Brief introduction from original document]
+## 概述
+[原文简介]
 
-## Relevant Content for: "[User Query]"
-[Extracted sections relevant to query]
+## 与 "[用户查询]" 相关的内容
+[提取的相关章节]
 
 ---
 
 ### 文档来源 (Sources)
-[Source information...]
+[来源信息...]
 
 ---
 
@@ -377,21 +398,21 @@ Extract from the docContent.md files:
 
 **Compressed Output Structure:**
 ```markdown
-# Hooks Reference
+# Hooks 参考指南
 
-## Overview
-Hooks are automation scripts that run at specific points in your workflow...
+## 概述
+Hooks 是在工作流特定时间点运行的自动化脚本...
 
-## Configuration for Deployment
+## 部署配置
 
-### Setting Up Deployment Hooks
-[Full section on deployment hook setup]
+### 设置部署 Hooks
+[完整的部署 hook 设置章节]
 
-### Deployment Hook Parameters
-[Full parameter reference with code examples]
+### 部署 Hook 参数
+[完整的参数参考及代码示例]
 
-### Common Deployment Patterns
-[Relevant code examples]
+### 常见部署模式
+[相关代码示例]
 
 ---
 
