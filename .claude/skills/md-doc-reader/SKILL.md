@@ -156,7 +156,7 @@ Config structure:
       "fuzzy_threshold": 0.6,
       "enable_fallback": false,
       "fallback_modes": ["case_insensitive", "partial", "fuzzy"],
-      "compress_threshold": 1000,
+      "compress_threshold": 2000,
       "enable_compression": false
     }
   }
@@ -166,7 +166,7 @@ Config structure:
 **New Configuration Options:**
 - `enable_fallback`: Enable automatic fallback to other search modes on failure (default: false)
 - `fallback_modes`: List of search modes to try as fallback (default: ["case_insensitive", "partial", "fuzzy"])
-- `compress_threshold`: Line count threshold for content compression (default: 1000)
+- `compress_threshold`: Line count threshold for content compression (default: 2000)
 - `enable_compression`: Enable automatic content compression for large documents (default: false)
 
 ## Directory Structure

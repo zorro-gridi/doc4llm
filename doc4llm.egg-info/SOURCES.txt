@@ -42,9 +42,12 @@ requirements.txt
 ./doc4llm/tool/__init__.py
 ./doc4llm/tool/md_doc_extractor/__init__.py
 ./doc4llm/tool/md_doc_extractor/agentic_matcher.py
+./doc4llm/tool/md_doc_extractor/chain_reasoner.py
+./doc4llm/tool/md_doc_extractor/conversation_memory.py
 ./doc4llm/tool/md_doc_extractor/doc_extractor.py
 ./doc4llm/tool/md_doc_extractor/exceptions.py
 ./doc4llm/tool/md_doc_extractor/hybrid_matcher.py
+./doc4llm/tool/md_doc_extractor/query_optimizer.py
 ./doc4llm/tool/md_doc_extractor/utils.py
 doc4llm/__init__.py
 doc4llm/__main__.py
@@ -88,9 +91,12 @@ doc4llm/scanner/utils.py
 doc4llm/tool/__init__.py
 doc4llm/tool/md_doc_extractor/__init__.py
 doc4llm/tool/md_doc_extractor/agentic_matcher.py
+doc4llm/tool/md_doc_extractor/chain_reasoner.py
+doc4llm/tool/md_doc_extractor/conversation_memory.py
 doc4llm/tool/md_doc_extractor/doc_extractor.py
 doc4llm/tool/md_doc_extractor/exceptions.py
 doc4llm/tool/md_doc_extractor/hybrid_matcher.py
+doc4llm/tool/md_doc_extractor/query_optimizer.py
 doc4llm/tool/md_doc_extractor/utils.py
 tests/test_agentic_matcher.py
 tests/test_doc_content_extraction.py

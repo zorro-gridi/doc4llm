@@ -11,6 +11,34 @@ allowed-tools:
 
 Search and discover markdown documents in the doc4llm md_docs directory structure using semantic matching.
 
+## Data Flow Integration
+
+**Input Source:** This skill receives **optimized queries from `md-doc-query-optimizer`** skill, not raw user queries.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Query Optimization Phase                  │
+│                   (md-doc-query-optimizer)                  │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            │ 3-5 optimized queries
+                            │ with strategy annotations
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Document Discovery Phase                  │
+│                      (md-doc-searcher)                       │
+│                                                              │
+│  Input: Optimized queries from Phase 0                      │
+│  Output: Document titles with TOC paths                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Why This Matters:**
+- **Multi-perspective search:** Receives 3-5 query variations instead of a single raw query
+- **Better recall:** Decomposition, expansion, and translation strategies improve coverage
+- **Language handling:** Pre-translated queries (Chinese→English) improve matching accuracy
+- **Ambiguity resolution:** Multiple query variants capture different interpretations
+
 ## Core Principle
 
 This skill focuses on **document discovery via TOC (Table of Contents)** - finding which documents match your query by searching `docTOC.md` index files.
@@ -27,33 +55,41 @@ This follows the **progressive disclosure** principle: discover structure first 
 
 ## Quick Start
 
-When a user requests document search, follow this workflow:
+When invoked with optimized queries from `md-doc-query-optimizer`, follow this workflow:
 
-1. **List documentation sets** - Use `ls -1 md_docs/` and **filter based on user's query intent**
+**Input:** 3-5 optimized queries (e.g., ["hooks configuration", "setup hooks", "hooks settings"])
+
+1. **List documentation sets** - Use `ls -1 md_docs/` and **filter based on optimized queries**
 2. **Select target set(s)** - Choose the most relevant documentation set(s). For generic/cross-cutting queries, consider searching MULTIPLE sets.
 3. **List docTOC.md files** - Use `Glob` or `Bash(find)` to find TOC files: `md_docs/<doc_set>/*/docTOC.md`
 4. **Read docTOC.md files** - Use `Read` tool to get table of contents for context
-5. **Semantic matching** - Use language understanding to match query with document titles
+5. **Multi-query semantic matching** - Search with ALL optimized queries, aggregate results, deduplicate
 6. **Apply progressive fallback** - If Level 1 returns insufficient results, trigger Level 2 (TOC grep) then Level 3 (cross-set + content search with context traceback)
 7. **Verify coverage completeness** - CRITICAL: Check if search results are comprehensive. Expand search if gaps exist.
 8. **Return comprehensive list** - Provide exhaustive list with TOC paths, coverage notes, and Sources section
 
 **Example:**
 ```
-User: "查找关于配置 Claude Code 的文档"
+Input from md-doc-query-optimizer:
+  1. "hooks configuration" - translation
+  2. "setup hooks" - expansion
+  3. "hooks settings" - expansion
 
 Step 1: List and filter doc sets
   → Available: Claude_Code_Docs:latest, Python_Docs:3.11, ...
-  → Filter: User mentioned "Claude Code" → Select Claude_Code_Docs:latest
+  → Filter: Optimized queries indicate "hooks" → Select Claude_Code_Docs:latest
 
 Step 2-3: List docTOC.md files in selected set
   → Glob: md_docs/Claude_Code_Docs:latest/*/docTOC.md
 
-Step 4-6: Search within Claude_Code_Docs:latest
-  → Semantic match for "配置" (configuration)
+Step 4-6: Multi-query search within Claude_Code_Docs:latest
+  → Search with query 1: "hooks configuration"
+  → Search with query 2: "setup hooks"
+  → Search with query 3: "hooks settings"
+  → Aggregate and deduplicate results
   → Results:
-    - Claude Code settings
-    - Model configuration
+    - Hooks reference (matched by queries 1, 2, 3)
+    - Get started with Claude Code hooks (matched by query 2)
   → TOC Paths returned for md-doc-reader use
 ```
 
@@ -631,29 +667,49 @@ Found N relevant document(s) in <doc_set>:
 
 ## Delegation Pattern
 
-This skill is designed to work with the `doc-retriever` agent for document discovery tasks:
+This skill is designed to work with the `doc-retriever` agent and `md-doc-query-optimizer` skill in a multi-phase retrieval workflow:
 
-1. **Discovery Phase** (this skill): Find matching document directories
-2. **Extraction Phase** (`md-doc-reader` skill): Extract content from found documents
+**Workflow:**
+```
+Phase 0: Query Optimization (md-doc-query-optimizer)
+    │ Input: Raw user query
+    │ Output: 3-5 optimized queries with annotations
+    ▼
+Phase 1: Document Discovery (this skill - md-doc-searcher)
+    │ Input: Optimized queries from Phase 0
+    │ Output: Document titles with TOC paths
+    ▼
+Phase 2: Content Extraction (md-doc-reader)
+    │ Input: Document titles
+    │ Output: Full content + line count
+    ▼
+Phase 3: Post-Processing (md-doc-processor) [Conditional]
+```
 
 When the `doc-retriever` agent needs to find documents:
 
-1. **List available doc sets** - Use `ls -1 md_docs/`
-2. **Apply intent filtering** - Filter doc sets based on user's query:
+1. **Receive optimized queries** - Input from `md-doc-query-optimizer` (3-5 queries with strategy annotations)
+2. **List available doc sets** - Use `ls -1 md_docs/`
+3. **Apply intent filtering** - Filter doc sets based on optimized queries:
+   - Extract domain keywords from optimized queries
    - Explicit mentions (e.g., "Claude" → `*Claude*`)
    - Domain-specific terms (e.g., "hooks" → Claude Code context)
    - **NEW: Check for generic/cross-cutting patterns** (e.g., "best practices" → search ALL sets)
    - Ask user if ambiguous
-3. **List directories in selected set(s)** - Use `Glob` or `Bash(ls)` with full path
-4. **Read docTOC.md for context** - Use `Read` tool to get table of contents
-5. **Apply semantic matching** - Use language understanding, NOT simple keyword matching
-6. **Apply progressive fallback** - Trigger Level 2 (TOC grep) or Level 3 (cross-set) if needed
-7. **Verify coverage completeness** - CRITICAL: Check if search is comprehensive
+4. **List directories in selected set(s)** - Use `Glob` or `Bash(ls)` with full path
+5. **Read docTOC.md for context** - Use `Read` tool to get table of contents
+6. **Multi-query semantic matching** - Search with ALL optimized queries:
+   - For each optimized query, perform semantic matching
+   - Aggregate results from all queries
+   - Deduplicate by document title
+   - Rank by relevance (documents matched by multiple queries rank higher)
+7. **Apply progressive fallback** - Trigger Level 2 (TOC grep) or Level 3 (cross-set) if needed
+8. **Verify coverage completeness** - CRITICAL: Check if search is comprehensive
    - Assess query type (generic vs framework-specific)
    - Check result diversity
    - Identify gaps and expand search if needed
-8. **Return comprehensive list with coverage notes** - Provide exhaustive list with what is/isn't covered
-9. **Delegate to md-doc-reader** - Extract content from found documents
+9. **Return comprehensive list with coverage notes** - Provide exhaustive list with what is/isn't covered
+10. **Delegate to md-doc-reader** - Extract content from found documents
 
 **Critical:** Always specify the documentation set path when listing directories:
 - ✅ `find md_docs/Claude_Code_Docs:latest -type d -mindepth 1`
@@ -661,7 +717,13 @@ When the `doc-retriever` agent needs to find documents:
 
 ## Workflow Example
 
-**User query:** "在 Claude_Code_Docs:latest 中查找关于 skills 的文档"
+**Input from md-doc-query-optimizer:**
+```
+Optimized Queries (Ranked):
+1. "skills" - direct match
+2. "Agent Skills" - context-specific expansion
+3. "skills reference" - expansion
+```
 
 **Step 1:** 列出文档集并根据意图过滤
 ```bash
@@ -672,7 +734,7 @@ ls -1 md_docs/
 # Python_Docs:3.11
 # React_Docs:v18
 
-# 根据用户意图过滤：用户明确提到 "Claude_Code_Docs:latest"
+# 根据优化查询过滤：所有查询都指向 "skills" → Claude Code context
 # 目标文档集: Claude_Code_Docs:latest
 ```
 
@@ -687,7 +749,7 @@ ls -1 md_docs/Claude_Code_Docs:latest/
 # ...
 ```
 
-**Step 3:** 语义匹配（通过 Prompt 指令）
+**Step 3:** 多查询语义匹配
 
 读取相关文档的 `docTOC.md` 获取更多上下文：
 ```bash
@@ -695,15 +757,17 @@ ls -1 md_docs/Claude_Code_Docs:latest/
 ```
 
 使用语义理解进行匹配：
-- 查询 "skills" → 匹配 "Agent Skills"
-- 考虑上下文：用户想要了解 Agent Skills 相关内容
-- 返回匹配的文档标题列表
+- 查询 1 "skills" → 匹配 "Agent Skills"
+- 查询 2 "Agent Skills" → 匹配 "Agent Skills" (高相关度)
+- 查询 3 "skills reference" → 匹配 "Agent Skills"
+- 聚合结果并去重：{"Agent Skills"}
+- 按匹配查询数量排序：Agent Skills (matched by 3 queries)
 
 **返回结果格式：**
 ```
 Found 1 relevant document(s):
 
-1. **Agent Skills** - Relevance: Direct match for "skills" query
+1. **Agent Skills** - Relevance: Matched by 3 optimized queries (skills, Agent Skills, skills reference)
 ```
 
 **Step 4:** 委托给 md-doc-reader 查看完整 TOC
@@ -721,7 +785,7 @@ toc = extractor.extract_by_title("Agent Skills")
 ```markdown
 Found 1 relevant document(s):
 
-1. **Agent Skills** - Relevance: Direct match for "skills" query
+1. **Agent Skills** - Relevance: Matched by 3 optimized queries
 
 **Coverage:**
 - ✅ Covered: Skills design philosophy and working principles
@@ -738,40 +802,51 @@ Found 1 relevant document(s):
 
 ### Workflow Example: Progressive Fallback in Action
 
-**User query:** "查找如何配置 hooks 进行部署"
-*(Query: "Find how to configure hooks for deployment")*
+**Input from md-doc-query-optimizer:**
+```
+Optimized Queries (Ranked):
+1. "configure hooks deployment" - decomposition
+2. "hooks configuration" - translation
+3. "deployment hooks" - decomposition
+4. "setup hooks" - expansion
+```
 
 **Step 1:** 列出文档集并根据意图过滤
 ```bash
 ls -1 md_docs/
 # Output: Claude_Code_Docs:latest
+# 根据优化查询过滤：所有查询都指向 "hooks" → Claude Code context
 # 目标文档集: Claude_Code_Docs:latest
 ```
 
 **Step 2:** 在指定文档集中列出所有目录
 ```bash
 ls -1 md_docs/Claude_Code_Docs:latest/
-# Returns many directories, but none directly match "configure hooks for deployment"
+# Returns many directories
 ```
 
-**Step 3:** 语义匹配（Level 1）
+**Step 3:** 多查询语义匹配（Level 1）
+
 ```bash
-# Semantic match on titles
-# Result: Found 1 match with low similarity (max_sim = 0.5)
-# Example: "Hooks" → similarity: 0.5
+# Multi-query semantic match on titles
+# Result: Found matches with varying similarity
+# Query 1 "configure hooks deployment" → max_sim = 0.5 (low)
+# Query 2 "hooks configuration" → max_sim = 0.6 (low)
+# Query 3 "deployment hooks" → max_sim = 0.55 (low)
+# Query 4 "setup hooks" → max_sim = 0.58 (low)
 ```
 
-**Decision:** max_sim (0.5) < threshold (0.7) → **Trigger Level 2 fallback**
+**Decision:** max_similarity (0.6) < threshold (0.7) → **Trigger Level 2 fallback**
 
 **Step 3.5:** 触发渐进式回退策略
 
 **Level 1 quality insufficient → 进入 Level 2**
 
-提取核心关键词: `configure`, `hooks`, `deployment`
+从优化查询中提取核心关键词: `configure`, `hooks`, `deployment`, `setup`
 
 ```bash
 # Level 2: TOC grep fallback
-grep -r -iE "(configure|hooks|deployment)" md_docs/Claude_Code_Docs:latest/*/docTOC.md
+grep -r -iE "(configure|hooks|deployment|setup)" md_docs/Claude_Code_Docs:latest/*/docTOC.md
 ```
 
 **Result:** Found matches in TOC files
@@ -784,8 +859,8 @@ md_docs/Claude_Code_Docs:latest/Get started with Claude Code hooks/docTOC.md:   
 ```
 Found 2 relevant document(s) via Level 2 fallback:
 
-1. **Hooks reference** - Relevance: TOC contains "Configure hooks" section
-2. **Get started with Claude Code hooks** - Relevance: TOC contains "Deployment hooks" section
+1. **Hooks reference** - Relevance: TOC contains "Configure hooks" section (matched by queries 1, 2, 4)
+2. **Get started with Claude Code hooks** - Relevance: TOC contains "Deployment hooks" section (matched by queries 1, 3)
 ```
 
 **Level 3 未触发** (Level 2 已返回结果)

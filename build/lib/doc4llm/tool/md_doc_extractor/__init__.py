@@ -23,6 +23,24 @@ from .agentic_matcher import (
     MatchResult,
     agentic_search,
 )
+from .query_optimizer import (
+    QueryOptimizer,
+    OptimizedQuery,
+    QueryAnalysis,
+    optimize_query,
+)
+from .chain_reasoner import (
+    ChainReasoner,
+    ReasoningStep,
+    ReasoningResult,
+    chain_reason,
+)
+from .conversation_memory import (
+    ConversationMemory,
+    ConversationTurn,
+    ConversationSession,
+    create_memory,
+)
 from .hybrid_matcher import (
     HybridMatcher,
     LLMEnhancement,
@@ -59,6 +77,21 @@ __all__ = [
     "ReflectiveReRanker",
     "MatchResult",
     "agentic_search",
+    # Query optimizer (v2.2.0)
+    "QueryOptimizer",
+    "OptimizedQuery",
+    "QueryAnalysis",
+    "optimize_query",
+    # Chain reasoner (v2.3.0)
+    "ChainReasoner",
+    "ReasoningStep",
+    "ReasoningResult",
+    "chain_reason",
+    # Conversation memory (v2.4.0)
+    "ConversationMemory",
+    "ConversationTurn",
+    "ConversationSession",
+    "create_memory",
     # Hybrid matcher (v2.1.0) - LLM-enhanced
     "HybridMatcher",
     "LLMEnhancement",

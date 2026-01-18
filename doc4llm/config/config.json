@@ -205,7 +205,7 @@
         "partial",
         "fuzzy"
       ],
-      "compress_threshold": 1000,
+      "compress_threshold": 2000,
       "enable_compression": false
     }
   },

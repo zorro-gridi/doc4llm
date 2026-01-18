@@ -44,7 +44,7 @@ You have access to the following skills:
 | `md-doc-query-optimizer` | Optimize and rewrite queries | User query is ambiguous or complex |
 | `md-doc-searcher` (AgenticDocMatcher) | Intelligently search documents | Need to find relevant documents |
 | `md-doc-reader` | Extract document content | Need to read full document content |
-| `md-doc-processor` | Post-process large documents | Document is > 1000 lines |
+| `md-doc-processor` | Post-process large documents | Document is > 2000 lines |
 | `ChainReasoner` (Python API) | Multi-hop reasoning | Complex questions requiring multiple documents |
 
 ---

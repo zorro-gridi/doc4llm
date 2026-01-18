@@ -44,7 +44,8 @@ class ProgressiveRetriever:
         return {
             "max_turns": 3,
             "min_results": 3,
-            "min_similarity": 0.5,
+            "min_similarity": 0.6,
+            "high_quality_threshold": 0.7,  # Threshold for triggering Level 2 fallback
             "title_max_results": 5,
             "toc_max_results": 10,
             "preview_max_results": 8,
@@ -272,8 +273,12 @@ class ProgressiveRetriever:
 
         Satisfaction criteria:
         1. Have at least min_results
-        2. At least one result with high similarity
+        2. At least one result with high similarity (>= high_quality_threshold for Level 1)
         3. Have diverse match types
+
+        Returns False to trigger Level 2: TOC Grep Fallback when:
+        - No results found, OR
+        - Max similarity below high_quality_threshold (0.7)
         """
         if not results:
             return False
@@ -284,7 +289,11 @@ class ProgressiveRetriever:
 
         # Criterion 2: Quality check
         max_sim = max(r.similarity for r in results)
-        if max_sim < self.config.get("min_similarity", 0.6):
+
+        # Use high_quality_threshold (0.7) for Level 1 satisfaction check
+        # If max_sim < 0.7, trigger Level 2 fallback for better matching
+        high_quality_threshold = self.config.get("high_quality_threshold", 0.7)
+        if max_sim < high_quality_threshold:
             return False
 
         # Criterion 3: Diversity check (optional)

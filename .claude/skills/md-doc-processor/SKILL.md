@@ -1,6 +1,6 @@
 ---
 name: md-doc-processor
-description: "Post-process extracted markdown documentation to decide between returning full content or performing intelligent compression. Conditionally invoked as Phase 3 of doc-retriever agent workflow ONLY when: (1) document exceeds 1000 lines, OR (2) user explicitly requested compression. Receives user query, full document content, and line count from doc-retriever agent. Detects explicit full-content requests (Chinese: 不压缩/完整内容/完整版, English: full content/don't compress/no compression) and performs query-relevant intelligent summarization when needed."
+description: "Post-process extracted markdown documentation to decide between returning full content or performing intelligent compression. Conditionally invoked as Phase 3 of doc-retriever agent workflow ONLY when: (1) document exceeds 2100 lines (threshold 2000 + buffer 100), OR (2) user explicitly requested compression. Receives user query, full document content, and line count from doc-retriever agent. Detects explicit full-content requests (Chinese: 不压缩/完整内容/完整版, English: full content/don't compress/no compression) and performs query-relevant intelligent summarization when needed."
 allowed-tools:
   - Read
   - Bash
@@ -32,12 +32,24 @@ Phase 1: md-doc-searcher  →  Phase 2: md-doc-reader  →  Phase 2.5: Condition
 You are **NOT** always invoked. The doc-retriever agent performs a conditional check after Phase 2:
 
 **You ARE invoked when:**
-- Document line count > 1000 (large document)
+- Document line count > 2100 (exceeds threshold + buffer)
 - User explicitly requested compression ("压缩", "总结", "summary", etc.)
 
 **You are NOT invoked when:**
-- Document line count ≤ 1000 AND user did not request compression
+- Document line count ≤ 2100 AND user did not request compression
 - → Content returned directly to user without processing
+
+**Compression Threshold Rules:**
+| Line Count Range | Action |
+|------------------|--------|
+| ≤ 2000 | No compression (within base threshold) |
+| 2001 - 2100 | No compression (within buffer zone) |
+| > 2100 | Compress to ~2000 lines (target threshold) |
+
+**Key Concepts:**
+- **Base Threshold**: 2000 lines
+- **Buffer Zone**: ±100 lines (2001-2100)
+- **Target Output**: ~2000 lines when compression is triggered
 
 ## Input from doc-retriever Agent
 
@@ -78,7 +90,7 @@ You receive the following from the doc-retriever agent:
                             └───────────────────────────────┘
 ```
 
-**Note:** Since you are only invoked when processing is needed, the "line count ≤ 1000" check is already handled by doc-retriever agent's conditional check. You focus on intent analysis and compression quality.
+**Note:** Since you are only invoked when processing is needed, the "line count ≤ 2100" check is already handled by doc-retriever agent's conditional check. You focus on intent analysis and compression quality.
 
 ## Decision Rules
 
@@ -100,7 +112,7 @@ You receive the following from the doc-retriever agent:
 **Trigger:** No full-content keywords AND processing is needed
 
 **When this applies:**
-- Document is large (>1000 lines) and user didn't request full content
+- Document is large (>2100 lines) and user didn't request full content
 - User explicitly requested compression ("压缩", "总结", "summary", "condense")
 
 **Action:** Perform query-relevant intelligent summarization
@@ -131,32 +143,38 @@ When Rule 3 is triggered, perform query-relevant intelligent summarization:
 ### Compression Strategy
 
 ```
-Original Document (e.g., 1850 lines)
+Original Document (e.g., 2850 lines)
     │
     ▼
-1. Analyze user query intent
+1. Check compression target
+   - Target: ~2000 lines (base threshold)
+   - Calculate reduction needed: ~850 lines to remove
+    │
+    ▼
+2. Analyze user query intent
    - What is user looking for?
    - Which sections are most relevant?
     │
     ▼
-2. Identify high-relevance sections
+3. Identify high-relevance sections
    - Match query keywords with headings
    - Score sections by relevance
     │
     ▼
-3. Extract complete relevant content
+4. Extract complete relevant content
    - Keep full sections (not partial)
    - Preserve code blocks
    - Maintain code examples
     │
     ▼
-4. Structure compressed output
+5. Structure compressed output to ~2000 lines
    - Start with overview/introduction
    - Include most relevant sections
    - Add navigation notes for skipped sections
+   - Add mandatory compression notice at end
     │
     ▼
-Compressed Output (e.g., ~600 lines)
+Compressed Output (~2000 lines with notice)
 ```
 
 ### What to Preserve
@@ -194,7 +212,12 @@ When performing intelligent compression, structure output as:
 
 ---
 
-*Note: Document compressed from [original] lines to [compressed] lines based on query relevance. Full document available upon request.*
+### 文档来源 (Sources)
+[Source information...]
+
+---
+
+**注意：原始文档已被压缩输出；原文: [X] 行, 压缩后: [Y] 行**
 ```
 
 ---
@@ -235,7 +258,7 @@ Hooks are automation scripts that run at specific points in your workflow...
 
 ---
 
-*Note: Original document was 1850 lines. Compressed to ~400 lines focusing on deployment configuration.*
+**注意：源文档已被压缩输出；原文: 2850 行, 压缩后: 1980 行**
 
 ### 文档来源 (Sources)
 
@@ -271,18 +294,18 @@ Extract from the docContent.md files:
 
 **Input from doc-retriever agent:**
 - Query: "查找关于 Hooks 的文档，返回完整内容，不要压缩"
-- Content: [1850 lines of complete content]
-- Line count: 1850
-- **Why invoked:** Line count > 1000
+- Content: [2850 lines of complete content]
+- Line count: 2850
+- **Why invoked:** Line count > 2100 (exceeds threshold + buffer)
 
 **Intent Analysis:** Keywords detected: "完整内容", "不要压缩"
 
 **Decision:** RETURN FULL CONTENT (Rule 1)
 
-**Output:** [All 1850 lines unchanged, with Sources section appended]
+**Output:** [All 2850 lines unchanged, with Sources section appended]
 
 ```markdown
-[Full 1850 lines of content...]
+[Full 2850 lines of content...]
 
 ### 文档来源 (Sources)
 
@@ -333,9 +356,9 @@ Extract from the docContent.md files:
 
 **Input from doc-retriever agent:**
 - Query: "How to configure hooks for deployment?"
-- Content: [1850 lines from "Hooks reference"]
-- Line count: 1850
-- **Why invoked:** Line count > 1000
+- Content: [2850 lines from "Hooks reference"]
+- Line count: 2850
+- **Why invoked:** Line count > 2100 (exceeds threshold + buffer)
 
 **Intent Analysis:** No full-content keywords, processing needed
 
@@ -372,7 +395,7 @@ Hooks are automation scripts that run at specific points in your workflow...
 
 ---
 
-*Note: Original document was 1850 lines. Compressed to ~400 lines focusing on deployment configuration. Sections on development, debugging, and advanced patterns were omitted. Request full content for complete documentation.*
+**注意：原始文档已被压缩输出；原文: 2850 行, 压缩后: 1980 行**
 
 ### 文档来源 (Sources)
 
@@ -388,7 +411,7 @@ Hooks are automation scripts that run at specific points in your workflow...
 This skill works as part of the doc-retriever agent orchestration:
 
 1. **Conditional invocation** - You are only invoked when processing is needed:
-   - Document > 1000 lines, OR
+   - Document > 2100 lines (exceeds 2000 threshold + 100 buffer), OR
    - User explicitly requested compression
 
 2. **Do NOT call** md-doc-reader or md-doc-searcher directly

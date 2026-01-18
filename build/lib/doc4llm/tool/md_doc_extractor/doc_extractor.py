@@ -55,7 +55,7 @@ class MarkdownDocExtractor(DebugMixin):
         debug_mode: bool = False,
         enable_fallback: bool = False,
         fallback_modes: List[str] | None = None,
-        compress_threshold: int = 1000,
+        compress_threshold: int = 2000,
         enable_compression: bool = False,
     ):
         """Initialize the extractor with configuration.
@@ -70,7 +70,7 @@ class MarkdownDocExtractor(DebugMixin):
             debug_mode: Enable debug output
             enable_fallback: Enable automatic fallback to other search modes on failure
             fallback_modes: List of search modes to try as fallback (default: ["case_insensitive", "partial", "fuzzy"])
-            compress_threshold: Line count threshold for content compression (default: 1000)
+            compress_threshold: Line count threshold for content compression (default: 2000)
             enable_compression: Enable automatic content compression for large documents
 
         Raises:
@@ -1251,7 +1251,7 @@ class MarkdownDocExtractor(DebugMixin):
                 debug_mode=config.get("debug_mode", 0) == 1,
                 enable_fallback=extractor_config.get("enable_fallback", False),
                 fallback_modes=extractor_config.get("fallback_modes", None),
-                compress_threshold=extractor_config.get("compress_threshold", 1000),
+                compress_threshold=extractor_config.get("compress_threshold", 2000),
                 enable_compression=extractor_config.get("enable_compression", False),
             )
         except (json.JSONDecodeError, IOError):
