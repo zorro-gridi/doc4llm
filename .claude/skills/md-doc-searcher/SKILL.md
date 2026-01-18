@@ -11,7 +11,19 @@ allowed-tools:
 
 Search and discover markdown documents in the doc4llm md_docs directory structure using semantic matching.
 
-This skill focuses on **document discovery** - finding which documents match your query. For content extraction, use the `md-doc-reader` skill.
+## Core Principle
+
+This skill focuses on **document discovery via TOC (Table of Contents)** - finding which documents match your query by searching `docTOC.md` index files.
+
+**CRITICAL:**
+- ✅ **DO:** Search `docTOC.md` files and return TOC paths
+- ✅ **DO:** Use `grep -B 10` for context when needed (Level 3.2)
+- ❌ **DON'T:** Use `Read` tool to load entire `docContent.md` files
+- ❌ **DON'T:** Return `docContent.md` paths as primary results
+
+**Workflow:** This skill finds documents → returns `docTOC.md` paths → `md-doc-reader` skill extracts content
+
+This follows the **progressive disclosure** principle: discover structure first (TOC), then access content later.
 
 ## Quick Start
 
@@ -19,12 +31,12 @@ When a user requests document search, follow this workflow:
 
 1. **List documentation sets** - Use `ls -1 md_docs/` and **filter based on user's query intent**
 2. **Select target set(s)** - Choose the most relevant documentation set(s). For generic/cross-cutting queries, consider searching MULTIPLE sets.
-3. **List document directories** - Use `Glob` or `Bash(ls)` in the selected set(s)
+3. **List docTOC.md files** - Use `Glob` or `Bash(find)` to find TOC files: `md_docs/<doc_set>/*/docTOC.md`
 4. **Read docTOC.md files** - Use `Read` tool to get table of contents for context
 5. **Semantic matching** - Use language understanding to match query with document titles
-6. **Apply progressive fallback** - If Level 1 returns insufficient results, trigger Level 2 (TOC grep) then Level 3 (cross-set search)
+6. **Apply progressive fallback** - If Level 1 returns insufficient results, trigger Level 2 (TOC grep) then Level 3 (cross-set + content search with context traceback)
 7. **Verify coverage completeness** - CRITICAL: Check if search results are comprehensive. Expand search if gaps exist.
-8. **Return comprehensive list** - Provide exhaustive list with coverage notes indicating what is/isn't covered
+8. **Return comprehensive list** - Provide exhaustive list with TOC paths, coverage notes, and Sources section
 
 **Example:**
 ```
@@ -34,11 +46,15 @@ Step 1: List and filter doc sets
   → Available: Claude_Code_Docs:latest, Python_Docs:3.11, ...
   → Filter: User mentioned "Claude Code" → Select Claude_Code_Docs:latest
 
-Step 2-6: Search within Claude_Code_Docs:latest
+Step 2-3: List docTOC.md files in selected set
+  → Glob: md_docs/Claude_Code_Docs:latest/*/docTOC.md
+
+Step 4-6: Search within Claude_Code_Docs:latest
   → Semantic match for "配置" (configuration)
   → Results:
     - Claude Code settings
     - Model configuration
+  → TOC Paths returned for md-doc-reader use
 ```
 
 ## Discovery Workflow
@@ -87,22 +103,30 @@ md_docs/*Claude*/
 
 **Important:** Always search within a **specific documentation set** to ensure accurate results. If multiple sets match the query, ask the user to confirm which one to search.
 
-### Step 2: List Document Directories in Specified Set
+### Step 2: List Document TOC Files in Specified Set
 
-Use `Glob` or `Bash(find)` to discover document directories **within the specified set**:
+**CRITICAL:** This skill focuses on **document discovery** via TOC files. Always target `docTOC.md` files, NOT directories.
+
+Use `Glob` or `Bash(find)` to discover `docTOC.md` files **within the specified set**:
 
 ```bash
-# Method 1: Using find with path restriction
-find md_docs/Claude_Code_Docs:latest -type d -mindepth 1
+# Method 1: Using find to locate TOC files (CORRECT)
+find md_docs/Claude_Code_Docs:latest -name "docTOC.md"
 
-# Method 2: Using Glob pattern
+# Method 2: Using Glob pattern (CORRECT)
+md_docs/Claude_Code_Docs:latest/*/docTOC.md
+
+# ❌ WRONG - Do NOT use directory-only patterns
 md_docs/Claude_Code_Docs:latest/*/
 
 # Expected structure:
-# md_docs/<doc_name>:<doc_version>/<PageTitle>/
+# md_docs/<doc_name>:<doc_version>/<PageTitle>/docTOC.md
 ```
 
-**Key point:** Specify the full path including the documentation set to limit search scope.
+**Key points:**
+- Always specify `docTOC.md` in the pattern to limit search to TOC files only
+- This ensures we're discovering documents through their index/structure, not full content
+- Follows **progressive disclosure** principle - TOC first, content later via md-doc-reader
 
 ### Step 3: Semantic Matching (via Prompt)
 
@@ -177,20 +201,97 @@ Keywords extracted: configure, hooks, deployment
 Grep command: grep -r -iE "(configure|hooks|deployment)" md_docs/<doc_set>/*/docTOC.md
 ```
 
-#### Level 3: Cross-Set + Full Content (Last Resort)
+#### Level 3: Cross-Set + Content Search (Last Resort)
 
 **Trigger:** Level 2 returns 0 results
 
-**Commands:**
-```bash
-# Cross-set TOC search
-grep -r -i "keyword" md_docs/*/docTOC.md
+**CRITICAL:** This level requires careful relevance filtering and context traceback to avoid meaningless results.
 
-# If still empty, content search
-grep -r -i "keyword" md_docs/*/docContent.md
+##### Level 3.1: Cross-Set TOC Search (with Relevance Constraints)
+
+**Step 1: Extract domain keywords from user query**
+```bash
+# Example: User queries "Claude Code skills design philosophy"
+# Domain keywords: Claude, Code
+# Topic keywords: skills, design, philosophy
 ```
 
-**Note:** This is the slowest but provides maximum recall. Only invoke when Level 1 and Level 2 both return 0 results.
+**Step 2: Filter documentation sets by domain relevance**
+```bash
+# List all doc sets first
+ls -1 md_docs/
+
+# Filter to only relevant sets (e.g., *Claude*, *Code*)
+# For "Claude Code skills", only search:
+# - Claude_Code_Docs:latest
+# NOT: Python_Docs, React_Docs, etc.
+```
+
+**Step 3: Search TOC files in filtered sets**
+```bash
+# Cross-set TOC search WITH domain filter
+grep -r -i "keyword" md_docs/*Claude*/docTOC.md md_docs/*Code*/docTOC.md
+```
+
+**Why this matters:** Searching "best practices" across ALL doc sets could return Python, React, or other framework-specific practices that are irrelevant to the user's actual query context.
+
+##### Level 3.2: docContent.md Context Search (with Traceback)
+
+**Trigger:** Level 3.1 returns 0 results
+
+**CRITICAL CONSTRAINTS:**
+- ❌ **NEVER** use `Read` tool to load entire docContent.md files
+- ✅ Only use `grep` with context to extract minimal information
+- ✅ Return docTOC.md paths for subsequent use by md-doc-reader
+
+**Search with context traceback:**
+```bash
+# Use grep -B to get 10 lines of context BEFORE the match
+grep -r -i -B 10 "keyword" md_docs/*RelevantSet*/docContent.md
+```
+
+**Parse results to extract:**
+1. **Documentation set name** - Extract from file path
+2. **Document title** - Extract from docContent.md (first 5 lines, look for `#` headings)
+3. **Match context** - The 10 lines before the match showing relevant section
+
+**Traceback workflow:**
+```bash
+# Step 1: Get context from grep (10 lines before match)
+grep -r -i -B 10 "design philosophy" md_docs/*Claude*/docContent.md
+
+# Step 2: Parse each result
+# Input: md_docs/Claude_Code_Docs:latest/Agent Skills/docContent.md:95: ## How Skills work
+# Extract:
+#   - Doc set: Claude_Code_Docs:latest
+#   - Document: Agent Skills
+#   - Title: (from first 5 lines of that docContent.md) → "# Agent Skills"
+#   - Context: Lines around the match
+
+# Step 3: If title not found in first 5 lines, retry with more lines
+# Retry: Check first 20 lines for title
+```
+
+**Return format for Level 3.2:**
+```markdown
+Found N relevant document(s) via Level 3.2 content search:
+
+1. **Document Title** (Doc_Set:Version)
+   - Relevance: Content contains "keyword" in section context
+   - Context: [Brief excerpt from grep -B 10 output]
+   - TOC Path: `md_docs/<doc_set>/<PageTitle>/docTOC.md`
+
+**Note:** Use `/md-doc-reader "Document Title"` to view full TOC and structure.
+```
+
+**⚠️ Updated Logic (v2.2):** Level 3 is now split into:
+- **Level 3.1:** Cross-set TOC search WITH domain relevance filtering
+- **Level 3.2:** Content search with context traceback (grep -B 10, title from 5 lines with retry)
+
+This ensures:
+1. Cross-set searches respect the user's query domain (no Python results for Claude queries)
+2. Content searches provide proper document attribution without loading full files
+3. All results point to docTOC.md for follow-up via md-doc-reader
 
 ### Step 4: Delegate to md-doc-reader
 
@@ -279,11 +380,11 @@ Found 3 relevant document(s) in Claude_Code_Docs:latest:
 - 💡 Suggestion: Search "performance" or "security" for those topics
 ```
 
-### 6. Sources Format (REQUIRED when returning content)
+### 6. Sources Format (ALWAYS REQUIRED)
 
-**IMPORTANT:** If you extract and return document content (e.g., when document is ≤ 1000 lines or user explicitly requests full content), you MUST include a **Sources** section at the end.
+**CRITICAL:** You MUST include a **Sources** section at the end of ALL search results, regardless of document length or content type.
 
-This is the same format requirement as `md-doc-processor` skill - see that skill's documentation for full details.
+This ensures proper attribution and allows users to locate the original documents for further reading.
 
 #### Required Format
 
@@ -295,31 +396,37 @@ This is the same format requirement as `md-doc-processor` skill - see that skill
 
 1. **Document Title**
    - 原文链接: https://original-url.com/docs/page
-   - 路径: `md_docs/<doc_name>:<doc_version>/<PageTitle>/docContent.md`
+   - TOC 路径: `md_docs/<doc_name>:<doc_version>/<PageTitle>/docTOC.md`
 ```
 
 #### Example
 
 ```markdown
-# Common workflows
+Found N relevant document(s):
 
-[Content...]
+1. **Common workflows** - Relevance: Contains explicit "best practices" guidance
+
+**Coverage:**
+- ✅ Covered: Workflow best practices
+- ❌ Not covered: Performance optimization
 
 ### 文档来源 (Sources)
 
 1. **Common workflows**
    - 原文链接: https://code.claude.com/docs/en/common-workflows
-   - 路径: `md_docs/Claude_Code_Docs:latest/Common workflows/docContent.md`
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Common workflows/docTOC.md`
 ```
 
 #### How to Get Source Information
 
-1. **Original URL**: Found at the top of docContent.md:
+1. **Original URL**: Found at the top of docTOC.md:
    ```markdown
    > **原文链接**: https://code.claude.com/docs/en/common-workflows
    ```
 
-2. **Local Path**: `md_docs/<doc_name>:<doc_version>/<PageTitle>/docContent.md`
+2. **Local TOC Path**: `md_docs/<doc_name>:<doc_version>/<PageTitle>/docTOC.md`
+
+**Note:** Use `/md-doc-reader "Document Title"` to view the full TOC and document structure.
 
 ## Directory Structure
 
@@ -344,7 +451,7 @@ Each `<PageTitle>` directory represents one document page.
                               ▼
               ┌───────────────────────────────┐
               │  Level 1: Title Semantic Match │
-              │  - List directories            │
+              │  - List docTOC.md files       │
               │  - Semantic understanding      │
               │  - Fast: O(k) where k = matches│
               │  - Threshold: max_sim >= 0.7   │
@@ -368,34 +475,49 @@ Each `<PageTitle>` directory represents one document page.
                                     │                   │
                                     ▼                   ▼
                           To Coverage Check    ┌───────────────────────────────┐
-                                                  │  Level 3: Max Recall         │
-                                                  │  - Cross-set TOC + Content   │
-                                                  │  - Slowest but comprehensive│
+                                                  │  Level 3.1: Cross-Set TOC   │
+                                                  │  - Filter by domain        │
+                                                  │  - grep -r across filtered │
+                                                  │    doc sets                │
                                                   └───────────────────────────────┘
                                                             │
-                                                            ▼
-                                              ┌─────────────────────────┐
-                                              │   Coverage Completeness │
-                                              │   Verification Check    │
-                                              │   - Assess query type   │
-                                              │   - Check result diversity
-                                              │   - Identify gaps      │
-                                              └─────────────────────────┘
-                                                        │
-                                          ┌─────────────┴─────────────┐
-                                          │                           │
-                                    [Coverage Complete]          [Gaps Found]
-                                    - Generic queries handled   - Expand scope
-                                    - All aspects covered      - Search other sets
-                                          │                           │
-                                          └─────────────┬─────────────┘
-                                                        ▼
-                                          ┌─────────────────────────┐
-                                          │    Return Results        │
-                                          │    With Coverage Notes   │
-                                          │    - What's covered       │
-                                          │    - What's not           │
-                                          └─────────────────────────┘
+                                                  ┌─────────┴─────────┐
+                                                  │                   │
+                                            [Results > 0]      [Results = 0]
+                                                  │                   │
+                                                  ▼                   ▼
+                                        To Coverage Check    ┌───────────────────────────────┐
+                                                                      │  Level 3.2: Content Search │
+                                                                      │  - grep -B 10 for context │
+                                                                      │  - Extract title from 5   │
+                                                                      │    lines (retry: 20)      │
+                                                                      │  - Return TOC paths only  │
+                                                                      └───────────────────────────────┘
+                                                                                │
+                                                                                ▼
+                                                                      ┌─────────────────────────┐
+                                                                      │   Coverage Completeness │
+                                                                      │   Verification Check    │
+                                                                      │   - Assess query type   │
+                                                                      │   - Check result diversity
+                                                                      │   - Identify gaps      │
+                                                                      └─────────────────────────┘
+                                                                                │
+                                                              ┌─────────────┴─────────────┐
+                                                              │                           │
+                                                        [Coverage Complete]          [Gaps Found]
+                                                        - Generic queries handled   - Expand scope
+                                                        - All aspects covered      - Search other sets
+                                                              │                           │
+                                                              └─────────────┬─────────────┘
+                                                                            ▼
+                                                              ┌─────────────────────────┐
+                                                              │    Return Results        │
+                                                              │    With Coverage Notes   │
+                                                              │    - What's covered       │
+                                                              │    - What's not           │
+                                                              │    + TOC Paths            │
+                                                              └─────────────────────────┘
 ```
 
 ## Search Completeness Guidelines
@@ -584,28 +706,34 @@ Found 1 relevant document(s):
 1. **Agent Skills** - Relevance: Direct match for "skills" query
 ```
 
-**Step 4:** 委托给 md-doc-reader 提取内容
+**Step 4:** 委托给 md-doc-reader 查看完整 TOC
 ```python
-# 使用 md-doc-reader skill 提取内容
+# 使用 md-doc-reader skill 查看 TOC 结构
 from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
 extractor = MarkdownDocExtractor()
-content = extractor.extract_by_title("Agent Skills")
+toc = extractor.extract_by_title("Agent Skills")
 ```
 
-**Step 5:** 返回内容时包含 Sources
+**Step 5:** 返回结果时始终包含 Sources
 
-如果直接返回内容（文档 ≤ 1000 行或用户请求完整内容），必须添加 Sources 部分：
+所有搜索结果都必须包含 Sources 部分：
 
 ```markdown
-# Agent Skills
+Found 1 relevant document(s):
 
-[文档内容...]
+1. **Agent Skills** - Relevance: Direct match for "skills" query
+
+**Coverage:**
+- ✅ Covered: Skills design philosophy and working principles
+- ❌ Not covered: Best practices for skill authoring
 
 ### 文档来源 (Sources)
 
 1. **Agent Skills**
    - 原文链接: https://code.claude.com/docs/en/agent-skills
-   - 路径: `md_docs/Claude_Code_Docs:latest/Agent Skills/docContent.md`
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md`
+
+**Note:** Use `/md-doc-reader "Agent Skills"` to view the full TOC and document structure.
 ```
 
 ### Workflow Example: Progressive Fallback in Action
@@ -662,40 +790,46 @@ Found 2 relevant document(s) via Level 2 fallback:
 
 **Level 3 未触发** (Level 2 已返回结果)
 
-**Step 4:** 委托给 md-doc-reader 提取内容并添加 Sources
+**Step 4:** 返回结果并包含 Sources（始终必需）
 
-```python
-# 使用 md-doc-reader skill 提取内容
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
-extractor = MarkdownDocExtractor()
-content = extractor.extract_by_title("Hooks reference")
-```
-
-返回时包含 Sources：
+返回时必须包含 Sources：
 
 ```markdown
-# Hooks Reference
+Found 2 relevant document(s) via Level 2 fallback:
 
-[文档内容...]
+1. **Hooks reference** - Relevance: TOC contains "Configure hooks" section
+2. **Get started with Claude Code hooks** - Relevance: TOC contains "Deployment hooks" section
+
+**Coverage:**
+- ✅ Covered: Hooks configuration and deployment
+- ❌ Not covered: Advanced hooks patterns
 
 ### 文档来源 (Sources)
 
 1. **Hooks reference**
    - 原文链接: https://code.claude.com/docs/en/hooks
-   - 路径: `md_docs/Claude_Code_Docs:latest/Hooks reference/docContent.md`
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Hooks reference/docTOC.md`
 
 2. **Get started with Claude Code hooks**
    - 原文链接: https://code.claude.com/docs/en/hooks-get-started
-   - 路径: `md_docs/Claude_Code_Docs:latest/Get started with Claude Code hooks/docContent.md`
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Get started with Claude Code hooks/docTOC.md`
+
+**Note:** Use `/md-doc-reader "Hooks reference"` to view the full TOC and document structure.
 ```
 
 ---
 
-**⚠️ Updated Logic (v2.1):** Level 2 is now triggered when:
-1. **No results** (results = 0), OR
-2. **Low quality matches** (max_similarity < 0.7)
+**⚠️ Updated Logic (v2.2):** Major improvements to progressive fallback:
+1. **Level 2** is triggered when: No results OR low quality matches (max_similarity < 0.7)
+2. **Level 3.1** adds domain relevance filtering for cross-set TOC searches
+3. **Level 3.2** adds context traceback for content searches (grep -B 10, title from 5 lines with retry)
+4. **All results** now include TOC paths instead of content paths
+5. **Sources section** is now always required regardless of document length
 
-This ensures better matching by falling back to TOC content search when title-only matching produces insufficient results.
+This ensures:
+- Cross-set searches respect the user's query domain
+- Content searches provide proper attribution without loading full files
+- All results point to docTOC.md for follow-up via md-doc-reader
 
 ---
 
@@ -849,18 +983,20 @@ Found 3 relevant document(s) across multiple doc sets:
 
 ## Search Scope Control
 
-**Important:** Always limit searches to a specific documentation set:
+**Important:** Always limit searches to specific docTOC.md files within a documentation set:
 
 | Method | Command | Scope |
 |--------|---------|-------|
-| **Incorrect** | `find md_docs -type d -mindepth 2` | Searches ALL documentation sets |
-| **Correct** | `find md_docs/Claude_Code_Docs:latest -type d -mindepth 1` | Searches ONLY specified set |
-| **Correct** | Glob pattern `md_docs/Claude_Code_Docs:latest/*/` | Searches ONLY specified set |
+| **Incorrect** | `find md_docs -type d -mindepth 2` | Searches ALL documentation sets (directories) |
+| **Incorrect** | `md_docs/Claude_Code_Docs:latest/*/` | Returns directories, not TOC files |
+| **Correct** | `find md_docs/Claude_Code_Docs:latest -name "docTOC.md"` | Searches ONLY TOC files in specified set |
+| **Correct** | Glob `md_docs/Claude_Code_Docs:latest/*/docTOC.md` | Searches ONLY TOC files in specified set |
 
 **Why this matters:**
 - Prevents cross-contamination between different documentation sets
 - Ensures accurate semantic matching within the correct domain
 - Improves search performance by reducing search space
+- Follows **progressive disclosure** - TOC first, content later via md-doc-reader
 
 ## Keyword Extraction for Fallback Searches
 
