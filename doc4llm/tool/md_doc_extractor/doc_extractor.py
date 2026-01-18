@@ -6,6 +6,7 @@ from markdown documents stored in the md_docs directory structure.
 """
 import json
 import re
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -19,6 +20,54 @@ from .exceptions import (
     NoDocumentsFoundError,
     SingleFileNotFoundError,
 )
+
+
+@dataclass
+class ExtractionResult:
+    """Result of multi-document extraction with metadata.
+
+    Attributes:
+        contents: Dictionary mapping document titles to their content
+        total_line_count: Cumulative line count across all extracted documents
+        individual_counts: Dictionary mapping document titles to their line counts
+        requires_processing: Whether total line count exceeds threshold (default: > 2100)
+        threshold: The threshold used for requires_processing check
+        document_count: Number of successfully extracted documents
+    """
+    contents: Dict[str, str]
+    total_line_count: int
+    individual_counts: Dict[str, int] = field(default_factory=dict)
+    requires_processing: bool = False
+    threshold: int = 2100
+    document_count: int = 0
+
+    def __post_init__(self):
+        """Calculate derived fields after initialization."""
+        self.document_count = len(self.contents)
+        # Update requires_processing based on threshold
+        self.requires_processing = self.total_line_count > self.threshold
+
+    def to_summary(self) -> str:
+        """Return a human-readable summary of the extraction result."""
+        lines = [
+            f"📊 Extraction Result Summary:",
+            f"   Documents extracted: {self.document_count}",
+            f"   Total line count: {self.total_line_count}",
+            f"   Threshold: {self.threshold}",
+        ]
+        if self.requires_processing:
+            lines.append(f"   ⚠️  THRESHOLD EXCEEDED by {self.total_line_count - self.threshold} lines")
+            lines.append(f"   → md-doc-processor SHOULD be invoked")
+        else:
+            margin = self.threshold - self.total_line_count
+            lines.append(f"   ✓ Within threshold (margin: {margin} lines)")
+            lines.append(f"   → Can return directly to user")
+
+        lines.append("\n Individual document breakdown:")
+        for title, count in self.individual_counts.items():
+            lines.append(f"   - {title}: {count} lines")
+
+        return "\n".join(lines)
 
 
 class MarkdownDocExtractor(DebugMixin):
@@ -461,6 +510,102 @@ class MarkdownDocExtractor(DebugMixin):
         self._debug_print(f"Successfully extracted {len(results)}/{len(titles)} documents")
 
         return results
+
+    def extract_by_titles_with_metadata(
+        self,
+        titles: List[str],
+        threshold: int = 2100
+    ) -> ExtractionResult:
+        """Extract multiple documents with complete metadata including line counts.
+
+        This method is designed for multi-document scenarios where cumulative
+        line count tracking is critical for determining whether post-processing
+        is required (e.g., invoking md-doc-processor for compression).
+
+        Args:
+            titles: List of document titles to extract
+            threshold: Line count threshold for requiring post-processing (default: 2100)
+
+        Returns:
+            ExtractionResult containing:
+                - contents: Dict mapping title to content
+                - total_line_count: Cumulative line count across ALL documents
+                - individual_counts: Dict mapping title to its line count
+                - requires_processing: Whether total_line_count exceeds threshold
+                - threshold: The threshold used for the check
+                - document_count: Number of successfully extracted documents
+
+        Examples:
+            >>> extractor = MarkdownDocExtractor()
+            >>> result = extractor.extract_by_titles_with_metadata([
+            ...     "Hooks reference",
+            ...     "Deployment guide",
+            ...     "Best practices"
+            ... ])
+            >>>
+            >>> # Check if processing is required
+            >>> if result.requires_processing:
+            ...     print(f"Need to process: {result.total_line_count} lines")
+            ...     # Invoke md-doc-processor
+            ... else:
+            ...     print(f"Within threshold: {result.total_line_count} lines")
+            ...     # Return directly
+            >>>
+            >>> # Print summary
+            >>> print(result.to_summary())
+        """
+        if not titles:
+            return ExtractionResult(
+                contents={},
+                total_line_count=0,
+                individual_counts={},
+                requires_processing=False,
+                threshold=threshold,
+                document_count=0
+            )
+
+        self._debug_print(f"Extracting {len(titles)} documents with metadata tracking")
+
+        results: Dict[str, str] = {}
+        individual_counts: Dict[str, int] = {}
+        total_lines = 0
+
+        for title in titles:
+            content = self.extract_by_title(title)
+            # In single file mode, empty string means no match
+            # In directory mode, None means not found
+            if content and content != "":
+                results[title] = content
+                line_count = len(content.split('\n'))
+                individual_counts[title] = line_count
+                total_lines += line_count
+                self._debug_print(f"  ✓ '{title}': {line_count} lines")
+            else:
+                self._debug_print(f"  ✗ Failed to extract: '{title}'")
+
+        # Determine if processing is required
+        requires_processing = total_lines > threshold
+
+        result = ExtractionResult(
+            contents=results,
+            total_line_count=total_lines,
+            individual_counts=individual_counts,
+            requires_processing=requires_processing,
+            threshold=threshold,
+            document_count=len(results)
+        )
+
+        self._debug_print(f"\n📊 Extraction Summary:")
+        self._debug_print(f"   Extracted: {result.document_count}/{len(titles)} documents")
+        self._debug_print(f"   Total lines: {total_lines}")
+        self._debug_print(f"   Threshold: {threshold}")
+        if requires_processing:
+            self._debug_print(f"   ⚠️  THRESHOLD EXCEEDED by {total_lines - threshold} lines")
+        else:
+            margin = threshold - total_lines
+            self._debug_print(f"   ✓ Within threshold (margin: {margin} lines)")
+
+        return result
 
     def search_documents(self, title: str) -> List[Dict[str, Any]]:
         """Search for documents matching a title pattern.

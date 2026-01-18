@@ -178,15 +178,45 @@ Output:
 
 **Skill:** `md-doc-reader`
 
-**Your Action:** Invoke md-doc-reader for each document title
+**Your Action:** Use `extract_by_titles_with_metadata()` for multi-document scenarios
+
+**CRITICAL:** For multi-document extraction, you MUST use the new `extract_by_titles_with_metadata()` method:
+
+```python
+from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, ExtractionResult
+
+extractor = MarkdownDocExtractor()
+
+# For multiple documents - ALWAYS use this method
+result = extractor.extract_by_titles_with_metadata(
+    titles=["Doc1", "Doc2", "Doc3"],  # From Phase 1 results
+    threshold=2100
+)
+
+# The result contains:
+# - result.contents: Dict[str, str] - All document content
+# - result.total_line_count: int - Cumulative line count (sum of ALL docs)
+# - result.requires_processing: bool - Whether threshold exceeded
+# - result.individual_counts: Dict[str, int] - Each doc's line count
+```
 
 **What It Does:**
-1. Uses `MarkdownDocExtractor` Python API
-2. **Always extracts complete content** using `extract_by_title()`
-3. Reports **total line count** of all extracted content (cumulative count if multiple documents)
-4. Returns full content to you (the orchestrator)
+1. Uses `MarkdownDocExtractor.extract_by_titles_with_metadata()` Python API
+2. **Always extracts complete content** for all documents
+3. **Automatically calculates cumulative line count** across ALL documents
+4. Returns `ExtractionResult` dataclass with metadata
 
-**Output:** Complete document content + total line count (sum of all extracted documents)
+**Output:** `ExtractionResult` containing:
+- `contents`: Complete document content (dict mapping titles to content)
+- `total_line_count`: **Cumulative line count (sum of ALL extracted documents)**
+- `individual_counts`: Line count for each document
+- `requires_processing`: Boolean flag indicating if threshold exceeded
+- `to_summary()`: Human-readable summary for debugging
+
+**Why This Method is Critical:**
+- **Prevents threshold bypass bugs** - Forces cumulative line count calculation
+- **Hard constraint enforcement** - Returns `requires_processing` flag that must be checked
+- **Debug visibility** - Provides `to_summary()` for troubleshooting
 
 **Source Citation Information to Extract:**
 Each document contains source metadata at the beginning:
@@ -207,12 +237,14 @@ You MUST extract and preserve:
 
 ### Phase 2.5: Conditional Check (Your Decision)
 
-**After Phase 2 completes, YOU decide whether to invoke Phase 3:**
+**After Phase 2 completes, check the `ExtractionResult.requires_processing` flag:**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  INPUT: User Query + Total Line Count from Phase 2          │
-│         (Cumulative count of ALL extracted documents)        │
+│  INPUT: ExtractionResult from Phase 2                       │
+│         - result.requires_processing: bool                   │
+│         - result.total_line_count: int                       │
+│         - result.contents: Dict[str, str]                    │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
@@ -236,8 +268,13 @@ You MUST extract and preserve:
 
 **Skip Phase 3 (Return content directly) WHEN:**
 
-```
-IF (total_line_count <= 2000) AND (user has NOT requested compression):
+```python
+# After Phase 2, you have ExtractionResult
+result = extractor.extract_by_titles_with_metadata(titles, threshold=2100)
+
+# Check the flag
+if not result.requires_processing and user_has_not_requested_compression():
+    # Within threshold - safe to return directly
     SKIP Phase 3
     Return full content directly to user WITH source citations
 ```
@@ -247,7 +284,7 @@ IF (total_line_count <= 2000) AND (user has NOT requested compression):
 ```markdown
 === AOP-FINAL | agent=doc-retriever | format=markdown | lines={actual_count} | source={doc_dir} ===
 
-[Document content here]
+[Document content here - from result.contents]
 
 ---
 **Source:** [Original URL from document]
@@ -259,13 +296,43 @@ IF (total_line_count <= 2000) AND (user has NOT requested compression):
 
 **Invoke Phase 3 (Need md-doc-processor) WHEN:**
 
-```
-IF (total_line_count > 2000) OR (user HAS requested compression):
+```python
+# After Phase 2, you have ExtractionResult
+result = extractor.extract_by_titles_with_metadata(titles, threshold=2100)
+
+# Check the flag
+if result.requires_processing or user_has_requested_compression():
+    # Threshold exceeded OR user wants compression
     INVOKE Phase 3 (md-doc-processor)
     md-doc-processor will handle citation formatting
 ```
 
-**Important:** `total_line_count` is the sum of line counts from ALL extracted documents, not the line count of a single document.
+**CRITICAL - Why This is Mandatory:**
+
+The `ExtractionResult.requires_processing` flag is a **hard constraint** that prevents threshold bypass bugs in multi-document scenarios:
+
+```python
+# Example: Multi-document scenario
+result = extractor.extract_by_titles_with_metadata([
+    "Hooks reference",      # 1200 lines
+    "Deployment guide",     # 1100 lines
+    "Best practices"        # 900 lines
+], threshold=2100)
+
+# ExtractionResult automatically calculates:
+# - total_line_count: 3200 (cumulative!)
+# - requires_processing: True (3200 > 2100)
+# - individual_counts: {"Hooks reference": 1200, ...}
+
+# You MUST check the flag:
+if result.requires_processing:
+    # → MANDATORY: Invoke md-doc-processor
+    # DO NOT skip this step!
+    invoke_md_doc_processor(result.contents, result.total_line_count)
+else:
+    # → Safe to return directly
+    return format_with_citations(result.contents)
+```
 
 **User compression request indicators:**
 - Chinese: "压缩", "总结", "摘要", "精简"
@@ -470,7 +537,7 @@ Total line count (450) <= 2000 BUT user requested compression ("压缩", "总结
 [md-doc-processor output displayed directly to user - DO NOT modify]
 ```
 
-### Example 5: Complex Query with Decomposition - NEW
+### Example 5: Multi-Document Fusion with Threshold Check (CRITICAL EXAMPLE)
 
 **User:** "use contextZ find about hooks 配置以及部署注意事项"
 
@@ -496,16 +563,59 @@ Optimized Queries (Ranked):
 Searching with multiple optimized queries...
 Found: "Hooks reference", "Get started with Claude Code hooks"
 
-[Phase 2: Invoke md-doc-reader to extract content]
-Extracted: 2200 lines total from both documents
+[Phase 2: Invoke md-doc-reader with extract_by_titles_with_metadata()]
+```python
+from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, ExtractionResult
+
+extractor = MarkdownDocExtractor()
+
+# CRITICAL: Use extract_by_titles_with_metadata for multi-document
+result = extractor.extract_by_titles_with_metadata([
+    "Hooks reference",
+    "Get started with Claude Code hooks"
+], threshold=2100)
+
+# Print summary for debugging
+print(result.to_summary())
+```
+
+Output:
+```
+📊 Extraction Result Summary:
+   Documents extracted: 2
+   Total line count: 3200
+   Threshold: 2100
+   ⚠️  THRESHOLD EXCEEDED by 1100 lines
+   → md-doc-processor SHOULD be invoked
+
+ Individual document breakdown:
+   - Hooks reference: 1200 lines
+   - Get started with Claude Code hooks: 1100 lines
+```
 
 [Phase 2.5: Conditional Check]
-Total line count (2200) > 2000
+```python
+# CRITICAL: Check the requires_processing flag
+if result.requires_processing:
+    # Threshold exceeded (3200 > 2100)
+    # → MUST invoke md-doc-processor
+    INVOKE Phase 3
+else:
+    # Would return directly (not in this case)
+    RETURN directly
+```
+
+Decision: result.requires_processing = True
  INVOKE Phase 3
 
-[Phase 3: Invoke md-doc-processor - RETURNS FINAL OUTPUT]
+[Phase 3: Invoke md-doc-processor with result.contents and result.total_line_count]
 [md-doc-processor output displayed directly to user - DO NOT modify]
 ```
+
+**Key Learning:** This example demonstrates why `extract_by_titles_with_metadata()` is critical:
+- Without it: agent might "forget" to sum (1200 + 1100 = 3200) lines
+- With it: `result.requires_processing` flag is automatically calculated
+- Result: Threshold check is **guaranteed** to be correct
 
 ## Skill Delegation Reference
 
@@ -513,19 +623,21 @@ Total line count (2200) > 2000
 |-------|-------|-------------|-------|--------|
 | **0** | md-doc-query-optimizer | Always | Raw user query | 3-5 optimized queries with annotations |
 | **1** | md-doc-searcher | Always | Optimized queries (from Phase 0) | Document titles with TOC paths |
-| **2** | md-doc-reader | Always | Document titles | Full content + total line count |
-| **2.5** | Your Check | Always | Query + total line count | Decision (skip/Invoke Phase 3) |
-| **3** | md-doc-processor | Conditional* | Query + content + total line count | Final output (full/compressed) + citation |
+| **2** | md-doc-reader | Always | Document titles | `ExtractionResult` (contents, total_line_count, requires_processing, etc.) |
+| **2.5** | Your Check | Always | `ExtractionResult` from Phase 2 | Decision (skip/Invoke Phase 3) based on `requires_processing` flag |
+| **3** | md-doc-processor | Conditional* | Query + `result.contents` + `result.total_line_count` | Final output (full/compressed) + citation |
 
-*Phase 3 is invoked ONLY when: `(total_line_count > 2000) OR (user requested compression)`
+*Phase 3 is invoked ONLY when: `result.requires_processing == True OR user requested compression`
+
+**IMPORTANT:** Phase 2 MUST use `extract_by_titles_with_metadata()` which returns `ExtractionResult` with the `requires_processing` flag. This prevents threshold bypass bugs in multi-document scenarios.
 
 ## Important Constraints
 
 - **READ ONLY**: You cannot modify any files (Write, Edit disallowed)
 - **Always optimize queries in Phase 0** - Use md-doc-query-optimizer for all queries
 - **Pass optimized queries to Phase 1** - md-doc-searcher receives optimized queries, not raw input
-- **Always extract full content in Phase 2** - Never compress at extraction phase
-- **Perform conditional check (Phase 2.5)** - Decide whether Phase 3 is needed
+- **Always use `extract_by_titles_with_metadata()` in Phase 2** - Never use manual extraction for multi-document
+- **Check `result.requires_processing` flag in Phase 2.5** - This is a hard constraint that prevents bugs
 - **Skip Phase 3 when possible** - Optimize performance by avoiding unnecessary skill invocations
 - **Preserve data flow** - Pass complete context between phases
 - **Always cite sources** - Include URL, path, and doc set info with all returned content

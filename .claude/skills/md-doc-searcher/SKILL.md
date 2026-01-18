@@ -5,6 +5,7 @@ allowed-tools:
   - Read
   - Glob
   - Bash
+context: fork
 ---
 
 # Markdown Document Searcher

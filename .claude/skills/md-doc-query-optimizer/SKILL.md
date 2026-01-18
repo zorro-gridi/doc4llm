@@ -1,6 +1,7 @@
 ---
 name: md-doc-query-optimizer
 description: "Optimize and rewrite user queries for better document retrieval. Use when the user's query is ambiguous, complex, or could benefit from expansion. Supports query decomposition, expansion, synonym replacement, and multi-query generation. Returns optimized queries for document search."
+context: fork
 ---
 
 # Markdown Document Query Optimizer

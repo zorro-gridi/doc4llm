@@ -5,6 +5,7 @@ allowed-tools:
   - Read
   - Glob
   - Bash
+context: fork
 ---
 
 # Markdown Document Reader
@@ -14,11 +15,22 @@ Extract content from markdown documents in the doc4llm md_docs directory structu
 ## Quick Start
 
 ```python
-from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor
+from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, ExtractionResult
 
 # Directory mode (default: md_docs)
 extractor = MarkdownDocExtractor()
 content = extractor.extract_by_title("Agent Skills - Claude Code Docs")
+
+# Multi-document extraction with metadata tracking (RECOMMENDED for doc-retriever)
+result = extractor.extract_by_titles_with_metadata([
+    "Hooks reference",
+    "Deployment guide"
+])
+if result.requires_processing:
+    print(f"Need md-doc-processor: {result.total_line_count} lines")
+else:
+    print(f"Within threshold: {result.total_line_count} lines")
+print(result.to_summary())  # Print detailed summary
 
 # Single file mode
 extractor = MarkdownDocExtractor(single_file_path="/path/to/file.md")
@@ -77,6 +89,55 @@ Extract content for a single document title. Returns `None` if not found.
 ### `extract_by_titles(titles: List[str]) -> Dict[str, str]`
 
 Extract content for multiple document titles.
+
+### `extract_by_titles_with_metadata(titles: List[str], threshold: int = 2100) -> ExtractionResult`
+
+**NEW in v2.5.0:** Extract multiple documents with complete metadata tracking. This is the **RECOMMENDED method for doc-retriever agent** when handling multiple documents.
+
+Returns an `ExtractionResult` dataclass with:
+- `contents: Dict[str, str]` - Document titles mapped to their content
+- `total_line_count: int` - **Cumulative line count across ALL documents**
+- `individual_counts: Dict[str, int]` - Each document's line count
+- `requires_processing: bool` - Whether `total_line_count` exceeds `threshold`
+- `threshold: int` - The threshold used (default: 2100)
+- `document_count: int` - Number of successfully extracted documents
+- `to_summary() -> str` - Human-readable summary
+
+**Critical for Multi-Document Scenarios:**
+```python
+from doc4llm.tool.md_doc_extractor import MarkdownDocExtractor, ExtractionResult
+
+extractor = MarkdownDocExtractor()
+
+# Extract multiple documents with metadata
+result = extractor.extract_by_titles_with_metadata([
+    "Hooks reference",
+    "Deployment guide",
+    "Best practices"
+])
+
+# Check if post-processing is required
+if result.requires_processing:
+    # Total line count exceeds threshold
+    # → MUST invoke md-doc-processor
+    invoke_md_doc_processor(
+        query=user_query,
+        contents=result.contents,
+        line_count=result.total_line_count
+    )
+else:
+    # Within threshold - safe to return directly
+    return format_with_citations(result.contents)
+
+# Print detailed summary
+print(result.to_summary())
+```
+
+**Why This Method is Critical:**
+- **Prevents threshold bypass bugs** - Forces cumulative line count calculation
+- **Hard constraint** - Returns `requires_processing` flag that cannot be ignored
+- **Debug visibility** - Provides `to_summary()` for troubleshooting
+- **Multi-document safety** - Designed specifically for fusion scenarios
 
 ### `search_documents(title: str) -> List[Dict]`
 

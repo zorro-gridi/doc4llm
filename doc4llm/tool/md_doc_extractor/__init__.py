@@ -15,7 +15,7 @@ Agentic matching:
     >>> results = matcher.match("skills")
 """
 
-from .doc_extractor import MarkdownDocExtractor
+from .doc_extractor import MarkdownDocExtractor, ExtractionResult
 from .agentic_matcher import (
     AgenticDocMatcher,
     ProgressiveRetriever,
@@ -71,6 +71,7 @@ from .utils import (
 __all__ = [
     # Main extractor class
     "MarkdownDocExtractor",
+    "ExtractionResult",  # Multi-document extraction result with metadata (v2.5.0)
     # Agentic matcher (v2.0.0)
     "AgenticDocMatcher",
     "ProgressiveRetriever",

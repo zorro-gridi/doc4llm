@@ -4,6 +4,7 @@ description: "Post-process extracted markdown documentation to decide between re
 allowed-tools:
   - Read
   - Bash
+context: fork
 ---
 
 # Markdown Document Post-Processor
