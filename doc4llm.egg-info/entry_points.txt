@@ -1,2 +1,0 @@
-[console_scripts]
-doc4llm = doc4llm.cli:main

@@ -118,6 +118,7 @@ When agents return results, they wrap their output with special markers that tel
 === END-AOP-CONTEXT ===
 
 === AOP-FINAL ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 [main content]
 === END-AOP-FINAL ===
 ```

@@ -65,6 +65,7 @@ A unified marker system for agent outputs that prevents unwanted modifications, 
 ### Example
 ```
 === AOP-FINAL | agent=doc-retriever | format=markdown | lines={total_lines} | source={doc_dir} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 [Document content here...]
 
@@ -97,6 +98,7 @@ You MUST wrap all final outputs with AOP markers:
 
 ```markdown
 === AOP-FINAL | agent=your-agent-name ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 [your output]
 === END-AOP-FINAL ===
 ```
@@ -146,6 +148,7 @@ In strict mode, if a marker is detected, behavior is MANDATORY (not optional).
 from AOP_VALIDATION import validate_agent_output
 
 output = """=== AOP-FINAL | agent=test ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 content
 === END-AOP-FINAL ==="""
 
@@ -169,6 +172,7 @@ All 10 tests should pass.
 
 ```
 === AOP-FINAL | agent=doc-retriever | format=markdown | lines={total_lines} | source=<doc_dir> ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 # Agent Skills
 
@@ -186,6 +190,7 @@ All 10 tests should pass.
 
 ```
 === AOP-FINAL | agent=doc-qa-agentic | confidence=0.92 | sources=3 ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 ## Hooks Configuration and Deployment
 

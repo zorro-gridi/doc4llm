@@ -53,6 +53,7 @@ DO NOT:
 ```
 Agent Output:
 === AOP-FINAL | agent=doc-retriever | lines=<total_lines> ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 [content]
 === END-AOP-FINAL ===
 

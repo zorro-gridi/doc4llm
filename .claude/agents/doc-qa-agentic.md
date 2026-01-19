@@ -25,6 +25,7 @@ This agent uses **Agent Output Protocol (AOP)** and returns **AOP-FINAL** output
 **AOP Marker Format:**
 ```
 === AOP-FINAL | agent=doc-qa-agentic | confidence={score} | sources={count} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 [answer content]
 === END-AOP-FINAL ===
 ```
@@ -257,6 +258,7 @@ The `result` contains:
 
 ```markdown
 === AOP-FINAL | agent=doc-qa-agentic | confidence=0.95 | sources=2 ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 ## [Question Topic]
 
@@ -280,6 +282,7 @@ Based on the documentation:
 
 ```markdown
 === AOP-FINAL | agent=doc-qa-agentic | confidence=0.88 | sources=3 ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 ## [Question Topic]
 
@@ -346,6 +349,7 @@ If confidence < 0.6, use **AOP-FINAL** with low confidence:
 
 ```markdown
 === AOP-FINAL | agent=doc-qa-agentic | confidence={low_value} | sources={count} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 ## Answer
 
@@ -366,6 +370,7 @@ If sources conflict, use **AOP-FINAL** with conflict note:
 
 ```markdown
 === AOP-FINAL | agent=doc-qa-agentic | confidence={value} | sources={count} | conflict=true ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 ## Answer
 

@@ -1,0 +1,135 @@
+[2026-01-19 16:34:34] doc-retriever: Bash tool used
+[2026-01-19 16:34:34] Command: ls -1 /Users/zorro/project/doc4llm/md_docs/
+[2026-01-19 16:34:34] Document extraction detected: ls -1 /Users/zorro/project/doc4llm/md_docs/
+[2026-01-19 16:34:57] doc-retriever: Bash tool used
+[2026-01-19 16:34:57] Command: python -c "
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+
+extractor = MarkdownDocExtractor()
+
+# Extract from both documents
+result = extractor.extract_by_titles_with_metadata(
+    titles=['Agent Skills', 'Slash commands'],
+    threshold=2100
+)
+
+# Display metadata
+print('Extraction Metadata:')
+print(f'Total line count: {result.total_line_count}')
+print(f'Requires processing: {result.requires_processing}')
+print(f'Individual counts: {result.individual_counts}')
+"
+[2026-01-19 16:34:57] Document extraction detected: python -c "
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+
+extractor = MarkdownDocExtractor()
+
+# Extract from both documents
+result = extractor.extract_by_titles_with_metadata(
+    titles=['Agent Skills', 'Slash commands'],
+    threshold=2100
+)
+
+# Display metadata
+print('Extraction Metadata:')
+print(f'Total line count: {result.total_line_count}')
+print(f'Requires processing: {result.requires_processing}')
+print(f'Individual counts: {result.individual_counts}')
+"
+[2026-01-19 16:38:07] doc-retriever session ended: unknown
+[2026-01-19 16:41:16] doc-retriever: Bash tool used
+[2026-01-19 16:41:16] Command: ls -1 md_docs/
+[2026-01-19 16:41:16] Document extraction detected: ls -1 md_docs/
+[2026-01-19 16:41:25] doc-retriever: Bash tool used
+[2026-01-19 16:41:25] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills"
+[2026-01-19 16:41:25] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills"
+[2026-01-19 16:42:09] doc-retriever session ended: unknown
+[2026-01-19 16:56:37] doc-retriever: Bash tool used
+[2026-01-19 16:56:37] Command: ls -la /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/
+[2026-01-19 16:58:01] doc-retriever: Bash tool used
+[2026-01-19 16:58:01] Command: ls -1 /Users/zorro/project/doc4llm/md_docs/
+[2026-01-19 16:58:01] Document extraction detected: ls -1 /Users/zorro/project/doc4llm/md_docs/
+[2026-01-19 16:59:32] doc-retriever: Bash tool used
+[2026-01-19 16:59:32] Command: find md_docs/Claude_Code_Docs:latest -type d -maxdepth 1 -name "*kill*" -o -name "*Skill*" 2>/dev/null | head -20
+[2026-01-19 16:59:32] Document extraction detected: find md_docs/Claude_Code_Docs:latest -type d -maxdepth 1 -name "*kill*" -o -name "*Skill*" 2>/dev/null | head -20
+[2026-01-19 17:02:54] doc-retriever: Bash tool used
+[2026-01-19 17:02:54] Command: python -c "
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
+
+extractor = MarkdownDocExtractor()
+
+# For multiple documents - ALWAYS use this method
+result = extractor.extract_by_titles_with_metadata(
+    titles=['Agent Skills'],
+    threshold=2100
+)
+
+# Output the result metadata
+print(f'Total line count: {result.total_line_count}')
+print(f'Requires processing: {result.requires_processing}')
+print(f'Individual counts: {result.individual_counts}')
+"
+[2026-01-19 17:02:54] Document extraction detected: python -c "
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
+
+extractor = MarkdownDocExtractor()
+
+# For multiple documents - ALWAYS use this method
+result = extractor.extract_by_titles_with_metadata(
+    titles=['Agent Skills'],
+    threshold=2100
+)
+
+# Output the result metadata
+print(f'Total line count: {result.total_line_count}')
+print(f'Requires processing: {result.requires_processing}')
+print(f'Individual counts: {result.individual_counts}')
+"
+[2026-01-19 17:04:35] doc-retriever: Bash tool used
+[2026-01-19 17:04:35] Command: python -c "
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+
+extractor = MarkdownDocExtractor()
+result = extractor.extract_by_titles_with_metadata(
+    titles=['Agent Skills'],
+    threshold=2100
+)
+
+# Output the content
+print(result.contents['Agent Skills'])
+"
+[2026-01-19 17:04:35] Document extraction detected: python -c "
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+
+extractor = MarkdownDocExtractor()
+result = extractor.extract_by_titles_with_metadata(
+    titles=['Agent Skills'],
+    threshold=2100
+)
+
+# Output the content
+print(result.contents['Agent Skills'])
+"
+[2026-01-19 17:18:34] doc-retriever: Bash tool used
+[2026-01-19 17:18:34] Command: ls -1 md_docs/
+[2026-01-19 17:18:34] Document extraction detected: ls -1 md_docs/
+[2026-01-19 17:18:47] doc-retriever: Bash tool used
+[2026-01-19 17:18:47] Command: python3 -c "
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+extractor = MarkdownDocExtractor()
+result = extractor.extract_by_titles_with_metadata(['Agent Skills'], threshold=2100)
+print(f'Total lines: {result.total_line_count}')
+print(f'Requires processing: {result.requires_processing}')
+print('--- CONTENT ---')
+print(result.contents.get('Agent Skills', ''))
+"
+[2026-01-19 17:18:47] Document extraction detected: python3 -c "
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+extractor = MarkdownDocExtractor()
+result = extractor.extract_by_titles_with_metadata(['Agent Skills'], threshold=2100)
+print(f'Total lines: {result.total_line_count}')
+print(f'Requires processing: {result.requires_processing}')
+print('--- CONTENT ---')
+print(result.contents.get('Agent Skills', ''))
+"
+[2026-01-19 17:22:12] doc-retriever session ended: unknown

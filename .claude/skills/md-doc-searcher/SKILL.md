@@ -6,6 +6,8 @@ allowed-tools:
   - Glob
   - Bash
 context: fork
+protocol: AOP
+protocol_version: "1.0"
 ---
 
 # Markdown Document Searcher
@@ -54,9 +56,9 @@ This skill focuses on **document discovery via TOC (Table of Contents)** - findi
 
 This follows the **progressive disclosure** principle: discover structure first (TOC), then access content later.
 
-## Helper Functions (v2.6.0)
+## SearchHelpers API
 
-This skill now leverages helper functions for deterministic operations, while preserving LLM semantic understanding for core matching logic.
+This skill leverages helper functions for deterministic operations:
 
 ```python
 from doc4llm.tool.md_doc_retrieval import SearchHelpers
@@ -75,6 +77,12 @@ SearchHelpers.extract_original_url(toc_content)     # Extract source URL from TO
 SearchHelpers.extract_keywords(query)               # Basic keyword extraction
 SearchHelpers.build_title_extraction_command(path, max_lines=5)
 
+# Content language and TOC processing (v2.9.0)
+SearchHelpers.extract_toc_headings(toc_content, max_headings=10)  # Extract markdown headings
+SearchHelpers.detect_content_language(content)      # Detect language: 'zh', 'en', 'mixed'
+SearchHelpers.format_language_appropriate_results(results, language)  # Language-aware formatting
+SearchHelpers.build_toc_content_extraction_command(toc_path, max_lines=50)
+
 # Formatting helpers
 SearchHelpers.format_sources_section(titles_and_urls)
 SearchHelpers.format_coverage_section(covered, partial, not_covered, suggestion)
@@ -82,61 +90,40 @@ SearchHelpers.format_coverage_section(covered, partial, not_covered, suggestion)
 # Documentation set helpers
 SearchHelpers.get_list_command(base_dir="md_docs")  # → "ls -1 md_docs/"
 SearchHelpers.build_doc_set_filter_pattern(intent_keywords)
+
+# Intent analysis and filtering helpers (Step 6)
+SearchHelpers.analyze_query_intent(original_query)  # → Intent classification
+SearchHelpers.calculate_relevance_score(doc_title, doc_context, query_intent)
+SearchHelpers.format_filtered_results(high_rel, medium_rel, filtered_out)
+SearchHelpers.format_filtering_summary(original_count, final_count, precision_improvement)
 ```
 
-**Key Principle:** These helpers handle repetitive formatting and construction tasks. Core semantic understanding (intent analysis, concept matching, context reasoning) remains with the LLM.
+**📖 See:** `reference/search-helpers-api.md` for complete API documentation
 
 ## Quick Start
 
 When invoked with optimized queries from `md-doc-query-optimizer`, follow this workflow:
 
-**Input:** 3-5 optimized queries (e.g., ["hooks configuration", "setup hooks", "hooks settings"])
+1. **List doc sets** - Use `SearchHelpers.get_list_command()` and filter based on query intent
+2. **List docTOC.md files** - Use `SearchHelpers.build_toc_glob_pattern()` + `Glob`
+3. **Read TOC files** - Get table of contents for semantic matching context
+4. **Multi-query matching** - Search ALL optimized queries, aggregate and deduplicate
+5. **Progressive fallback** - If Level 1 fails (<0.7 similarity), trigger Level 2→3
+6. **Verify coverage** - Ensure completeness, search multiple sets for generic queries
+7. **Intent-based filtering** - Analyze original query intent, remove low-relevance docs (see Step 6)
+8. **Extract TOC content** - Detect language and extract headings from kept results
+9. **Return AOP-FINAL** - See "Return Format Requirements" section for output format
 
-1. **List documentation sets** - Use `SearchHelpers.get_list_command()` and **filter based on optimized queries**
-2. **Select target set(s)** - Choose the most relevant documentation set(s). For generic/cross-cutting queries, consider searching MULTIPLE sets.
-3. **List docTOC.md files** - Use `Glob` or `SearchHelpers.build_toc_glob_pattern()`
-4. **Read docTOC.md files** - Use `Read` tool to get table of contents for context
-5. **Multi-query semantic matching** - Search with ALL optimized queries, aggregate results, deduplicate
-6. **Apply progressive fallback** - If Level 1 returns insufficient results, trigger Level 2 (TOC grep) then Level 3 (cross-set + content search with context traceback)
-7. **Verify coverage completeness** - CRITICAL: Check if search results are comprehensive. Expand search if gaps exist.
-8. **Return comprehensive list** - Provide exhaustive list with TOC paths, coverage notes, and Sources section
+**Example:** Query "hooks configuration" → 3 optimized queries → Select Claude_Code_Docs → Multi-query search → Intent filter (CONFIGURE) → 2 high-relevance docs → AOP-FINAL output
 
-**Example:**
-```
-Input from md-doc-query-optimizer:
-  1. "hooks configuration" - translation
-  2. "setup hooks" - expansion
-  3. "hooks settings" - expansion
-
-Step 1: List and filter doc sets
-  → Available: Claude_Code_Docs:latest, Python_Docs:3.11, ...
-  → Filter: Optimized queries indicate "hooks" → Select Claude_Code_Docs:latest
-
-Step 2-3: List docTOC.md files in selected set
-  → Glob: md_docs/Claude_Code_Docs:latest/*/docTOC.md
-  → Or use: SearchHelpers.build_toc_glob_pattern("Claude_Code_Docs:latest")
-
-Step 4-6: Multi-query search within Claude_Code_Docs:latest
-  → Search with query 1: "hooks configuration"
-  → Search with query 2: "setup hooks"
-  → Search with query 3: "hooks settings"
-  → Aggregate and deduplicate results
-  → Results:
-    - Hooks reference (matched by queries 1, 2, 3)
-    - Get started with Claude Code hooks (matched by query 2)
-  → TOC Paths returned for md-doc-reader use
-```
-
-## Discovery Workflow
+## Core Search Workflow
 
 ### Step 1: Identify Documentation Set with Intent Filtering
 
 First, list available documentation sets and **filter based on user's query intent**:
 
 ```bash
-# Use helper to get the list command
 SearchHelpers.get_list_command()  # → "ls -1 md_docs/"
-# Then execute via Bash tool
 ```
 
 **Intent-Based Filtering (LLM Semantic Analysis):**
@@ -154,44 +141,20 @@ SearchHelpers.get_list_command()  # → "ls -1 md_docs/"
 | "如何配置 hooks" | `Claude_Code_Docs:latest` (context) | "hooks" suggests Claude Code context |
 | "所有关于 deployment 的文档" | Ask user | Multiple sets may contain deployment info |
 
-**Helper for filtered patterns:**
-```python
-SearchHelpers.build_doc_set_filter_pattern(["Claude", "Code"])
-# → "md_docs/*Claude* md_docs/*Code*"
-```
-
-**Important:** Always search within a **specific documentation set** to ensure accurate results. If multiple sets match the query, ask the user to confirm which one to search.
-
 ### Step 2: List Document TOC Files in Specified Set
 
 **CRITICAL:** This skill focuses on **document discovery** via TOC files. Always target `docTOC.md` files, NOT directories.
 
 **Method 1: Using Glob pattern (CORRECT)**
 ```bash
-# Use helper to build pattern
 SearchHelpers.build_toc_glob_pattern("Claude_Code_Docs:latest")
 # → "md_docs/Claude_Code_Docs:latest/*/docTOC.md"
-```
-
-**Method 2: Using find command (CORRECT)**
-```bash
-find md_docs/Claude_Code_Docs:latest -name "docTOC.md"
-```
-
-**❌ WRONG - Do NOT use directory-only patterns:**
-```bash
-md_docs/Claude_Code_Docs:latest/*/
 ```
 
 **Expected structure:**
 ```
 md_docs/<doc_name>:<doc_version>/<PageTitle>/docTOC.md
 ```
-
-**Key points:**
-- Always specify `docTOC.md` in the pattern to limit search to TOC files only
-- This ensures we're discovering documents through their index/structure, not full content
-- Follows **progressive disclosure** - TOC first, content later via md-doc-reader
 
 ### Step 3: Semantic Matching (via LLM Prompt)
 
@@ -213,231 +176,209 @@ After listing TOC files, use semantic understanding to match the user's query:
 | "security" | Authentication, Authorization, Security settings, Permissions | LLM maps domain relationships |
 | "API" | API reference, Connect, Integration, Endpoints | LLM understands technical context |
 
-**Domain-Specific Context:**
-- "hooks" in Claude Code context → Claude hooks (not webhooks)
-- "skills" in AI context → Agent capabilities (not job skills)
-- "deployment" in web context → Production deployment (not military deployment)
-
-**Helper for section extraction:**
-```python
-from doc4llm.tool.md_doc_retrieval.utils import extract_toc_sections, semantic_match_toc_sections
-
-# Extract sections from docTOC.md content
-sections = extract_toc_sections(toc_content, query="hooks", max_sections=20)
-# Returns: [{'level': 2, 'title': 'Configure hooks', 'anchor': 'configure-hooks', 'line_number': 5}]
-
-# Or semantic match existing sections
-matched = semantic_match_toc_sections(sections, "hooks")
-# Returns sections sorted by relevance score
-```
-
-**Benefits:**
-- Structured TOC parsing with metadata
-- Semantic matching on section titles
-- Anchor link generation for navigation
-- Line number tracking for debugging
-
-### Step 3.5: Progressive Fallback Strategy
+### Step 4: Progressive Fallback
 
 When Level 1 semantic matching returns **0 results OR low-quality matches** (max_similarity < 0.7), automatically invoke fallback levels:
 
-#### Level 1: Semantic Title Matching (Default)
+**📖 See:** `reference/progressive-fallback.md` for detailed fallback level specifications
 
-- Current implementation using LLM semantic understanding
-- Fast path for well-titled documents
-- **Quality threshold:** `max_similarity >= 0.7` to return results
+**Summary:**
+- **Level 1:** Semantic title matching (default)
+- **Level 2:** TOC content grep (when Level 1 fails)
+- **Level 3.1:** Cross-set TOC search with domain filtering
+- **Level 3.2:** Content search with context traceback (last resort)
 
-#### Level 2: TOC Content Grep (Fallback)
+### Step 5: Verify Coverage Completeness
 
-**Trigger:** Level 1 returns 0 results **OR** `max_similarity < 0.7` (low quality matches)
+**CRITICAL:** A search is ONLY complete when you have **verified** that all potentially relevant documents have been found.
 
-**Use helper to build command:**
-```python
-from doc4llm.tool.md_doc_retrieval import SearchHelpers
+**Multi-Set Search Triggers:**
 
-# First extract keywords
-keywords = SearchHelpers.extract_keywords("how to configure hooks for deployment")
-# → ['configure', 'hooks', 'deployment']
+| Query Pattern | Example | Action |
+|--------------|---------|--------|
+| Generic concepts | "best practices", "tips", "optimization" | Search ALL doc sets |
+| Cross-cutting concerns | "deployment", "testing", "monitoring", "security" | Search ALL doc sets |
+| Configuration/setup | "how to configure", "setup guide", "getting started" | Search ALL doc sets |
+| Framework-specific | "React hooks", "Python async", "Claude skills" | Single set |
 
-# Then build grep command
-SearchHelpers.build_level2_grep_command(
-    keywords=["configure", "hooks", "deployment"],
-    doc_set="Claude_Code_Docs:latest"
-)
-# → "grep -r -iE '(configure|hooks|deployment)' md_docs/Claude_Code_Docs:latest/*/docTOC.md"
+### Step 6: Redundancy Verification and Intent-Based Filtering
+
+**PURPOSE:** After coverage verification, perform LLM-based analysis to eliminate documents that don't align with the user's actual query intent, ensuring precision over recall.
+
+**Core Principle:** Use semantic intent analysis to filter out documents that may have matched keywords but don't serve the user's actual information need.
+
+#### Intent Analysis Framework
+
+**Step 6.1: Query Intent Classification**
+
+Analyze the original user query (not optimized queries) to determine:
+
+1. **Primary Intent Type:**
+   - `LEARN` - User wants to understand concepts, principles, or how things work
+   - `CONFIGURE` - User wants to set up, customize, or modify settings
+   - `TROUBLESHOOT` - User wants to solve problems or fix issues
+   - `REFERENCE` - User wants quick lookup of syntax, parameters, or specifications
+   - `COMPARE` - User wants to understand differences or choose between options
+
+2. **Scope Specificity:**
+   - `SPECIFIC` - Targets a particular feature, component, or use case
+   - `GENERAL` - Covers broad topics or multiple related areas
+   - `CONTEXTUAL` - Depends on user's current situation or environment
+
+3. **Information Depth:**
+   - `OVERVIEW` - High-level understanding or introduction
+   - `DETAILED` - In-depth technical information or comprehensive guides
+   - `PRACTICAL` - Step-by-step instructions or hands-on examples
+
+**Step 6.2: Document Relevance Scoring**
+
+For each document in the search results, evaluate:
+
+```
+Relevance Score = Intent_Match × Scope_Alignment × Depth_Appropriateness × Specificity_Match
+
+Where each factor is scored 0.0-1.0:
+- Intent_Match: How well the document serves the identified intent
+- Scope_Alignment: How well the document's scope matches query scope
+- Depth_Appropriateness: How well the document's depth matches information need
+- Specificity_Match: How well the document's specificity matches query specificity
 ```
 
-**Execute via Bash tool:**
-```bash
-grep -r -iE '(configure|hooks|deployment)' md_docs/Claude_Code_Docs:latest/*/docTOC.md
-```
+**Step 6.3: Filtering Thresholds**
 
-#### Level 3: Cross-Set + Content Search (Last Resort)
+- **High Relevance (≥0.8):** Keep - Strong alignment with user intent
+- **Medium Relevance (0.5-0.79):** Review - May be tangentially related, include with caveats
+- **Low Relevance (<0.5):** Remove - Likely noise or off-topic
 
-**Trigger:** Level 2 returns 0 results
+## Content Language and Structure Constraints (v2.9.0)
 
-**CRITICAL:** This level requires careful relevance filtering and context traceback to avoid meaningless results.
+**CRITICAL CONSTRAINTS for search result content:**
 
-##### Level 3.1: Cross-Set TOC Search (with Relevance Constraints)
+1. **Language Consistency**:
+   - If source docTOC.md is in English → Return English headings
+   - If source docTOC.md is in Chinese → Return Chinese headings
+   - If source docTOC.md is mixed → Preserve original mixed language format
+   - Use `SearchHelpers.detect_content_language()` to determine source language
 
-**Step 1: Extract domain keywords from user query** (LLM semantic analysis)
-```python
-# Example: User queries "Claude Code skills design philosophy"
-# Domain keywords: Claude, Code
-# Topic keywords: skills, design, philosophy
-```
+2. **Content Structure**:
+   - Extract actual markdown headings from docTOC.md using `SearchHelpers.extract_toc_headings()`
+   - Preserve hierarchical structure (# ## ### ####)
+   - Remove URL links from headings for cleaner display
+   - Include up to 10 most relevant headings per document
+   - Format headings with proper indentation to show hierarchy
 
-**Step 2: Filter documentation sets by domain relevance**
-```python
-# Use helper to build filter pattern
-SearchHelpers.build_doc_set_filter_pattern(["Claude", "Code"])
-# → "md_docs/*Claude* md_docs/*Code*"
+**Implementation Steps:**
+1. Read docTOC.md content for each relevant document
+2. Use `SearchHelpers.detect_content_language()` to determine language
+3. Use `SearchHelpers.extract_toc_headings()` to get clean markdown headings
+4. Include extracted headings in the `toc_content` field of result dictionaries
+5. Use `SearchHelpers.format_language_appropriate_results()` for proper formatting
 
-# For "Claude Code skills", only search:
-# - Claude_Code_Docs:latest
-# NOT: Python_Docs, React_Docs, etc.
-```
+## 输出样例格式 (Output Example Format)
 
-**Step 3: Search TOC files in filtered sets**
-```bash
-# Cross-set TOC search WITH domain filter
-grep -r -i "keyword" md_docs/*Claude*/*/docTOC.md md_docs/*Code*/*/docTOC.md
-```
-
-**Why this matters:** Searching "best practices" across ALL doc sets could return Python, React, or other framework-specific practices that are irrelevant to the user's actual query context.
-
-##### Level 3.2: docContent.md Context Search (with Traceback)
-
-**Trigger:** Level 3.1 returns 0 results
-
-**CRITICAL CONSTRAINTS:**
-- ❌ **NEVER** use `Read` tool to load entire docContent.md files
-- ✅ Only use `grep` with context to extract minimal information
-- ✅ Return docTOC.md paths for subsequent use by md-doc-reader
-
-**Search with context traceback:**
-```python
-# Use helper to build command
-SearchHelpers.build_level3_content_grep_command(
-    keywords=["design philosophy"],
-    doc_sets=["Claude_Code_Docs:latest"],
-    context_lines=10
-)
-# → "grep -r -i -B 10 'design philosophy' md_docs/Claude_Code_Docs:latest/*/docContent.md"
-```
-
-**Execute via Bash tool:**
-```bash
-grep -r -i -B 10 "design philosophy" md_docs/*Claude*/*/docContent.md
-```
-
-**Parse results to extract:**
-1. **Documentation set name** - Extract from file path
-2. **Document title** - Extract from docContent.md (first 5 lines, look for `#` headings)
-3. **Match context** - The 10 lines before the match showing relevant section
-
-**Helper for title extraction:**
-```python
-SearchHelpers.build_title_extraction_command(
-    "md_docs/Claude_Code_Docs:latest/Agent Skills/docContent.md",
-    max_lines=5
-)
-# → "head -5 md_docs/Claude_Code_Docs:latest/Agent Skills/docContent.md"
-```
-
-**Return format for Level 3.2:**
-```markdown
-Found N relevant document(s) via Level 3.2 content search:
-
-1. **Document Title** (Doc_Set:Version)
-   - Relevance: Content contains "keyword" in section context
-   - Context: [Brief excerpt from grep -B 10 output]
-   - TOC Path: `md_docs/<doc_set>/<PageTitle>/docTOC.md`
-
-**Note:** Use `/md-doc-reader "Document Title"` to view full TOC and structure.
-```
-
-### Step 4: Delegate to md-doc-reader
-
-Once relevant directories are found, delegate content extraction to `md-doc-reader` skill.
-
-## Semantic Search Instructions
-
-When performing document search, follow these guidelines:
-
-### 1. Intent Filtering at Documentation Set Level
-
-First level of filtering - determine which documentation set to search:
-
-**Filtering Strategies:**
-
-| Strategy | When to Use | Example |
-|----------|-------------|---------|
-| **Explicit mention** | User names the framework | "Python" → `*Python*` sets |
-| **Domain-specific terms** | Unique terminology maps to specific set | "hooks" → Claude Code |
-| **Context inference** | Current session context | Previous question about React → React docs |
-| **Ask user** | Ambiguous or multiple matches | "deployment" → Ask which project |
-
-### 2. Use Semantic Understanding, Not Keyword Matching
-
-**❌ Avoid:** Simple keyword/substring matching
-**✅ Use:** Language understanding to match concepts and context
-
-**Core LLM Capabilities:**
-- Understand synonyms and related concepts
-- Recognize domain-specific terminology
-- Consider context and user intent
-- Distinguish homonyms based on context (e.g., "hooks" in Claude Code vs webhooks)
-
-### 3. Consider Synonyms and Related Concepts
-
-| User Query | Should Match (LLM Semantic Understanding) |
-|------------|-------------------------------------------|
-| "how to configure" | Settings, Configuration, Setup, Preferences |
-| "deployment" | Enterprise deployment, Install, Setup, Production |
-| "security" | Authentication, Authorization, Security settings, Permissions |
-| "API" | API reference, Connect, Integration, Endpoints |
-
-### 4. Return Format with Coverage Notes
-
-Return results as a list of document titles with relevance notes AND coverage verification:
+以下是一个典型的搜索结果输出样例：
 
 ```markdown
-Found N relevant document(s) in <doc_set>:
+=== AOP-FINAL | agent=md-doc-searcher | results=3 | doc_sets=Claude_Code_Docs:latest ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
-1. **Document Title** - Relevance: why it matches
-2. **Another Title** - Relevance: contains section about topic
-...
+## 精准检索结果 (Intent-Filtered Results)
+
+### 高相关性文档 (High Relevance ≥0.8)
+
+1. **Agent Skills** - 相关性: 0.9
+   - 意图匹配: 直接回答用户关于技能配置的需求
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md`
+   - 正文内容:
+     # Agent Skills
+     ## 1. Create your first Skill
+     ### 1.1. Where Skills live
+     #### 1.1.1. Automatic discovery from nested directories
+     ## 2. Configure Skills
+     ### 2.1. Write SKILL.md
+
+2. **Get started with Claude Code hooks** - 相关性: 0.8
+   - 意图匹配: 提供hooks设置的入门指导
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Get started with Claude Code hooks/docTOC.md`
+   - 正文内容:
+     # Get started with Claude Code hooks
+     ## 1. Introduction to hooks
+     ## 2. Basic configuration
+     ### 2.1. Hook types
+     ### 2.2. Configuration files
+
+### 相关文档 (Medium Relevance 0.5-0.79)
+
+3. **Testing best practices** - 相关性: 0.6
+   - 意图匹配: 提供测试相关的上下文信息
+   - 注意: 通用测试上下文，非hooks专用
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Testing best practices/docTOC.md`
+
+### 已过滤文档 (Filtered Out <0.5)
+- "Claude Code overview" - 原因: 对于具体配置查询过于宽泛
+- "API reference" - 原因: 不同主题 (API vs 配置)
+
+---
+
+### 文档来源 (Sources)
+
+1. **Agent Skills**
+   - 原文链接: https://code.claude.com/docs/en/agent-skills
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md`
+
+2. **Get started with Claude Code hooks**
+   - 原文链接: https://code.claude.com/docs/en/get-started-hooks
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Get started with Claude Code hooks/docTOC.md`
+
+3. **Testing best practices**
+   - 原文链接: https://code.claude.com/docs/en/testing-best-practices
+   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Testing best practices/docTOC.md`
 
 **Coverage:**
-- ✅ Covered: [aspects covered by results]
-- ⚠️  Partially covered: [aspects partially covered]
-- ❌ Not covered: [aspects that may exist in other documents/sets]
-- 💡 Suggestion: [if applicable, suggest other searches]
+- ✅ Covered: 配置方法, 入门指导, 基本设置
+- ⚠️  Partially covered: 高级配置模式
+- ❌ Not covered: 性能优化, 故障排除
+- 💡 Suggestion: 搜索 'hooks troubleshooting' 获取故障排除信息
+
+=== END-AOP-FINAL ===
 ```
 
-**Use helper for formatting:**
-```python
-SearchHelpers.format_coverage_section(
-    covered=["Configuration", "Setup"],
-    partial=["Advanced patterns"],
-    not_covered=["Performance"],
-    suggestion="Search 'performance' for optimization tips"
-)
+### 样例说明 (Example Explanation)
+
+完整输出样例包含：分层结果（AOP-FINAL标记）、意图过滤、 TOC内容、过滤总结、来源信息、覆盖度分析。详见 "Return Format Requirements" 章节。
+
+## Return Format Requirements
+
+### AOP-FINAL Output Format
+
+**CRITICAL:** All final search results MUST be wrapped with AOP-FINAL markers to prevent modification by the main session AI.
+
+```markdown
+=== AOP-FINAL | agent=md-doc-searcher | results={count} | doc_sets={sets} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
+
+[Search results content here]
+
+### 文档来源 (Sources)
+[Sources section]
+
+**Coverage:**
+[Coverage section]
+
+=== END-AOP-FINAL ===
 ```
 
-### 5. Sources Format (ALWAYS REQUIRED)
+**Required Attributes:**
+- `agent=md-doc-searcher` - Identifies this skill as the source
+- `results={count}` - Number of documents found
+- `doc_sets={sets}` - Documentation sets searched (comma-separated)
 
-**CRITICAL:** You MUST include a **Sources** section at the end of ALL search results, regardless of document length or content type.
+### Sources Format (ALWAYS REQUIRED)
 
-This ensures proper attribution and allows users to locate the original documents for further reading.
+**CRITICAL:** You MUST include a **Sources** section at the end of ALL search results.
 
 **Helper for formatting:**
 ```python
-# Extract URLs from TOC content
-url = SearchHelpers.extract_original_url(toc_content)
-
-# Format sources section
 SearchHelpers.format_sources_section([
     ("Agent Skills", "https://code.claude.com/docs/en/agent-skills", "md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md")
 ])
@@ -447,292 +388,47 @@ SearchHelpers.format_sources_section([
 ```markdown
 ---
 
-### 文档来源
+### 文档来源 (Sources)
 
 1. **Document Title**
    - 原文链接: https://original-url.com/docs/page
    - TOC 路径: `md_docs/<doc_name>:<doc_version>/<PageTitle>/docTOC.md`
 ```
 
-## Progressive Fallback Flow
+### Coverage Format
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    SEARCH REQUEST                            │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-              ┌───────────────────────────────┐
-              │  Level 1: Title Semantic Match │
-              │  - LLM semantic understanding  │
-              │  - Fast: O(k) where k = matches│
-              │  - Threshold: max_sim >= 0.7   │
-              └───────────────────────────────┘
-                              │
-              ┌───────────────┴───────────────┐
-              │                               │
-        [Results > 0 AND                 [Results = 0 OR
-         max_sim >= 0.7]                  max_sim < 0.7]
-              │                               │
-              ▼                               ▼
-        To Coverage Check            ┌───────────────────────────────┐
-                                    │  Level 2: TOC Grep Fallback   │
-                                    │  - grep -r across TOC files   │
-                                    │  - Balanced: O(1) operation   │
-                                    └───────────────────────────────┘
-                                              │
-                                    ┌─────────┴─────────┐
-                                    │                   │
-                              [Results > 0]      [Results = 0]
-                                    │                   │
-                                    ▼                   ▼
-                          To Coverage Check    ┌───────────────────────────────┐
-                                                  │  Level 3.1: Cross-Set TOC   │
-                                                  │  - Filter by domain        │
-                                                  │  - grep -r across filtered │
-                                                  │    doc sets                │
-                                                  └───────────────────────────────┘
-                                                            │
-                                                  ┌─────────┴─────────┐
-                                                  │                   │
-                                            [Results > 0]      [Results = 0]
-                                                  │                   │
-                                                  ▼                   ▼
-                                        To Coverage Check    ┌───────────────────────────────┐
-                                                                      │  Level 3.2: Content Search │
-                                                                      │  - grep -B 10 for context │
-                                                                      │  - Extract title from 5   │
-                                                                      │    lines (retry: 20)      │
-                                                                      │  - Return TOC paths only  │
-                                                                      └───────────────────────────────┘
-                                                                                │
-                                                                                ▼
-                                                                      ┌─────────────────────────┐
-                                                                      │   Coverage Completeness │
-                                                                      │   Verification Check    │
-                                                                      │   - Assess query type   │
-                                                                      │   - Check result diversity
-                                                                      │   - Identify gaps      │
-                                                                      └─────────────────────────┘
-                                                                                │
-                                                              ┌─────────────┴─────────────┐
-                                                              │                           │
-                                                        [Coverage Complete]          [Gaps Found]
-                                                        - Generic queries handled   - Expand scope
-                                                        - All aspects covered      - Search other sets
-                                                              │                           │
-                                                              └─────────────┬─────────────┘
-                                                                            ▼
-                                                              ┌─────────────────────────┐
-                                                              │    Return Results        │
-                                                              │    With Coverage Notes   │
-                                                              │    - What's covered       │
-                                                              │    - What's not           │
-                                                              │    + TOC Paths            │
-                                                              └─────────────────────────┘
-```
-
-## Search Completeness Guidelines
-
-### When is Search Considered Complete?
-
-**CRITICAL:** A search is ONLY complete when you have **verified** that all potentially relevant documents have been found. The progressive fallback strategy finds matches within a scope, but you MUST verify coverage completeness.
-
-#### Completeness Checklist
-
-Before returning results, ask yourself:
-
-- [ ] Have I searched ALL relevant documentation sets?
-- [ ] Do the results cover different aspects of the query?
-- [ ] Could related concepts exist in documents with different titles?
-- [ ] Should I cross-reference with other documentation sets?
-- [ ] Have I explicitly stated what is/isn't covered in the results?
-
-#### Multi-Set Search Triggers
-
-**ALWAYS search multiple documentation sets when:**
-
-| Query Pattern | Example | Action | Rationale |
-|--------------|---------|--------|-----------|
-| Generic concepts | "best practices", "tips", "optimization" | Search ALL doc sets | These concepts apply across multiple domains |
-| Cross-cutting concerns | "deployment", "testing", "monitoring", "security" | Search ALL doc sets | May have framework-specific and general implementations |
-| Configuration/setup | "how to configure", "setup guide", "getting started" | Search ALL doc sets | Setup varies by framework/context |
-| Comparison questions | "difference between X and Y", "X vs Y" | Search ALL doc sets | Requires comprehensive comparison |
-| Framework-specific | "React hooks", "Python async", "Claude skills" | Single set | Terminology is domain-specific |
-
-#### Coverage Verification Steps
-
-After completing Level 1-3 search:
-
-1. **Assess result diversity** - Do results cover different perspectives/aspects?
-2. **Identify gaps** - What aspects of the query are NOT covered?
-3. **Expand if needed** - If gaps found, search other doc sets
-4. **Document coverage** - Explicitly state what IS and ISN'T covered
-
-#### Decision Tree: Is Coverage Complete?
-
-```
-┌─────────────────────────────────────────┐
-│     After Level 1-3 Search              │
-└─────────────────────────────────────────┘
-                  │
-                  ▼
-        ┌─────────────────────┐
-        │ Assess Query Type   │
-        └─────────────────────┘
-                  │
-    ┌─────────────┴─────────────┐
-    │                           │
-Generic/Cross-cutting    Framework-specific
-    │                           │
-    ▼                           ▼
-┌─────────────┐          ┌─────────────┐
-│ Search ALL  │          │ Single set  │
-│ doc sets?   │          │ sufficient │
-└─────────────┘          └─────────────┘
-    │                           │
-    ▼                           ▼
-Multiple results           Verify specific
-from various sets          terms covered
-    │                           │
-    └─────────────┬─────────────┘
-                  │
-                  ▼
-        ┌─────────────────────┐
-        │ Document Coverage   │
-        │ - What's covered     │
-        │ - What's not         │
-        │ - Gaps identified    │
-        └─────────────────────┘
-```
-
-## Delegation Pattern
-
-This skill is designed to work with the `doc-retriever` agent and `md-doc-query-optimizer` skill in a multi-phase retrieval workflow:
-
-**Workflow:**
-```
-Phase 0: Query Optimization (md-doc-query-optimizer)
-    │ Input: Raw user query
-    │ Output: 3-5 optimized queries with annotations
-    ▼
-Phase 1: Document Discovery (this skill - md-doc-searcher)
-    │ Input: Optimized queries from Phase 0
-    │ Output: Document titles with TOC paths
-    ▼
-Phase 2: Content Extraction (md-doc-reader)
-    │ Input: Document titles
-    │ Output: Full content + line count
-    ▼
-Phase 3: Post-Processing (md-doc-processor) [Conditional]
-```
-
-When the `doc-retriever` agent needs to find documents:
-
-1. **Receive optimized queries** - Input from `md-doc-query-optimizer` (3-5 queries with strategy annotations)
-2. **List available doc sets** - Use `SearchHelpers.get_list_command()`
-3. **Apply intent filtering** - Filter doc sets based on optimized queries (LLM semantic analysis)
-4. **List directories in selected set(s)** - Use `Glob` or `SearchHelpers.build_toc_glob_pattern()`
-5. **Read docTOC.md for context** - Use `Read` tool to get table of contents
-6. **Multi-query semantic matching** - Search with ALL optimized queries using LLM semantic understanding
-7. **Apply progressive fallback** - Trigger Level 2 (TOC grep) or Level 3 (cross-set) if needed
-8. **Verify coverage completeness** - CRITICAL: Check if search is comprehensive
-9. **Return comprehensive list with coverage notes** - Use helpers for formatting
-
-## Workflow Example
-
-**Input from md-doc-query-optimizer:**
-```
-Optimized Queries (Ranked):
-1. "skills" - direct match
-2. "Agent Skills" - context-specific expansion
-3. "skills reference" - expansion
-```
-
-**Step 1:** 列出文档集并根据意图过滤
-```bash
-# Use helper to get list command
-SearchHelpers.get_list_command()
-# Execute: ls -1 md_docs/
-
-# Output:
-# Claude_Code_Docs:latest
-# Python_Docs:3.11
-# React_Docs:v18
-
-# 根据优化查询过滤：所有查询都指向 "skills" → Claude Code context
-# 目标文档集: Claude_Code_Docs:latest
-```
-
-**Step 2:** 在指定文档集中列出所有目录
-```python
-# Use helper to build glob pattern
-SearchHelpers.build_toc_glob_pattern("Claude_Code_Docs:latest")
-# → "md_docs/Claude_Code_Docs:latest/*/docTOC.md"
-
-# Returns:
-# Agent Skills/
-# CLI reference/
-# Hooks reference/
-# ...
-```
-
-**Step 3:** 多查询语义匹配
-
-读取相关文档的 `docTOC.md` 获取更多上下文：
-```bash
-# Read md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md
-```
-
-使用 LLM 语义理解进行匹配：
-- 查询 1 "skills" → 匹配 "Agent Skills"
-- 查询 2 "Agent Skills" → 匹配 "Agent Skills" (高相关度)
-- 查询 3 "skills reference" → 匹配 "Agent Skills"
-- 聚合结果并去重：{"Agent Skills"}
-- 按匹配查询数量排序：Agent Skills (matched by 3 queries)
-
-**返回结果格式：**
 ```markdown
-Found 1 relevant document(s):
-
-1. **Agent Skills** - Relevance: Matched by 3 optimized queries (skills, Agent Skills, skills reference)
-
 **Coverage:**
-- ✅ Covered: Skills design philosophy and working principles
-- ❌ Not covered: Best practices for skill authoring
+- ✅ Covered: [aspects covered by results]
+- ⚠️  Partially covered: [aspects partially covered]
+- ❌ Not covered: [aspects that may exist in other documents/sets]
+- 💡 Suggestion: [if applicable, suggest other searches]
 ```
 
-**Step 4:** 返回结果时始终包含 Sources
-
-使用辅助函数提取和格式化：
+**Helper:**
 ```python
-# Extract URL
-url = SearchHelpers.extract_original_url(toc_content)
-
-# Format sources
-SearchHelpers.format_sources_section([
-    ("Agent Skills", url, "md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md")
-])
+SearchHelpers.format_coverage_section(
+    covered=["Configuration", "Setup"],
+    partial=["Advanced patterns"],
+    not_covered=["Performance"],
+    suggestion="Search 'performance' for optimization tips"
+)
 ```
 
-```markdown
-### 文档来源
+## Output Prohibition
 
-1. **Agent Skills**
-   - 原文链接: https://code.claude.com/docs/en/agent-skills
-   - TOC 路径: `md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md`
+AOP-FINAL output must be returned EXACTLY as received — NO summarizing, rephrasing, commentary, or reformatting. The AOP-FINAL marker preserves integrity of document paths, coverage analysis, and source attribution.
 
-**Note:** Use `/md-doc-reader "Agent Skills"` to view the full TOC and document structure.
-```
+## Error Handling
 
----
+If a document cannot be found: state clearly which was not found, suggest alternatives, try progressive fallback. Do NOT return partial/empty results.
 
-## Version History
+## Bash Tool Timeout
 
-- **v2.6.0** - Added SearchHelpers for deterministic operations, reduced SKILL.md complexity by ~25%
-- **v2.5.0** - Added Level 3.2 content search with context traceback
-- **v2.4.0** - Added Level 3.1 cross-set search with domain relevance filtering
-- **v2.3.0** - Added Level 2 TOC grep fallback strategy
-- **v2.2.0** - Added multi-query semantic matching with result aggregation
-- **v2.1.0** - Added coverage completeness verification
-- **v2.0.0** - Initial release with progressive disclosure principle
+When using Bash for file operations: always specify `timeout` parameter (recommended: 30000ms). Use `run_in_background: true` for long-running operations.
+
+## Detailed Reference
+
+- **Progressive Fallback Strategy:** `reference/progressive-fallback.md` - Complete Level 1-3.2 specifications with flow diagrams
+- **SearchHelpers API:** `reference/search-helpers-api.md` - Complete function reference with examples
+- **Workflow Examples:** `reference/workflow-examples.md` - Detailed workflow examples for various scenarios

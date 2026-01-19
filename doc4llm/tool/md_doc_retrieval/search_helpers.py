@@ -6,8 +6,20 @@ These helpers perform deterministic operations (path construction, formatting)
 and do NOT replace LLM semantic understanding capabilities.
 
 Core Principle:
-- Helpers: Deterministic operations (path building, command construction)
-- LLM: Semantic understanding (intent analysis, concept matching)
+- Helpers: Deterministic operations (path building, command construction, formatting)
+- LLM: Semantic understanding (intent analysis, concept matching, relevance scoring)
+
+Version 2.9.0 Features:
+- Content language consistency constraints for result formatting
+- TOC structure extraction from docTOC.md files
+- Language-adaptive result formatting (Chinese/English/Mixed)
+- Markdown heading extraction with hierarchy preservation
+
+Version 2.8.0 Features:
+- Intent analysis framework for query understanding
+- Relevance scoring structure for document filtering
+- Filtered results formatting for precision improvement
+- Comprehensive filtering summary generation
 """
 import re
 from typing import List, Optional
@@ -203,15 +215,25 @@ class SearchHelpers:
         Examples:
             >>> SearchHelpers.extract_keywords("how to configure hooks for deployment")
             ['configure', 'hooks', 'deployment']
+            >>> SearchHelpers.extract_keywords("如何配置hooks用于测试")
+            ['配置', 'hooks', '测试']
         """
-        # Tokenize and clean
-        words = re.findall(r'\b\w+\b', query.lower())
+        # Handle mixed language queries - preserve both Chinese and English words
+        # Use a more inclusive pattern for Chinese characters
+        words = re.findall(r'[\w\u4e00-\u9fff]+', query.lower())
 
-        # Remove stop words but preserve technical terms
-        keywords = [
-            word for word in words
-            if word not in SearchHelpers.STOP_WORDS or word in SearchHelpers.TECHNICAL_TERMS
-        ]
+        # Remove English stop words but preserve technical terms and Chinese words
+        keywords = []
+        for word in words:
+            # Keep Chinese words (contains Chinese characters)
+            if re.search(r'[\u4e00-\u9fff]', word):
+                keywords.append(word)
+            # Keep English technical terms
+            elif word in SearchHelpers.TECHNICAL_TERMS:
+                keywords.append(word)
+            # Keep English words that are not stop words
+            elif word not in SearchHelpers.STOP_WORDS:
+                keywords.append(word)
 
         # Remove duplicates while preserving order
         seen = set()
@@ -353,3 +375,428 @@ class SearchHelpers:
             'head -5 md_docs/Claude_Code_Docs:latest/Agent Skills/docContent.md'
         """
         return f"head -{max_lines} {content_path}"
+
+    # ========================================================================
+    # Content Language and TOC Processing Helpers (v2.9.0)
+    # ========================================================================
+
+    @staticmethod
+    def extract_toc_headings(toc_content: str, max_headings: int = 10) -> str:
+        """Extract markdown headings from docTOC.md content.
+
+        This helper extracts the actual markdown headings from TOC content
+        to be included in search results, preserving the original language
+        and hierarchical structure.
+
+        Args:
+            toc_content: Content of a docTOC.md file
+            max_headings: Maximum number of headings to extract (default: 10)
+
+        Returns:
+            Formatted string of markdown headings
+
+        Examples:
+            >>> toc = '''# Agent Skills
+            ... ## 1. Create your first Skill
+            ... ### 1.1. Where Skills live
+            ... ## 2. Configure Skills'''
+            >>> SearchHelpers.extract_toc_headings(toc)
+            '# Agent Skills\\n## 1. Create your first Skill\\n### 1.1. Where Skills live\\n## 2. Configure Skills'
+        """
+        if not toc_content:
+            return ""
+
+        lines = toc_content.split('\n')
+        headings = []
+        count = 0
+
+        for line in lines:
+            line = line.strip()
+            # Match markdown headings (# ## ### etc.)
+            if line.startswith('#') and count < max_headings:
+                # Remove URL links from headings for cleaner display
+                # Pattern: "## 1. Title：https://example.com/link"
+                if '：https://' in line:
+                    line = line.split('：https://')[0]
+                elif ': https://' in line:
+                    line = line.split(': https://')[0]
+                
+                headings.append(line)
+                count += 1
+
+        return '\n'.join(headings)
+
+    @staticmethod
+    def detect_content_language(content: str) -> str:
+        """Detect the primary language of content.
+
+        This helper performs basic language detection to determine if content
+        is primarily Chinese, English, or mixed language.
+
+        Args:
+            content: Text content to analyze
+
+        Returns:
+            Language code: 'zh' for Chinese, 'en' for English, 'mixed' for mixed
+
+        Examples:
+            >>> SearchHelpers.detect_content_language("Agent Skills")
+            'en'
+            >>> SearchHelpers.detect_content_language("代理技能")
+            'zh'
+            >>> SearchHelpers.detect_content_language("Agent Skills 代理技能")
+            'mixed'
+        """
+        if not content:
+            return 'en'
+
+        # Count Chinese characters
+        chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', content))
+        # Count English letters
+        english_chars = len(re.findall(r'[a-zA-Z]', content))
+        
+        total_chars = chinese_chars + english_chars
+        if total_chars == 0:
+            return 'en'
+
+        chinese_ratio = chinese_chars / total_chars
+        
+        if chinese_ratio > 0.6:
+            return 'zh'
+        elif chinese_ratio < 0.2:
+            return 'en'
+        else:
+            return 'mixed'
+
+    @staticmethod
+    def format_language_appropriate_results(
+        results: List[dict], 
+        detected_language: str
+    ) -> str:
+        """Format results using language-appropriate labels and structure.
+
+        Args:
+            results: List of result dictionaries with metadata
+            detected_language: Detected language ('zh', 'en', 'mixed')
+
+        Returns:
+            Formatted results with appropriate language labels
+
+        Examples:
+            >>> results = [{"title": "Agent Skills", "score": 0.9, "toc_content": "# Agent Skills\\n## Create"}]
+            >>> SearchHelpers.format_language_appropriate_results(results, 'en')
+            '1. **Agent Skills** - Relevance: 0.9\\n   - Content:\\n     # Agent Skills\\n     ## Create'
+        """
+        if not results:
+            return ""
+
+        # Language-specific labels
+        labels = {
+            'zh': {
+                'content': '正文内容',
+                'relevance': '相关性',
+                'intent_match': '意图匹配',
+                'toc_path': 'TOC 路径'
+            },
+            'en': {
+                'content': 'Content',
+                'relevance': 'Relevance',
+                'intent_match': 'Intent Match',
+                'toc_path': 'TOC Path'
+            },
+            'mixed': {
+                'content': '正文内容 (Content)',
+                'relevance': '相关性 (Relevance)',
+                'intent_match': '意图匹配 (Intent Match)',
+                'toc_path': 'TOC 路径 (TOC Path)'
+            }
+        }
+
+        current_labels = labels.get(detected_language, labels['en'])
+        lines = []
+
+        for i, doc in enumerate(results, 1):
+            lines.append(f"{i}. **{doc['title']}** - {current_labels['relevance']}: {doc.get('score', 'N/A')}")
+            
+            if 'rationale' in doc:
+                lines.append(f"   - {current_labels['intent_match']}: {doc['rationale']}")
+            
+            if 'path' in doc:
+                lines.append(f"   - {current_labels['toc_path']}: `{doc['path']}`")
+            
+            # Add TOC content if available
+            if 'toc_content' in doc and doc['toc_content']:
+                lines.append(f"   - {current_labels['content']}:")
+                # Indent each line of TOC content
+                toc_lines = doc['toc_content'].split('\n')
+                for toc_line in toc_lines:
+                    if toc_line.strip():
+                        lines.append(f"     {toc_line}")
+            
+            lines.append("")
+
+        return '\n'.join(lines)
+
+    @staticmethod
+    def build_toc_content_extraction_command(toc_path: str, max_lines: int = 50) -> str:
+        """Build command to extract TOC content for result formatting.
+
+        Args:
+            toc_path: Path to docTOC.md file
+            max_lines: Maximum number of lines to extract (default: 50)
+
+        Returns:
+            Head command string to extract TOC content
+
+        Examples:
+            >>> SearchHelpers.build_toc_content_extraction_command(
+            ...     "md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md"
+            ... )
+            'head -50 md_docs/Claude_Code_Docs:latest/Agent Skills/docTOC.md'
+        """
+        return f"head -{max_lines} {toc_path}"
+
+    # ========================================================================
+    # Intent Analysis and Filtering Helpers (Step 6 - v2.8.0)
+    # ========================================================================
+
+    @staticmethod
+    def analyze_query_intent(original_query: str) -> dict:
+        """Analyze the original user query to determine intent classification.
+
+        This helper provides structured intent analysis for LLM-based filtering.
+        The actual semantic analysis should be performed by the LLM using this
+        framework as guidance.
+
+        Args:
+            original_query: The original user query (not optimized queries)
+
+        Returns:
+            Intent analysis framework with keys:
+            - primary_intent: LEARN, CONFIGURE, TROUBLESHOOT, REFERENCE, COMPARE
+            - scope: SPECIFIC, GENERAL, CONTEXTUAL
+            - depth: OVERVIEW, DETAILED, PRACTICAL
+            - specificity_keywords: Key terms indicating specific focus
+
+        Examples:
+            >>> SearchHelpers.analyze_query_intent("如何配置Claude Code的hooks用于自动化测试")
+            {
+                "primary_intent": "CONFIGURE",
+                "scope": "SPECIFIC", 
+                "depth": "PRACTICAL",
+                "specificity_keywords": ["hooks", "自动化测试", "配置"]
+            }
+
+        Note:
+            This helper provides the framework structure. The LLM should perform
+            the actual semantic analysis to populate these fields.
+        """
+        # Extract potential specificity keywords using existing helper
+        keywords = SearchHelpers.extract_keywords(original_query)
+        
+        # Return framework structure - LLM should populate with semantic analysis
+        return {
+            "primary_intent": "UNKNOWN",  # LLM should determine: LEARN, CONFIGURE, etc.
+            "scope": "UNKNOWN",           # LLM should determine: SPECIFIC, GENERAL, etc.
+            "depth": "UNKNOWN",           # LLM should determine: OVERVIEW, DETAILED, etc.
+            "specificity_keywords": keywords,
+            "framework_note": "LLM should perform semantic analysis to populate intent fields"
+        }
+
+    @staticmethod
+    def calculate_relevance_score(
+        doc_title: str, 
+        doc_context: Optional[str], 
+        query_intent: dict
+    ) -> dict:
+        """Calculate relevance score framework for a document based on query intent.
+
+        This helper provides the scoring framework structure. The LLM should
+        perform the actual semantic evaluation to calculate scores.
+
+        Args:
+            doc_title: Document title
+            doc_context: Additional context from TOC or content (optional)
+            query_intent: Intent analysis result from analyze_query_intent()
+
+        Returns:
+            Relevance analysis framework with keys:
+            - score: Overall relevance score (0.0-1.0) - LLM calculated
+            - intent_match: How well document serves the intent (0.0-1.0)
+            - scope_alignment: Scope alignment score (0.0-1.0)
+            - depth_appropriateness: Depth appropriateness score (0.0-1.0)
+            - specificity_match: Specificity alignment score (0.0-1.0)
+            - rationale: Brief explanation of the scoring
+
+        Examples:
+            >>> SearchHelpers.calculate_relevance_score(
+            ...     "Hooks reference",
+            ...     "Configuration options and setup guide",
+            ...     {"primary_intent": "CONFIGURE", "scope": "SPECIFIC"}
+            ... )
+            {
+                "score": 0.0,  # LLM should calculate
+                "intent_match": 0.0,
+                "scope_alignment": 0.0,
+                "depth_appropriateness": 0.0,
+                "specificity_match": 0.0,
+                "rationale": "LLM should provide semantic evaluation"
+            }
+
+        Note:
+            This helper provides the scoring framework. The LLM should perform
+            semantic evaluation to calculate actual scores.
+        """
+        return {
+            "score": 0.0,  # LLM should calculate overall score
+            "intent_match": 0.0,  # LLM should evaluate intent alignment
+            "scope_alignment": 0.0,  # LLM should evaluate scope match
+            "depth_appropriateness": 0.0,  # LLM should evaluate depth match
+            "specificity_match": 0.0,  # LLM should evaluate specificity
+            "rationale": "LLM should provide semantic evaluation and rationale",
+            "doc_title": doc_title,
+            "doc_context": doc_context or "",
+            "query_intent": query_intent
+        }
+
+    @staticmethod
+    def format_filtered_results(
+        high_relevance: List[dict], 
+        medium_relevance: List[dict], 
+        filtered_out: List[dict]
+    ) -> str:
+        """Format the filtered results with relevance categories.
+
+        Args:
+            high_relevance: High relevance documents (≥0.8) with metadata
+            medium_relevance: Medium relevance documents (0.5-0.79) with metadata  
+            filtered_out: Filtered out documents (<0.5) with reasons
+
+        Returns:
+            Formatted filtered results section in markdown
+
+        Examples:
+            >>> SearchHelpers.format_filtered_results(
+            ...     [{"title": "Hooks reference", "score": 0.9, "rationale": "Direct guide"}],
+            ...     [{"title": "Testing guide", "score": 0.6, "rationale": "Related"}],
+            ...     [{"title": "API ref", "score": 0.2, "reason": "Different topic"}]
+            ... )
+            '## 精准检索结果 (Intent-Filtered Results)\\n\\n### 高相关性文档...'
+        """
+        lines = ["## 精准检索结果 (Intent-Filtered Results)\n"]
+
+        # High relevance section
+        if high_relevance:
+            lines.append("### 高相关性文档 (High Relevance ≥0.8)")
+            for i, doc in enumerate(high_relevance, 1):
+                lines.append(f"{i}. **{doc['title']}** - Relevance: {doc.get('score', 'N/A')}")
+                if 'rationale' in doc:
+                    lines.append(f"   - Intent Match: {doc['rationale']}")
+                if 'path' in doc:
+                    lines.append(f"   - TOC Path: `{doc['path']}`")
+                # Add TOC content if available
+                if 'toc_content' in doc and doc['toc_content']:
+                    lines.append(f"   - 正文内容:")
+                    lines.append(f"     {doc['toc_content']}")
+                lines.append("")
+
+        # Medium relevance section
+        if medium_relevance:
+            lines.append("### 相关文档 (Medium Relevance 0.5-0.79)")
+            start_num = len(high_relevance) + 1
+            for i, doc in enumerate(medium_relevance, start_num):
+                lines.append(f"{i}. **{doc['title']}** - Relevance: {doc.get('score', 'N/A')}")
+                if 'rationale' in doc:
+                    lines.append(f"   - Intent Match: {doc['rationale']}")
+                if 'note' in doc:
+                    lines.append(f"   - Note: {doc['note']}")
+                if 'path' in doc:
+                    lines.append(f"   - TOC Path: `{doc['path']}`")
+                # Add TOC content if available
+                if 'toc_content' in doc and doc['toc_content']:
+                    lines.append(f"   - 正文内容:")
+                    lines.append(f"     {doc['toc_content']}")
+                lines.append("")
+
+        # Filtered out section
+        if filtered_out:
+            lines.append("### 已过滤文档 (Filtered Out <0.5)")
+            for doc in filtered_out:
+                reason = doc.get('reason', 'Low relevance score')
+                lines.append(f"- \"{doc['title']}\" - Reason: {reason}")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def format_filtering_summary(
+        original_count: int, 
+        final_count: int, 
+        precision_improvement: str
+    ) -> str:
+        """Format a summary of the filtering process.
+
+        Args:
+            original_count: Number of documents before filtering
+            final_count: Number of documents after filtering (high + medium)
+            precision_improvement: Description of precision improvement
+
+        Returns:
+            Formatted filtering summary in markdown
+
+        Examples:
+            >>> SearchHelpers.format_filtering_summary(5, 3, "60% → 100%")
+            '**Filtering Summary:**\\n- Original results: 5 documents...'
+        """
+        high_count = final_count  # Assuming final_count represents kept documents
+        filtered_count = original_count - final_count
+
+        lines = [
+            "\n**Filtering Summary:**",
+            f"- Original results: {original_count} documents",
+            f"- Final results: {final_count} documents",
+            f"- Filtered out: {filtered_count} documents",
+            f"- Precision improvement: {precision_improvement}"
+        ]
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def get_intent_classification_guide() -> dict:
+        """Get the intent classification guide for LLM reference.
+
+        Returns:
+            Dictionary containing intent classification guidelines
+
+        Note:
+            This helper provides reference information for LLM-based intent analysis.
+        """
+        return {
+            "primary_intent_types": {
+                "LEARN": "User wants to understand concepts, principles, or how things work",
+                "CONFIGURE": "User wants to set up, customize, or modify settings", 
+                "TROUBLESHOOT": "User wants to solve problems or fix issues",
+                "REFERENCE": "User wants quick lookup of syntax, parameters, or specifications",
+                "COMPARE": "User wants to understand differences or choose between options"
+            },
+            "scope_types": {
+                "SPECIFIC": "Targets a particular feature, component, or use case",
+                "GENERAL": "Covers broad topics or multiple related areas", 
+                "CONTEXTUAL": "Depends on user's current situation or environment"
+            },
+            "depth_types": {
+                "OVERVIEW": "High-level understanding or introduction",
+                "DETAILED": "In-depth technical information or comprehensive guides",
+                "PRACTICAL": "Step-by-step instructions or hands-on examples"
+            },
+            "relevance_thresholds": {
+                "high": 0.8,
+                "medium": 0.5,
+                "low": 0.0
+            },
+            "scoring_factors": [
+                "intent_match: How well the document serves the identified intent",
+                "scope_alignment: How well the document's scope matches query scope", 
+                "depth_appropriateness: How well the document's depth matches information need",
+                "specificity_match: How well the document's specificity matches query specificity"
+            ]
+        }
