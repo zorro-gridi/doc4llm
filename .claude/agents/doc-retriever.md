@@ -1,6 +1,6 @@
 ---
 name: doc-retriever
-description: "Documentation retrieval orchestrator using a four-phase progressive disclosure workflow. **Use proactively** when user use keywords **'use contextZ' or 'use contextz'** to submit a query or content extract instruction. Final returns properly cited results with source URLs and file paths."
+description: "Documentation retrieval orchestrator using a four-phase progressive disclosure workflow. **Use proactively** when user use keywords **'use contextZ' or 'use contextz'** to submit a query、content extract instruction or have a relative intent. Final returns properly cited results with source URLs and file paths."
 skills:
   - md-doc-query-optimizer
   - md-doc-searcher

@@ -1323,48 +1323,58 @@ class MarkdownDocExtractor(DebugMixin):
         return '\n'.join(result)
 
     @classmethod
-    def from_config(cls, config_path: str | None = None) -> "MarkdownDocExtractor":
-        """Create an extractor instance from a configuration file.
+    def from_config(cls, config_path: str | None = None, config_dict: dict | None = None) -> "MarkdownDocExtractor":
+        """Create an extractor instance from a configuration file or dictionary.
 
         Args:
-            config_path: Path to config.json. If None, uses default location.
+            config_path: Path to config.json. If None, uses package default config.
+            config_dict: Optional config dict (overrides config_path if both provided).
 
         Returns:
             A configured MarkdownDocExtractor instance
-
-        Examples:
-            >>> extractor = MarkdownDocExtractor.from_config()
         """
-        # Default config path
-        if config_path is None:
-            config_path = "doc4llm/config/config.json"
+        # Priority 1: Direct config dictionary
+        if config_dict is not None:
+            config = config_dict
+        else:
+            # Priority 2: Explicit config path
+            if config_path is None:
+                # Use package's own config file
+                package_dir = Path(__file__).parent
+                config_file = package_dir / "config.json"
+            else:
+                config_file = Path(config_path)
 
-        config_file = Path(config_path)
+            if not config_file.exists():
+                return cls()
 
-        if not config_file.exists():
-            # Return with defaults if config doesn't exist
-            return cls()
+            try:
+                with open(config_file, "r", encoding="utf-8") as f:
+                    config = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                return cls()
 
-        try:
-            with open(config_file, "r", encoding="utf-8") as f:
-                config = json.load(f)
+        # Handle both flat config (package's own) and nested config (main config)
+        if "tool" in config and "markdown_extractor" in config["tool"]:
+            # Legacy format from main config
+            extractor_config = config["tool"]["markdown_extractor"]
+            base_dir = extractor_config.get("base_dir", config.get("doc_dir", "md_docs"))
+            debug_mode = config.get("debug_mode", 0) == 1
+        else:
+            # New flat format from package config
+            extractor_config = config
+            base_dir = config.get("base_dir", "md_docs")
+            debug_mode = config.get("debug_mode", 0) == 1
 
-            # Extract tool configuration if it exists
-            tool_config = config.get("tool", {})
-            extractor_config = tool_config.get("markdown_extractor", {})
-
-            return cls(
-                base_dir=extractor_config.get("base_dir", config.get("doc_dir", "md_docs")),
-                search_mode=extractor_config.get("default_search_mode", "exact"),
-                case_sensitive=extractor_config.get("case_sensitive", False),
-                max_results=extractor_config.get("max_results", 10),
-                fuzzy_threshold=extractor_config.get("fuzzy_threshold", 0.6),
-                debug_mode=config.get("debug_mode", 0) == 1,
-                enable_fallback=extractor_config.get("enable_fallback", False),
-                fallback_modes=extractor_config.get("fallback_modes", None),
-                compress_threshold=extractor_config.get("compress_threshold", 2000),
-                enable_compression=extractor_config.get("enable_compression", False),
-            )
-        except (json.JSONDecodeError, IOError):
-            # Return with defaults if config is invalid
-            return cls()
+        return cls(
+            base_dir=base_dir,
+            search_mode=extractor_config.get("default_search_mode", "exact"),
+            case_sensitive=extractor_config.get("case_sensitive", False),
+            max_results=extractor_config.get("max_results", 10),
+            fuzzy_threshold=extractor_config.get("fuzzy_threshold", 0.6),
+            debug_mode=debug_mode,
+            enable_fallback=extractor_config.get("enable_fallback", False),
+            fallback_modes=extractor_config.get("fallback_modes", None),
+            compress_threshold=extractor_config.get("compress_threshold", 2000),
+            enable_compression=extractor_config.get("enable_compression", False),
+        )

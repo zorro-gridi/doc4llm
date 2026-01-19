@@ -100,22 +100,76 @@ def main():
         # Create extractor from config or with parameters
         if args.config:
             extractor = MarkdownDocExtractor.from_config(args.config)
-        elif args.file:
-            extractor = MarkdownDocExtractor(
-                single_file_path=args.file,
-                search_mode=args.search_mode,
-                fuzzy_threshold=args.fuzzy_threshold,
-                max_results=args.max_results,
-                debug_mode=args.debug,
-            )
         else:
-            extractor = MarkdownDocExtractor(
-                base_dir=args.base_dir,
-                search_mode=args.search_mode,
-                fuzzy_threshold=args.fuzzy_threshold,
-                max_results=args.max_results,
-                debug_mode=args.debug,
-            )
+            # Try to load skill's config first
+            script_dir = Path(__file__).parent.parent
+            skill_config_path = script_dir / "config.json"
+
+            if skill_config_path.exists():
+                try:
+                    with open(skill_config_path, "r", encoding="utf-8") as f:
+                        skill_config = json.load(f)
+
+                    if args.file:
+                        extractor = MarkdownDocExtractor(
+                            single_file_path=args.file,
+                            search_mode=args.search_mode or skill_config.get("default_search_mode", "exact"),
+                            fuzzy_threshold=args.fuzzy_threshold or skill_config.get("fuzzy_threshold", 0.6),
+                            max_results=args.max_results or skill_config.get("max_results", 10),
+                            debug_mode=args.debug,
+                            enable_fallback=skill_config.get("enable_fallback", False),
+                            fallback_modes=skill_config.get("fallback_modes", None),
+                            compress_threshold=skill_config.get("compress_threshold", 2000),
+                            enable_compression=skill_config.get("enable_compression", False),
+                        )
+                    else:
+                        extractor = MarkdownDocExtractor(
+                            base_dir=args.base_dir or skill_config.get("base_dir", "md_docs"),
+                            search_mode=args.search_mode or skill_config.get("default_search_mode", "exact"),
+                            fuzzy_threshold=args.fuzzy_threshold or skill_config.get("fuzzy_threshold", 0.6),
+                            max_results=args.max_results or skill_config.get("max_results", 10),
+                            debug_mode=args.debug,
+                            enable_fallback=skill_config.get("enable_fallback", False),
+                            fallback_modes=skill_config.get("fallback_modes", None),
+                            compress_threshold=skill_config.get("compress_threshold", 2000),
+                            enable_compression=skill_config.get("enable_compression", False),
+                        )
+                except (json.JSONDecodeError, IOError):
+                    # Fall back to CLI args only
+                    if args.file:
+                        extractor = MarkdownDocExtractor(
+                            single_file_path=args.file,
+                            search_mode=args.search_mode,
+                            fuzzy_threshold=args.fuzzy_threshold,
+                            max_results=args.max_results,
+                            debug_mode=args.debug,
+                        )
+                    else:
+                        extractor = MarkdownDocExtractor(
+                            base_dir=args.base_dir,
+                            search_mode=args.search_mode,
+                            fuzzy_threshold=args.fuzzy_threshold,
+                            max_results=args.max_results,
+                            debug_mode=args.debug,
+                        )
+            else:
+                # No skill config, use CLI args only
+                if args.file:
+                    extractor = MarkdownDocExtractor(
+                        single_file_path=args.file,
+                        search_mode=args.search_mode,
+                        fuzzy_threshold=args.fuzzy_threshold,
+                        max_results=args.max_results,
+                        debug_mode=args.debug,
+                    )
+                else:
+                    extractor = MarkdownDocExtractor(
+                        base_dir=args.base_dir,
+                        search_mode=args.search_mode,
+                        fuzzy_threshold=args.fuzzy_threshold,
+                        max_results=args.max_results,
+                        debug_mode=args.debug,
+                    )
 
         # List available documents
         if args.list:

@@ -24,6 +24,7 @@ When agents return results, they wrap their output with special markers that tel
 **Format:**
 ```
 === AOP-FINAL ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 [content that must not be modified]
 === END-AOP-FINAL ===
 ```
@@ -148,6 +149,7 @@ When agents return results, they wrap their output with special markers that tel
 **Example:**
 ```
 === AOP-FINAL | agent=doc-retriever | format=markdown | lines=<total_lines> ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 [content]
 === END-AOP-FINAL ===
 ```
@@ -189,6 +191,7 @@ Choose the appropriate marker type based on your agent's purpose:
 
 ```markdown
 === AOP-FINAL | agent=your-agent-name | source={doc_dir} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 [Your formatted output here]
 
@@ -249,6 +252,7 @@ In **strict mode** (recommended for production):
 
    ```markdown
    === AOP-FINAL | agent=your-agent-name ===
+   **Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
    [your output]
    === END-AOP-FINAL ===
    ```
@@ -275,6 +279,7 @@ Based on my search, here are the results:
 **After:**
 ```
 === AOP-FINAL | agent=doc-retriever | source={doc_dir} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 [content]
 
@@ -332,6 +337,7 @@ def validate_aop_output(output: str) -> bool:
 
 ```
 === AOP-FINAL | agent=doc-retriever | format=markdown | lines=<total_lines> | source={doc_dir} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 # Agent Skills
 
@@ -349,6 +355,7 @@ def validate_aop_output(output: str) -> bool:
 
 ```
 === AOP-FINAL | agent=doc-qa-agentic | confidence=0.92 | sources=3 ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 ## Hooks Configuration and Deployment
 

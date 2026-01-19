@@ -224,36 +224,50 @@ Get detailed information about a document.
 
 ## Configuration
 
-Load from `doc4llm/config/config.json`:
+The md-doc-reader skill manages its own configuration at `.claude/skills/md-doc-reader/config.json`.
+
+### Usage Examples
 
 ```python
-extractor = MarkdownDocExtractor.from_config()
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+import json
+from pathlib import Path
+
+# Load and use skill's config
+skill_config_path = Path(__file__).parent.parent / "md-doc-reader" / "config.json"
+with open(skill_config_path) as f:
+    skill_config = json.load(f)
+extractor = MarkdownDocExtractor.from_config(config_dict=skill_config)
 ```
 
-Config structure:
+### Config Structure
+
 ```json
 {
-  "tool": {
-    "markdown_extractor": {
-      "base_dir": "md_docs",
-      "default_search_mode": "exact",
-      "case_sensitive": false,
-      "max_results": 10,
-      "fuzzy_threshold": 0.6,
-      "enable_fallback": false,
-      "fallback_modes": ["case_insensitive", "partial", "fuzzy"],
-      "compress_threshold": 2000,
-      "enable_compression": false
-    }
-  }
+  "base_dir": "md_docs",
+  "default_search_mode": "exact",
+  "case_sensitive": false,
+  "max_results": 10,
+  "fuzzy_threshold": 0.6,
+  "enable_fallback": true,
+  "fallback_modes": ["case_insensitive", "partial", "fuzzy"],
+  "compress_threshold": 2000,
+  "enable_compression": false,
+  "debug_mode": 0
 }
 ```
 
-**New Configuration Options:**
-- `enable_fallback`: Enable automatic fallback to other search modes on failure (default: false)
-- `fallback_modes`: List of search modes to try as fallback (default: ["case_insensitive", "partial", "fuzzy"])
-- `compress_threshold`: Line count threshold for content compression (default: 2000)
-- `enable_compression`: Enable automatic content compression for large documents (default: false)
+**Configuration Options:**
+- `base_dir`: Base documentation directory
+- `default_search_mode`: "exact", "case_insensitive", "fuzzy", or "partial"
+- `case_sensitive`: Whether exact matching is case sensitive
+- `max_results`: Max results for fuzzy/partial searches
+- `fuzzy_threshold`: Minimum similarity ratio (0.0 to 1.0)
+- `enable_fallback`: Enable automatic fallback to other search modes
+- `fallback_modes`: List of fallback search modes
+- `compress_threshold`: Line count threshold for compression
+- `enable_compression`: Enable automatic content compression
+- `debug_mode`: Debug output (0=off, 1=on)
 
 ## Directory Structure
 
