@@ -1,6 +1,6 @@
 ---
 name: md-doc-reader
-description: Extract content from markdown documents by title in the doc4llm md_docs directory structure. Use this skill when Claude needs to read documentation pages that were previously scraped and converted to markdown, query specific titles within documentation sets, extract content from doc4llm's md_docs/ directory or individual .md files, or search and list available documentation titles. Supports exact, case-insensitive, fuzzy, and partial matching modes.
+description: Extract content from markdown documents by title in the knowledge base configured in `.claude/knowledge_base.json`. Use this skill when Claude needs to read documentation pages that were previously scraped and converted to markdown, query specific titles within documentation sets, extract content from the knowledge base directory or individual .md files, or search and list available documentation titles. Supports exact, case-insensitive, fuzzy, and partial matching modes.
 allowed-tools:
   - Read
   - Glob
@@ -10,7 +10,7 @@ context: fork
 
 # Markdown Document Reader
 
-Extract content from markdown documents in the doc4llm md_docs directory structure using the `MarkdownDocExtractor`.
+Extract content from markdown documents in the knowledge base directory configured in `.claude/knowledge_base.json` using the `MarkdownDocExtractor`.
 
 ## Output Language Requirement
 
@@ -66,8 +66,10 @@ For complete documentation:
 
 Expected format:
 ```
-md_docs/
+<base_dir>/
 └── <doc_name>:<doc_version>/
     └── <PageTitle>/
         └── docContent.md
 ```
+
+Where `<base_dir>` is configured in `.claude/knowledge_base.json` (default: `md_docs`).

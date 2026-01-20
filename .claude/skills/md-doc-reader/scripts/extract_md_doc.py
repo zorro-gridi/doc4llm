@@ -157,13 +157,12 @@ def main():
     # Validate arguments
     # Allow --list, --titles-csv, --titles-file, --semantic-search without --title
     requires_title = not (
-        args.list
-        or args.titles_csv
-        or args.titles_file
-        or args.semantic_search
+        args.list or args.titles_csv or args.titles_file or args.semantic_search
     )
     if requires_title and not args.title:
-        parser.error("--title is required unless using --list, --titles-csv, --titles-file, or --semantic-search")
+        parser.error(
+            "--title is required unless using --list, --titles-csv, --titles-file, or --semantic-search"
+        )
 
     try:
         # Import the extractor
@@ -173,70 +172,112 @@ def main():
         if args.config:
             extractor = MarkdownDocExtractor.from_config(args.config)
         else:
-            # Try to load skill's config first
-            script_dir = Path(__file__).parent  # scripts/ directory
-            skill_config_path = script_dir / "config.json"
+            # Try to load knowledge base config first (shared config for all skills)
+            project_root = Path(
+                __file__
+            ).parent.parent.parent  # scripts/ -> skill/ -> .claude/
+            knowledge_base_config_path = (
+                project_root / ".claude" / "knowledge_base.json"
+            )
+            skill_config_path = None
 
-            # Add deprecation fallback for old location
-            old_config_path = script_dir.parent / "config.json"
-            if not skill_config_path.exists() and old_config_path.exists():
-                import warnings
-                warnings.warn(
-                    "Config location deprecated: Move config.json from skill root to scripts/ directory.",
-                    DeprecationWarning,
-                    stacklevel=2
-                )
-                skill_config_path = old_config_path
-
-            if skill_config_path.exists():
+            if knowledge_base_config_path.exists():
                 try:
-                    with open(skill_config_path, "r", encoding="utf-8") as f:
-                        skill_config = json.load(f)
+                    with open(knowledge_base_config_path, "r", encoding="utf-8") as f:
+                        kb_config = json.load(f)
+                    kb_base_dir = kb_config.get("knowledge_base", {}).get(
+                        "base_dir", "md_docs"
+                    )
+                    extractor = MarkdownDocExtractor(
+                        base_dir=args.base_dir or kb_base_dir,
+                        search_mode=args.search_mode
+                        or kb_config.get("default_search_mode", "exact"),
+                        fuzzy_threshold=args.fuzzy_threshold
+                        or kb_config.get("fuzzy_threshold", 0.6),
+                        max_results=args.max_results
+                        or kb_config.get("max_results", 10),
+                        debug_mode=args.debug,
+                        enable_fallback=kb_config.get("enable_fallback", False),
+                        fallback_modes=kb_config.get("fallback_modes", None),
+                        compress_threshold=kb_config.get("compress_threshold", 2000),
+                        enable_compression=kb_config.get("enable_compression", False),
+                    )
+                except (json.JSONDecodeError, IOError, KeyError):
+                    # Fall back to skill's own config
+                    knowledge_base_config_path = None
+            # Fall back to skill's own config if knowledge_base.json not available
+            if (
+                knowledge_base_config_path is None
+                or not knowledge_base_config_path.exists()
+            ):
+                script_dir = Path(__file__).parent  # scripts/ directory
+                skill_config_path = script_dir / "config.json"
 
-                    if args.file:
-                        extractor = MarkdownDocExtractor(
-                            single_file_path=args.file,
-                            search_mode=args.search_mode or skill_config.get("default_search_mode", "exact"),
-                            fuzzy_threshold=args.fuzzy_threshold or skill_config.get("fuzzy_threshold", 0.6),
-                            max_results=args.max_results or skill_config.get("max_results", 10),
-                            debug_mode=args.debug,
-                            enable_fallback=skill_config.get("enable_fallback", False),
-                            fallback_modes=skill_config.get("fallback_modes", None),
-                            compress_threshold=skill_config.get("compress_threshold", 2000),
-                            enable_compression=skill_config.get("enable_compression", False),
-                        )
-                    else:
-                        extractor = MarkdownDocExtractor(
-                            base_dir=args.base_dir or skill_config.get("base_dir", "md_docs"),
-                            search_mode=args.search_mode or skill_config.get("default_search_mode", "exact"),
-                            fuzzy_threshold=args.fuzzy_threshold or skill_config.get("fuzzy_threshold", 0.6),
-                            max_results=args.max_results or skill_config.get("max_results", 10),
-                            debug_mode=args.debug,
-                            enable_fallback=skill_config.get("enable_fallback", False),
-                            fallback_modes=skill_config.get("fallback_modes", None),
-                            compress_threshold=skill_config.get("compress_threshold", 2000),
-                            enable_compression=skill_config.get("enable_compression", False),
-                        )
-                except (json.JSONDecodeError, IOError):
-                    # Fall back to CLI args only
-                    if args.file:
-                        extractor = MarkdownDocExtractor(
-                            single_file_path=args.file,
-                            search_mode=args.search_mode,
-                            fuzzy_threshold=args.fuzzy_threshold,
-                            max_results=args.max_results,
-                            debug_mode=args.debug,
-                        )
-                    else:
-                        extractor = MarkdownDocExtractor(
-                            base_dir=args.base_dir,
-                            search_mode=args.search_mode,
-                            fuzzy_threshold=args.fuzzy_threshold,
-                            max_results=args.max_results,
-                            debug_mode=args.debug,
-                        )
-            else:
-                # No skill config, use CLI args only
+                # Add deprecation fallback for old location
+                old_config_path = script_dir.parent / "config.json"
+                if not skill_config_path.exists() and old_config_path.exists():
+                    import warnings
+
+                    warnings.warn(
+                        "Config location deprecated: Move config.json from skill root to scripts/ directory.",
+                        DeprecationWarning,
+                        stacklevel=2,
+                    )
+                    skill_config_path = old_config_path
+
+                if skill_config_path and skill_config_path.exists():
+                    try:
+                        with open(skill_config_path, "r", encoding="utf-8") as f:
+                            skill_config = json.load(f)
+
+                        if args.file:
+                            extractor = MarkdownDocExtractor(
+                                single_file_path=args.file,
+                                search_mode=args.search_mode
+                                or skill_config.get("default_search_mode", "exact"),
+                                fuzzy_threshold=args.fuzzy_threshold
+                                or skill_config.get("fuzzy_threshold", 0.6),
+                                max_results=args.max_results
+                                or skill_config.get("max_results", 10),
+                                debug_mode=args.debug,
+                                enable_fallback=skill_config.get(
+                                    "enable_fallback", False
+                                ),
+                                fallback_modes=skill_config.get("fallback_modes", None),
+                                compress_threshold=skill_config.get(
+                                    "compress_threshold", 2000
+                                ),
+                                enable_compression=skill_config.get(
+                                    "enable_compression", False
+                                ),
+                            )
+                        else:
+                            extractor = MarkdownDocExtractor(
+                                base_dir=args.base_dir
+                                or skill_config.get("base_dir", "md_docs"),
+                                search_mode=args.search_mode
+                                or skill_config.get("default_search_mode", "exact"),
+                                fuzzy_threshold=args.fuzzy_threshold
+                                or skill_config.get("fuzzy_threshold", 0.6),
+                                max_results=args.max_results
+                                or skill_config.get("max_results", 10),
+                                debug_mode=args.debug,
+                                enable_fallback=skill_config.get(
+                                    "enable_fallback", False
+                                ),
+                                fallback_modes=skill_config.get("fallback_modes", None),
+                                compress_threshold=skill_config.get(
+                                    "compress_threshold", 2000
+                                ),
+                                enable_compression=skill_config.get(
+                                    "enable_compression", False
+                                ),
+                            )
+                    except (json.JSONDecodeError, IOError):
+                        pass
+
+            # If no config file worked, use CLI args only
+            if "extractor" not in locals():
                 if args.file:
                     extractor = MarkdownDocExtractor(
                         single_file_path=args.file,
@@ -290,9 +331,9 @@ def main():
             if args.with_metadata:
                 # Use extract_by_titles_with_metadata()
                 from doc4llm.tool.md_doc_retrieval import ExtractionResult
+
                 result: ExtractionResult = extractor.extract_by_titles_with_metadata(
-                    titles=titles,
-                    threshold=args.threshold
+                    titles=titles, threshold=args.threshold
                 )
                 output_metadata_result(result, args.format)
             else:
@@ -304,8 +345,7 @@ def main():
         # Compression mode
         if args.compress:
             result = extractor.extract_with_compression(
-                title=args.title,
-                query=args.compress_query
+                title=args.title, query=args.compress_query
             )
             output_compression_result(result, args.format)
             return 0
@@ -315,7 +355,7 @@ def main():
             candidates = extractor.extract_by_title_with_candidates(
                 title=args.title,
                 max_candidates=args.max_candidates,
-                min_threshold=args.min_threshold
+                min_threshold=args.min_threshold,
             )
             output_candidates(candidates, args.format)
             return 0
@@ -325,7 +365,7 @@ def main():
             results = extractor.semantic_search_titles(
                 query=args.title,
                 doc_set=args.doc_set,
-                max_results=args.max_results or 10
+                max_results=args.max_results or 10,
             )
             output_semantic_results(results, args.format)
             return 0
@@ -343,15 +383,23 @@ def main():
             print(f"No document found with title: '{args.title}'", file=sys.stderr)
             return 1
         elif content == "":
-            print(f"Title does not match in single-file mode: '{args.title}'", file=sys.stderr)
+            print(
+                f"Title does not match in single-file mode: '{args.title}'",
+                file=sys.stderr,
+            )
             return 1
         else:
             if args.format == "json":
-                print(json.dumps({
-                    "title": args.title,
-                    "content": content,
-                    "length": len(content),
-                }, indent=2))
+                print(
+                    json.dumps(
+                        {
+                            "title": args.title,
+                            "content": content,
+                            "length": len(content),
+                        },
+                        indent=2,
+                    )
+                )
             else:
                 print(content)
             return 0
@@ -367,17 +415,23 @@ def main():
 
 # Output formatting functions
 
+
 def output_metadata_result(result, format_type: str):
     """Output ExtractionResult with metadata."""
     if format_type == "json":
-        print(json.dumps({
-            "contents": result.contents,
-            "total_line_count": result.total_line_count,
-            "individual_counts": result.individual_counts,
-            "requires_processing": result.requires_processing,
-            "threshold": result.threshold,
-            "document_count": result.document_count
-        }, indent=2))
+        print(
+            json.dumps(
+                {
+                    "contents": result.contents,
+                    "total_line_count": result.total_line_count,
+                    "individual_counts": result.individual_counts,
+                    "requires_processing": result.requires_processing,
+                    "threshold": result.threshold,
+                    "document_count": result.document_count,
+                },
+                indent=2,
+            )
+        )
     elif format_type == "summary":
         print(result.to_summary())
     else:  # text
@@ -398,7 +452,7 @@ def output_multi_contents(contents: dict, format_type: str):
     elif format_type == "summary":
         print(f"Extracted {len(contents)} documents:")
         for title, content in contents.items():
-            line_count = len(content.split('\n'))
+            line_count = len(content.split("\n"))
             print(f"  - {title}: {line_count} lines")
     else:  # text
         for title, content in contents.items():
@@ -415,14 +469,16 @@ def output_compression_result(result: dict, format_type: str):
         print(f"Title: {result['title']}")
         print(f"Line count: {result['line_count']}")
         print(f"Compressed: {result['compressed']}")
-        if result['compressed']:
+        if result["compressed"]:
             print(f"Compression ratio: {result['compression_ratio']:.0%}")
             print(f"Method: {result['compression_method']}")
     else:  # text
         print(f"=== {result['title']} ===")
-        if result['compressed']:
-            print(f"[Compressed - {result['compression_ratio']:.0%} reduction via {result['compression_method']}]")
-        print(result['content'])
+        if result["compressed"]:
+            print(
+                f"[Compressed - {result['compression_ratio']:.0%} reduction via {result['compression_method']}]"
+            )
+        print(result["content"])
 
 
 def output_candidates(candidates: list, format_type: str):
@@ -449,7 +505,9 @@ def output_semantic_results(results: list, format_type: str):
     elif format_type == "summary":
         print(f"Found {len(results)} results:")
         for r in results:
-            print(f"  - {r['title']} ({r['match_type']}, similarity: {r['similarity']:.2f})")
+            print(
+                f"  - {r['title']} ({r['match_type']}, similarity: {r['similarity']:.2f})"
+            )
     else:  # text
         for i, r in enumerate(results, 1):
             print(f"{i}. {r['title']}")

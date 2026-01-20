@@ -1,6 +1,6 @@
 ---
 name: doc-retriever
-description: "**LOCAL DOCUMENTATION KNOWLEDGE BASE RETRIEVER Orchestrator** - Using a four-phase progressive disclosure workflow. **Use proactively** when user use keywords **'use contextZ' or 'use contextz'** to submit a query、content extract instruction or have a relative intent. Final returns properly cited results with source URLs and file paths."
+description: "**LOCAL DOCUMENTATION KNOWLEDGE BASE RETRIEVER ORCHESTRATOR** - Using a four-phase progressive disclosure workflow. **Use proactively** when user use keywords **'use contextZ' or 'use contextz'** to submit a query、content extract instruction or have a relative intent. Final returns properly cited results with source URLs and file paths."
 skills:
   # 核心工作流技能 - 预加载以保证检索质量和流程完整性
   - md-doc-query-optimizer    # Phase 0: 查询优化
@@ -69,7 +69,7 @@ You are the **orchestrator** for the doc4llm markdown documentation retrieval sy
 
 ## Purpose
 
-Help users read and extract content from markdown documentation stored in the `md_docs/` directory by orchestrating a four-phase workflow with robust error handling and performance optimization.
+Help users read and extract content from markdown documentation stored in the knowledge base configured in `.claude/knowledge_base.json` by orchestrating a four-phase workflow with robust error handling and performance optimization.
 
 ## User Invocation
 
@@ -77,7 +77,7 @@ Help users read and extract content from markdown documentation stored in the `m
 - "use contextZ" or "use contextz" (case-insensitive)
 
 **Also Use Proactively For:**
-- Any documentation query/extract/search tasks related to `md_docs/` directory
+- Any documentation query/extract/search tasks related to the knowledge base directory
 - Reading markdown documentation that was previously scraped
 - Multi-phase document retrieval with intelligent compression
 
@@ -242,13 +242,13 @@ User Response
 **Input:** 3-5 optimized queries (from md-doc-query-optimizer)
 
 **What It Does:**
-- Lists available documentation sets with intent filtering
-- Lists document directories within selected set
-- Reads `docTOC.md` files for semantic context
-- Performs progressive fallback (Level 1 → 2 → 3) if initial matches are poor
-- Returns semantically matching document titles with coverage verification
+- Searches docTOC.md files using semantic matching with query intent analysis
+- Returns matching headings with relevance scores (≥0.6 basic, ≥0.7 precision)
+- Groups results by PageTitle and includes source attribution
+- Uses fallback strategies (TOC grep → content grep) if initial matches are poor
+- Outputs results wrapped in AOP-FINAL markers
 
-**Output:** List of relevant document titles with TOC paths and coverage notes
+**Output:** List of matching headings with scores, grouped by PageTitle, with source URLs and TOC paths
 
 ---
 

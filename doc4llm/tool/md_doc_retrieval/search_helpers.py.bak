@@ -1,0 +1,1379 @@
+"""
+Search helper functions for md-doc-searcher skill.
+
+This module provides helper functions for document search operations.
+These helpers perform deterministic operations (path construction, formatting)
+and do NOT replace LLM semantic understanding capabilities.
+
+Core Principle:
+- Helpers: Deterministic operations (path building, command construction, formatting)
+- LLM: Semantic understanding (intent analysis, concept matching, relevance scoring)
+
+Version 4.1.0 Features:
+- Configuration Management: Configurable thresholds for basic/precision matching
+- Search Success Validation: Built-in validation for retrieval success conditions
+- Cross-DocSet Verification: Complete coverage verification for multi-document searches
+- Enhanced Heading Scoring: Added precision match markers and category classification
+- PageTitle Scoring: calculate_page_title_relevance_score() for basic threshold (0.6)
+- Fallback Attribution: annotate_headings_with_page_title() for PageTitle ownership
+- Content Traceback: traceback_to_heading() for tracing content matches back to headings
+
+Version 2.9.0 Features (retained):
+- Content language consistency constraints for result formatting
+- TOC structure extraction from docTOC.md files
+- Language-adaptive result formatting (Chinese/English/Mixed)
+- Markdown heading extraction with hierarchy preservation
+
+Version 2.8.0 Features (retained):
+- Intent analysis framework for query understanding
+- Relevance scoring structure for document filtering
+- Filtered results formatting for precision improvement
+- Comprehensive filtering summary generation
+"""
+import json
+import os
+import re
+from typing import List, Optional, Tuple, Dict, Any
+
+
+class _Config:
+    """Internal configuration management class for SearchHelpers.
+
+    Manages thresholds and matching requirements for search operations.
+    All configuration is stored as class variables for stateless access.
+    """
+    _basic_threshold: float = 0.6
+    _precision_threshold: float = 0.7
+    _min_page_title_matches: int = 2
+    _min_heading_matches: int = 2
+
+    @classmethod
+    def set_basic_threshold(cls, threshold: float) -> None:
+        """Set the basic relevance matching threshold.
+
+        Args:
+            threshold: Basic threshold value (default: 0.6)
+        """
+        cls._basic_threshold = max(0.0, min(1.0, threshold))
+
+    @classmethod
+    def set_precision_threshold(cls, threshold: float) -> None:
+        """Set the precision relevance matching threshold.
+
+        Args:
+            threshold: Precision threshold value (default: 0.7)
+        """
+        cls._precision_threshold = max(0.0, min(1.0, threshold))
+
+    @classmethod
+    def set_min_page_title_matches(cls, count: int) -> None:
+        """Set the minimum number of matched PageTitles required per doc-set.
+
+        Args:
+            count: Minimum count (default: 2)
+        """
+        cls._min_page_title_matches = max(1, count)
+
+    @classmethod
+    def set_min_heading_matches(cls, count: int) -> None:
+        """Set the minimum number of matched headings required per doc-set.
+
+        Args:
+            count: Minimum count (default: 2)
+        """
+        cls._min_heading_matches = max(1, count)
+
+    @classmethod
+    def get(cls) -> dict:
+        """Get the current threshold configuration.
+
+        Returns:
+            Dictionary containing current configuration
+        """
+        return {
+            "basic_threshold": cls._basic_threshold,
+            "precision_threshold": cls._precision_threshold,
+            "min_page_title_matches": cls._min_page_title_matches,
+            "min_heading_matches": cls._min_heading_matches
+        }
+
+
+class SearchHelpers:
+    """Helper functions for document search operations.
+
+    These functions assist with repetitive formatting and construction tasks
+    while preserving LLM's semantic understanding for core matching logic.
+    """
+
+    ORIGINAL_URL_PATTERN = re.compile(
+        r'>\s*\*\*原文链接\*\*\s*:\s*(https?://[^\s]+)',
+        re.IGNORECASE
+    )
+<>
+    STOP_WORDS = {
+        'the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were',
+        'to', 'for', 'with', 'by', 'from', 'at', 'on', 'in', 'about',
+        'how', 'what', 'where', 'when', 'why', 'which', 'that', 'this',
+        'these', 'those', 'use', 'using', 'can', 'will', 'would'
+    }
+
+    TECHNICAL_TERMS = {
+        'api', 'cli', 'sdk', 'http', 'https', 'jwt', 'oauth', 'ssh',
+        'webhook', 'middleware', 'endpoint', 'token', 'auth', 'config',
+        'deploy', 'hooks', 'async', 'sync', 'json', 'xml', 'yaml', 'yml'
+    }
+
+    _kb_path_cache: Optional[str] = None
+
+    @staticmethod
+    def get_knowledge_base_path() -> str:
+        """Load knowledge base path from config file.
+
+        Reads ~/.claude/knowledge_base.json and returns the base_dir value
+        with shell expansion (e.g., ~ expanded to home directory).
+
+        Returns:
+            The resolved knowledge base directory path
+        """
+        if SearchHelpers._kb_path_cache is not None:
+            return SearchHelpers._kb_path_cache
+
+        config_path = os.path.expanduser("~/.claude/knowledge_base.json")
+        with open(config_path) as f:
+            config = json.load(f)
+        SearchHelpers._kb_path_cache = os.path.expanduser(config["knowledge_base"]["base_dir"])
+        return SearchHelpers._kb_path_cache
+
+    @staticmethod
+    def prefix_knowledge_base(relative_path: str) -> str:
+        """Prefix a relative path with the knowledge base path.
+
+        Args:
+            relative_path: Path relative to knowledge base directory
+
+        Returns:
+            Full path prefixed with knowledge base directory
+        """
+        kb_path = SearchHelpers.get_knowledge_base_path()
+        return f"{kb_path}/{relative_path}" if kb_path else relative_path
+
+    @staticmethod
+    def build_toc_glob_pattern(doc_set: str) -> str:
+        """Build Glob pattern for finding TOC files in a documentation set.
+
+        Args:
+            doc_set: Documentation set name (e.g., "Claude_Code_Docs:latest")
+
+        Returns:
+            Glob pattern string for finding docTOC.md files
+        """
+        return SearchHelpers.prefix_knowledge_base(f"{doc_set}/*/docTOC.md")
+
+    @staticmethod
+    def build_content_glob_pattern(doc_set: str) -> str:
+        """Build Glob pattern for finding content files in a documentation set.
+
+        Args:
+            doc_set: Documentation set name (e.g., "Claude_Code_Docs:latest")
+
+        Returns:
+            Glob pattern string for finding docContent.md files
+        """
+        return SearchHelpers.prefix_knowledge_base(f"{doc_set}/*/docContent.md")
+
+    @staticmethod
+    def build_toc_path(doc_set: str, page_title: str) -> str:
+        """Build the full path to a docTOC.md file.
+
+        Args:
+            doc_set: Documentation set name
+            page_title: Page title
+
+        Returns:
+            Full path to the docTOC.md file
+        """
+        return SearchHelpers.prefix_knowledge_base(f"{doc_set}/{page_title}/docTOC.md")
+
+    @staticmethod
+    def build_content_path(doc_set: str, page_title: str) -> str:
+        """Build the full path to a docContent.md file.
+
+        Args:
+            doc_set: Documentation set name
+            page_title: Page title
+
+        Returns:
+            Full path to the docContent.md file
+        """
+        return SearchHelpers.prefix_knowledge_base(f"{doc_set}/{page_title}/docContent.md")
+
+    @staticmethod
+    def build_level2_grep_command(keywords: List[str], doc_set: str) -> str:
+        """Build Level 2 TOC grep command.
+
+        Constructs a grep command for searching keywords in TOC files.
+        This helper only constructs the command string; execution is left to the LLM.
+
+        Args:
+            keywords: List of keywords to search for
+            doc_set: Documentation set name
+
+        Returns:
+            Grep command string
+        """
+        if not keywords:
+            return ""
+        pattern = "|".join(keywords)
+        return f"grep -r -iE '({pattern})' {SearchHelpers.build_toc_glob_pattern(doc_set)}"
+
+    @staticmethod
+    def build_level3_content_grep_command(
+        keywords: List[str],
+        doc_sets: List[str],
+        context_lines: int = 10
+    ) -> str:
+        """Build Level 3.2 content grep command with context.
+
+        Constructs a grep command for searching keywords in content files
+        with context lines before the match (for traceback).
+
+        Args:
+            keywords: List of keywords to search for
+            doc_sets: List of documentation set names to search
+            context_lines: Number of context lines before match (default: 10)
+
+        Returns:
+            Grep command string with -B flag for context
+        """
+        if not keywords or not doc_sets:
+            return ""
+
+        search_paths = " ".join([
+            SearchHelpers.build_content_glob_pattern(doc_set) for doc_set in doc_sets
+        ])
+
+        pattern = keywords[0] if len(keywords) == 1 else f"({'|'.join(keywords)})"
+        return f"grep -r -i -B {context_lines} '{pattern}' {search_paths}"
+
+    @staticmethod
+    def extract_original_url(toc_content: str) -> Optional[str]:
+        """Extract original URL from docTOC.md content.
+
+        Args:
+            toc_content: Content of a docTOC.md file
+
+        Returns:
+            Original URL if found, None otherwise
+        """
+        match = SearchHelpers.ORIGINAL_URL_PATTERN.search(toc_content)
+        return match.group(1).strip() if match else None
+
+    @staticmethod
+    def extract_keywords(query: str) -> List[str]:
+        """Extract core keywords from a query for Level 2/3 fallback.
+
+        This helper performs basic keyword extraction by removing stop words
+        and preserving technical terms.
+
+        Args:
+            query: User query string
+
+        Returns:
+            List of extracted keywords
+        """
+        words = re.findall(r'[\w\u4e00-\u9fff]+', query.lower())
+
+        keywords = []
+        for word in words:
+            if re.search(r'[\u4e00-\u9fff]', word):
+                keywords.append(word)
+            elif word in SearchHelpers.TECHNICAL_TERMS:
+                keywords.append(word)
+            elif word not in SearchHelpers.STOP_WORDS:
+                keywords.append(word)
+
+        seen = set()
+        result = []
+        for word in keywords:
+            if word not in seen:
+                seen.add(word)
+                result.append(word)
+
+        return result
+
+    @staticmethod
+    def format_sources_section(
+        titles_and_urls: List[tuple[str, str, str]]
+    ) -> str:
+        """Format the Sources section for search results.
+
+        Args:
+            titles_and_urls: List of (title, original_url, toc_path) tuples
+
+        Returns:
+            Formatted Sources section in markdown
+        """
+        if not titles_and_urls:
+            return ""
+
+        lines = ["\n---\n\n### 文档来源\n"]
+
+        for i, (title, url, toc_path) in enumerate(titles_and_urls, 1):
+            lines.append(f"{i}. **{title}**")
+            lines.append(f"   - 原文链接: {url}")
+            lines.append(f"   - TOC 路径: `{toc_path}`")
+
+        return "\n".join(lines) + "\n"
+
+    @staticmethod
+    def format_coverage_section(
+        covered: List[str],
+        partial: List[str],
+        not_covered: List[str],
+        suggestion: Optional[str] = None
+    ) -> str:
+        """Format the Coverage section for search results.
+
+        Args:
+            covered: List of covered aspects
+            partial: List of partially covered aspects
+            not_covered: List of not covered aspects
+            suggestion: Optional suggestion for further search
+
+        Returns:
+            Formatted Coverage section in markdown
+        """
+        lines = ["\n**Coverage:**"]
+
+        if covered:
+            lines.append(f"- ✅ Covered: {', '.join(covered)}")
+
+        if partial:
+            lines.append(f"- ⚠️  Partially covered: {', '.join(partial)}")
+
+        if not_covered:
+            lines.append(f"- ❌ Not covered: {', '.join(not_covered)}")
+
+        if suggestion:
+            lines.append(f"- 💡 Suggestion: {suggestion}")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def build_doc_set_filter_pattern(intent_keywords: List[str]) -> str:
+        """Build a filter pattern for documentation sets based on intent keywords.
+
+        Args:
+            intent_keywords: List of keywords for filtering doc sets
+
+        Returns:
+            Glob pattern for filtering documentation sets
+        """
+        kb_path = SearchHelpers.get_knowledge_base_path()
+        patterns = [f"{kb_path}/*{keyword}*" for keyword in intent_keywords]
+        return " ".join(patterns)
+
+    @staticmethod
+    def get_list_command(base_dir: Optional[str] = None) -> str:
+        """Get the command to list all available documentation sets.
+
+        Args:
+            base_dir: Base directory containing documentation sets.
+                      If None, uses knowledge base path from config.
+
+        Returns:
+            Bash command string to list documentation sets
+        """
+        if base_dir is None:
+            base_dir = SearchHelpers.get_knowledge_base_path()
+        return f"ls -1 {base_dir}/"
+
+    @staticmethod
+    def build_title_extraction_command(content_path: str, max_lines: int = 5) -> str:
+        """Build command to extract title from docContent.md.
+
+        Args:
+            content_path: Path to docContent.md file
+            max_lines: Maximum number of lines to check for title (default: 5)
+
+        Returns:
+            Head command string
+        """
+        return f"head -{max_lines} {content_path}"
+
+    @staticmethod
+    def build_toc_content_extraction_command(toc_path: str, max_lines: int = 50) -> str:
+        """Build command to extract TOC content for result formatting.
+
+        Args:
+            toc_path: Path to docTOC.md file
+            max_lines: Maximum number of lines to extract (default: 50)
+
+        Returns:
+            Head command string to extract TOC content
+        """
+        return f"head -{max_lines} {toc_path}"
+
+    @staticmethod
+    def detect_content_language(content: str) -> str:
+        """Detect the primary language of content.
+
+        This helper performs basic language detection to determine if content
+        is primarily Chinese, English, or mixed language.
+
+        Args:
+            content: Text content to analyze
+
+        Returns:
+            Language code: 'zh' for Chinese, 'en' for English, 'mixed' for mixed
+        """
+        if not content:
+            return 'en'
+
+        chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', content))
+        english_chars = len(re.findall(r'[a-zA-Z]', content))
+
+        total_chars = chinese_chars + english_chars
+        if total_chars == 0:
+            return 'en'
+
+        chinese_ratio = chinese_chars / total_chars
+
+        if chinese_ratio > 0.6:
+            return 'zh'
+        elif chinese_ratio < 0.2:
+            return 'en'
+        else:
+            return 'mixed'
+
+    @staticmethod
+    def format_language_appropriate_results(
+        results: List[dict],
+        detected_language: str
+    ) -> str:
+        """Format results using language-appropriate labels and structure.
+
+        Args:
+            results: List of result dictionaries with metadata
+            detected_language: Detected language ('zh', 'en', 'mixed')
+
+        Returns:
+            Formatted results with appropriate language labels
+        """
+        if not results:
+            return ""
+
+        labels = {
+            'zh': {
+                'content': '正文内容',
+                'relevance': '相关性',
+                'intent_match': '意图匹配',
+                'toc_path': 'TOC 路径'
+            },
+            'en': {
+                'content': 'Content',
+                'relevance': 'Relevance',
+                'intent_match': 'Intent Match',
+                'toc_path': 'TOC Path'
+            },
+            'mixed': {
+                'content': '正文内容 (Content)',
+                'relevance': '相关性 (Relevance)',
+                'intent_match': '意图匹配 (Intent Match)',
+                'toc_path': 'TOC 路径 (TOC Path)'
+            }
+        }
+
+        current_labels = labels.get(detected_language, labels['en'])
+        lines = []
+
+        for i, doc in enumerate(results, 1):
+            lines.append(f"{i}. **{doc['title']}** - {current_labels['relevance']}: {doc.get('score', 'N/A')}")
+
+            if 'rationale' in doc:
+                lines.append(f"   - {current_labels['intent_match']}: {doc['rationale']}")
+
+            if 'path' in doc:
+                lines.append(f"   - {current_labels['toc_path']}: `{doc['path']}`")
+
+            if 'toc_content' in doc and doc['toc_content']:
+                lines.append(f"   - {current_labels['content']}:")
+                toc_lines = doc['toc_content'].split('\n')
+                for toc_line in toc_lines:
+                    if toc_line.strip():
+                        lines.append(f"     {toc_line}")
+
+            lines.append("")
+
+        return '\n'.join(lines)
+
+    @staticmethod
+    def analyze_query_intent(original_query: str) -> dict:
+        """Analyze the original user query to determine intent classification.
+
+        This helper provides structured intent analysis for LLM-based filtering.
+        The actual semantic analysis should be performed by the LLM using this
+        framework as guidance.
+
+        Args:
+            original_query: The original user query (not optimized queries)
+
+        Returns:
+            Intent analysis framework with keys:
+            - primary_intent: LEARN, CONFIGURE, TROUBLESHOOT, REFERENCE, COMPARE
+            - scope: SPECIFIC, GENERAL, CONTEXTUAL
+            - depth: OVERVIEW, DETAILED, PRACTICAL
+            - specificity_keywords: Key terms indicating specific focus
+        """
+        keywords = SearchHelpers.extract_keywords(original_query)
+
+        return {
+            "primary_intent": "UNKNOWN",
+            "scope": "UNKNOWN",
+            "depth": "UNKNOWN",
+            "specificity_keywords": keywords,
+            "framework_note": "LLM should perform semantic analysis to populate intent fields"
+        }
+
+    @staticmethod
+    def calculate_relevance_score(
+        doc_title: str,
+        doc_context: Optional[str],
+        query_intent: dict
+    ) -> dict:
+        """Calculate relevance score framework for a document based on query intent.
+
+        This helper provides the scoring framework structure. The LLM should
+        perform the actual semantic evaluation to calculate scores.
+
+        Args:
+            doc_title: Document title
+            doc_context: Additional context from TOC or content (optional)
+            query_intent: Intent analysis result from analyze_query_intent()
+
+        Returns:
+            Relevance analysis framework with keys:
+            - score: Overall relevance score (0.0-1.0) - LLM calculated
+            - intent_match: How well document serves the intent (0.0-1.0)
+            - scope_alignment: Scope alignment score (0.0-1.0)
+            - depth_appropriateness: Depth appropriateness score (0.0-1.0)
+            - specificity_match: Specificity alignment score (0.0-1.0)
+            - rationale: Brief explanation of the scoring
+        """
+        return {
+            "score": 0.0,
+            "intent_match": 0.0,
+            "scope_alignment": 0.0,
+            "depth_appropriateness": 0.0,
+            "specificity_match": 0.0,
+            "rationale": "LLM should provide semantic evaluation and rationale",
+            "doc_title": doc_title,
+            "doc_context": doc_context or "",
+            "query_intent": query_intent
+        }
+
+    @staticmethod
+    def format_filtered_results(
+        high_relevance: List[dict],
+        medium_relevance: List[dict],
+        filtered_out: List[dict]
+    ) -> str:
+        """Format the filtered results with relevance categories.
+
+        Args:
+            high_relevance: High relevance documents (≥0.8) with metadata
+            medium_relevance: Medium relevance documents (0.5-0.79) with metadata
+            filtered_out: Filtered out documents (<0.5) with reasons
+
+        Returns:
+            Formatted filtered results section in markdown
+        """
+        lines = ["## 精准检索结果 (Intent-Filtered Results)\n"]
+
+        if high_relevance:
+            lines.append("### 高相关性文档 (High Relevance ≥0.8)")
+            for i, doc in enumerate(high_relevance, 1):
+                lines.append(f"{i}. **{doc['title']}** - Relevance: {doc.get('score', 'N/A')}")
+                if 'rationale' in doc:
+                    lines.append(f"   - Intent Match: {doc['rationale']}")
+                if 'path' in doc:
+                    lines.append(f"   - TOC Path: `{doc['path']}`")
+                if 'toc_content' in doc and doc['toc_content']:
+                    lines.append(f"   - 正文内容:")
+                    lines.append(f"     {doc['toc_content']}")
+                lines.append("")
+
+        if medium_relevance:
+            lines.append("### 相关文档 (Medium Relevance 0.5-0.79)")
+            start_num = len(high_relevance) + 1
+            for i, doc in enumerate(medium_relevance, start_num):
+                lines.append(f"{i}. **{doc['title']}** - Relevance: {doc.get('score', 'N/A')}")
+                if 'rationale' in doc:
+                    lines.append(f"   - Intent Match: {doc['rationale']}")
+                if 'note' in doc:
+                    lines.append(f"   - Note: {doc['note']}")
+                if 'path' in doc:
+                    lines.append(f"   - TOC Path: `{doc['path']}`")
+                if 'toc_content' in doc and doc['toc_content']:
+                    lines.append(f"   - 正文内容:")
+                    lines.append(f"     {doc['toc_content']}")
+                lines.append("")
+
+        if filtered_out:
+            lines.append("### 已过滤文档 (Filtered Out <0.5)")
+            for doc in filtered_out:
+                reason = doc.get('reason', 'Low relevance score')
+                lines.append(f"- \"{doc['title']}\" - Reason: {reason}")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def format_filtering_summary(
+        original_count: int,
+        final_count: int,
+        precision_improvement: str
+    ) -> str:
+        """Format a summary of the filtering process.
+
+        Args:
+            original_count: Number of documents before filtering
+            final_count: Number of documents after filtering (high + medium)
+            precision_improvement: Description of precision improvement
+
+        Returns:
+            Formatted filtering summary in markdown
+        """
+        high_count = final_count
+        filtered_count = original_count - final_count
+
+        lines = [
+            "\n**Filtering Summary:**",
+            f"- Original results: {original_count} documents",
+            f"- Final results: {final_count} documents",
+            f"- Filtered out: {filtered_count} documents",
+            f"- Precision improvement: {precision_improvement}"
+        ]
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def get_intent_classification_guide() -> dict:
+        """Get the intent classification guide for LLM reference.
+
+        Returns:
+            Dictionary containing intent classification guidelines
+        """
+        return {
+            "primary_intent_types": {
+                "LEARN": "User wants to understand concepts, principles, or how things work",
+                "CONFIGURE": "User wants to set up, customize, or modify settings",
+                "TROUBLESHOOT": "User wants to solve problems or fix issues",
+                "REFERENCE": "User wants quick lookup of syntax, parameters, or specifications",
+                "COMPARE": "User wants to understand differences or choose between options"
+            },
+            "scope_types": {
+                "SPECIFIC": "Targets a particular feature, component, or use case",
+                "GENERAL": "Covers broad topics or multiple related areas",
+                "CONTEXTUAL": "Depends on user's current situation or environment"
+            },
+            "depth_types": {
+                "OVERVIEW": "High-level understanding or introduction",
+                "DETAILED": "In-depth technical information or comprehensive guides",
+                "PRACTICAL": "Step-by-step instructions or hands-on examples"
+            },
+            "relevance_thresholds": {
+                "high": 0.8,
+                "medium": 0.6,
+                "low": 0.0
+            },
+            "scoring_factors": [
+                "intent_match: How well the heading serves the identified intent",
+                "scope_alignment: How well the heading's scope matches query scope",
+                "depth_appropriateness: How well the heading's depth matches information need",
+                "specificity_match: How well the heading's specificity matches query specificity"
+            ]
+        }
+
+    @staticmethod
+    def extract_headings_with_levels(toc_content: str) -> List[dict]:
+        """Extract all headings from docTOC.md content with their levels.
+
+        This helper parses markdown headings and returns structured data
+        including level, text, and anchor information.
+
+        Args:
+            toc_content: Content of a docTOC.md file
+
+        Returns:
+            List of heading dictionaries with keys:
+            - level: Heading level (1-6)
+            - text: Heading text without markdown symbols
+            - full_text: Complete heading line with markdown
+            - anchor: URL anchor if present
+        """
+        if not toc_content:
+            return []
+
+        lines = toc_content.split('\n')
+        headings = []
+
+        heading_pattern = re.compile(r'^(#{1,6})\s+(.+)$')
+        link_pattern = re.compile(r'\[([^\]]+)\]\([^\)]+\)')
+        anchor_pattern = re.compile(r'：https://[^\s]+|: https://[^\s]+')
+
+        for line in lines:
+            match = heading_pattern.match(line.strip())
+            if match:
+                level = len(match.group(1))
+                full_text = match.group(2).strip()
+
+                anchor = None
+                anchor_match = anchor_pattern.search(full_text)
+                if anchor_match:
+                    anchor = anchor_match.group(0).replace('：', '').replace(': ', '').strip()
+
+                text = anchor_pattern.sub('', full_text).strip()
+
+                link_match = link_pattern.search(text)
+                if link_match:
+                    text = link_match.group(1)
+
+                headings.append({
+                    "level": level,
+                    "text": text,
+                    "full_text": f"{'#' * level} {text}",
+                    "anchor": anchor
+                })
+
+        return headings
+
+    @staticmethod
+    def rank_headings_by_relevance(
+        headings: List[dict],
+        query: str,
+        min_relevance: float = 0.6
+    ) -> List[dict]:
+        """Rank headings by semantic relevance to the query.
+
+        This helper provides the framework for relevance ranking. The LLM
+        should perform actual semantic evaluation to calculate scores.
+
+        Args:
+            headings: List of heading dictionaries from extract_headings_with_levels()
+            query: User query for relevance evaluation
+            min_relevance: Minimum relevance threshold (default: 0.6)
+
+        Returns:
+            List of headings with relevance scores, sorted by score descending.
+            Only headings with score >= min_relevance are included.
+        """
+        if not headings or not query:
+            return []
+
+        return headings
+
+    @staticmethod
+    def format_headings_with_scores(
+        headings: List[dict],
+        document_title: Optional[str] = None,
+        min_relevance: float = 0.6
+    ) -> str:
+        """Format headings with relevance scores for output.
+
+        Args:
+            headings: List of heading dictionaries with 'score' key
+            document_title: Optional document title to include as H1
+            min_relevance: Minimum relevance threshold for inclusion
+
+        Returns:
+            Formatted markdown string with headings and scores
+        """
+        if not headings:
+            return ""
+
+        filtered_headings = [h for h in headings if h.get('score', 0) >= min_relevance]
+        filtered_headings.sort(key=lambda x: (-x.get('score', 0), x.get('level', 6)))
+
+        lines = []
+
+        if document_title:
+            lines.append(f"# {document_title}\n")
+
+        for heading in filtered_headings:
+            level = heading.get('level', 1)
+            text = heading.get('text', '')
+            score = heading.get('score', 0)
+
+            prefix = '#' * level
+            lines.append(f"{prefix} {text} (relation: {score:.2f})")
+
+        return '\n'.join(lines)
+
+    @staticmethod
+    def calculate_heading_relevance_score(
+        heading_text: str,
+        query: str,
+        query_intent: Optional[dict] = None
+    ) -> dict:
+        """Calculate relevance score framework for a heading based on query and intent.
+
+        This helper provides the scoring framework structure. The LLM should
+        perform the actual semantic evaluation to calculate scores.
+
+        Args:
+            heading_text: Text content of the heading
+            query: User query for relevance evaluation
+            query_intent: Optional intent analysis result from analyze_query_intent()
+
+        Returns:
+            Relevance analysis framework with keys:
+            - score: Overall relevance score (0.0-1.0) - LLM calculated
+            - intent_match: How well heading serves the intent (0.0-1.0)
+            - scope_alignment: Scope alignment score (0.0-1.0)
+            - depth_appropriateness: Depth appropriateness score (0.0-1.0)
+            - rationale: Brief explanation of the scoring
+        """
+        return {
+            "score": 0.0,
+            "intent_match": 0.0,
+            "scope_alignment": 0.0,
+            "depth_appropriateness": 0.0,
+            "rationale": "LLM should provide semantic evaluation and rationale",
+            "heading_text": heading_text,
+            "query": query,
+            "query_intent": query_intent or {}
+        }
+
+    @staticmethod
+    def format_filtering_summary_headings(
+        total_headings: int,
+        high_relevance: int,
+        medium_relevance: int,
+        filtered_out: int,
+        precision_count: int = 0
+    ) -> str:
+        """Format a summary of heading-level filtering results.
+
+        Args:
+            total_headings: Total number of headings evaluated
+            high_relevance: Number of headings with score >= 0.8
+            medium_relevance: Number of headings with score 0.6-0.79
+            filtered_out: Number of headings with score < 0.6
+            precision_count: Number of precision matches (score >= 0.7)
+
+        Returns:
+            Formatted filtering summary in markdown
+        """
+        lines = [
+            f"- 高相关性 heading (≥0.8): {high_relevance}",
+            f"- 中等相关性 heading (0.6-0.79): {medium_relevance}",
+            f"- 精准匹配 heading (≥0.7): {precision_count}",
+            f"- 已过滤 heading (<0.6): {filtered_out}"
+        ]
+        return '\n'.join(lines)
+
+    # =========================================================================
+    # Configuration Management (v4.0.0) - Uses _Config class directly
+    # =========================================================================
+
+    @staticmethod
+    def calculate_page_title_relevance_score(query: str, toc_content: str = None) -> dict:
+        """Calculate relevance score for a PageTitle based on query and TOC content.
+
+        CRITICAL: This is used in Step 2: PageTitle Matching to filter by basic threshold (0.6).
+
+        Args:
+            query: The optimized query for relevance evaluation
+            toc_content: Content of the docTOC.md file for context
+
+        Returns:
+            Relevance analysis with keys:
+            - score (float): Overall relevance score (0.0-1.0)
+            - is_basic (bool): Whether score >= 0.6 (basic threshold)
+            - is_precision (bool): Whether score >= 0.7 (precision threshold)
+            - rationale (str): Brief explanation of the scoring
+        """
+        return {
+            "score": 0.0,
+            "is_basic": False,
+            "is_precision": False,
+            "rationale": "LLM should provide semantic evaluation"
+        }
+
+    @staticmethod
+    def get_threshold_config() -> dict:
+        """Get the current threshold configuration.
+
+        Returns:
+            Dictionary containing current configuration
+        """
+        return _Config.get()
+
+    # =========================================================================
+    # Search Success Validation (v4.0.0)
+    # =========================================================================
+
+    @staticmethod
+    def validate_search_success(
+        page_title_results: list,
+        heading_results: list,
+        precision_threshold: float = 0.7
+    ) -> dict:
+        """Validate whether the search results meet all success conditions.
+
+        Args:
+            page_title_results: List of PageTitle match results
+            heading_results: List of heading match results
+            precision_threshold: Threshold for precision match (default: 0.7)
+
+        Returns:
+            Validation result with keys:
+            - success (bool): Overall validation success
+            - page_title_valid (bool): PageTitle count >= 2
+            - heading_valid (bool): Heading count >= 2
+            - precision_valid (bool): Has precision matches
+            - failure_reasons (list[str]): List of failure reasons
+            - stats (dict): Statistics with page_title_count, heading_count, precision_count
+        """
+        config = _Config.get()
+        min_page_title = config["min_page_title_matches"]
+        min_heading = config["min_heading_matches"]
+
+        page_title_count = len(page_title_results)
+        heading_count = len(heading_results)
+
+        precision_count = sum(
+            1 for r in page_title_results if r.get('score', 0) >= precision_threshold
+        ) + sum(
+            1 for r in heading_results if r.get('score', 0) >= precision_threshold
+        )
+
+        failure_reasons = []
+
+        if page_title_count < min_page_title:
+            failure_reasons.append(f"PageTitle count ({page_title_count}) < minimum ({min_page_title})")
+
+        if heading_count < min_heading:
+            failure_reasons.append(f"Heading count ({heading_count}) < minimum ({min_heading})")
+
+        if precision_count < 1:
+            failure_reasons.append("No precision matches found (score >= 0.7)")
+
+        return {
+            "success": len(failure_reasons) == 0,
+            "page_title_valid": page_title_count >= min_page_title,
+            "heading_valid": heading_count >= min_heading,
+            "precision_valid": precision_count >= 1,
+            "failure_reasons": failure_reasons,
+            "stats": {
+                "page_title_count": page_title_count,
+                "heading_count": heading_count,
+                "precision_count": precision_count
+            }
+        }
+
+    @staticmethod
+    def check_page_title_requirement(results: list, min_count: int = 2) -> Tuple[bool, int]:
+        """Check if PageTitle match count meets the minimum requirement.
+
+        Args:
+            results: List of PageTitle results with 'score' field
+            min_count: Minimum required count (default: 2)
+
+        Returns:
+            Tuple of (is_valid, actual_count)
+        """
+        count = len(results)
+        return count >= min_count, count
+
+    @staticmethod
+    def check_heading_requirement(results: list, min_count: int = 2) -> Tuple[bool, int]:
+        """Check if heading match count meets the minimum requirement.
+
+        Args:
+            results: List of heading results with 'score' field
+            min_count: Minimum required count (default: 2)
+
+        Returns:
+            Tuple of (is_valid, actual_count)
+        """
+        count = len(results)
+        return count >= min_count, count
+
+    @staticmethod
+    def check_precision_requirement(results: list, precision_threshold: float = 0.7) -> Tuple[bool, int]:
+        """Check if there is at least one precision match (score >= threshold).
+
+        Args:
+            results: List of results with 'score' field
+            precision_threshold: Threshold for precision match (default: 0.7)
+
+        Returns:
+            Tuple of (is_valid, precision_count)
+        """
+        precision_count = sum(1 for r in results if r.get('score', 0) >= precision_threshold)
+        return precision_count >= 1, precision_count
+
+    # =========================================================================
+    # Result Aggregation (v4.0.0)
+    # =========================================================================
+
+    @staticmethod
+    def aggregate_page_title_results(all_results: list[dict]) -> dict:
+        """Aggregate PageTitle match results from all queries.
+
+        Args:
+            all_results: List of all PageTitle results from multiple queries
+
+        Returns:
+            Aggregated results with keys:
+            - total_unique_titles: Number of unique titles
+            - titles_by_relevance: Dict with high/medium/low lists
+            - precision_matches: Count of precision matches
+            - doc_set_breakdown: Breakdown by doc-set
+        """
+        unique_titles = {}
+        doc_set_breakdown = {}
+
+        for result in all_results:
+            title = result.get('title', '')
+            score = result.get('score', 0)
+            doc_set = result.get('doc_set', 'unknown')
+            path = result.get('path', '')
+
+            if title not in unique_titles:
+                unique_titles[title] = {
+                    "title": title,
+                    "score": score,
+                    "path": path,
+                    "doc_set": doc_set
+                }
+
+            if doc_set not in doc_set_breakdown:
+                doc_set_breakdown[doc_set] = {"page_title_count": 0, "precision_count": 0}
+
+            doc_set_breakdown[doc_set]["page_title_count"] += 1
+            if score >= 0.7:
+                doc_set_breakdown[doc_set]["precision_count"] += 1
+
+        titles_by_relevance = {
+            "high": [t for t in unique_titles.values() if t['score'] >= 0.8],
+            "medium": [t for t in unique_titles.values() if 0.6 <= t['score'] < 0.8],
+            "low": [t for t in unique_titles.values() if t['score'] < 0.6]
+        }
+
+        precision_matches = sum(
+            1 for t in unique_titles.values() if t['score'] >= 0.7
+        )
+
+        return {
+            "total_unique_titles": len(unique_titles),
+            "titles_by_relevance": titles_by_relevance,
+            "precision_matches": precision_matches,
+            "doc_set_breakdown": doc_set_breakdown
+        }
+
+    @staticmethod
+    def annotate_headings_with_page_title(grep_results: list[dict], doc_set: str) -> list[dict]:
+        """Annotate grep results with PageTitle ownership.
+
+        Used in Fallback Strategy 1 when PageTitle-level matching fails.
+        CRITICAL: All fallback results MUST include PageTitle attribution.
+
+        Args:
+            grep_results: List of grep result entries with file paths
+            doc_set: The documentation set name
+
+        Returns:
+            Heading results with PageTitle attribution
+        """
+        annotated = []
+
+        for result in grep_results:
+            file_path = result.get('file', '')
+            match = result.get('match', '')
+
+            match_page_title = None
+            if f"/{doc_set}/" in file_path:
+                parts = file_path.split(f"/{doc_set}/")
+                if len(parts) > 1:
+                    path_parts = parts[1].split('/')
+                    if len(path_parts) >= 2:
+                        match_page_title = path_parts[0]
+
+            annotated.append({
+                "heading_text": match,
+                "page_title": match_page_title or "Unknown",
+                "toc_path": file_path,
+                "score": 0.0,
+                "is_basic": False
+            })
+
+        return annotated
+
+    @staticmethod
+    def extract_headings_from_toc_paths(
+        toc_paths: list[str],
+        query: str,
+        query_intent: dict = None,
+        min_relevance: float = 0.6
+    ) -> list[dict]:
+        """Extract and score headings from multiple TOC file paths.
+
+        Args:
+            toc_paths: List of TOC file paths
+            query: User query for relevance evaluation
+            query_intent: Intent analysis result from analyze_query_intent()
+            min_relevance: Minimum relevance threshold (default: 0.6)
+
+        Returns:
+            Heading results with metadata per doc-set
+        """
+        results = []
+
+        for toc_path in toc_paths:
+            doc_set = "unknown"
+            page_title = "Unknown"
+
+            if "/docTOC.md" in toc_path:
+                path_parts = toc_path.split("/docTOC.md")[0].split("/")
+                if len(path_parts) >= 2:
+                    page_title = path_parts[-1]
+                    for i, part in enumerate(path_parts):
+                        if ":" in part:
+                            doc_set = "/".join(path_parts[i:])
+                            break
+
+            results.append({
+                "doc_set": doc_set,
+                "page_title": page_title,
+                "toc_path": toc_path,
+                "headings": []
+            })
+
+        return results
+
+    # =========================================================================
+    # Cross-DocSet Verification (v4.0.0)
+    # =========================================================================
+
+    @staticmethod
+    def validate_cross_docset_coverage(target_doc_sets: list[str], matched_doc_sets: list[str]) -> dict:
+        """Validate coverage completeness for cross-docset search.
+
+        Args:
+            target_doc_sets: List of target doc-set names
+            matched_doc_sets: List of actually matched doc-set names
+
+        Returns:
+            Coverage validation result with keys:
+            - complete: Whether all targets are matched
+            - matched: List of matched doc-sets
+            - missing: List of missing doc-sets
+            - extra: List of extra doc-sets found
+            - coverage_percentage: Percentage of coverage
+        """
+        target_set = set(target_doc_sets)
+        matched_set = set(matched_doc_sets)
+
+        missing = target_set - matched_set
+        extra = matched_set - target_set
+        matched = matched_set & target_set
+
+        coverage_percentage = (len(matched) / len(target_set) * 100) if target_set else 100.0
+
+        return {
+            "complete": len(missing) == 0,
+            "matched": list(matched),
+            "missing": list(missing),
+            "extra": list(extra),
+            "coverage_percentage": coverage_percentage
+        }
+
+    @staticmethod
+    def get_docset_match_status(
+        doc_set_name: str,
+        page_title_count: int,
+        heading_count: int,
+        precision_count: int,
+        min_page_title: int = 2,
+        min_heading: int = 2
+    ) -> dict:
+        """Get the match status for a single doc-set.
+
+        Args:
+            doc_set_name: Name of the doc-set
+            page_title_count: Number of matched PageTitles
+            heading_count: Number of matched headings
+            precision_count: Number of precision matches
+            min_page_title: Minimum PageTitle count (default: 2)
+            min_heading: Minimum heading count (default: 2)
+
+        Returns:
+            Match status with keys:
+            - doc_set: Doc-set name
+            - page_title_valid: Whether PageTitle count meets minimum
+            - heading_valid: Whether heading count meets minimum
+            - has_precision_match: Whether there are precision matches
+            - overall_valid: Whether all conditions are met
+        """
+        page_title_valid = page_title_count >= min_page_title
+        heading_valid = heading_count >= min_heading
+        has_precision_match = precision_count >= 1
+
+        return {
+            "doc_set": doc_set_name,
+            "page_title_valid": page_title_valid,
+            "heading_valid": heading_valid,
+            "has_precision_match": has_precision_match,
+            "overall_valid": page_title_valid and heading_valid and has_precision_match
+        }
+
+    # =========================================================================
+    # Output Formatting (v4.0.0)
+    # =========================================================================
+
+    @staticmethod
+    def format_search_summary(
+        page_title_count: int,
+        heading_count: int,
+        precision_count: int,
+        doc_set_count: int
+    ) -> str:
+        """Format a summary of search results.
+
+        Args:
+            page_title_count: Total matched PageTitles
+            heading_count: Total matched headings
+            precision_count: Total precision matches
+            doc_set_count: Number of doc-sets searched
+
+        Returns:
+            Formatted summary string
+        """
+        return f"""## 检索结果摘要
+- 文档集数量: {doc_set_count}
+- 匹配PageTitle总数: {page_title_count}
+- 匹配Heading总数: {heading_count}
+- 精准匹配(≥0.7)数量: {precision_count}"""
+
+    @staticmethod
+    def format_match_statistics(docset_results: list[dict]) -> str:
+        """Format match statistics grouped by doc-set.
+
+        Args:
+            docset_results: List of doc-set results with keys:
+                - doc_set: Doc-set name
+                - page_title_count: Number of PageTitle matches
+                - heading_count: Number of heading matches
+                - precision_count: Number of precision matches
+
+        Returns:
+            Formatted statistics string
+        """
+        config = _Config.get()
+        min_pt = config["min_page_title_matches"]
+        min_head = config["min_heading_matches"]
+
+        lines = ["## 匹配统计 (按文档集)\n"]
+
+        for result in docset_results:
+            doc_set = result.get('doc_set', 'unknown')
+            pt_count = result.get('page_title_count', 0)
+            head_count = result.get('heading_count', 0)
+            prec_count = result.get('precision_count', 0)
+
+            pt_status = "✅" if pt_count >= min_pt else "❌"
+            head_status = "✅" if head_count >= min_head else "❌"
+            prec_status = "✅" if prec_count >= 1 else "❌"
+            overall_status = "✅ 通过" if (pt_count >= min_pt and head_count >= min_head and prec_count >= 1) else "❌ 失败"
+
+            lines.append(f"- **{doc_set}:**")
+            lines.append(f"  - PageTitle匹配: {pt_count}/{min_pt} {pt_status}")
+            lines.append(f"  - Heading匹配: {head_count}/{min_head} {head_status}")
+            lines.append(f"  - 精准匹配: {prec_count}/1 {prec_status}")
+            lines.append(f"  - 整体状态: {overall_status}")
+            lines.append("")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def format_heading_list_with_scores(
+        heading_results: list[dict],
+        page_title: str,
+        include_page_title_header: bool = True
+    ) -> str:
+        """Format a heading list with scores and PageTitle attribution.
+
+        Args:
+            heading_results: List of heading results with 'text', 'score', 'level', 'is_precision'
+            page_title: The PageTitle this heading belongs to
+            include_page_title_header: Include PageTitle as header (default: True)
+
+        Returns:
+            Formatted heading list string
+        """
+        lines = []
+
+        if include_page_title_header:
+            lines.append(f"## {page_title}\n")
+
+        sorted_results = sorted(
+            heading_results,
+            key=lambda x: (-x.get('score', 0), x.get('level', 6))
+        )
+
+        for heading in sorted_results:
+            text = heading.get('text', '')
+            level = heading.get('level', 2)
+            score = heading.get('score', 0)
+            is_precision = heading.get('is_precision', False)
+
+            precision_marker = " ✅精准匹配" if is_precision else ""
+            prefix = '#' * level
+
+            lines.append(f"{prefix} {text} ({score:.2f}){precision_marker}")
+
+        return "\n".join(lines)
+
+    # =========================================================================
+    # Content Traceback (v4.1.0)
+    # =========================================================================
+
+    @staticmethod
+    def traceback_to_heading(
+        content_path: str,
+        match_line: int,
+        context_lines: int = 10
+    ) -> dict:
+        """Trace back from a content match to find the nearest heading.
+
+        Used in Fallback Strategy 2 when TOC grep fails.
+        CRITICAL: This enables finding headings even when only docContent.md matches exist.
+
+        Args:
+            content_path: Path to the docContent.md file
+            match_line: Line number where the match was found
+            context_lines: Number of lines to search backward for heading (default: 10)
+
+        Returns:
+            Traceback result with keys:
+            - heading_text: The nearest heading text
+            - heading_level: Heading level (1-6)
+            - page_title: The PageTitle this heading belongs to
+            - heading_line: Line number of the heading
+            - context_excerpt: Brief excerpt showing the match context
+        """
+        page_title = "Unknown"
+        if f"/docContent.md" in content_path:
+            path_parts = content_path.split("/docContent.md")[0].split("/")
+            if len(path_parts) >= 2:
+                page_title = path_parts[-1]
+
+        return {
+            "heading_text": "",
+            "heading_level": 1,
+            "page_title": page_title,
+            "heading_line": 0,
+            "context_excerpt": ""
+        }

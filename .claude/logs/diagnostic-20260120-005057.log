@@ -1,0 +1,36 @@
+[INFO] 开始系统诊断 - Tue Jan 20 00:50:57 CST 2026
+[INFO] Python 版本: Python 3.10.14
+[INFO] jq 已安装
+[INFO] doc4llm 包可用
+[INFO] MarkdownDocExtractor 模块可用
+[INFO] .claude 存在 (drwxr-xr-x@)
+[INFO] .claude/agents 存在 (drwxr-xr-x@)
+[INFO] .claude/skills 存在 (drwxr-xr-x@)
+[INFO] .claude/scripts 存在 (drwxr-xr-x@)
+[INFO] .claude/logs 存在 (drwxr-xr-x@)
+[INFO] md_docs 存在 (drwxr-xr-x@)
+[WARN] .claude/agents/doc-retriever.md 存在但不可执行
+[INFO] .claude/scripts/log-retrieval.sh 存在且可执行
+[INFO] .claude/scripts/validate-doc-operation.sh 存在且可执行
+[INFO] .claude/scripts/cleanup-doc-session.sh 存在且可执行
+[INFO] md-doc-query-optimizer 技能配置正确
+[INFO] md-doc-query-optimizer 包含描述
+[INFO] md-doc-searcher 技能配置正确
+[INFO] md-doc-searcher 包含描述
+[INFO] md-doc-reader 技能配置正确
+[INFO] md-doc-reader 包含描述
+[INFO] md-doc-processor 技能配置正确
+[INFO] md-doc-processor 包含描述
+[INFO] 发现        1 个文档集
+[INFO] Claude_Code_Docs:latest:       49 个文档,       48 个目录
+[WARN] Claude_Code_Docs:latest: 文档和目录数量不匹配
+[INFO] doc-retrieval.log: 5.7K,      140 行
+[INFO] doc-retrieval.log 最后活动: 2026-01-20 00:49:51
+[INFO] security-validation.log: 5.8K,      116 行
+[INFO] security-validation.log 最后活动: 2026-01-20 00:50:43
+[INFO] performance-monitor.log: 2.6K,       51 行
+[INFO] performance-monitor.log 最后活动: 2026-01-19 17:32:00
+[INFO] 开始性能测试...
+[INFO] 文档读取测试: 0s
+[INFO] 目录遍历测试: 0s
+[INFO] 诊断完成 - Tue Jan 20 00:50:58 CST 2026

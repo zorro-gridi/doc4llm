@@ -4,7 +4,7 @@
 # 在执行 Bash 命令前进行全面的安全性和有效性检查
 
 # 安全配置
-MAX_COMMAND_LENGTH=1500  # 增加命令长度限制
+MAX_COMMAND_LENGTH=2000  # 增加命令长度限制以支持复杂查询
 ALLOWED_PATHS_PATTERN="^(md_docs/|\.claude/logs/|\.claude/temp/)"
 LOG_FILE=".claude/logs/security-validation.log"
 
@@ -48,7 +48,7 @@ DANGEROUS_PATTERNS=(
     "eval"                  # 动态执行
     "exec"                  # 进程替换
     "\$\("                  # 命令替换
-    "`"                     # 反引号命令替换
+    "\`"                     # 反引号命令替换
     "&&.*rm"                # 链式删除
     "||.*rm"                # 条件删除
     ">"                     # 重定向（可能覆盖文件）

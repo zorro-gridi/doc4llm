@@ -112,3 +112,5 @@ print(f'Requires processing: {result.requires_processing}')
 print('--- CONTENT ---')
 print(result.contents.get('Agent Skills', ''))
 "
+[2026-01-20 00:50:04] [INFO] 验证命令: python -c "from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor; extractor = MarkdownDocExtractor(); result = extractor.extract_by_titles_with_metadata(["Agent Skills"], threshold=2100); print(f"Total lines: {result.total_line_count}"); print(f"Requires processing: {result.requires_processing}")"
+[2026-01-20 00:50:43] [INFO] 无法解析命令，允许执行
