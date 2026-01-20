@@ -10,8 +10,9 @@ The progressive fallback strategy ensures comprehensive document discovery by au
 
 | Level | Trigger | Success Condition |
 |-------|---------|-------------------|
-| 1 | Always (start) | PageTitle count >= 2 **AND** has precision match (>=0.7) |
-| 2 | Level 1 fails | Heading count >= 2 |
+| 1 (Step 2) | Always (start) | PageTitle count >= 1 **AND** has precision match (>=0.7) |
+| Step 3 | After Level 1 success | Heading count >= 2 (per doc-set) |
+| 2 (Fallback 1) | Step 3 fails | Heading count >= 2 |
 | 3.1 | Level 2 fails | Heading count >= 2 (cross-set) |
 | 3.2 | Level 3.1 fails | Heading count >= 2 (with PageTitle attribution) |
 
@@ -31,17 +32,17 @@ The progressive fallback strategy ensures comprehensive document discovery by au
 **Success Condition:**
 ```python
 # Must satisfy ALL:
-page_title_count >= 2  AND  precision_count >= 1
+page_title_count >= 1  AND  precision_count >= 1
 
 # Validation
-page_title_valid, count = SearchHelpers.check_page_title_requirement(results, min_count=2)
+page_title_valid, count = SearchHelpers.check_page_title_requirement(results, min_count=1)
 precision_valid, p_count = SearchHelpers.check_precision_requirement(results, precision_threshold=0.7)
 
 if page_title_valid and precision_valid:
-    # Level 1 SUCCESS - proceed to heading extraction
-    proceed_to_step_5()
+    # Level 1 SUCCESS - proceed to Step 3 (heading identification)
+    proceed_to_step_3()
 else:
-    # Level 1 FAILS - trigger Level 2
+    # Level 1 FAILS - trigger Fallback Strategy 1 (Level 2)
     trigger_fallback_level_2()
 ```
 
@@ -57,7 +58,7 @@ Result: 4 PageTitles, 3 with score >= 0.7
 
 **Purpose:** Search within TOC file contents when Level 1 success conditions not met
 
-**Trigger:** Level 1 fails (PageTitle count < 2 OR no precision match)
+**Trigger:** Level 1 fails (PageTitle count < 1 OR no precision match)
 
 **How to use:**
 
@@ -303,13 +304,13 @@ Found N relevant document(s) via Level 3.2 content search:
                               │
               ┌───────────────┴───────────────┐
               │                               │
-        [PageTitle≥2 AND                  [PageTitle<2 OR
+        [PageTitle≥1 AND                  [PageTitle<1 OR
          has precision ≥0.7]               no precision match]
               │                               │
               ▼                               ▼
     ┌────────────────────┐    ┌───────────────────────────────┐
-    │  Validate Heading  │    │  Level 2: TOC Grep Fallback   │
-    │  Count (Step 5)    │    │  - grep -r across TOC files   │
+    │  Step 3: Identify  │    │  Level 2: TOC Grep Fallback   │
+    │  Matching Headings │    │  - grep -r across TOC files   │
     │  Heading≥2?        │    │  - Balanced: O(1) operation   │
     └────────────────────┘    └───────────────────────────────┘
               │                         │
@@ -368,8 +369,9 @@ Found N relevant document(s) via Level 3.2 content search:
 
 | Level | Trigger | Search Scope | Success Condition | Output |
 |-------|---------|--------------|-------------------|--------|
-| **1** | Always (start) | Single set, titles only | PageTitle≥2 AND precision≥0.7 | Document titles with scores |
-| **2** | Level 1 fails | Single set, TOC contents | Heading≥2 | Document titles with heading context |
+| **1 (Step 2)** | Always (start) | Single set, titles only | PageTitle≥1 AND precision≥0.7 | Document titles with scores |
+| **Step 3** | After Level 1 success | From matched PageTitles | Heading≥2 (per doc-set) | Headings with scores |
+| **2 (Fallback 1)** | Step 3 fails | Single set, TOC contents | Heading≥2 | Document titles with heading context |
 | **3.1** | Level 2 fails | Multiple filtered sets, TOC | Heading≥2 | Document titles with heading context |
 | **3.2** | Level 3.1 fails | Multiple filtered sets, content | Heading≥2 AND attribution | Document titles with context + PageTitle attribution |
 
@@ -386,16 +388,16 @@ def search_with_validation(query, doc_set):
     # Configure thresholds (optional, defaults exist)
     SearchHelpers.set_basic_threshold(0.6)
     SearchHelpers.set_precision_threshold(0.7)
-    SearchHelpers.set_min_page_title_matches(2)
+    SearchHelpers.set_min_page_title_matches(1)
     SearchHelpers.set_min_heading_matches(2)
 
     # =========================================
-    # LEVEL 1: Semantic Title Matching
+    # LEVEL 1: Semantic Title Matching (Step 2)
     # =========================================
     level1_results = semantic_match(query, doc_set)
 
     # Validate Level 1
-    pt_valid, pt_count = SearchHelpers.check_page_title_requirement(level1_results, min_count=2)
+    pt_valid, pt_count = SearchHelpers.check_page_title_requirement(level1_results, min_count=1)
     prec_valid, prec_count = SearchHelpers.check_precision_requirement(level1_results, precision_threshold=0.7)
 
     if pt_valid and prec_valid:
@@ -473,29 +475,6 @@ def search_with_validation(query, doc_set):
     }
 ```
 
-### Cross-DocSet Validation Example
-
-```python
-from doc4llm.tool.md_doc_retrieval import SearchHelpers
-
-# Scenario: Multi-set search (e.g., comparing Claude Code and Cursor)
-target_doc_sets = ["Claude_Code_Docs:latest", "Cursor_Docs:v1.0"]
-all_results = []
-
-for doc_set in target_doc_sets:
-    results = search_with_validation(query, doc_set)
-    all_results.append(results)
-
-# Validate complete coverage
-matched_doc_sets = [r["doc_set"] for r in all_results if r["success"]]
-coverage = SearchHelpers.validate_cross_docset_coverage(target_doc_sets, matched_doc_sets)
-
-if not coverage["complete"]:
-    # Report missing doc-sets
-    print(f"Missing documentation sets: {coverage['missing']}")
-    print(f"Coverage: {coverage['coverage_percentage']}%")
-```
-
 ## Failure Reporting
 
 When all fallback levels are exhausted, report failure with clear diagnostic information:
@@ -510,7 +489,8 @@ When all fallback levels are exhausted, report failure with clear diagnostic inf
 
 | 策略 | 条件要求 | 验证结果 | 状态 |
 |------|---------|---------|------|
-| Level 1: 语义标题匹配 | PageTitle≥2 且 精准匹配≥0.7 | PageTitle: X, 精准: Y | ❌ 失败 |
+| Level 1: 语义标题匹配 | PageTitle≥1 且 精准匹配≥0.7 | PageTitle: X, 精准: Y | ❌ 失败 |
+| Step 3: Heading识别 | Heading≥2 (per doc-set) | Heading: Z | ❌ 失败 |
 | Level 2: TOC内容grep | Heading≥2 | Heading: Z | ❌ 失败 |
 | Level 3.1: 跨集TOC搜索 | Heading≥2 | Heading: W | ❌ 失败 |
 | Level 3.2: 全文内容搜索 | Heading≥2 且 PageTitle归属 | Heading: V, 归属: U | ❌ 失败 |
