@@ -298,25 +298,6 @@ gap_results = search_with_validation("testing hooks", "Claude_Code_Docs:latest")
 
 ---
 
-## 快速API参考
-
-| 函数 | 用途 |
-|------|------|
-| `extract_headings_with_levels()` | 提取TOC中的heading |
-| `extract_keywords()` | 提取查询关键词 |
-| `calculate_page_title_relevance_score()` | PageTitle评分 |
-| `calculate_heading_relevance_score()` | Heading评分 |
-| `check_page_title_requirement()` | 验证PageTitle数量 |
-| `check_heading_requirement()` | 验证Heading数量 |
-| `check_precision_requirement()` | 验证精准匹配数量 |
-| `annotate_headings_with_page_title()` | 为grep结果添加归属 |
-| `traceback_to_heading()` | 从内容回溯到heading |
-| `validate_cross_docset_coverage()` | 跨文档集覆盖度验证 |
-
-**详细API文档**: `reference/search-helpers-api.md`
-
----
-
 ## API Version
 
 本文档描述 Workflow Examples v4.1.0

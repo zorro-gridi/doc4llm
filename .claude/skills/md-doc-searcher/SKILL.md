@@ -93,15 +93,23 @@ Bash: head -n 5 "{knowledge_base}/<doc_set>/<PageTitle>/docContent.md"
 
 ## Semantic Retrieval Functions
 
-Use these functions for semantic analysis:
+Use these functions for semantic analysis. See [API Reference](reference/search-helpers-api.md) for complete documentation.
 
-- **SearchHelpers.extract_keywords()** - Extract keywords from query
-- **SearchHelpers.analyze_query_intent()** - Get intent framework
-- **SearchHelpers.extract_headings_with_levels()** - Parse TOC headings
-- **SearchHelpers.calculate_page_title_relevance_score()** - PageTitle scoring framework
-- **SearchHelpers.calculate_heading_relevance_score()** - Heading scoring framework
-- **SearchHelpers.annotate_headings_with_page_title()** - Annotate grep results
-- **SearchHelpers.traceback_to_heading()** - Trace content match to heading
+### Content Extraction
+
+- **`SearchHelpers.extract_keywords(query: str) -> List[str]`** - Extract keywords from query
+- **`SearchHelpers.extract_headings_with_levels(toc_content: str) -> List[dict]`** - Parse TOC headings
+
+### Intent & Scoring Framework
+
+- **`SearchHelpers.analyze_query_intent(original_query: str) -> dict`** - Get intent framework
+- **`SearchHelpers.calculate_page_title_relevance_score(query: str, toc_content: str = None) -> dict`** - PageTitle scoring framework
+- **`SearchHelpers.calculate_heading_relevance_score(heading_text: str, query: str, query_intent: dict = None) -> dict`** - Heading scoring framework
+
+### Fallback Support
+
+- **`SearchHelpers.annotate_headings_with_page_title(grep_results: list[dict], doc_set: str) -> list[dict]`** - Annotate grep results
+- **`SearchHelpers.traceback_to_heading(content_path: str, match_line: int, context_lines: int = 10) -> dict`** - Trace content match to heading
 
 ## Core Retrieval Flow
 
@@ -363,7 +371,6 @@ final_score = (semantic_relevance * 0.4) + (intent_alignment * 0.4) + (context_a
 - 过滤总结
 - 来源信息
 - 覆盖度分析
-```
 
 ## Output Prohibition
 
