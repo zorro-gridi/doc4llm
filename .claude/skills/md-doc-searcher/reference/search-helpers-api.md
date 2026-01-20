@@ -5,7 +5,10 @@ Semantic retrieval functions for document search operations.
 ## Import
 
 ```python
-from doc4llm.tool.md_doc_retrieval import SearchHelpers
+# Import from skill's scripts directory
+import sys
+sys.path.insert(0, '.claude/skills/md-doc-searcher/scripts')
+from search_helpers import SearchHelpers
 ```
 
 ---

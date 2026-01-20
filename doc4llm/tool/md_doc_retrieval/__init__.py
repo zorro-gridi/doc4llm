@@ -80,7 +80,6 @@ from .utils import (
     parse_doc_structure,
     sanitize_filename,
 )
-from .search_helpers import SearchHelpers
 from .bm25_matcher import (
     BM25Matcher,
     BM25Config,
@@ -140,8 +139,6 @@ __all__ = [
     "extract_doc_name_and_version",
     "extract_title_from_md_file",
     "extract_section_by_title",
-    # Search helpers (v2.6.0)
-    "SearchHelpers",
     # BM25 matcher (v3.1.0)
     "BM25Matcher",
     "BM25Config",

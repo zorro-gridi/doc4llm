@@ -46,6 +46,7 @@ Search and discover markdown documents in the doc4llm knowledge base directory s
 
 This skill focuses on **document discovery via TOC (Table of Contents)** - finding which documents match your query by searching `docTOC.md` index files.
 
+
 ## Bash Tool Operations
 
 ### Read Knowledge Base Configuration
@@ -81,8 +82,8 @@ Bash: grep -r -i -B 10 "keyword" "{knowledge_base}/<doc_set>"/*/docContent.md
 
 **Retry with expanded context:**
 ```bash
-Bash: grep -r -i -B 20 "keyword" "{knowledge_base}/<doc_set>"/*/docContent.md  # 2nd attempt
-Bash: grep -r -i -B 50 "keyword" "{knowledge_base}/<doc_set>"/*/docContent.md  # 3rd attempt
+Bash: grep -r -i -B 15 "keyword" "{knowledge_base}/<doc_set>"/*/docContent.md  # 2nd attempt
+Bash: grep -r -i -B 20 "keyword" "{knowledge_base}/<doc_set>"/*/docContent.md  # 3rd attempt
 ```
 
 ### Extract Title from Content
@@ -113,103 +114,161 @@ Use these functions for semantic analysis. See [API Reference](reference/search-
 
 ## Core Retrieval Flow
 
-This skill implements a **4-step retrieval process** based on the specification. Each step has explicit success conditions and fallback triggers.
+### STATE 1 — Identify Doc-Sets
 
-### Step 1: Identify Matching Doc-Sets
+**Purpose:** Identify all `<doc_name>:<doc_version>` doc-sets that match the query intent.
 
-**Purpose:** Find all `<doc_name>:<doc_version>` doc-sets that match the query intent.
+**Process:**
 
-**Method:**
-1. Use `ls -1 "{knowledge_base}/"` to list available doc-sets
-2. Analyze query intent to identify target domains (e.g., "Claude" → `*Claude*`)
-3. Filter doc-sets based on intent keywords using LLM semantic understanding
+* List available doc-sets from `{knowledge_base}/`
+* Match `<doc_name>:<doc_version>` using semantic intent from the query
 
-**Output:** List of matching doc-set names
+**Failure Condition:**
 
-```python
-["Claude_Code_Docs:latest", "Cursor_Docs:v1.0"]
-```
+* If **no doc-set matches**, terminate immediately with:
 
-**Match Anomaly Handling:**
-- If **no doc-sets match** → Report failure immediately: "Target documentation set not found"
-- This is a terminal failure - no fallback strategies apply
+> Target documentation set not found
 
-### Step 2: Identify Matching PageTitles
+---
 
-**Purpose:** Find all `<PageTitle>` directories within matched doc-sets that meet basic relevance threshold (≥0.6).
+### STATE 2 — Identify PageTitles
 
-**Method:**
-1. List all `docTOC.md` files in each matched doc-set
-2. For each PageTitle, read its `docTOC.md` content
-3. Calculate PageTitle relevance score using `calculate_page_title_relevance_score(query, toc_context)`
-4. Filter by **basic threshold (0.6)** - only keep PageTitles with score ≥ 0.6
+**Purpose:** Find relevant PageTitle directories inside matched doc-sets.
 
-**Success Conditions:**
-- PageTitle count ≥ 1 per doc-set
-- At least one PageTitle with precision score (≥ 0.7)
+**Process:**
 
-**Fallback Trigger:** If conditions not met → Execute Fallback Strategy 1
+* For each matched doc-set:
 
-### Step 3: Identify Matching Headings (via docTOC.md)
+  * Read all `docTOC.md` files
+  * Score PageTitle relevance using
+    `calculate_page_title_relevance_score(query, toc_context)`
 
-**Purpose:** From filtered PageTitles, find headings that match the query.
+**Filtering Rules:**
 
-**Method:**
-1. Read `docTOC.md` files from matched PageTitles
-2. Extract all headings using `extract_headings_with_levels()`
-3. Score each heading using `calculate_heading_relevance_score()` with **prompt-based retrieval strategy**
-4. Filter by basic threshold (≥ 0.6)
+* Keep only PageTitles with score ≥ **0.6**
 
-**Success Conditions:**
-- Heading count ≥ 2 per doc-set (across all matched PageTitles)
+**Success Requirements:**
 
-**Fallback Trigger:** If conditions not met → Execute Fallback Strategy 2
+* At least **1 PageTitle per doc-set**
+* AND at least **one PageTitle with score ≥ 0.7**
 
-### Step 4: Return Heading Lists
+**Failure Handling:**
 
-**Purpose:** Return all matching headings with scores and attribution.
+* If requirements are not met → go to **FALLBACK_1**
 
-**CRITICAL:** Output must be based on **heading-level relevance scores**, not PageTitle-level scores. Each heading is evaluated independently.
+---
 
-### Fallback Strategy 1: TOC Content Grep
+### STATE 3 — Identify Headings
 
-**Trigger:** Step 2 success conditions not met (PageTitle < 1 OR no precision match)
+**Purpose:** Find relevant headings from filtered PageTitles.
 
-**Method:**
-1. Extract keywords from query using `extract_keywords()`
-2. Execute grep across all `docTOC.md` files in matched doc-sets
-3. Parse grep results to identify matching headings
-4. **Annotate each heading with its PageTitle ownership** using `annotate_headings_with_page_title()`
+**Process:**
 
-**Success Conditions:**
-- Heading count ≥ 2 per doc-set
-- All results include PageTitle attribution
+* From matched PageTitles:
 
-**Fallback Trigger:** If conditions not met → Execute Fallback Strategy 2
+  * Extract headings with levels from `docTOC.md`
+  * Score each heading using
+    `calculate_heading_relevance_score(query, heading_text)`
 
-### Fallback Strategy 2: Content Context Traceback
+**Filtering Rules:**
 
-**Trigger:** Fallback Strategy 1 success conditions not met
+* Keep only headings with score ≥ **0.6**
 
-**Purpose:** Use docContent.md only as a hint to locate relevant headings in docTOC.md
+**Success Requirements:**
 
-**Method:**
-1. Execute grep across `docContent.md` files **with context only** (`grep -B 10`)
-2. **For each match, trace back to the nearest heading** in `docTOC.md` using `traceback_to_heading()`
-3. **Discard the content context** - use it only to identify which heading to return
-4. **Retry with expanded context if no heading found:**
-   - If `grep -B 10` fails to traceback to any heading → Retry with `grep -B 20`
-   - If still no heading → Retry with `grep -B 50`
-5. Return **only the heading list from docTOC.md**, never docContent content
+* At least **2 headings per doc-set**
 
-**CRITICAL:** This strategy must NOT return any docContent.md content. The grep result is a hint, not output.
+**Failure Handling:**
 
-**Success Conditions:**
-- Heading count ≥ 2 per doc-set
-- All results include PageTitle attribution
-- Results contain ONLY docTOC.md headings (no docContent content)
+* If requirements are not met → go to **FALLBACK_2**
 
-**Fallback Trigger:** If conditions not met → Report failure
+---
+
+### STATE 4 — Return Headings
+
+**Purpose:** Return final heading-level results.
+
+**Output Rules:**
+
+* Output **ONLY headings from `docTOC.md`**
+* Each result item must include:
+
+  * `doc_set`
+  * `page_title`
+  * `heading`
+  * `level`
+  * `score`
+
+---
+
+### FALLBACK_1 — TOC Grep
+
+**Trigger:** STATE 2 fails
+
+**Purpose:** Use keyword-based grep on TOC files.
+
+**Process:**
+
+* Extract keywords from the query
+* Grep across all `docTOC.md` files in matched doc-sets
+* Parse headings and annotate with PageTitle ownership
+
+**Success Requirements:**
+
+* At least **2 headings per doc-set**
+* All results must include **PageTitle attribution**
+
+**Failure Handling:**
+
+* If requirements are not met → go to **FALLBACK_2**
+
+---
+
+### FALLBACK_2 — Content Traceback
+
+**Trigger:** FALLBACK_1 fails
+
+**Purpose:** Use `docContent.md` only as a locator to find relevant headings in `docTOC.md`.
+
+**Process:**
+
+* Grep across `docContent.md` with context only:
+
+  * First: `-B 10`
+  * Then: `-B 15`
+  * Then: `-B 20`
+* For each match:
+
+  * Trace back to the **nearest heading in `docTOC.md`**
+  * Discard the content itself
+
+**Output Rules:**
+
+* Return **ONLY headings from `docTOC.md`**
+* Never return any `docContent.md` content
+
+**Success Requirements:**
+
+* At least **2 headings per doc-set**
+* All results must include **PageTitle attribution**
+
+**Failure Handling:**
+
+* If requirements are not met, terminate with:
+
+> No relevant headings found after all fallback strategies
+
+---
+
+## CRITICAL RULES
+
+* NEVER return any `docContent.md` content
+* NEVER return PageTitle-level matches as results
+* Output must be **heading-level relevance only**
+* Follow the state machine strictly — **no shortcuts**
+
+---
+
 
 ## Prompt-based Retrieval Strategy
 

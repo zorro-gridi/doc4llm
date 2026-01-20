@@ -63,7 +63,10 @@ Result: 4 PageTitles, 3 with score >= 0.7
 **How to use:**
 
 ```python
-from doc4llm.tool.md_doc_retrieval import SearchHelpers
+# Import from skill's scripts directory
+import sys
+sys.path.insert(0, '.claude/skills/md-doc-searcher/scripts')
+from search_helpers import SearchHelpers
 
 # First extract keywords
 keywords = SearchHelpers.extract_keywords("how to configure hooks for deployment")
@@ -380,7 +383,10 @@ Found N relevant document(s) via Level 3.2 content search:
 ### Complete Validation Flow Example
 
 ```python
-from doc4llm.tool.md_doc_retrieval import SearchHelpers
+# Import from skill's scripts directory
+import sys
+sys.path.insert(0, '.claude/skills/md-doc-searcher/scripts')
+from search_helpers import SearchHelpers
 
 def search_with_validation(query, doc_set):
     """Complete search with validation at each level"""
