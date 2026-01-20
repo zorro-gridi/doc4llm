@@ -1,18 +1,10 @@
-# Progressive Fallback Strategy (v4.0.0)
+# Progressive Fallback Strategy
 
 This document provides detailed information about the progressive fallback levels used in md-doc-searcher.
 
 ## Overview
 
 The progressive fallback strategy ensures comprehensive document discovery by automatically escalating search sophistication when simpler methods fail.
-
-## v4.0.0 Key Changes
-
-- **Success condition validation** at each fallback level
-- **PageTitle count >= 2** requirement for Level 1
-- **Heading count >= 2** requirement for Level 2 and 3
-- **Precision match >= 0.7** requirement for Level 1
-- **Explicit failure reporting** when all fallbacks exhausted
 
 ## Success Conditions Summary
 
@@ -294,7 +286,7 @@ Found N relevant document(s) via Level 3.2 content search:
 **Note:** Use `/md-doc-reader "Document Title"` to view full TOC and structure.
 ```
 
-## Progressive Fallback Flow Diagram (v4.0.0)
+## Progressive Fallback Flow Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -372,7 +364,7 @@ Found N relevant document(s) via Level 3.2 content search:
     └─────────────────────────────────────────────────────────┘
 ```
 
-## Decision Criteria Summary (v4.0.0)
+## Decision Criteria Summary
 
 | Level | Trigger | Search Scope | Success Condition | Output |
 |-------|---------|--------------|-------------------|--------|
@@ -381,7 +373,7 @@ Found N relevant document(s) via Level 3.2 content search:
 | **3.1** | Level 2 fails | Multiple filtered sets, TOC | Heading≥2 | Document titles with heading context |
 | **3.2** | Level 3.1 fails | Multiple filtered sets, content | Heading≥2 AND attribution | Document titles with context + PageTitle attribution |
 
-## Validation Helpers Usage (v4.0.0)
+## Validation Helpers Usage
 
 ### Complete Validation Flow Example
 

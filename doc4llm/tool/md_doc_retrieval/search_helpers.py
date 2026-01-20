@@ -42,23 +42,6 @@ class SearchHelpers:
         return result
 
     @staticmethod
-    def detect_content_language(content: str) -> str:
-        if not content:
-            return 'en'
-        chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', content))
-        english_chars = len(re.findall(r'[a-zA-Z]', content))
-        total_chars = chinese_chars + english_chars
-        if total_chars == 0:
-            return 'en'
-        chinese_ratio = chinese_chars / total_chars
-        if chinese_ratio > 0.6:
-            return 'zh'
-        elif chinese_ratio < 0.2:
-            return 'en'
-        else:
-            return 'mixed'
-
-    @staticmethod
     def analyze_query_intent(original_query: str) -> dict:
         keywords = SearchHelpers.extract_keywords(original_query)
         return {

@@ -34,17 +34,6 @@ keywords = SearchHelpers.extract_keywords("how to configure hooks for deployment
 
 ---
 
-### `detect_content_language(content: str) -> str`
-
-Detects primary language: 'zh', 'en', or 'mixed'.
-
-```python
-lang = SearchHelpers.detect_content_language(content)
-# → 'zh' | 'en' | 'mixed'
-```
-
----
-
 ## Intent & Scoring Framework
 
 ### `analyze_query_intent(original_query: str) -> dict`
