@@ -569,6 +569,112 @@ class MarkdownDocExtractor(DebugMixin):
 
         return result
 
+    def extract_by_headings(
+        self,
+        page_title: str,
+        headings: List[str],
+        doc_set: str | None = None
+    ) -> Dict[str, str]:
+        """Extract specific sections from a document by heading titles.
+
+        This method enables section-level content extraction, allowing
+        precise retrieval of only the relevant sections identified by
+        md-doc-searcher.
+
+        Args:
+            page_title: The document page title
+            headings: List of heading titles to extract (without # prefix)
+            doc_set: Optional doc_set identifier (e.g., "code_claude_com:latest").
+                     If None, searches all doc_sets.
+
+        Returns:
+            Dictionary mapping heading titles to their section content:
+            {
+                "Heading 1": "## Heading 1\\n\\nContent...",
+                "Heading 2": "### Heading 2\\n\\nContent..."
+            }
+
+        Raises:
+            DocumentNotFoundError: If the document doesn't exist
+            InvalidTitleError: If page_title is invalid
+
+        Examples:
+            >>> extractor = MarkdownDocExtractor()
+            >>> sections = extractor.extract_by_headings(
+            ...     page_title="Agent Skills",
+            ...     headings=["Create Skills", "Configure Hooks"]
+            ... )
+            >>> print(sections["Create Skills"])
+            "## Create Skills\\n\\nTo create a skill..."
+        """
+        # Normalize page title
+        from . import utils as utils_module
+        normalized_title = utils_module.normalize_title(page_title)
+
+        self._debug_print(f"Extracting {len(headings)} headings from '{normalized_title}'")
+
+        # Get document structure
+        try:
+            doc_structure = self._get_doc_structure()
+        except (BaseDirectoryNotFoundError, NoDocumentsFoundError) as e:
+            raise DocumentNotFoundError(normalized_title, f"Error getting document structure: {e}")
+
+        # Find the matching title
+        all_titles = []
+        for titles_list in doc_structure.values():
+            all_titles.extend(titles_list)
+
+        match_result = self._matcher.match(normalized_title, all_titles)
+        matched_title = match_result.title if match_result else None
+
+        if matched_title is None:
+            raise DocumentNotFoundError(
+                normalized_title,
+                f"Document not found in any doc_set"
+            )
+
+        # Find the document set that contains this title
+        target_doc_set = doc_set
+        if target_doc_set is None:
+            for doc_key, titles in doc_structure.items():
+                if matched_title in titles:
+                    target_doc_set = doc_key
+                    break
+
+        if target_doc_set is None:
+            raise DocumentNotFoundError(
+                normalized_title,
+                f"Could not find document set for title: {matched_title}"
+            )
+
+        # Parse doc name and version
+        if ":" in target_doc_set:
+            doc_name, doc_version = target_doc_set.split(":", 1)
+        else:
+            doc_name = target_doc_set
+            doc_version = "latest"
+
+        # Build the path and read content
+        doc_path = utils_module.build_doc_path(self.base_dir, doc_name, doc_version, matched_title)
+
+        try:
+            content = self._read_doc_content(doc_path)
+        except DocumentNotFoundError as e:
+            raise DocumentNotFoundError(normalized_title, f"Failed to read document: {e}")
+
+        # Extract each section using existing utils function
+        sections = {}
+        for heading in headings:
+            section_content = utils_module.extract_section_by_title(content, heading)
+            if section_content is not None:
+                sections[heading] = section_content
+                self._debug_print(f"  ✓ Extracted: {heading} ({len(section_content)} chars)")
+            else:
+                self._debug_print(f"  ✗ Not found: {heading}")
+
+        self._debug_print(f"Extracted {len(sections)}/{len(headings)} sections")
+        return sections
+
     def search_documents(self, title: str) -> List[Dict[str, Any]]:
         """Search for documents matching a title pattern.
 
@@ -1321,6 +1427,144 @@ class MarkdownDocExtractor(DebugMixin):
             result.append(f"\n\n... ({len(lines) - line_count} more lines truncated)")
 
         return '\n'.join(result)
+
+    def extract_multi_by_headings(
+        self,
+        sections: List[Dict[str, Any]],
+        threshold: int = 2100
+    ) -> ExtractionResult:
+        """Extract multiple sections from multiple documents by heading titles.
+
+        This method enables multi-document section-level extraction, where each
+        document can have its own set of headings to extract. This is useful when
+        md-doc-searcher returns multiple documents with their associated headings.
+
+        Args:
+            sections: List of section specifications. Each spec is a dict with:
+                - "title" (str): Document page title
+                - "headings" (List[str]): List of heading names to extract
+                - "doc_set" (str): Document set identifier (e.g., "code_claude_com:latest")
+            threshold: Line count threshold for requiring post-processing (default: 2100)
+
+        Returns:
+            ExtractionResult containing:
+                - contents: Dict mapping "{title}::{heading}" to section content
+                - total_line_count: Cumulative line count across all sections
+                - individual_counts: Dict mapping "{title}::{heading}" to line count
+                - requires_processing: Whether total_line_count exceeds threshold
+                - threshold: The threshold used for the check
+                - document_count: Number of successfully extracted sections
+
+        Raises:
+            InvalidTitleError: If a section specification is invalid
+            DocumentNotFoundError: If a document doesn't exist
+
+        Examples:
+            >>> extractor = MarkdownDocExtractor()
+            >>> sections = [
+            ...     {
+            ...         "title": "Agent Skills",
+            ...         "headings": ["Create Skills", "Configure Hooks"],
+            ...         "doc_set": "code_claude_com:latest"
+            ...     },
+            ...     {
+            ...         "title": "Hooks Reference",
+            ...         "headings": ["Hook Types", "Configuration"],
+            ...         "doc_set": "code_claude_com:latest"
+            ...     }
+            ... ]
+            >>> result = extractor.extract_multi_by_headings(sections)
+            >>> # Access sections by composite key
+            >>> content = result.contents["Agent Skills::Create Skills"]
+        """
+        if not sections:
+            return ExtractionResult(
+                contents={},
+                total_line_count=0,
+                individual_counts={},
+                requires_processing=False,
+                threshold=threshold,
+                document_count=0
+            )
+
+        self._debug_print(f"Extracting {len(sections)} document-section groups")
+
+        results: Dict[str, str] = {}
+        individual_counts: Dict[str, int] = {}
+        total_lines = 0
+
+        for section_spec in sections:
+            # Validate section specification
+            if not isinstance(section_spec, dict):
+                self._debug_print(f"  ✗ Invalid section spec: {section_spec}")
+                continue
+
+            title = section_spec.get("title")
+            headings = section_spec.get("headings")
+            doc_set = section_spec.get("doc_set")
+
+            # Validate required fields
+            if not title:
+                self._debug_print(f"  ✗ Missing 'title' in section spec")
+                continue
+
+            if not headings:
+                self._debug_print(f"  ✗ Missing 'headings' in section spec for '{title}'")
+                continue
+
+            if not isinstance(headings, list):
+                self._debug_print(f"  ✗ 'headings' must be a list for '{title}'")
+                continue
+
+            if not doc_set:
+                self._debug_print(f"  ✗ Missing 'doc_set' in section spec for '{title}'")
+                continue
+
+            self._debug_print(f"  Processing: '{title}' with {len(headings)} headings")
+
+            # Extract sections for this document
+            try:
+                extracted_sections = self.extract_by_headings(
+                    page_title=title,
+                    headings=headings,
+                    doc_set=doc_set
+                )
+
+                # Add each extracted section to results with composite key
+                for heading, section_content in extracted_sections.items():
+                    composite_key = f"{title}::{heading}"
+                    results[composite_key] = section_content
+                    line_count = len(section_content.split('\n'))
+                    individual_counts[composite_key] = line_count
+                    total_lines += line_count
+                    self._debug_print(f"    ✓ '{heading}': {line_count} lines")
+
+            except Exception as e:
+                self._debug_print(f"  ✗ Failed to extract '{title}': {e}")
+
+        # Determine if processing is required
+        requires_processing = total_lines > threshold
+
+        result = ExtractionResult(
+            contents=results,
+            total_line_count=total_lines,
+            individual_counts=individual_counts,
+            requires_processing=requires_processing,
+            threshold=threshold,
+            document_count=len(results)
+        )
+
+        self._debug_print(f"\n📊 Multi-Section Extraction Summary:")
+        self._debug_print(f"   Sections extracted: {result.document_count}")
+        self._debug_print(f"   Total lines: {total_lines}")
+        self._debug_print(f"   Threshold: {threshold}")
+        if requires_processing:
+            self._debug_print(f"   ⚠️  THRESHOLD EXCEEDED by {total_lines - threshold} lines")
+        else:
+            margin = threshold - total_lines
+            self._debug_print(f"   ✓ Within threshold (margin: {margin} lines)")
+
+        return result
 
     @classmethod
     def from_config(cls, config_path: str | None = None, config_dict: dict | None = None) -> "MarkdownDocExtractor":

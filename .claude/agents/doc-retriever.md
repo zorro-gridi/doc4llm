@@ -28,20 +28,20 @@ hooks:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: "./.claude/scripts/validate-doc-operation.sh"
+          command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/validate-doc-operation.sh"'
   PostToolUse:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: "./.claude/scripts/log-retrieval.sh"
+          command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/log-retrieval.sh"'
   Stop:
     - hooks:
         - type: command
-          command: "./.claude/scripts/cleanup-doc-session.sh completed"
-  Error:
+          command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/cleanup-doc-session.sh"'
+  SubagentStop:
     - hooks:
         - type: command
-          command: "./.claude/scripts/cleanup-doc-session.sh failed"
+          command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/cleanup-doc-session.sh"'
 ---
 ---
 
@@ -237,26 +237,122 @@ User Response
 
 ### Phase 1: Document Discovery (md-doc-searcher)
 
-**Your Action:** Invoke md-doc-searcher with **optimized queries from Phase 0**
+**Your Action:** Invoke md-doc-searcher with **optimized queries from Phase 0** using **--json** flag
 
-**Input:** 3-5 optimized queries (from md-doc-query-optimizer)
+**Input:** 3-5 optimized queries (from md-doc-query-optimizer) - supports multiple --query flags
 
 **What It Does:**
-- Searches docTOC.md files using semantic matching with query intent analysis
-- Returns matching headings with relevance scores (≥0.6 basic, ≥0.7 precision)
+- Searches docTOC.md files using **BM25-based retrieval** with customizable parameters (k1, b)
+- Returns matching headings with level and text information
 - Groups results by PageTitle and includes source attribution
-- Uses fallback strategies (TOC grep → content grep) if initial matches are poor
-- Outputs results wrapped in AOP-FINAL markers
 
-**Output:** List of matching headings with scores, grouped by PageTitle, with source URLs and TOC paths
+**Enhanced Output Format (with --json flag):**
+
+When using `--json` flag, md-doc-searcher outputs structured JSON metadata:
+
+```json
+{
+  "success": true,
+  "doc_sets_found": ["code_claude_com:latest"],
+  "results": [
+    {
+      "doc_set": "code_claude_com:latest",
+      "page_title": "Agent Skills",
+      "toc_path": "/path/to/docTOC.md",
+      "headings": [
+        {"level": 2, "text": "Create Skills"},
+        {"level": 3, "text": "Configure Hooks"}
+      ]
+    }
+  ]
+}
+```
+
+**CLI Usage:**
+```bash
+# Use --json flag for structured output
+python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py \
+  --query "hooks configuration" \
+  --json
+
+# Multiple queries (from Phase 0 optimizer)
+python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py \
+  --query "hooks configuration" \
+  --query "deployment" \
+  --query "setup" \
+  --json
+```
+
+**CLI Arguments:**
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| `--query` | string | **required** | Search query string (can be specified multiple times) |
+| `--bm25-k1` | float | 1.2 | BM25 k1 parameter (controls term saturation) |
+| `--bm25-b` | float | 0.75 | BM25 b parameter (controls document length normalization) |
+| `--json` | flag | false | Output structured JSON metadata instead of AOP-FINAL format |
+
+**Output:**
+- `page_titles`: List of document page titles
+- `headings`: List of matching heading texts for each page
+- `toc_path`: Path to TOC file (for reference)
 
 ---
 
 ### Phase 2: Content Extraction (md-doc-reader)
 
-**Your Action:** Use `extract_by_titles_with_metadata()` for multi-document scenarios
+**Your Action:** Choose extraction mode based on Phase 1 output
 
-**CRITICAL:** For multi-document extraction, you MUST use the `extract_by_titles_with_metadata()` method:
+**Mode A: Section-Level Extraction (NEW - When headings available)**
+
+When Phase 1 returns specific headings, use section extraction for precision:
+
+```python
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+
+extractor = MarkdownDocExtractor()
+
+# Extract only the relevant sections
+sections = extractor.extract_by_headings(
+    page_title="Agent Skills",
+    headings=["Create Skills", "Configure Hooks"],
+    doc_set="code_claude_com:latest"
+)
+
+# Returns: Dict[str, str] mapping heading to section content
+# {
+#     "Create Skills": "## Create Skills\n\nTo create a skill...",
+#     "Configure Hooks": "### Configure Hooks\n\nHooks allow..."
+# }
+
+# Combine sections for output
+content = "\n\n".join([
+    f"## {heading}\n\n{section_content}"
+    for heading, section_content in sections.items()
+])
+
+line_count = len(content.split("\n"))
+```
+
+**CLI Usage:**
+```bash
+# CRITICAL: --doc-set is MANDATORY when using --headings
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "Create Skills,Configure Hooks" \
+  --doc-set "code_claude_com:latest"
+```
+
+**IMPORTANT Parameter Rules:**
+- **`--title` is REQUIRED for ALL single-document CLI invocations** (except when using `--titles-csv`/`--titles-file`)
+- **`--doc-set` is REQUIRED for ALL CLI invocations**: Always provide this parameter
+- **Reason**: Ensures deterministic document and section targeting
+- **Format**: Use `"doc_name:version"` for doc_set (e.g., `"code_claude_com:latest"`)
+- **Source**: Get both `page_title` (mapped to `--title`) and `doc_set` from Phase 1 md-doc-searcher JSON output
+
+**Mode B: Full Document Extraction (When no headings or full context needed)**
+
+For multi-document extraction, use `extract_by_titles_with_metadata()`:
 
 ```python
 from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
@@ -276,15 +372,229 @@ result = extractor.extract_by_titles_with_metadata(
 # - result.individual_counts: Dict[str, int] - Each doc's line count
 ```
 
-**What It Does:**
-- Uses `MarkdownDocExtractor.extract_by_titles_with_metadata()` Python API
-- **Always extracts complete content** for all documents
-- **Automatically calculates cumulative line count** across ALL documents
-- Returns `ExtractionResult` dataclass with metadata
+**Decision Tree:**
+```
+IF Phase 1 returned headings with scores >= 0.7:
+    Use Mode A (extract_by_headings)
+    ✓ More efficient
+    ✓ Precise content
+    ✓ Smaller line count
 
-**Output:** `ExtractionResult` containing contents, total_line_count, individual_counts, and requires_processing flag
+ELSE:
+    Use Mode B (extract_by_titles_with_metadata)
+    ✓ Complete context
+    ✓ Backwards compatible
+```
+
+**Mode C: Multi-Section Extraction (NEW - Multiple documents with headings)**
+
+When Phase 1 returns multiple documents with their associated headings, use multi-section extraction:
+
+```python
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
+
+extractor = MarkdownDocExtractor()
+
+# Section specifications from Phase 1 JSON output
+sections = [
+    {
+        "title": "Agent Skills",
+        "headings": ["Create Skills", "Configure Hooks"],
+        "doc_set": "code_claude_com:latest"
+    },
+    {
+        "title": "Hooks Reference",
+        "headings": ["Hook Types", "Configuration"],
+        "doc_set": "code_claude_com:latest"
+    }
+]
+
+result = extractor.extract_multi_by_headings(sections=sections, threshold=2100)
+
+# The result contains:
+# - result.contents: Dict[str, str] - Section content with composite keys
+#   Keys format: "{title}::{heading}"
+#   Example: "Agent Skills::Create Skills"
+# - result.total_line_count: int - Cumulative line count (sum of ALL sections)
+# - result.requires_processing: bool - Whether threshold exceeded
+# - result.individual_counts: Dict[str, int] - Each section's line count
+# - result.document_count: int - Number of sections extracted
+```
+
+**CLI Usage (via JSON file):**
+```bash
+# Create sections.json file:
+cat > sections.json << 'EOF'
+[
+  {
+    "title": "Agent Skills",
+    "headings": ["Create Skills", "Configure Hooks"],
+    "doc_set": "code_claude_com:latest"
+  },
+  {
+    "title": "Hooks Reference",
+    "headings": ["Hook Types", "Configuration"],
+    "doc_set": "code_claude_com:latest"
+  }
+]
+EOF
+
+# Use --sections-file parameter
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-file sections.json \
+  --format json
+```
+
+**CLI Usage (via inline JSON):**
+```bash
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-json '[{"title":"Agent Skills","headings":["Create Skills"],"doc_set":"code_claude_com:latest"}]' \
+  --format json
+```
+
+**Enhanced Decision Tree with Mode C:**
+```
+IF Phase 1 returned multiple results with headings:
+    Use Mode C (extract_multi_by_headings)
+    ✓ Most efficient for multi-document scenarios
+    ✓ Maintains title-headings association
+    ✓ Smallest cumulative line count
+
+ELSE IF Phase 1 returned single result with headings:
+    Use Mode A (extract_by_headings)
+    ✓ More efficient
+    ✓ Precise content
+    ✓ Smaller line count
+
+ELSE:
+    Use Mode B (extract_by_titles_with_metadata)
+    ✓ Complete context
+    ✓ Backwards compatible
+```
+
+**What It Does:**
+- Uses `MarkdownDocExtractor` Python API
+- Mode A: Extracts specific sections by heading titles (single document)
+- Mode B: Extracts complete documents with metadata (multiple documents)
+- Mode C: Extracts multiple sections from multiple documents (most efficient)
+- Automatically calculates line count for Phase 2.5 decision
+
+**Output:** Section content dictionary OR `ExtractionResult` with metadata
 
 **📖 See:** `doc-retriever-reference/phase-details.md` for complete extraction API
+
+---
+
+### Phase 2 Complete Workflow: Phase 1 → Phase 2 Parameter Mapping
+
+This section shows how to properly map Phase 1 (md-doc-searcher) output to Phase 2 (md-doc-reader) CLI parameters.
+
+#### Step 1: Capture Phase 1 Output with `--json`
+
+```bash
+# Phase 1: Search with JSON output
+python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py \
+  --query "hooks configuration" \
+  --json
+```
+
+**Phase 1 JSON Output:**
+```json
+{
+  "success": true,
+  "doc_sets_found": ["code_claude_com:latest"],
+  "results": [
+    {
+      "doc_set": "code_claude_com:latest",
+      "page_title": "Agent Skills",
+      "toc_path": "/path/to/docTOC.md",
+      "headings": [
+        {"level": 2, "text": "Create Skills"},
+        {"level": 3, "text": "Configure Hooks"}
+      ]
+    }
+  ]
+}
+```
+
+#### Step 2: Map Phase 1 Output to Phase 2 Parameters
+
+| Phase 1 Field | Phase 2 Parameter | Example |
+|---------------|-------------------|---------|
+| `doc_set` | `--doc-set` | `--doc-set "code_claude_com:latest"` |
+| `page_title` | `--title` | `--title "Agent Skills"` |
+| `headings[].text` | `--headings` | `--headings "Create Skills,Configure Hooks"` |
+
+**Note:** Phase 1 JSON output uses `page_title`, which maps to the CLI parameter `--title`.
+
+#### Step 3: Build Phase 2 CLI Command
+
+**Mode A (Section Extraction with headings):**
+```bash
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "Create Skills,Configure Hooks" \
+  --doc-set "code_claude_com:latest"
+```
+
+**Mode B (Full document without headings):**
+```bash
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --doc-set "code_claude_com:latest"
+# Note: --doc-set is REQUIRED for all CLI invocations
+```
+
+#### Phase 2 Parameter Decision Flow
+
+```
+Phase 1 Output Analysis:
+│
+├─ Are there multiple results in the "results" array?
+│  │
+│  └─ YES (Multiple results with headings) → Use Mode C (Multi-Section Extraction)
+│        └─ --sections-file OR --sections-json: **REQUIRED**
+│        └─ Format: JSON array of section specifications
+│
+├─ Single result?
+│  │
+│  ├─ Does result contain "headings" array with items?
+│  │  │
+│  │  └─ YES → Use Mode A (Section Extraction)
+│  │        └─ --title: **REQUIRED** (use result.page_title)
+│  │        └─ --doc-set: **REQUIRED** (use result.doc_set)
+│  │        └─ --headings: **REQUIRED** (comma-separated result.headings[].text)
+│  │
+│  └─ NO  → Use Mode B (Full Document Extraction)
+│           └─ --title: **REQUIRED** (use result.page_title)
+│           └─ --doc-set: **REQUIRED** (use result.doc_set)
+│
+└─ Critical: --doc-set is ALWAYS required for all extraction modes
+
+Example Decision Logic:
+   # Multiple results with headings
+   if len(phase1_results) > 1:
+       sections = [
+           {
+               "title": r["page_title"],
+               "headings": [h["text"] for h in r["headings"]],
+               "doc_set": r["doc_set"]
+           }
+           for r in phase1_results
+       ]
+       cmd = f'''extract_md_doc.py --sections-json '{json.dumps(sections)}' '''
+   elif phase1_result["headings"]:
+       # Single result with headings - section extraction
+       cmd = f'''extract_md_doc.py \
+         --title "{phase1_result["page_title"]}" \
+         --headings "{','.join(phase1_result["headings"])}" \
+         --doc-set "{phase1_result["doc_set"]}"'''
+   else:
+       # Single result without headings - full extraction
+       cmd = f'''extract_md_doc.py \
+         --title "{phase1_result["page_title"]}" \
+         --doc-set "{phase1_result["doc_set"]}"'''
+```
 
 ---
 
@@ -439,6 +749,7 @@ This is the standard AOP format that tells the calling agent (or main AI) that t
 - **Always optimize queries in Phase 0** - Use md-doc-query-optimizer for all queries
 - **Pass optimized queries to Phase 1** - md-doc-searcher receives optimized queries, not raw input
 - **Always use `extract_by_titles_with_metadata()` in Phase 2** - Never use manual extraction for multi-document
+- **Always provide `--title` and `--doc-set` in Phase 2 CLI calls** - Both are REQUIRED for ALL single-document CLI invocations
 - **Check `result.requires_processing` flag in Phase 2.5** - This is a hard constraint that prevents bugs
 - **Skip Phase 3 when possible** - Optimize performance by avoiding unnecessary skill invocations
 - **Preserve data flow** - Pass complete context between phases

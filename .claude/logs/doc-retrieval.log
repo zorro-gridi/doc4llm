@@ -1,140 +1,207 @@
-[2026-01-19 16:34:34] doc-retriever: Bash tool used
-[2026-01-19 16:34:34] Command: ls -1 /Users/zorro/project/doc4llm/md_docs/
-[2026-01-19 16:34:34] Document extraction detected: ls -1 /Users/zorro/project/doc4llm/md_docs/
-[2026-01-19 16:34:57] doc-retriever: Bash tool used
-[2026-01-19 16:34:57] Command: python -c "
+[2026-01-21 01:17:20] doc-retriever: Bash tool used
+[2026-01-21 01:17:20] Command: ls -la ~/project/md_docs_base/
+[2026-01-21 01:17:20] Document extraction detected: ls -la ~/project/md_docs_base/
+[2026-01-21 01:17:41] doc-retriever: Bash tool used
+[2026-01-21 01:17:41] Command: python -c "from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor; import inspect; print([m for m in dir(MarkdownDocExtractor) if 'extract' in m])"
+[2026-01-21 01:17:41] Document extraction detected: python -c "from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor; import inspect; print([m for m in dir(MarkdownDocExtractor) if 'extract' in m])"
+[2026-01-21 01:18:03] doc-retriever: Bash tool used
+[2026-01-21 01:18:03] Command: python -m doc4llm.tool.md_doc_retrieval --help 2>&1 || python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" 2>&1 | head -100
+[2026-01-21 01:18:03] Document extraction detected: python -m doc4llm.tool.md_doc_retrieval --help 2>&1 || python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" 2>&1 | head -100
+[2026-01-21 01:18:06] doc-retriever: Bash tool used
+[2026-01-21 01:18:06] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --list | head -50
+[2026-01-21 01:18:06] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --list | head -50
+[2026-01-21 01:18:08] doc-retriever: Bash tool used
+[2026-01-21 01:18:08] Command: ls -la /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/ | head -30
+[2026-01-21 01:18:08] Document extraction detected: ls -la /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/ | head -30
+[2026-01-21 01:19:30] doc-retriever session ended: 49fa6520-5b08-4cc0-a103-0a15fdd4577f (status: completed)
+[2026-01-21 01:27:02] doc-retriever: Bash tool used
+[2026-01-21 01:27:02] Command: python -c "
+import sys
+sys.path.insert(0, '.')
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+import json
+
+# Initialize extractor
+extractor = MarkdownDocExtractor()
+
+# Read knowledge base config
+with open('.claude/knowledge_base.json', 'r') as f:
+    kb_config = json.load(f)
+    base_dir = kb_config.get('base_dir', 'md_docs')
+
+print(f'Knowledge base directory: {base_dir}')
+print(f'Doc sets configured: {list(kb_config.get(\"doc_sets\", {}).keys())}')
+"
+[2026-01-21 01:27:02] Document extraction detected: python -c "
+import sys
+sys.path.insert(0, '.')
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+import json
+
+# Initialize extractor
+extractor = MarkdownDocExtractor()
+
+# Read knowledge base config
+with open('.claude/knowledge_base.json', 'r') as f:
+    kb_config = json.load(f)
+    base_dir = kb_config.get('base_dir', 'md_docs')
+
+print(f'Knowledge base directory: {base_dir}')
+print(f'Doc sets configured: {list(kb_config.get(\"doc_sets\", {}).keys())}')
+"
+[2026-01-21 01:27:04] doc-retriever: Bash tool used
+[2026-01-21 01:27:04] Command: ls -la md_docs/ 2>/dev/null || echo "md_docs directory does not exist"
+[2026-01-21 01:27:04] Document extraction detected: ls -la md_docs/ 2>/dev/null || echo "md_docs directory does not exist"
+[2026-01-21 01:27:07] doc-retriever: Bash tool used
+[2026-01-21 01:27:07] Command: find md_docs/ -name "docTOC.md" -type f | head -20
+[2026-01-21 01:27:07] Document extraction detected: find md_docs/ -name "docTOC.md" -type f | head -20
+[2026-01-21 01:27:09] doc-retriever: Bash tool used
+[2026-01-21 01:27:09] Command: find md_docs/ -name "docTOC.md" -type f | xargs grep -l "Skills\|skills" | head -10
+[2026-01-21 01:27:09] Document extraction detected: find md_docs/ -name "docTOC.md" -type f | xargs grep -l "Skills\|skills" | head -10
+[2026-01-21 01:27:15] doc-retriever: Bash tool used
+[2026-01-21 01:27:15] Command: ls md_docs/Claude_Code_Docs:latest/ | grep -i skill
+[2026-01-21 01:27:15] Document extraction detected: ls md_docs/Claude_Code_Docs:latest/ | grep -i skill
+[2026-01-21 01:27:22] doc-retriever: Bash tool used
+[2026-01-21 01:27:22] Command: python -c "
+import sys
+sys.path.insert(0, '.')
 from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
 
-extractor = MarkdownDocExtractor()
-
-# Extract from both documents
-result = extractor.extract_by_titles_with_metadata(
-    titles=['Agent Skills', 'Slash commands'],
-    threshold=2100
-)
-
-# Display metadata
-print('Extraction Metadata:')
-print(f'Total line count: {result.total_line_count}')
-print(f'Requires processing: {result.requires_processing}')
-print(f'Individual counts: {result.individual_counts}')
-"
-[2026-01-19 16:34:57] Document extraction detected: python -c "
-from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
-
-extractor = MarkdownDocExtractor()
-
-# Extract from both documents
-result = extractor.extract_by_titles_with_metadata(
-    titles=['Agent Skills', 'Slash commands'],
-    threshold=2100
-)
-
-# Display metadata
-print('Extraction Metadata:')
-print(f'Total line count: {result.total_line_count}')
-print(f'Requires processing: {result.requires_processing}')
-print(f'Individual counts: {result.individual_counts}')
-"
-[2026-01-19 16:38:07] doc-retriever session ended: unknown
-[2026-01-19 16:41:16] doc-retriever: Bash tool used
-[2026-01-19 16:41:16] Command: ls -1 md_docs/
-[2026-01-19 16:41:16] Document extraction detected: ls -1 md_docs/
-[2026-01-19 16:41:25] doc-retriever: Bash tool used
-[2026-01-19 16:41:25] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills"
-[2026-01-19 16:41:25] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills"
-[2026-01-19 16:42:09] doc-retriever session ended: unknown
-[2026-01-19 16:56:37] doc-retriever: Bash tool used
-[2026-01-19 16:56:37] Command: ls -la /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/
-[2026-01-19 16:58:01] doc-retriever: Bash tool used
-[2026-01-19 16:58:01] Command: ls -1 /Users/zorro/project/doc4llm/md_docs/
-[2026-01-19 16:58:01] Document extraction detected: ls -1 /Users/zorro/project/doc4llm/md_docs/
-[2026-01-19 16:59:32] doc-retriever: Bash tool used
-[2026-01-19 16:59:32] Command: find md_docs/Claude_Code_Docs:latest -type d -maxdepth 1 -name "*kill*" -o -name "*Skill*" 2>/dev/null | head -20
-[2026-01-19 16:59:32] Document extraction detected: find md_docs/Claude_Code_Docs:latest -type d -maxdepth 1 -name "*kill*" -o -name "*Skill*" 2>/dev/null | head -20
-[2026-01-19 17:02:54] doc-retriever: Bash tool used
-[2026-01-19 17:02:54] Command: python -c "
-from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
-
-extractor = MarkdownDocExtractor()
-
-# For multiple documents - ALWAYS use this method
-result = extractor.extract_by_titles_with_metadata(
-    titles=['Agent Skills'],
-    threshold=2100
-)
-
-# Output the result metadata
-print(f'Total line count: {result.total_line_count}')
-print(f'Requires processing: {result.requires_processing}')
-print(f'Individual counts: {result.individual_counts}')
-"
-[2026-01-19 17:02:54] Document extraction detected: python -c "
-from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
-
-extractor = MarkdownDocExtractor()
-
-# For multiple documents - ALWAYS use this method
-result = extractor.extract_by_titles_with_metadata(
-    titles=['Agent Skills'],
-    threshold=2100
-)
-
-# Output the result metadata
-print(f'Total line count: {result.total_line_count}')
-print(f'Requires processing: {result.requires_processing}')
-print(f'Individual counts: {result.individual_counts}')
-"
-[2026-01-19 17:04:35] doc-retriever: Bash tool used
-[2026-01-19 17:04:35] Command: python -c "
-from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
-
-extractor = MarkdownDocExtractor()
-result = extractor.extract_by_titles_with_metadata(
-    titles=['Agent Skills'],
-    threshold=2100
-)
-
-# Output the content
-print(result.contents['Agent Skills'])
-"
-[2026-01-19 17:04:35] Document extraction detected: python -c "
-from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
-
-extractor = MarkdownDocExtractor()
-result = extractor.extract_by_titles_with_metadata(
-    titles=['Agent Skills'],
-    threshold=2100
-)
-
-# Output the content
-print(result.contents['Agent Skills'])
-"
-[2026-01-19 17:18:34] doc-retriever: Bash tool used
-[2026-01-19 17:18:34] Command: ls -1 md_docs/
-[2026-01-19 17:18:34] Document extraction detected: ls -1 md_docs/
-[2026-01-19 17:18:47] doc-retriever: Bash tool used
-[2026-01-19 17:18:47] Command: python3 -c "
-from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
 extractor = MarkdownDocExtractor()
 result = extractor.extract_by_titles_with_metadata(['Agent Skills'], threshold=2100)
+
 print(f'Total lines: {result.total_line_count}')
 print(f'Requires processing: {result.requires_processing}')
-print('--- CONTENT ---')
-print(result.contents.get('Agent Skills', ''))
+print(f'Individual counts: {result.individual_counts}')
 "
-[2026-01-19 17:18:47] Document extraction detected: python3 -c "
+[2026-01-21 01:27:22] Document extraction detected: python -c "
+import sys
+sys.path.insert(0, '.')
 from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+
 extractor = MarkdownDocExtractor()
 result = extractor.extract_by_titles_with_metadata(['Agent Skills'], threshold=2100)
+
 print(f'Total lines: {result.total_line_count}')
 print(f'Requires processing: {result.requires_processing}')
-print('--- CONTENT ---')
-print(result.contents.get('Agent Skills', ''))
+print(f'Individual counts: {result.individual_counts}')
 "
-[2026-01-19 17:22:12] doc-retriever session ended: unknown
-[2026-01-20 00:48:05] doc-retriever: Bash tool used
-[2026-01-20 00:48:05] Command: ls -la .claude/logs/
-[2026-01-20 00:49:00] doc-retriever: Bash tool used
-[2026-01-20 00:49:00] Command: echo test
-[2026-01-20 00:49:51] doc-retriever: Test tool used
+[2026-01-21 01:28:32] doc-retriever session ended: 929083e5-78e5-47ca-8cda-0b77b6d12d26 (status: completed)
+[2026-01-21 01:34:29] doc-retriever: Bash tool used
+[2026-01-21 01:34:29] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "skills creation" --query "create skills" --query "agent skills" --query "skills guide" --query "skill development" --json
+[2026-01-21 01:34:39] doc-retriever: Bash tool used
+[2026-01-21 01:34:39] Command: ls -la ~/project/md_docs_base/Claude_Code_Docs:latest/ | head -30
+[2026-01-21 01:34:39] Document extraction detected: ls -la ~/project/md_docs_base/Claude_Code_Docs:latest/ | head -30
+[2026-01-21 01:35:23] doc-retriever session ended: f0fb4794-857b-4e71-b338-927d98dab49d (status: completed)
+[2026-01-21 01:50:43] doc-retriever: Bash tool used
+[2026-01-21 01:50:43] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Agent Skills" --query "create skills" --query "skills structure" --query "skills configuration" --json
+[2026-01-21 01:50:51] doc-retriever: Bash tool used
+[2026-01-21 01:50:51] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --list --doc-set "Claude_Code_Docs:latest" 2>&1 | head -50
+[2026-01-21 01:50:51] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --list --doc-set "Claude_Code_Docs:latest" 2>&1 | head -50
+[2026-01-21 01:50:53] doc-retriever: Bash tool used
+[2026-01-21 01:50:53] Command: ls -la "/Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/" | head -30
+[2026-01-21 01:50:53] Document extraction detected: ls -la "/Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/" | head -30
+[2026-01-21 01:51:48] doc-retriever session ended: 251fe512-eb5f-4575-b0f1-ff76d8d68b23 (status: completed)
+[2026-01-21 01:54:35] doc-retriever: Bash tool used
+[2026-01-21 01:54:35] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Agent Skills" --query "create skills" --query "skills configuration" --query "skill development" --json
+[2026-01-21 01:54:42] doc-retriever: Bash tool used
+[2026-01-21 01:54:42] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --base-dir ~/project/md_docs_base
+[2026-01-21 01:54:42] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --base-dir ~/project/md_docs_base
+[2026-01-21 01:54:44] doc-retriever: Bash tool used
+[2026-01-21 01:54:44] Command: wc -l /tmp/extract_output.txt 2>/dev/null || echo "Counting lines in extracted content..."
+[2026-01-21 01:55:40] doc-retriever session ended: ad6aea81-c89b-460a-ae18-553ad463ac05 (status: completed)
+[2026-01-21 02:03:57] doc-retriever: Bash tool used
+[2026-01-21 02:03:57] Command: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "create skills" --query "Agent Skills" --query "skills development" --query "how to create skills" --query "skills tutorial" --json
+[2026-01-21 02:04:01] doc-retriever: Bash tool used
+[2026-01-21 02:04:01] Command: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "1. Create your first Skill","2. How Skills work","3. Configure Skills" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:04:01] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "1. Create your first Skill","2. How Skills work","3. Configure Skills" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:04:43] doc-retriever session ended: 797a2057-b694-4c6f-80dd-c1046fa60948 (status: completed)
+[2026-01-21 02:15:18] doc-retriever: Bash tool used
+[2026-01-21 02:15:18] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Create Skills" --query "create agent skills" --query "skills development" --json
+[2026-01-21 02:15:23] doc-retriever: Bash tool used
+[2026-01-21 02:15:23] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Agent Skills","headings":["1. Create your first Skill","2. How Skills work","3. Configure Skills"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Create plugins","headings":["2.2. Create your first plugin","4.1. Add Skills to your plugin"],"doc_set":"Claude_Code_Docs:latest"}]' --format json
+[2026-01-21 02:15:23] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Agent Skills","headings":["1. Create your first Skill","2. How Skills work","3. Configure Skills"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Create plugins","headings":["2.2. Create your first plugin","4.1. Add Skills to your plugin"],"doc_set":"Claude_Code_Docs:latest"}]' --format json
+[2026-01-21 02:15:44] doc-retriever session ended: 3e45beba-9b79-4cdb-a6b4-0727482ddc1f (status: completed)
+[2026-01-21 02:18:41] doc-retriever: Bash tool used
+[2026-01-21 02:18:41] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "create skills" --query "Agent Skills" --query "skills development" --query "how to create skills" --query "building skills" --json
+[2026-01-21 02:18:47] doc-retriever: Bash tool used
+[2026-01-21 02:18:47] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "1. Create your first Skill,2. How Skills work,2.1. Where Skills live,2.2. When to use Skills versus other options,3. Configure Skills,3.5. Run Skills in a forked context,3.6. Define hooks for Skills,3.8. Skills and subagents,3.9. Distribute Skills,5.1. View and test Skills" \
+  --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:18:47] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "1. Create your first Skill,2. How Skills work,2.1. Where Skills live,2.2. When to use Skills versus other options,3. Configure Skills,3.5. Run Skills in a forked context,3.6. Define hooks for Skills,3.8. Skills and subagents,3.9. Distribute Skills,5.1. View and test Skills" \
+  --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:19:37] doc-retriever session ended: 8da47989-cf95-4c32-b34c-be7764019c53 (status: completed)
+[2026-01-21 02:21:41] doc-retriever: Bash tool used
+[2026-01-21 02:21:41] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Agent Skills configuration" --query "skills parameters" --query "skill configuration reference" --query "SKILL.md format" --json
+[2026-01-21 02:21:45] doc-retriever: Bash tool used
+[2026-01-21 02:21:45] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "3. Configure Skills,3.1. Write SKILL.md,3.5. Run Skills in a forked context,3.6. Define hooks for Skills,3.7. Control Skill visibility,3.8. Skills and subagents,3.9. Distribute Skills" \
+  --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:21:45] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "3. Configure Skills,3.1. Write SKILL.md,3.5. Run Skills in a forked context,3.6. Define hooks for Skills,3.7. Control Skill visibility,3.8. Skills and subagents,3.9. Distribute Skills" \
+  --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:21:53] doc-retriever session ended: 639caf9d-fc44-49cb-88b5-f3b13777dab4 (status: completed)
+[2026-01-21 02:23:14] doc-retriever: Bash tool used
+[2026-01-21 02:23:14] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Agent Skills" --query "subagent" --query "Task tool" --query "Skill tool" --json
+[2026-01-21 02:23:18] doc-retriever: Bash tool used
+[2026-01-21 02:23:18] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "2. How Skills work,2.2. When to use Skills versus other options,3.8. Skills and subagents" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:23:18] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "2. How Skills work,2.2. When to use Skills versus other options,3.8. Skills and subagents" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:23:21] doc-retriever: Bash tool used
+[2026-01-21 02:23:21] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --headings "2. Quickstart: create your first subagent,3.2. Choose the subagent scope,3.3. Write subagent files,3.5. Control subagent capabilities" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:23:21] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --headings "2. Quickstart: create your first subagent,3.2. Choose the subagent scope,3.3. Write subagent files,3.5. Control subagent capabilities" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:23:24] doc-retriever: Bash tool used
+[2026-01-21 02:23:24] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "5. Skill tool,6. Skills vs slash commands" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:23:24] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "5. Skill tool,6. Skills vs slash commands" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:24:02] doc-retriever session ended: fb6323ce-a862-4708-8311-ec9c864e1ae9 (status: completed)
+[2026-01-21 02:25:08] doc-retriever: Bash tool used
+[2026-01-21 02:25:08] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Agent Skills" --query "Task tool subagent_type" --query "skills vs subagent" --query "Agent Skills configuration" --json
+[2026-01-21 02:25:21] doc-retriever: Bash tool used
+[2026-01-21 02:25:21] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-json '[
+    {"title": "Agent Skills", "headings": ["2. How Skills work", "2.2. When to use Skills versus other options", "3.8. Skills and subagents"], "doc_set": "Claude_Code_Docs:latest"},
+    {"title": "Slash commands", "headings": ["6. Skills vs slash commands"], "doc_set": "Claude_Code_Docs:latest"},
+    {"title": "Create custom subagents", "headings": ["2. Quickstart: create your first subagent", "3.2. Choose the subagent scope", "3.5. Control subagent capabilities"], "doc_set": "Claude_Code_Docs:latest"}
+  ]' \
+  --format json
+[2026-01-21 02:25:21] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-json '[
+    {"title": "Agent Skills", "headings": ["2. How Skills work", "2.2. When to use Skills versus other options", "3.8. Skills and subagents"], "doc_set": "Claude_Code_Docs:latest"},
+    {"title": "Slash commands", "headings": ["6. Skills vs slash commands"], "doc_set": "Claude_Code_Docs:latest"},
+    {"title": "Create custom subagents", "headings": ["2. Quickstart: create your first subagent", "3.2. Choose the subagent scope", "3.5. Control subagent capabilities"], "doc_set": "Claude_Code_Docs:latest"}
+  ]' \
+  --format json
+[2026-01-21 02:25:41] doc-retriever session ended: 8eb37018-fb5d-4ab1-86ea-73bd34da56b1 (status: completed)
+[2026-01-21 02:28:29] doc-retriever: Bash tool used
+[2026-01-21 02:28:29] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "logs module design" --query "logging best practices" --query ".claude logs directory" --json
+[2026-01-21 02:28:32] doc-retriever: Bash tool used
+[2026-01-21 02:28:32] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query ".claude directory structure" --query "directory validation" --query "project structure" --json
+[2026-01-21 02:28:34] doc-retriever: Bash tool used
+[2026-01-21 02:28:34] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query ".claude structure" --query "agents skills" --query "configuration files" --json
+[2026-01-21 02:28:42] doc-retriever: Bash tool used
+[2026-01-21 02:28:42] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Manage Claude's memory" --headings "Modular rules with .claude/rules/,Basic structure" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:28:42] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Manage Claude's memory" --headings "Modular rules with .claude/rules/,Basic structure" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:28:43] doc-retriever: Bash tool used
+[2026-01-21 02:28:43] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "Where Skills live,Use multiple files" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:28:43] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "Where Skills live,Use multiple files" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:28:44] doc-retriever: Bash tool used
+[2026-01-21 02:28:44] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Plugins reference" --headings "Plugin directory structure,Directory structure mistakes" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:28:44] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Plugins reference" --headings "Plugin directory structure,Directory structure mistakes" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:28:54] doc-retriever: Bash tool used
+[2026-01-21 02:28:54] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Claude Code settings" --query "configuration files" --query "configuration scopes" --json
+[2026-01-21 02:28:58] doc-retriever: Bash tool used
+[2026-01-21 02:28:58] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Claude Code settings" --headings "Configuration scopes,Available scopes,Settings files,Key points about the configuration system" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:28:58] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Claude Code settings" --headings "Configuration scopes,Available scopes,Settings files,Key points about the configuration system" --doc-set "Claude_Code_Docs:latest"
+[2026-01-21 02:29:02] doc-retriever: Bash tool used
+[2026-01-21 02:29:02] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "gitignore" --query "exclude files" --query "local settings" --json
+[2026-01-21 02:29:22] doc-retriever session ended: ef1ea62d-5b7e-4a80-8d19-34c42e145ab1 (status: completed)

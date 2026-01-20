@@ -47,13 +47,7 @@ DO NOT:
   ❌ Use bash commands
 ```
 
-### Rule 3: Script-based Skills (context: exec)
-For skills that have executable implementations:
-```bash
-python .claude/scripts/skill-dispatcher.py {skill_name} "arguments"
-```
-
-### Rule 4: Error Handling
+### Rule 3: Error Handling
 If skill execution fails:
 - Check skill type first
 - Verify skill exists
@@ -71,10 +65,4 @@ Right: Apply the skill's prompt template directly
 ```
 Wrong: Assume all skills are executable
 Right: Read SKILL.md frontmatter to determine type
-```
-
-### ❌ Mistake 3: Using hardcoded paths
-```
-Wrong: cd /specific/path && python specific_script.py
-Right: Use skill-dispatcher.py for unified handling
 ```

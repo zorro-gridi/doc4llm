@@ -10,30 +10,43 @@ doc4llm is a documentation crawler for LLM training data. It features recursive 
 
 ## Development Commands
 
-### Installation
+### Environment Setup
+
+**IMPORTANT:** All Python scripts must be executed within the `k8s` conda virtual environment.
+
 ```bash
+# Activate the k8s conda environment
+conda activate k8s
+
+# Install dependencies (first time only)
 pip install -r requirements.txt
 ```
 
 ### Running the Scanner
 
+**IMPORTANT:** Always activate the `k8s` conda environment before running any Python scripts.
+
 **Single URL:**
 ```bash
+conda activate k8s
 python doc4llm.py -u https://example.com -workers 20 -delay 1 -timeout 8 -depth 3
 ```
 
 **Batch URL file:**
 ```bash
+conda activate k8s
 python doc4llm.py -f url.txt -workers 20 -delay 1 -timeout 8 -depth 3
 ```
 
 **Fuzz mode (custom URL concatenation):**
 ```bash
+conda activate k8s
 python doc4llm.py -f url.txt -fuzz 1 -proxy http://127.0.0.1:8080
 ```
 
 **Whitelist mode:**
 ```bash
+conda activate k8s
 python doc4llm.py -f url.txt -fuzz 1 -scope 3 -danger 1 -proxy http://127.0.0.1:8080
 ```
 

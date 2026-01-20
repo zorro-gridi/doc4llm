@@ -30,7 +30,7 @@ Extract content from markdown documents in the knowledge base directory configur
 
 **For agent/skill usage (recommended - zero context overhead):**
 ```bash
-python scripts/extract_md_doc.py --title "Agent Skills"
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills"
 ```
 
 **For Python integration:**
@@ -62,6 +62,67 @@ For complete documentation:
 | `fuzzy` | Fuzzy string matching with similarity threshold |
 | `partial` | Matches titles containing query as substring |
 
+## Section Extraction by Headings
+
+**NEW:** Extract specific sections from a document using heading titles for token-efficient retrieval.
+
+### CLI Usage
+
+```bash
+# Extract specific sections by headings
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "Create Skills,Configure Hooks" \
+  --doc-set "code_claude_com:latest"
+
+# Output in JSON format
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "Create Skills,Configure Hooks" \
+  --format json
+```
+
+### CLI Arguments (Section Extraction)
+
+| Argument | Type | Description |
+|----------|------|-------------|
+| `--title` | string | **Required** document page title |
+| `--headings` | string | Comma-separated heading names for section extraction (optional) |
+| `--doc-set` | string | **Required** document set identifier (e.g., "code_claude_com:latest") |
+| `--format` | string | Output format: `text` (default), `json`, or `summary` |
+
+**CRITICAL REQUIRED PARAMETERS:**
+- **`--title`**: **Required for ALL CLI invocations** (except when using `--list`, `--titles-csv`, `--titles-file`, or `--semantic-search`)
+- **`--doc-set`**: **Required for ALL CLI invocations**
+
+These parameters ensure the correct document and section are targeted from the correct document set.
+
+### Python API
+
+```python
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+
+extractor = MarkdownDocExtractor()
+
+# Extract specific sections by headings
+sections = extractor.extract_by_headings(
+    page_title="Agent Skills",
+    headings=["Create Skills", "Configure Hooks"],
+    doc_set="code_claude_com:latest"
+)
+
+# Returns: Dict[str, str] mapping heading to section content
+# {
+#     "Create Skills": "## Create Skills\n\nTo create a skill...",
+#     "Configure Hooks": "### Configure Hooks\n\nHooks allow..."
+# }
+```
+
+**Benefits:**
+- Token-efficient: Only extract relevant sections identified by md-doc-searcher
+- Precise: Content matches searcher-identified headings exactly
+- Fast: Smaller content = faster LLM processing
+
 ## Directory Structure
 
 Expected format:
@@ -73,3 +134,146 @@ Expected format:
 ```
 
 Where `<base_dir>` is configured in `.claude/knowledge_base.json` (default: `md_docs`).
+
+## CLI Parameter Decision Guide
+
+### Scenario 1: Single Document (Full Content)
+```bash
+# CRITICAL: --doc-set is REQUIRED for all CLI calls
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --doc-set "code_claude_com:latest"
+```
+
+### Scenario 2: Section Extraction (by Headings)
+```bash
+# Extract specific sections - --doc-set is REQUIRED
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "Create Skills,Configure Hooks" \
+  --doc-set "code_claude_com:latest"
+```
+
+### Scenario 3: Multiple Documents (Full Content)
+```bash
+# Extract multiple documents with metadata - --doc-set is REQUIRED
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --titles-csv "Agent Skills,Slash Commands,Hooks" \
+  --doc-set "code_claude_com:latest" \
+  --with-metadata \
+  --threshold 2100
+```
+
+### Scenario 4: Multi-Section Extraction (Multiple Documents with Headings)
+
+**NEW:** Extract specific sections from multiple documents, maintaining title-headings associations.
+
+**Python API:**
+```python
+from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
+
+extractor = MarkdownDocExtractor()
+
+# Section specifications with title-headings associations
+sections = [
+    {
+        "title": "Agent Skills",
+        "headings": ["Create Skills", "Configure Hooks"],
+        "doc_set": "code_claude_com:latest"
+    },
+    {
+        "title": "Hooks Reference",
+        "headings": ["Hook Types", "Configuration"],
+        "doc_set": "code_claude_com:latest"
+    }
+]
+
+result = extractor.extract_multi_by_headings(sections=sections, threshold=2100)
+
+# Returns: ExtractionResult with composite keys "{title}::{heading}"
+# - result.contents: Dict mapping "Agent Skills::Create Skills" to content
+# - result.total_line_count: Cumulative line count
+# - result.requires_processing: Whether threshold exceeded
+# - result.individual_counts: Per-section line counts
+```
+
+**CLI Usage (JSON file):**
+```bash
+# Create sections.json file
+cat > sections.json << 'EOF'
+[
+  {
+    "title": "Agent Skills",
+    "headings": ["Create Skills", "Configure Hooks"],
+    "doc_set": "code_claude_com:latest"
+  },
+  {
+    "title": "Hooks Reference",
+    "headings": ["Hook Types", "Configuration"],
+    "doc_set": "code_claude_com:latest"
+  }
+]
+EOF
+
+# Extract using --sections-file
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-file sections.json \
+  --format json
+```
+
+**CLI Usage (inline JSON):**
+```bash
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-json '[{"title":"Agent Skills","headings":["Create Skills"],"doc_set":"code_claude_com:latest"}]' \
+  --format json
+```
+
+**Benefits:**
+- Token-efficient: Only extract relevant sections from multiple documents
+- Maintains associations: Title-headings pairs preserved via composite keys
+- Cumulative tracking: Automatic line count across all sections
+- Ideal for doc-retriever workflow: Directly use Phase 1 JSON output
+
+### Parameter Decision Tree
+
+```
+What do you want to extract?
+│
+├─ Multiple documents, each with specific sections?
+│  └─ Use: --sections-file sections.json OR --sections-json '[...]' (NEW)
+│     └─ Format: JSON array of {title, headings[], doc_set} objects
+│
+├─ Single document, full content?
+│  └─ Use: --title "Document Title" --doc-set "doc_set:version"
+│     └─ --doc-set: **REQUIRED**
+│
+├─ Specific sections within a single document?
+│  └─ Use: --title "Document Title" --headings "Heading1,Heading2" --doc-set "doc_set:version"
+│     └─ --doc-set: **REQUIRED**
+│
+├─ Multiple documents, full content?
+│  └─ Use: --titles-csv "Doc1,Doc2,Doc3" --doc-set "doc_set:version"
+│     └─ --with-metadata: Recommended (gets line counts)
+│     └─ --doc-set: **REQUIRED**
+│
+└─ List available documents?
+   └─ Use: --list --doc-set "doc_set:version"
+      └─ --doc-set: **REQUIRED**
+```
+
+### Common Mistakes to Avoid
+
+| Mistake | Error | Fix |
+|---------|-------|-----|
+| **Missing `--title` in ANY CLI call** | `--title is required unless using --list, --titles-csv, --titles-file, --semantic-search, --sections-file, or --sections-json` | **Always add** `--title "Your Page Title"` |
+| **Missing `--doc-set` in ANY CLI call** | Document not found or ambiguous results | **Always add** `--doc-set "your_doc_set:version"` |
+| Using `--title` with `--titles-csv` | Conflicting arguments | Use only one title specification method |
+| Wrong `--doc-set` format | Document not found | Use format: `"doc_name:version"` (e.g., `"code_claude_com:latest"`) |
+| **Invalid JSON in `--sections-json`** | JSON decode error | Ensure valid JSON array with proper escaping |
+
+### Why --doc-set is Always Required
+
+1. **Multiple document sets**: Your knowledge base may contain multiple document sets (e.g., "code_claude_com:latest", "anthropic_docs:v2")
+2. **Title collisions**: Different document sets may contain pages with identical titles
+3. **Deterministic behavior**: Explicitly specifying the document set ensures consistent and predictable results
+4. **Performance**: Directly targeting a specific document set is faster than searching all sets

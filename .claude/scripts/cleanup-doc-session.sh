@@ -2,10 +2,27 @@
 
 # doc-retriever 会话清理脚本 - 增强版
 # 在子代理完成时执行清理操作并记录详细统计
+# 从 hook 的 stdin JSON 读取会话信息
 
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-SESSION_ID="${CLAUDE_SESSION_ID:-unknown}"
-SESSION_STATUS="${1:-completed}"  # completed, failed, interrupted
+
+# 从 stdin 读取 hook 输入（JSON 格式）
+INPUT=$(cat)
+
+# 提取字段（使用 jq，如果失败则使用默认值）
+SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
+HOOK_EVENT=$(echo "$INPUT" | jq -r '.hook_event_name // "Stop"')
+
+# 如果无法从 JSON 提取，使用环境变量
+SESSION_ID="${SESSION_ID:-${CLAUDE_SESSION_ID:-unknown}}"
+
+# 判断会话状态：根据 hook 事件类型推断
+# Stop/SubagentStop 正常触发视为完成，可通过日志判断是否有错误
+SESSION_STATUS="completed"
+if [ "$HOOK_EVENT" = "SubagentStop" ]; then
+    # 子代理停止，可能需要检查是否有错误
+    SESSION_STATUS="completed"
+fi
 
 # 记录会话结束
 echo "[$TIMESTAMP] doc-retriever session ended: $SESSION_ID (status: $SESSION_STATUS)" >> .claude/logs/doc-retrieval.log

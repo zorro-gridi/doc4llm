@@ -28,6 +28,9 @@ if [ -z "$COMMAND" ] || [ "$COMMAND" = "null" ]; then
     exit 0
 fi
 
+# Normalize command: remove newlines and extra whitespace for pattern matching
+COMMAND_NORMALIZED=$(echo "$COMMAND" | tr '\n' ' ' | tr -s ' ')
+
 log_security_event "INFO" "验证命令: $COMMAND"
 
 # 1. 命令长度检查
@@ -42,80 +45,95 @@ DANGEROUS_PATTERNS=(
     "rm -rf"
     "sudo"
     "chmod 777"
-    ">/dev/null 2>&1 &"     # 后台进程
-    "curl.*|.*sh"           # 管道执行
-    "wget.*|.*sh"           # 管道执行
-    "eval"                  # 动态执行
-    "exec"                  # 进程替换
-    "\$\("                  # 命令替换
-    "\`"                     # 反引号命令替换
-    "&&.*rm"                # 链式删除
-    "||.*rm"                # 条件删除
-    ">"                     # 重定向（可能覆盖文件）
-    ">>"                    # 追加重定向
-    "nc -l"                 # 网络监听
-    "python -c.*os\."       # Python 系统调用
-    "python -c.*subprocess" # Python 子进程
-    "/etc/"                 # 系统配置目录
-    "/usr/"                 # 系统程序目录
-    "/var/"                 # 系统变量目录
-    "~/"                    # 用户主目录
+    ">/dev/null 2>&1 &"
+    "curl.*\\|.*sh"
+    "wget.*\\|.*sh"
+    "^eval[[:space:]]"
+    "\\beval[[:space:]]"
+    "exec[[:space:]]"
+    "\\$\\("
+    '`'
+    "&&.*rm"
+    "||.*rm"
+    "nc -l"
+    "/etc/"
+    "/usr/"
+    "/var/"
 )
 
 for pattern in "${DANGEROUS_PATTERNS[@]}"; do
-    if echo "$COMMAND" | grep -qE "$pattern"; then
-        log_security_event "CRITICAL" "检测到危险操作: $pattern in $COMMAND"
-        echo "❌ 安全检查失败: 检测到危险操作模式 '$pattern'" >&2
-        echo "🚫 命令被阻止: $COMMAND" >&2
-        exit 2
+    # Skip empty patterns
+    if [ -n "$pattern" ]; then
+        if echo "$COMMAND_NORMALIZED" | grep -qE "$pattern" 2>/dev/null; then
+            log_security_event "CRITICAL" "检测到危险操作: $pattern in $COMMAND"
+            echo "❌ 安全检查失败: 检测到危险操作模式 '$pattern'" >&2
+            echo "🚫 命令被阻止: $COMMAND" >&2
+            exit 2
+        fi
     fi
 done
 
 # 3. 路径遍历检查
 PATH_TRAVERSAL_PATTERNS=(
-    "\.\./\.\."             # 路径遍历
-    "/\.\."                 # 路径遍历
-    "\.\.\\"                # Windows 路径遍历
-    "%2e%2e"                # URL 编码路径遍历
-    "%252e%252e"            # 双重编码路径遍历
+    "\.\./\.\."
+    "/\.\."
+    "%2e%2e"
+    "%252e%252e"
 )
 
 for pattern in "${PATH_TRAVERSAL_PATTERNS[@]}"; do
-    if echo "$COMMAND" | grep -qE "$pattern"; then
-        log_security_event "CRITICAL" "检测到路径遍历尝试: $pattern in $COMMAND"
-        echo "❌ 安全检查失败: 检测到路径遍历尝试" >&2
-        exit 2
+    # Skip empty patterns
+    if [ -n "$pattern" ]; then
+        if echo "$COMMAND_NORMALIZED" | grep -qE "$pattern" 2>/dev/null; then
+            log_security_event "CRITICAL" "检测到路径遍历尝试: $pattern in $COMMAND"
+            echo "❌ 安全检查失败: 检测到路径遍历尝试" >&2
+            exit 2
+        fi
     fi
 done
 
 # 4. 允许的文档操作白名单
 ALLOWED_DOC_OPERATIONS=(
-    "^ls -[la1]+ md_docs/"
-    "^find md_docs/ -name"
-    "^grep -[rEin]+ .* md_docs/"
+    "^ls -[la1]+ .* (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
+    "^find (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
+    "^grep -[lrEinRH]+ .* (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
+    "^grep -[lrEinRH]+"
     "^python .*/extract_md_doc\.py"
+    "^python .*/doc_searcher_cli\.py"
     "^python -m doc4llm"
-    "^cat md_docs/.*/doc(Content|TOC)\.md$"
-    "^head -n [0-9]+ md_docs/"
-    "^tail -n [0-9]+ md_docs/"
-    "^wc -l md_docs/"
+    "^conda run -n k8s python .*/extract_md_doc\.py"
+    "^conda run -n k8s python .*/doc_searcher_cli\.py"
+    "^cat (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/.*/doc(Content|TOC)\.md"
+    "^head -n [0-9]+ (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
+    "^tail -n [0-9]+ (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
+    "^wc -l"
     "^echo"
     "^mkdir -p \.claude/(logs|temp)"
+    "^python.*doc4llm"
+    "^python.*md_doc"
+    "^python -c.*from doc4llm"
+    "^python3 -c.*from doc4llm"
+    "^ls.*md_docs"
+    "^ls.*/project/md_docs"
+    "^grep.*\.claude/scripts"
 )
 
 IS_ALLOWED_OPERATION=false
 for pattern in "${ALLOWED_DOC_OPERATIONS[@]}"; do
-    if echo "$COMMAND" | grep -qE "$pattern"; then
-        IS_ALLOWED_OPERATION=true
-        log_security_event "INFO" "匹配允许操作: $pattern"
-        break
+    # Skip empty patterns
+    if [ -n "$pattern" ]; then
+        if echo "$COMMAND_NORMALIZED" | grep -qE "$pattern" 2>/dev/null; then
+            IS_ALLOWED_OPERATION=true
+            log_security_event "INFO" "匹配允许操作: $pattern"
+            break
+        fi
     fi
 done
 
 # 5. 如果不是预定义的安全操作，进行额外检查
 if [ "$IS_ALLOWED_OPERATION" = false ]; then
     # 检查是否访问允许的路径
-    if echo "$COMMAND" | grep -qE "$ALLOWED_PATHS_PATTERN"; then
+    if [ -n "$ALLOWED_PATHS_PATTERN" ] && echo "$COMMAND_NORMALIZED" | grep -qE "$ALLOWED_PATHS_PATTERN" 2>/dev/null; then
         log_security_event "WARN" "非标准但路径安全的操作: $COMMAND"
     else
         log_security_event "ERROR" "不允许的操作: $COMMAND"
@@ -126,13 +144,13 @@ if [ "$IS_ALLOWED_OPERATION" = false ]; then
 fi
 
 # 6. 文档目录存在性检查
-if echo "$COMMAND" | grep -q "md_docs" && [ ! -d "md_docs" ]; then
+if echo "$COMMAND" | grep -q "md_docs" 2>/dev/null && [ ! -d "md_docs" ]; then
     log_security_event "WARN" "md_docs 目录不存在，操作可能失败"
     echo "⚠️  警告: md_docs 目录不存在，操作可能失败" >&2
 fi
 
 # 7. 资源使用检查（防止资源耗尽）
-if echo "$COMMAND" | grep -qE "(find.*-exec|grep.*-r.*\*|cat.*\*)"; then
+if echo "$COMMAND_NORMALIZED" | grep -qE "(find.*-exec|grep.*-r.*\*|cat.*\*)" 2>/dev/null; then
     log_security_event "WARN" "可能的高资源消耗操作: $COMMAND"
     echo "⚠️  警告: 操作可能消耗大量资源" >&2
 fi

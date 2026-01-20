@@ -29,8 +29,7 @@ def main():
     parser.add_argument(
         "--base-dir",
         "-b",
-        default="md_docs",
-        help="Base documentation directory (default: md_docs)",
+        help="Base directory (loaded from knowledge_base.json, override with explicit value)",
     )
     parser.add_argument(
         "--file",
@@ -138,7 +137,11 @@ def main():
     )
     parser.add_argument(
         "--doc-set",
-        help="Filter by document set",
+        help="Document set identifier (e.g., 'code_claude_com:latest') - REQUIRED for section extraction (--headings)",
+    )
+    parser.add_argument(
+        "--headings",
+        help="Comma-separated heading names for section extraction",
     )
     parser.add_argument(
         "--doc-info",
@@ -151,149 +154,101 @@ def main():
         default="text",
         help="Output format (default: text)",
     )
+    parser.add_argument(
+        "--sections-file",
+        help="Path to JSON file containing multi-section specifications",
+    )
+    parser.add_argument(
+        "--sections-json",
+        help="Inline JSON string with multi-section specifications",
+    )
 
     args = parser.parse_args()
 
     # Validate arguments
-    # Allow --list, --titles-csv, --titles-file, --semantic-search without --title
+    # Allow --list, --titles-csv, --titles-file, --semantic-search, --sections-file, --sections-json without --title
     requires_title = not (
-        args.list or args.titles_csv or args.titles_file or args.semantic_search
+        args.list or args.titles_csv or args.titles_file or args.semantic_search or
+        args.sections_file or args.sections_json
     )
     if requires_title and not args.title:
         parser.error(
-            "--title is required unless using --list, --titles-csv, --titles-file, or --semantic-search"
+            "--title is required unless using --list, --titles-csv, --titles-file, --semantic-search, --sections-file, or --sections-json"
+        )
+
+    # Validate mutually exclusive arguments
+    if args.sections_file and args.sections_json:
+        parser.error(
+            "--sections-file and --sections-json are mutually exclusive"
+        )
+
+    # Require --doc-set when using --headings (section extraction)
+    if args.headings and not args.doc_set:
+        parser.error(
+            "--doc-set is required when using --headings for section extraction to ensure the correct document set is targeted"
         )
 
     try:
-        # Import the extractor
         from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
 
-        # Create extractor from config or with parameters
         if args.config:
             extractor = MarkdownDocExtractor.from_config(args.config)
         else:
-            # Try to load knowledge base config first (shared config for all skills)
-            project_root = Path(
-                __file__
-            ).parent.parent.parent  # scripts/ -> skill/ -> .claude/
-            knowledge_base_config_path = (
-                project_root / ".claude" / "knowledge_base.json"
-            )
-            skill_config_path = None
+            # Search upward from current script to find .claude directory with knowledge_base.json
+            current = Path(__file__).resolve()
+            knowledge_base_config_path = None
+            for _ in range(6):  # Search up to 6 levels up
+                if (current / "knowledge_base.json").exists():
+                    knowledge_base_config_path = current / "knowledge_base.json"
+                    break
+                current = current.parent
+            if not knowledge_base_config_path:
+                raise ValueError(
+                    f"knowledge_base.json not found in parent directories of {__file__}"
+                )
 
-            if knowledge_base_config_path.exists():
-                try:
-                    with open(knowledge_base_config_path, "r", encoding="utf-8") as f:
-                        kb_config = json.load(f)
-                    kb_base_dir = kb_config.get("knowledge_base", {}).get(
-                        "base_dir", "md_docs"
-                    )
-                    extractor = MarkdownDocExtractor(
-                        base_dir=args.base_dir or kb_base_dir,
-                        search_mode=args.search_mode
-                        or kb_config.get("default_search_mode", "exact"),
-                        fuzzy_threshold=args.fuzzy_threshold
-                        or kb_config.get("fuzzy_threshold", 0.6),
-                        max_results=args.max_results
-                        or kb_config.get("max_results", 10),
-                        debug_mode=args.debug,
-                        enable_fallback=kb_config.get("enable_fallback", False),
-                        fallback_modes=kb_config.get("fallback_modes", None),
-                        compress_threshold=kb_config.get("compress_threshold", 2000),
-                        enable_compression=kb_config.get("enable_compression", False),
-                    )
-                except (json.JSONDecodeError, IOError, KeyError):
-                    # Fall back to skill's own config
-                    knowledge_base_config_path = None
-            # Fall back to skill's own config if knowledge_base.json not available
-            if (
-                knowledge_base_config_path is None
-                or not knowledge_base_config_path.exists()
-            ):
-                script_dir = Path(__file__).parent  # scripts/ directory
-                skill_config_path = script_dir / "config.json"
+            try:
+                with open(knowledge_base_config_path, "r", encoding="utf-8") as f:
+                    kb_config = json.load(f)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Invalid JSON in knowledge_base.json: {e}")
 
-                # Add deprecation fallback for old location
-                old_config_path = script_dir.parent / "config.json"
-                if not skill_config_path.exists() and old_config_path.exists():
-                    import warnings
+            kb_base_dir = kb_config.get("knowledge_base", {}).get("base_dir")
+            if not kb_base_dir:
+                raise ValueError(
+                    "base_dir not found in knowledge_base.json['knowledge_base']"
+                )
+            # Expand ~ to user's home directory
+            kb_base_dir = str(Path(kb_base_dir).expanduser().resolve())
 
-                    warnings.warn(
-                        "Config location deprecated: Move config.json from skill root to scripts/ directory.",
-                        DeprecationWarning,
-                        stacklevel=2,
-                    )
-                    skill_config_path = old_config_path
-
-                if skill_config_path and skill_config_path.exists():
-                    try:
-                        with open(skill_config_path, "r", encoding="utf-8") as f:
-                            skill_config = json.load(f)
-
-                        if args.file:
-                            extractor = MarkdownDocExtractor(
-                                single_file_path=args.file,
-                                search_mode=args.search_mode
-                                or skill_config.get("default_search_mode", "exact"),
-                                fuzzy_threshold=args.fuzzy_threshold
-                                or skill_config.get("fuzzy_threshold", 0.6),
-                                max_results=args.max_results
-                                or skill_config.get("max_results", 10),
-                                debug_mode=args.debug,
-                                enable_fallback=skill_config.get(
-                                    "enable_fallback", False
-                                ),
-                                fallback_modes=skill_config.get("fallback_modes", None),
-                                compress_threshold=skill_config.get(
-                                    "compress_threshold", 2000
-                                ),
-                                enable_compression=skill_config.get(
-                                    "enable_compression", False
-                                ),
-                            )
-                        else:
-                            extractor = MarkdownDocExtractor(
-                                base_dir=args.base_dir
-                                or skill_config.get("base_dir", "md_docs"),
-                                search_mode=args.search_mode
-                                or skill_config.get("default_search_mode", "exact"),
-                                fuzzy_threshold=args.fuzzy_threshold
-                                or skill_config.get("fuzzy_threshold", 0.6),
-                                max_results=args.max_results
-                                or skill_config.get("max_results", 10),
-                                debug_mode=args.debug,
-                                enable_fallback=skill_config.get(
-                                    "enable_fallback", False
-                                ),
-                                fallback_modes=skill_config.get("fallback_modes", None),
-                                compress_threshold=skill_config.get(
-                                    "compress_threshold", 2000
-                                ),
-                                enable_compression=skill_config.get(
-                                    "enable_compression", False
-                                ),
-                            )
-                    except (json.JSONDecodeError, IOError):
-                        pass
-
-            # If no config file worked, use CLI args only
-            if "extractor" not in locals():
-                if args.file:
-                    extractor = MarkdownDocExtractor(
-                        single_file_path=args.file,
-                        search_mode=args.search_mode,
-                        fuzzy_threshold=args.fuzzy_threshold,
-                        max_results=args.max_results,
-                        debug_mode=args.debug,
-                    )
-                else:
-                    extractor = MarkdownDocExtractor(
-                        base_dir=args.base_dir,
-                        search_mode=args.search_mode,
-                        fuzzy_threshold=args.fuzzy_threshold,
-                        max_results=args.max_results,
-                        debug_mode=args.debug,
-                    )
+            if args.file:
+                extractor = MarkdownDocExtractor(
+                    single_file_path=args.file,
+                    search_mode=args.search_mode
+                    or kb_config.get("default_search_mode", "exact"),
+                    fuzzy_threshold=args.fuzzy_threshold
+                    or kb_config.get("fuzzy_threshold", 0.6),
+                    max_results=args.max_results or kb_config.get("max_results", 10),
+                    debug_mode=args.debug,
+                    enable_fallback=kb_config.get("enable_fallback", False),
+                    fallback_modes=kb_config.get("fallback_modes", None),
+                    compress_threshold=kb_config.get("compress_threshold", 2000),
+                    enable_compression=kb_config.get("enable_compression", False),
+                )
+            else:
+                extractor = MarkdownDocExtractor(
+                    base_dir=args.base_dir or kb_base_dir,
+                    search_mode=args.search_mode
+                    or kb_config.get("default_search_mode", "exact"),
+                    fuzzy_threshold=args.fuzzy_threshold
+                    or kb_config.get("fuzzy_threshold", 0.6),
+                    max_results=args.max_results or kb_config.get("max_results", 10),
+                    debug_mode=args.debug,
+                    enable_fallback=kb_config.get("enable_fallback", False),
+                    fallback_modes=kb_config.get("fallback_modes", None),
+                    compress_threshold=kb_config.get("compress_threshold", 2000),
+                    enable_compression=kb_config.get("enable_compression", False),
+                )
 
         # List available documents
         if args.list:
@@ -342,6 +297,24 @@ def main():
                 output_multi_contents(contents, args.format)
             return 0
 
+        # Multi-section extraction (multiple documents with their associated headings)
+        if args.sections_file or args.sections_json:
+            # Load sections specifications
+            if args.sections_file:
+                with open(args.sections_file, "r", encoding="utf-8") as f:
+                    sections = json.load(f)
+            else:  # args.sections_json
+                sections = json.loads(args.sections_json)
+
+            # Use extract_multi_by_headings()
+            from doc4llm.tool.md_doc_retrieval import ExtractionResult
+
+            result: ExtractionResult = extractor.extract_multi_by_headings(
+                sections=sections, threshold=args.threshold
+            )
+            output_multi_sections_result(result, args.format)
+            return 0
+
         # Compression mode
         if args.compress:
             result = extractor.extract_with_compression(
@@ -374,6 +347,21 @@ def main():
         if args.doc_info:
             info = extractor.get_document_info(args.title)
             output_doc_info(info, args.format)
+            return 0
+
+        # Section extraction by headings
+        if args.headings:
+            headings = [h.strip() for h in args.headings.split(",")]
+            sections = extractor.extract_by_headings(
+                page_title=args.title, headings=headings, doc_set=args.doc_set
+            )
+            if args.format == "json":
+                print(json.dumps(sections, indent=2, ensure_ascii=False))
+            else:
+                for heading, content in sections.items():
+                    print(f"=== {heading} ===")
+                    print(content)
+                    print()
             return 0
 
         # Extract content by title
@@ -533,6 +521,67 @@ def output_doc_info(info: dict, format_type: str):
         print(f"=== Document Info ===")
         for key, value in info.items():
             print(f"{key}: {value}")
+
+
+def output_multi_sections_result(result, format_type: str):
+    """Output multi-section extraction result with composite keys.
+
+    The composite key format is "{title}::{heading}" for each section.
+    """
+    if format_type == "json":
+        print(
+            json.dumps(
+                {
+                    "contents": result.contents,
+                    "total_line_count": result.total_line_count,
+                    "individual_counts": result.individual_counts,
+                    "requires_processing": result.requires_processing,
+                    "threshold": result.threshold,
+                    "document_count": result.document_count,
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
+    elif format_type == "summary":
+        print(result.to_summary())
+        # Also show section breakdown
+        print("\n📋 Section breakdown:")
+        current_title = None
+        for key, count in result.individual_counts.items():
+            if "::" in key:
+                title, heading = key.split("::", 1)
+                if title != current_title:
+                    print(f"\n  📄 {title}:")
+                    current_title = title
+                print(f"     - {heading}: {count} lines")
+            else:
+                print(f"  - {key}: {count} lines")
+    else:  # text
+        print(f"=== Multi-Section Extraction Result ===")
+        print(f"Total sections extracted: {result.document_count}")
+        print(f"Total line count: {result.total_line_count}")
+        print(f"Requires processing: {'Yes' if result.requires_processing else 'No'}")
+        print(f"Threshold: {result.threshold}")
+        print("\n--- Content ---\n")
+
+        current_title = None
+        for key, content in result.contents.items():
+            if "::" in key:
+                title, heading = key.split("::", 1)
+                if title != current_title:
+                    if current_title is not None:
+                        print()  # Blank line between documents
+                    print(f"## {title}")
+                    print("=" * (len(title) + 3))
+                    current_title = title
+                print(f"\n### {heading}")
+                print("-" * (len(heading) + 4))
+                print()
+            else:
+                print(f"=== {key} ===")
+            print(content)
+            print()
 
 
 if __name__ == "__main__":
