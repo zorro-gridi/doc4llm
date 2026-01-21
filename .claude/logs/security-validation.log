@@ -424,3 +424,36 @@ print(f'Individual counts: {result.individual_counts}')
 [2026-01-21 02:43:53] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Create custom subagents","headings":["Create custom subagents","Quickstart: create your first subagent","Choose the subagent scope","Write subagent files","Control subagent capabilities","Hooks in subagent frontmatter","Project-level hooks for subagent events","Manage subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Agent Skills","headings":["Agent Skills","How Skills work","When to use Skills versus other options","Skills and subagents","Give a subagent access to Skills","Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Hooks reference","headings":["Best practices","Configuration","Hooks in Skills, Agents, and Slash Commands","SubagentStop with custom logic"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Claude Code settings","headings":["Subagent configuration"],"doc_set":"Claude_Code_Docs:latest"}]' --format json
 [2026-01-21 02:43:53] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
 [2026-01-21 02:43:53] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Create custom subagents","headings":["Create custom subagents","Quickstart: create your first subagent","Choose the subagent scope","Write subagent files","Control subagent capabilities","Hooks in subagent frontmatter","Project-level hooks for subagent events","Manage subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Agent Skills","headings":["Agent Skills","How Skills work","When to use Skills versus other options","Skills and subagents","Give a subagent access to Skills","Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Hooks reference","headings":["Best practices","Configuration","Hooks in Skills, Agents, and Slash Commands","SubagentStop with custom logic"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Claude Code settings","headings":["Subagent configuration"],"doc_set":"Claude_Code_Docs:latest"}]' --format json
+[2026-01-21 10:28:45] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent keyword trigger" --query "define subagent trigger" --query "subagent invocation keywords" --json
+[2026-01-21 10:28:45] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 10:28:45] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent keyword trigger" --query "define subagent trigger" --query "subagent invocation keywords" --json
+[2026-01-21 10:29:01] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Create custom subagents" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --with-metadata \
+  --threshold 2100
+[2026-01-21 10:29:01] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:29:01] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Create custom subagents" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --with-metadata \
+  --threshold 2100
+[2026-01-21 10:29:06] [INFO] 验证命令: cat /Users/zorro/.claude/projects/-Users-zorro-project-doc4llm/1e3bdd3c-7e4d-4716-afe9-6a315fbf3c68/tool-results/call_2480c9b3cd9c4c5a93188097.txt | head -50
+[2026-01-21 10:29:06] [ERROR] 不允许的操作: cat /Users/zorro/.claude/projects/-Users-zorro-project-doc4llm/1e3bdd3c-7e4d-4716-afe9-6a315fbf3c68/tool-results/call_2480c9b3cd9c4c5a93188097.txt | head -50
+[2026-01-21 10:29:10] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Create custom subagents" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --with-metadata \
+  --threshold 2100 2>&1 | tail -20
+[2026-01-21 10:29:10] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:29:10] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Create custom subagents" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --with-metadata \
+  --threshold 2100 2>&1 | tail -20
+[2026-01-21 10:29:13] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --doc-set "Claude_Code_Docs:latest" --doc-info
+[2026-01-21 10:29:13] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:29:13] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --doc-set "Claude_Code_Docs:latest" --doc-info
+[2026-01-21 10:29:25] [INFO] 验证命令: wc -l /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Create\ custom\ subagents/docContent.md
+[2026-01-21 10:29:25] [INFO] 匹配允许操作: ^wc -l
+[2026-01-21 10:29:25] [INFO] 安全验证通过: wc -l /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Create\ custom\ subagents/docContent.md
