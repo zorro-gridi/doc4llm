@@ -35,12 +35,6 @@ from .agentic_matcher import (
     MatchResult,
     agentic_search,
 )
-from .query_optimizer import (
-    QueryOptimizer,
-    OptimizedQuery,
-    QueryAnalysis,
-    optimize_query,
-)
 from .exceptions import (
     BaseDirectoryNotFoundError,
     ConfigurationError,
@@ -83,11 +77,6 @@ __all__ = [
     "ReflectiveReRanker",
     "MatchResult",
     "agentic_search",
-    # Query optimizer (v2.2.0)
-    "QueryOptimizer",
-    "OptimizedQuery",
-    "QueryAnalysis",
-    "optimize_query",
     # Exceptions
     "DocExtractorError",
     "DocumentNotFoundError",

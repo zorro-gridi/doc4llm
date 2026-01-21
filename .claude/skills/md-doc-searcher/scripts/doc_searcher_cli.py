@@ -144,6 +144,44 @@ def create_parser() -> argparse.ArgumentParser:
         help="Output raw JSON result instead of AOP format"
     )
 
+    # Reranker parameters
+    parser.add_argument(
+        "--reranker",
+        action="store_true",
+        default=True,
+        help="Enable transformer-based semantic re-ranking for headings"
+    )
+    parser.add_argument(
+        "--reranker-model-zh",
+        type=str,
+        default="BAAI/bge-large-zh-v1.5",
+        help="Chinese model ID for reranker (default: BAAI/bge-large-zh-v1.5)"
+    )
+    parser.add_argument(
+        "--reranker-model-en",
+        type=str,
+        default="BAAI/bge-large-en-v1.5",
+        help="English model ID for reranker (default: BAAI/bge-large-en-v1.5)"
+    )
+    parser.add_argument(
+        "--reranker-threshold",
+        type=float,
+        default=0.68,
+        help="Similarity threshold for filtering headings (default: 0.68). Headings with score < threshold are filtered out."
+    )
+    parser.add_argument(
+        "--reranker-top-k",
+        type=int,
+        default=None,
+        help="Keep top K headings after re-ranking (default: None = keep all above threshold)"
+    )
+    parser.add_argument(
+        "--reranker-lang-threshold",
+        type=float,
+        default=0.6,
+        help="Language detection threshold (default: 0.6). Ratio of Chinese characters >= this value uses Chinese model, otherwise English model."
+    )
+
     return parser
 
 
@@ -197,6 +235,21 @@ def validate_args(args: argparse.Namespace) -> bool:
         print("Error: min-headings must be at least 1")
         return False
 
+    # Validate reranker threshold
+    if not 0.0 <= args.reranker_threshold <= 1.0:
+        print("Error: reranker-threshold must be between 0.0 and 1.0")
+        return False
+
+    # Validate reranker lang threshold
+    if not 0.0 <= args.reranker_lang_threshold <= 1.0:
+        print("Error: reranker-lang-threshold must be between 0.0 and 1.0")
+        return False
+
+    # Validate reranker top-k
+    if args.reranker_top_k is not None and args.reranker_top_k < 1:
+        print("Error: reranker-top-k must be at least 1")
+        return False
+
     return True
 
 
@@ -222,7 +275,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         threshold_precision=args.threshold_precision,
         min_page_titles=args.min_page_titles,
         min_headings=args.min_headings,
-        debug=args.debug
+        debug=args.debug,
+        reranker_enabled=args.reranker,
+        reranker_model_zh=args.reranker_model_zh,
+        reranker_model_en=args.reranker_model_en,
+        reranker_threshold=args.reranker_threshold,
+        reranker_top_k=args.reranker_top_k,
+        reranker_lang_threshold=args.reranker_lang_threshold,
     )
 
     # Execute search

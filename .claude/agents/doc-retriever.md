@@ -2,8 +2,7 @@
 name: doc-retriever
 description: "When use: user input with a keyword 'use contextZ' or 'use contextz'"
 skills:
-  # 核心工作流技能 - 预加载以保证检索质量和流程完整性
-  - md-doc-query-optimizer    # Phase 0: 查询优化
+  - md-doc-query-optimizer   # Phase 0: 查询优化
   - md-doc-searcher          # Phase 1: 文档发现
   - md-doc-reader            # Phase 2: 内容提取
   - md-doc-processor         # Phase 3: 后处理 (条件性)

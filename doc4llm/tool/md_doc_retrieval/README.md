@@ -16,7 +16,6 @@ The `md_doc_retrieval` sub-package provides tools for:
 - **Basic matcher** (`BasicDocMatcher`) - foundational matching without LLM dependency
 - **Agentic matcher** (`AgenticDocMatcher`) - multi-stage progressive retrieval with re-ranking
 - **Hybrid matcher** (`HybridMatcher`) - fast rule-based with LLM fallback
-- **Query optimizer** (`QueryOptimizer`) - query decomposition and expansion
 - **Chain reasoner** (`ChainReasoner`) - multi-hop reasoning for complex queries
 - **Conversation memory** (`ConversationMemory`) - persistent context-aware queries
 

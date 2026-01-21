@@ -1,9 +1,9 @@
 """
-Markdown Document Searcher API - BM25 based retrieval.
+Markdown Document Searcher API - BM25 based retrieval with transformer reranking.
 
 This module provides CLI + API interface for searching markdown documents
 in the doc4llm knowledge base. Uses BM25 scoring for doc-set, page_title,
-and heading matching. Fallback strategies use grep-based search.
+and heading matching. Supports transformer-based semantic re-ranking.
 
 Core BM25 Parameters:
     k1: Term frequency saturation parameter (default 1.2)
@@ -13,302 +13,39 @@ Matching Thresholds:
     threshold_page_title: Page title match threshold, uses full TOC (default 0.6)
     threshold_headings: Heading match threshold, single heading text (default 0.25)
     threshold_precision: Precision match threshold for headings (default 0.7)
+
+Reranker Parameters:
+    reranker_enabled: Enable transformer re-ranking (default False)
+    reranker_threshold: Minimum similarity score for headings (default 0.5)
+    reranker_top_k: Maximum number of headings to keep after re-ranking (default None)
 """
 
 import json
-import math
 import re
-from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
+# Import local modules
+from bm25_recall import (
+    BM25Recall,
+    extract_keywords,
+    extract_page_title_from_path,
+)
+from output_format import OutputFormatter
+from reranker import HeadingReranker, RerankerConfig
 
-STOP_WORDS = {
-    "the",
-    "a",
-    "an",
-    "and",
-    "or",
-    "but",
-    "is",
-    "are",
-    "was",
-    "were",
-    "to",
-    "for",
-    "with",
-    "by",
-    "from",
-    "at",
-    "on",
-    "in",
-    "about",
-    "how",
-    "what",
-    "where",
-    "when",
-    "why",
-    "which",
-    "that",
-    "this",
-    "these",
-    "those",
-    "use",
-    "using",
-    "can",
-    "will",
-    "would",
-}
+# Import transformer matcher from md_doc_retrieval
+import sys
+for _ in range(4):  # Search up to 4 levels up
+    if (Path(__file__).parent.parent / "doc4llm").exists():
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+        break
 
-TECHNICAL_TERMS = {
-    "api",
-    "cli",
-    "sdk",
-    "http",
-    "https",
-    "jwt",
-    "oauth",
-    "ssh",
-    "webhook",
-    "middleware",
-    "endpoint",
-    "token",
-    "auth",
-    "config",
-    "deploy",
-    "hooks",
-    "async",
-    "sync",
-    "json",
-    "xml",
-    "yaml",
-    "yml",
-}
-
-
-@dataclass
-class BM25Config:
-    """Configuration for BM25 ranking parameters."""
-
-    k1: float = 1.2
-    b: float = 0.75
-    min_token_length: int = 2
-    max_token_length: int = 30
-    lowercase: bool = True
-    stop_words: Optional[set] = None
-
-
-class BM25Matcher:
-    """BM25-based matcher for content search."""
-
-    DEFAULT_STOP_WORDS = {
-        "the",
-        "a",
-        "an",
-        "and",
-        "or",
-        "but",
-        "is",
-        "are",
-        "was",
-        "were",
-        "to",
-        "for",
-        "with",
-        "by",
-        "from",
-        "at",
-        "on",
-        "in",
-        "about",
-        "as",
-        "of",
-        "it",
-        "this",
-        "that",
-        "be",
-        "have",
-        "has",
-        "had",
-    }
-
-    def __init__(self, config: Optional[BM25Config] = None):
-        self.config = config or BM25Config()
-        if self.config.stop_words is None:
-            self.config.stop_words = self.DEFAULT_STOP_WORDS
-        self._doc_ids: List[str] = []
-        self._doc_lengths: List[int] = []
-        self._doc_vectors: List[Dict[str, int]] = []
-        self._idf_cache: Dict[str, float] = {}
-        self._avg_doc_length: float = 0.0
-        self._total_docs: int = 0
-
-    def _tokenize(self, text: str) -> List[str]:
-        tokens = re.findall(r"\b\w+\b", text)
-        filtered = []
-        for token in tokens:
-            if self.config.lowercase:
-                token = token.lower()
-            if token in self.config.stop_words:
-                continue
-            if len(token) < self.config.min_token_length:
-                continue
-            if len(token) > self.config.max_token_length:
-                continue
-            filtered.append(token)
-        return filtered
-
-    def build_index(
-        self, documents: Dict[str, str], pre_tokenized: bool = False
-    ) -> None:
-        self._doc_ids = []
-        self._doc_lengths = []
-        self._doc_vectors = []
-        self._idf_cache = {}
-        total_length = 0
-
-        for doc_id, content in documents.items():
-            self._doc_ids.append(doc_id)
-            if pre_tokenized:
-                tokens = content if isinstance(content, list) else content.split()
-            else:
-                tokens = self._tokenize(content)
-            term_freq = Counter(tokens)
-            self._doc_vectors.append(dict(term_freq))
-            self._doc_lengths.append(len(tokens))
-            total_length += len(tokens)
-
-        self._total_docs = len(self._doc_ids)
-        self._avg_doc_length = (
-            total_length / self._total_docs if self._total_docs > 0 else 0
-        )
-        self._compute_idf()
-
-    def _compute_idf(self) -> None:
-        doc_freq = Counter()
-        for doc_vector in self._doc_vectors:
-            for term in doc_vector:
-                doc_freq[term] += 1
-        for term, df in doc_freq.items():
-            self._idf_cache[term] = math.log(
-                (self._total_docs - df + 0.5) / (df + 0.5) + 1.0
-            )
-
-    def _get_idf(self, term: str) -> float:
-        if self.config.lowercase:
-            term = term.lower()
-        return self._idf_cache.get(term, 0.0)
-
-    def _score_document(self, query_tokens: List[str], doc_idx: int) -> float:
-        doc_vector = self._doc_vectors[doc_idx]
-        doc_length = self._doc_lengths[doc_idx]
-        score = 0.0
-        for token in query_tokens:
-            if token not in doc_vector:
-                continue
-            tf = doc_vector[token]
-            idf = self._get_idf(token)
-            numerator = tf * (self.config.k1 + 1)
-            denominator = tf + self.config.k1 * (
-                1 - self.config.b + self.config.b * (doc_length / self._avg_doc_length)
-            )
-            score += idf * (numerator / denominator)
-        return score
-
-    def search(
-        self, query: str, top_k: int = 10, min_score: float = 0.0
-    ) -> List[Tuple[str, float]]:
-        if not self._doc_ids:
-            return []
-        query_tokens = self._tokenize(query)
-        if not query_tokens:
-            return []
-        scores = []
-        for doc_idx in range(self._total_docs):
-            score = self._score_document(query_tokens, doc_idx)
-            if score >= min_score:
-                scores.append((self._doc_ids[doc_idx], score))
-        scores.sort(key=lambda x: x[1], reverse=True)
-        return scores[:top_k]
-
-
-def calculate_bm25_similarity(
-    query: str, content: str, config: Optional[BM25Config] = None
-) -> float:
-    """Quick BM25 similarity calculation for a single document."""
-    if not query or not content:
-        return 0.0
-    matcher = BM25Matcher(config)
-    matcher.build_index({"doc": content})
-    results = matcher.search(query, top_k=1)
-    return results[0][1] if results else 0.0
-
-
-def extract_keywords(query: str) -> List[str]:
-    """Extract keywords from query string."""
-    words = re.findall(r"[\w\u4e00-\u9fff]+", query.lower())
-    keywords = []
-    for word in words:
-        if re.search(r"[\u4e00-\u9fff]", word):
-            keywords.append(word)
-        elif word in TECHNICAL_TERMS:
-            keywords.append(word)
-        elif word not in STOP_WORDS:
-            keywords.append(word)
-    seen = set()
-    result = []
-    for word in keywords:
-        if word not in seen:
-            seen.add(word)
-            result.append(word)
-    return result
-
-
-def extract_page_title_from_path(toc_path: str) -> str:
-    """Extract page title from toc file path."""
-    parts = toc_path.split("/")
-    for i, part in enumerate(parts):
-        if part == "docTOC.md":
-            if i > 0:
-                return parts[i - 1]
-    return "Unknown"
-
-
-def parse_headings(toc_content: str) -> List[Dict[str, Any]]:
-    """Parse headings from TOC content."""
-    if not toc_content:
-        return []
-    lines = toc_content.split("\n")
-    headings = []
-    heading_pattern = re.compile(r"^(#{1,6})\s+(.+)$")
-    link_pattern = re.compile(r"\[([^\]]+)\]\([^\)]+\)")
-    anchor_pattern = re.compile(r"：https://[^\s]+|: https://[^\s]+")
-
-    for line in lines:
-        match = heading_pattern.match(line.strip())
-        if match:
-            level = len(match.group(1))
-            full_text = match.group(2).strip()
-            anchor = None
-            anchor_match = anchor_pattern.search(full_text)
-            if anchor_match:
-                anchor = (
-                    anchor_match.group(0).replace("：", "").replace(": ", "").strip()
-                )
-            text = anchor_pattern.sub("", full_text).strip()
-            link_match = link_pattern.search(text)
-            if link_match:
-                text = link_match.group(1)
-            headings.append(
-                {
-                    "level": level,
-                    "text": text,
-                    "full_text": f"{'#' * level} {text}",
-                    "anchor": anchor,
-                }
-            )
-    return headings
+from doc4llm.tool.md_doc_retrieval.transformer_matcher import (
+    TransformerMatcher,
+    TransformerConfig,
+)
 
 
 @dataclass
@@ -316,20 +53,26 @@ class DocSearcherAPI:
     """
     Markdown Document Searcher API.
 
-    Provides BM25-based document retrieval from docTOC.md files.
-    Supports main flow with full-text BM25 and grep-based fallback strategies.
+    Provides BM25-based document retrieval from docTOC.md files with optional
+    transformer-based semantic re-ranking.
 
     Args:
-        base_dir: Knowledge base root directory
+        base_dir: Knowledge base root directory (loaded from knowledge_base.json)
         bm25_k1: BM25 k1 parameter (default 1.2)
         bm25_b: BM25 b parameter (default 0.75)
-        threshold_page_title: Page title matching threshold, uses full TOC content (default 0.6)
-        threshold_headings: Heading matching threshold, single heading text (default 0.25)
-        threshold_precision: Precision matching threshold for headings only (default 0.7)
-        threshold_doc_set: Doc-set matching threshold, keyword Jaccard (default 0.6)
+        threshold_page_title: Page title matching threshold (default 0.6)
+        threshold_headings: Heading matching threshold (default 0.25)
+        threshold_precision: Precision matching threshold (default 0.7)
+        threshold_doc_set: Doc-set matching threshold (default 0.6)
         min_page_titles: Minimum page titles per doc-set (default 1)
         min_headings: Minimum headings per doc-set (default 2)
         debug: Enable debug mode (default False)
+        reranker_enabled: Enable transformer re-ranking (default False)
+        reranker_model_zh: Chinese model ID (default "BAAI/bge-large-zh-v1.5")
+        reranker_model_en: English model ID (default "BAAI/bge-large-en-v1.5")
+        reranker_threshold: Minimum similarity score for headings (default 0.5)
+        reranker_top_k: Maximum headings to keep after re-ranking (default None)
+        reranker_lang_threshold: Language detection threshold (default 0.3)
 
     Attributes:
         base_dir: Knowledge base root directory
@@ -346,6 +89,12 @@ class DocSearcherAPI:
     min_page_titles: int = 1
     min_headings: int = 2
     debug: bool = False
+    reranker_enabled: bool = False
+    reranker_model_zh: str = "BAAI/bge-large-zh-v1.5"
+    reranker_model_en: str = "BAAI/bge-large-en-v1.5"
+    reranker_threshold: float = 0.5
+    reranker_top_k: Optional[int] = None
+    reranker_lang_threshold: float = 0.3
 
     def __post_init__(self):
         """Initialize configuration from knowledge_base.json."""
@@ -382,13 +131,29 @@ class DocSearcherAPI:
             "debug": self.debug,
         }
 
+        # Initialize reranker if enabled
+        self._reranker: Optional[HeadingReranker] = None
+        if self.reranker_enabled:
+            transformer_config = TransformerConfig(
+                model_zh=self.reranker_model_zh,
+                model_en=self.reranker_model_en,
+                lang_threshold=self.reranker_lang_threshold,
+            )
+            matcher = TransformerMatcher(transformer_config)
+            reranker_config = RerankerConfig(
+                enabled=True,
+                min_score_threshold=self.reranker_threshold,
+                top_k=self.reranker_top_k,
+            )
+            self._reranker = HeadingReranker(reranker_config, matcher)
+
     def _debug_print(self, message: str):
         """Print debug message."""
         if self.debug:
             print(f"[DEBUG] {message}")
 
     def _extract_keywords(self, text: str) -> List[str]:
-        """Extract keywords from text (保留版本号作为独立词)。"""
+        """Extract keywords from text."""
         return re.findall(r"[a-zA-Z]+", text.lower())
 
     def _calculate_jaccard(self, set1: List[str], set2: List[str]) -> float:
@@ -397,6 +162,110 @@ class DocSearcherAPI:
         if not s1 or not s2:
             return 0.0
         return len(s1 & s2) / len(s1 | s2)
+
+    def _detect_language(self, text: str) -> str:
+        """
+        Detect text language based on Chinese character ratio.
+
+        Args:
+            text: Input text to analyze
+
+        Returns:
+            "zh" if Chinese character ratio >= threshold, "en" otherwise
+        """
+        # Count Chinese characters (Unicode range for CJK Unified Ideographs)
+        chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', text))
+        total_chars = len(text.strip())
+
+        if total_chars == 0:
+            return "en"
+
+        ratio = chinese_chars / total_chars
+        return "zh" if ratio >= self.reranker_lang_threshold else "en"
+
+    def _detect_docset_language(self, doc_set: str, sample_size: int = 5) -> str:
+        """
+        Detect the primary language of a doc-set by sampling docTOC.md files.
+
+        Args:
+            doc_set: Name of the doc-set to analyze
+            sample_size: Maximum number of TOC files to sample
+
+        Returns:
+            "zh" if Chinese is dominant, "en" otherwise
+        """
+        docset_path = Path(self.base_dir) / doc_set
+        if not docset_path.exists():
+            self._debug_print(f"Doc-set path not found: {docset_path}")
+            return "en"  # Default to English
+
+        # Find all docTOC.md files
+        toc_files = list(docset_path.rglob("docTOC.md"))
+        if not toc_files:
+            self._debug_print(f"No docTOC.md files found in {doc_set}")
+            return "en"  # Default to English
+
+        # Sample files
+        sample_files = toc_files[:sample_size]
+        self._debug_print(f"Sampling {len(sample_files)} TOC files for language detection")
+
+        # Collect all text from sampled files
+        all_text = []
+        for toc_file in sample_files:
+            try:
+                with open(toc_file, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    # Extract headings (lines starting with #)
+                    headings = [line for line in content.split("\n") if line.strip().startswith("#")]
+                    all_text.extend(headings)
+            except Exception as e:
+                self._debug_print(f"Error reading {toc_file}: {e}")
+
+        if not all_text:
+            return "en"
+
+        # Combine all headings for language detection
+        combined_text = " ".join(all_text)
+        detected_lang = self._detect_language(combined_text)
+        self._debug_print(f"Detected doc-set language: {detected_lang}")
+
+        return detected_lang
+
+    def _validate_language_consistency(
+        self, query: Union[str, List[str]], doc_set: str
+    ) -> None:
+        """
+        Validate that query language matches corpus language.
+
+        Args:
+            query: Search query string or list of query strings
+            doc_set: Target doc-set name
+
+        Raises:
+            ValueError: If query and corpus languages don't match
+        """
+        # Detect query language
+        queries = [query] if isinstance(query, str) else query
+        combined_query = " ".join(queries)
+        query_lang = self._detect_language(combined_query)
+        self._debug_print(f"Detected query language: {query_lang}")
+
+        # Detect corpus language
+        corpus_lang = self._detect_docset_language(doc_set)
+        self._debug_print(f"Detected corpus language: {corpus_lang}")
+
+        # Check consistency
+        if query_lang != corpus_lang:
+            lang_names = {
+                "zh": "中文",
+                "en": "英文"
+            }
+            raise ValueError(
+                f"Language mismatch detected: Query is in {lang_names[query_lang]} "
+                f"but corpus '{doc_set}' is primarily in {lang_names[corpus_lang]}. "
+                f"Please use {lang_names[corpus_lang]} queries for this corpus, "
+                f"or specify a different doc-set that matches your query language."
+            )
 
     def _match_doc_sets(
         self, query: Union[str, List[str]], doc_sets: List[str]
@@ -474,104 +343,6 @@ class DocSearcherAPI:
             if item.is_dir() and ":" in item.name:
                 doc_sets.append(item.name)
         return sorted(doc_sets)
-
-    def _find_toc_files(self, doc_set: str) -> List[str]:
-        """Find all TOC files in a doc-set."""
-        base = Path(self.base_dir) / doc_set
-        if not base.exists():
-            return []
-        toc_files = []
-        for item in base.iterdir():
-            if item.is_dir():
-                toc_path = item / "docTOC.md"
-                if toc_path.exists():
-                    toc_files.append(str(toc_path))
-        return sorted(toc_files)
-
-    def _read_toc_content(self, toc_path: str) -> str:
-        """Read TOC file content."""
-        try:
-            return Path(toc_path).read_text(encoding="utf-8")
-        except Exception:
-            return ""
-
-    def _search_page_titles_bm25(
-        self, doc_set: str, query: Union[str, List[str]]
-    ) -> List[Dict[str, Any]]:
-        """Search page titles using BM25. Supports single query or query list."""
-        # Normalize query to list
-        queries = [query] if isinstance(query, str) else query
-        # Combine queries with space for BM25 search
-        combined_query = " ".join(queries)
-
-        toc_files = self._find_toc_files(doc_set)
-        matcher = BM25Matcher(BM25Config(k1=self.bm25_k1, b=self.bm25_b))
-
-        documents = {}
-        for toc_path in toc_files:
-            page_title = extract_page_title_from_path(toc_path)
-            content = self._read_toc_content(toc_path)
-            documents[page_title] = content
-
-        if not documents:
-            return []
-
-        matcher.build_index(documents)
-        results = matcher.search(combined_query, top_k=100)
-
-        scored_pages = []
-        for page_title, score in results:
-            # Page Title 使用 threshold_page_title
-            is_basic = score >= self.threshold_page_title
-
-            if is_basic:
-                toc_path = str(Path(self.base_dir) / doc_set / page_title / "docTOC.md")
-                toc_content = self._read_toc_content(toc_path)
-                headings = parse_headings(toc_content)
-
-                scored_headings = []
-                for heading in headings:
-                    h_score = calculate_bm25_similarity(
-                        combined_query,
-                        heading["text"],
-                        BM25Config(k1=self.bm25_k1, b=self.bm25_b),
-                    )
-                    self._debug_print(
-                        f"    Heading: {heading['text'][:50]}, score: {h_score:.2f}"
-                    )
-                    scored_headings.append(
-                        {
-                            **heading,
-                            "score": h_score,
-                            "is_basic": h_score >= self.threshold_headings,
-                            "is_precision": h_score >= self.threshold_precision,
-                        }
-                    )
-
-                # 只返回 basic 级别以上的 headings (使用 threshold_headings)
-                self._debug_print(
-                    f"    threshold_headings: {self.threshold_headings}, valid count before filter: {len(scored_headings)}"
-                )
-                valid_headings = [h for h in scored_headings if h["is_basic"]]
-                self._debug_print(f"    valid_headings count: {len(valid_headings)}")
-
-                precision_count = sum(1 for h in valid_headings if h["is_precision"])
-
-                scored_pages.append(
-                    {
-                        "doc_set": doc_set,
-                        "page_title": page_title,
-                        "score": score,
-                        "is_basic": is_basic,
-                        "is_precision": False,  # Page title 不使用 precision
-                        "toc_path": toc_path,
-                        "headings": valid_headings,
-                        "heading_count": len(valid_headings),
-                        "precision_count": precision_count,
-                    }
-                )
-
-        return scored_pages
 
     def _run_grep(self, cmd: List[str]) -> str:
         """Run grep command and return output."""
@@ -714,6 +485,8 @@ class DocSearcherAPI:
             nearest = heading_candidates[-1] if heading_candidates else None
 
             if nearest:
+                from bm25_recall import calculate_bm25_similarity, BM25Config
+
                 score = calculate_bm25_similarity(
                     combined_query,
                     nearest["text"],
@@ -755,7 +528,8 @@ class DocSearcherAPI:
             STATE 1: Identify doc-set using keyword matching (Jaccard)
             STATE 2: Identify page-titles using BM25
             STATE 3: Identify headings using BM25
-            STATE 4: Return results
+            STATE 4: (Optional) Re-rank headings using transformer
+            STATE 5: Return results
 
         Fallback strategies:
             FALLBACK_1: grep TOC search
@@ -779,6 +553,7 @@ class DocSearcherAPI:
         combined_query = " ".join(queries)
         self._debug_print(f"Searching queries: {queries}")
         self._debug_print(f"Base dir: {self.base_dir}")
+        self._debug_print(f"Reranker enabled: {self.reranker_enabled}")
 
         available_doc_sets = self._find_doc_sets()
         if not available_doc_sets:
@@ -821,11 +596,44 @@ class DocSearcherAPI:
 
         self._debug_print(f"Matched doc-set: {matched_doc_set}")
 
+        # Validate language consistency
+        self._validate_language_consistency(query, matched_doc_set)
+
         all_results = []
         self._debug_print(f"Processing {matched_doc_set}")
 
-        scored_pages = self._search_page_titles_bm25(matched_doc_set, query)
+        # BM25 recall
+        bm25_recall = BM25Recall(
+            base_dir=self.base_dir,
+            k1=self.bm25_k1,
+            b=self.bm25_b,
+            threshold_page_title=self.threshold_page_title,
+            threshold_headings=self.threshold_headings,
+            threshold_precision=self.threshold_precision,
+            debug=self.debug,
+        )
+        scored_pages = bm25_recall.recall_pages(
+            matched_doc_set, query, min_headings=self.min_headings
+        )
         self._debug_print(f"Found {len(scored_pages)} scored pages")
+
+        # Transformer re-ranking for headings
+        if self._reranker:
+            self._debug_print("Applying transformer re-ranking to headings")
+            for page in scored_pages:
+                original_headings = page["headings"]
+                if original_headings:
+                    reranked_headings = self._reranker.rerank_headings(
+                        combined_query, original_headings
+                    )
+                    page["headings"] = reranked_headings
+                    page["heading_count"] = len(reranked_headings)
+                    page["precision_count"] = sum(
+                        1 for h in reranked_headings if h.get("is_precision", False)
+                    )
+                    self._debug_print(
+                        f"  Page: {page['page_title']}, headings: {len(original_headings)} -> {len(reranked_headings)}"
+                    )
 
         for page in scored_pages:
             self._debug_print(
@@ -850,6 +658,8 @@ class DocSearcherAPI:
             grep_results = self._fallback1_grep_search(query, [matched_doc_set])
 
             if grep_results:
+                from bm25_recall import calculate_bm25_similarity, BM25Config
+
                 for result in grep_results:
                     result["score"] = calculate_bm25_similarity(
                         combined_query,
@@ -939,47 +749,7 @@ class DocSearcherAPI:
         Returns:
             Formatted AOP markdown string
         """
-        doc_sets_str = ",".join(result.get("doc_sets_found", []))
-        results = result.get("results", [])
-        count = len(results)
-
-        lines = []
-        lines.append(
-            f"=== AOP-FINAL | agent=md-doc-searcher | results={count} | doc_sets={doc_sets_str} ==="
-        )
-        lines.append(
-            "**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary"
-        )
-
-        for page in results:
-            lines.append(f"**{page['doc_set']}**")
-            lines.append("")
-            lines.append(f"**{page['page_title']}**")
-            lines.append(f"   - TOC 路径: `{page['toc_path']}`")
-            lines.append("   - **匹配Heading列表**:")
-
-            for heading in page.get("headings", []):
-                level_hash = "#" * heading.get("level", 2)
-                lines.append(f"     - {level_hash} {heading['text']}")
-
-                lines.append("")
-
-        lines.append("=== END-AOP-FINAL ===")
-
-        if count == 0:
-            lines.clear()
-            lines.append(
-                f"=== AOP-FINAL | agent=md-doc-searcher | results={count} | doc_sets={doc_sets_str} ==="
-            )
-            lines.append(
-                "**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary"
-            )
-            lines.append("")
-            lines.append("No matched headings found!")
-            lines.append("")
-            lines.append("=== END-AOP-FINAL ===")
-
-        return "\n".join(lines)
+        return OutputFormatter.format_aop(result)
 
     def format_structured_output(self, result: Dict[str, Any]) -> str:
         """
@@ -987,8 +757,7 @@ class DocSearcherAPI:
 
         Returns JSON metadata with doc_set, page_title, toc_path, and headings
         that can be parsed by downstream skills like md-doc-reader for
-        section-level content extraction. Results are not separated by relevance
-        level (high/medium) - all matched pages are returned in a single list.
+        section-level content extraction.
 
         Args:
             result: Search result from self.search()
@@ -996,20 +765,4 @@ class DocSearcherAPI:
         Returns:
             JSON string with structured metadata
         """
-        structured = {
-            "success": result.get("success", False),
-            "doc_sets_found": result.get("doc_sets_found", []),
-            "results": [
-                {
-                    "doc_set": page["doc_set"],
-                    "page_title": page["page_title"],
-                    "toc_path": page["toc_path"],
-                    "headings": [
-                        {"level": h.get("level", 2), "text": h["text"]}
-                        for h in page.get("headings", [])
-                    ],
-                }
-                for page in result.get("results", [])
-            ],
-        }
-        return json.dumps(structured, ensure_ascii=False, indent=2)
+        return OutputFormatter.format_structured(result)
