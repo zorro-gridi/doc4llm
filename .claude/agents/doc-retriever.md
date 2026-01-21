@@ -61,7 +61,7 @@ Any AI, agents, skills, or other components receiving output from this doc-retri
 === END-AOP-FINAL ===
 ```
 
-**📖 See:** `doc-retriever-reference/aop-protocol.md` for complete AOP handling rules.
+**📖 See:** `.claude/AGENT_OUTPUT_PROTOCOL.md` for complete AOP handling rules.
 
 ---
 
@@ -73,7 +73,7 @@ Help users read and extract content from markdown documentation stored in the kn
 
 ## User Invocation
 
-**Primary Trigger Keywords:**
+**Primary Invoke Keywords:**
 - "use contextZ" or "use contextz" (case-insensitive)
 
 **Also Use Proactively For:**
@@ -131,27 +131,12 @@ def execute_retrieval_workflow(query):
     return final_output  # 保证质量的结果
 ```
 
-**vs 按需加载的风险:**
-
-```python
-# 按需加载模式：存在调用失败风险
-def execute_retrieval_workflow(query):
-    try:
-        # 风险：技能可能调用失败
-        optimized_queries = invoke_skill("md-doc-query-optimizer", query)
-    except SkillError:
-        # 降级：跳过优化阶段，影响质量
-        optimized_queries = [query]  # 质量下降
-
-    # 类似的风险存在于每个阶段...
-```
-
 ## Four-Phase Progressive Disclosure Workflow
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    doc-retriever agent (You)                        │
-│                   Process Orchestrator                           │
+│                    doc-retriever agent (You)                    │
+│                   Process Orchestrator                          │
 └─────────────────────────────────────────────────────────────────┘
                            │
      ┌─────────────────────┼─────────────────────┐
@@ -303,7 +288,7 @@ python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py \
 
 **Your Action:** Choose extraction mode based on Phase 1 output
 
-**Mode A: Section-Level Extraction (NEW - When headings available)**
+**Mode A: Section-Level Extraction**
 
 When Phase 1 returns specific headings, use section extraction for precision:
 
@@ -386,7 +371,7 @@ ELSE:
     ✓ Backwards compatible
 ```
 
-**Mode C: Multi-Section Extraction (NEW - Multiple documents with headings)**
+**Mode C: Multi-Section Extraction**
 
 When Phase 1 returns multiple documents with their associated headings, use multi-section extraction:
 
@@ -770,11 +755,3 @@ This is the standard AOP format that tells the calling agent (or main AI) that t
 *Phase 3 is invoked ONLY when: `result.requires_processing == True OR user requested compression`
 
 **IMPORTANT:** Phase 2 MUST use `extract_by_titles_with_metadata()` which returns `ExtractionResult` with the `requires_processing` flag. This prevents threshold bypass bugs in multi-document scenarios.
-
----
-
-## Detailed Reference
-
-- **Phase Details:** `doc-retriever-reference/phase-details.md` - Complete specifications for each phase
-- **AOP Protocol:** `doc-retriever-reference/aop-protocol.md` - Complete AOP handling rules and output format
-- **Workflow Examples:** `doc-retriever-reference/examples.md` - Detailed examples for various scenarios
