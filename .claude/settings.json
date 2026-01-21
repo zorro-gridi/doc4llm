@@ -2,6 +2,10 @@
   "permissions": {
     "allow": [
       "Skill"
+    ],
+    "deny": [
+      "Read(**/docContent.md)",
+      "Read(docContent.md)"
     ]
   }
 }

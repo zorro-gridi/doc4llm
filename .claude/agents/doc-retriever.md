@@ -1,6 +1,6 @@
 ---
 name: doc-retriever
-description: "**LOCAL DOCUMENTATION KNOWLEDGE BASE RETRIEVER ORCHESTRATOR** - Using a four-phase progressive disclosure workflow. **Use proactively** when user use keywords **'use contextZ' or 'use contextz'** to submit a query、content extract instruction or have a relative intent. Final returns properly cited results with source URLs and file paths."
+description: "When use: user input with a keyword 'use contextZ' or 'use contextz'"
 skills:
   # 核心工作流技能 - 预加载以保证检索质量和流程完整性
   - md-doc-query-optimizer    # Phase 0: 查询优化
@@ -42,7 +42,6 @@ hooks:
     - hooks:
         - type: command
           command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/cleanup-doc-session.sh"'
----
 ---
 
 ## STRICT OUTPUT PROHIBITION

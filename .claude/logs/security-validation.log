@@ -457,3 +457,290 @@ print(f'Individual counts: {result.individual_counts}')
 [2026-01-21 10:29:25] [INFO] 验证命令: wc -l /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Create\ custom\ subagents/docContent.md
 [2026-01-21 10:29:25] [INFO] 匹配允许操作: ^wc -l
 [2026-01-21 10:29:25] [INFO] 安全验证通过: wc -l /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Create\ custom\ subagents/docContent.md
+[2026-01-21 10:48:44] [INFO] 验证命令: python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py "如何给 claude code subagent 定义一个关键词触发机制？"
+[2026-01-21 10:48:45] [ERROR] 不允许的操作: python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py "如何给 claude code subagent 定义一个关键词触发机制？"
+[2026-01-21 10:48:51] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent keyword trigger" --query "subagent invoke keywords" --query "define subagent trigger" --query "subagent configuration keywords" --query "Agent Skills invoke" --json
+[2026-01-21 10:48:51] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 10:48:51] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent keyword trigger" --query "subagent invoke keywords" --query "define subagent trigger" --query "subagent configuration keywords" --query "Agent Skills invoke" --json
+[2026-01-21 10:48:56] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-json '[{"title":"Agent Skills","headings":["3.8. Skills and subagents","3.8.1. Give a subagent access to Skills","3.8.2. Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Create custom subagents","headings":["2. Quickstart: create your first subagent","3.3. Write subagent files","3. Subagent configuration"],"doc_set":"Claude_Code_Docs:latest"}]' \
+  --format json \
+  --with-metadata
+[2026-01-21 10:48:56] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:48:56] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-json '[{"title":"Agent Skills","headings":["3.8. Skills and subagents","3.8.1. Give a subagent access to Skills","3.8.2. Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Create custom subagents","headings":["2. Quickstart: create your first subagent","3.3. Write subagent files","3. Subagent configuration"],"doc_set":"Claude_Code_Docs:latest"}]' \
+  --format json \
+  --with-metadata
+[2026-01-21 10:54:18] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent trigger methods" --query "custom subagent invocation" --query "subagent configuration" --query "create custom subagent" --query "Agent Skills best practices" --json
+[2026-01-21 10:54:18] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 10:54:18] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent trigger methods" --query "custom subagent invocation" --query "subagent configuration" --query "create custom subagent" --query "Agent Skills best practices" --json
+[2026-01-21 10:54:24] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.8. Skills and subagents,3.8.1. Give a subagent access to Skills,3.8.2. Run a Skill in a subagent context" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:25] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:54:25] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.8. Skills and subagents,3.8.1. Give a subagent access to Skills,3.8.2. Run a Skill in a subagent context" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:26] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:26] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:54:26] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:27] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Claude Code settings" --headings "3. Subagent configuration" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:27] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:54:27] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Claude Code settings" --headings "3. Subagent configuration" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:28] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "6. Skills vs slash commands,6.2. Use Skills for" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:29] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:54:29] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "6. Skills vs slash commands,6.2. Use Skills for" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:33] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --headings "2. Quickstart: create your first subagent,3.2. Choose the subagent scope,3.3. Write subagent files,3.5. Control subagent capabilities,3.6.1. Hooks in subagent frontmatter,3.6.2. Project-level hooks for subagent events,4.5. Manage subagent context" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:33] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:54:33] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --headings "2. Quickstart: create your first subagent,3.2. Choose the subagent scope,3.3. Write subagent files,3.5. Control subagent capabilities,3.6.1. Hooks in subagent frontmatter,3.6.2. Project-level hooks for subagent events,4.5. Manage subagent context" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:37] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.5. Run Skills in a forked context,3. Configure Skills" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:37] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 10:54:37] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.5. Run Skills in a forked context,3. Configure Skills" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:40] [INFO] 验证命令: head -3 /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Agent\ Skills/docContent.md && echo "---" && head -3 /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Create\ custom\ subagents/docContent.md
+[2026-01-21 10:54:41] [ERROR] 不允许的操作: head -3 /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Agent\ Skills/docContent.md && echo "---" && head -3 /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Create\ custom\ subagents/docContent.md
+[2026-01-21 10:59:57] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Use proactively" --query "agent description" --query "proactively invoke" --json
+[2026-01-21 10:59:58] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 10:59:58] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Use proactively" --query "agent description" --query "proactively invoke" --json
+[2026-01-21 11:00:02] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "agent description" --query "invoke keywords" --query "skill configuration" --json
+[2026-01-21 11:00:03] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 11:00:03] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "agent description" --query "invoke keywords" --query "skill configuration" --json
+[2026-01-21 11:00:34] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.7. Control Skill visibility,3.7.1. When to use each setting,5.2. Skill not triggering" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:35] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:00:35] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.7. Control Skill visibility,3.7.1. When to use each setting,5.2. Skill not triggering" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:39] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "doc-retriever" --query "agent orchestration" --json
+[2026-01-21 11:00:40] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 11:00:40] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "doc-retriever" --query "agent orchestration" --json
+[2026-01-21 11:00:50] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.1. Write SKILL.md,5. Troubleshooting" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:50] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:00:50] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.1. Write SKILL.md,5. Troubleshooting" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:54] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "automatic discovery" --query "trigger" --query "invoke" --json
+[2026-01-21 11:00:55] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 11:00:55] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "automatic discovery" --query "trigger" --query "invoke" --json
+[2026-01-21 11:00:57] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "5.1. What the Skill tool can invoke,4.2.1. Dynamic discovery" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:58] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:00:58] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "5.1. What the Skill tool can invoke,4.2.1. Dynamic discovery" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:01:13] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --doc-set "Claude_Code_Docs:latest" --with-metadata
+[2026-01-21 11:01:13] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:01:14] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --doc-set "Claude_Code_Docs:latest" --with-metadata
+[2026-01-21 11:03:29] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent invoke methods" --query "create custom subagent" --query "agent invocation" --query "skill triggers" --json
+[2026-01-21 11:03:29] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 11:03:29] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent invoke methods" --query "create custom subagent" --query "agent invocation" --query "skill triggers" --json
+[2026-01-21 11:03:34] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Create custom subagents","doc_set":"Claude_Code_Docs:latest"},{"title":"Agent Skills","headings":["Give a subagent access to Skills","Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Slash commands","headings":["Skill tool","What the Skill tool can invoke","Skill permission rules"],"doc_set":"Claude_Code_Docs:latest"}]' --format json
+[2026-01-21 11:03:34] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:03:34] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Create custom subagents","doc_set":"Claude_Code_Docs:latest"},{"title":"Agent Skills","headings":["Give a subagent access to Skills","Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Slash commands","headings":["Skill tool","What the Skill tool can invoke","Skill permission rules"],"doc_set":"Claude_Code_Docs:latest"}]' --format json
+[2026-01-21 11:03:37] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --doc-set "Claude_Code_Docs:latest" --with-metadata
+[2026-01-21 11:08:08] [INFO] 验证命令: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "skill access control skill permission subagent call skill invocation restriction user-only skills"
+[2026-01-21 11:08:09] [INFO] 匹配允许操作: ^python.*doc4llm
+[2026-01-21 11:08:09] [INFO] 安全验证通过: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "skill access control skill permission subagent call skill invocation restriction user-only skills"
+[2026-01-21 11:08:13] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "skill access control" --query "subagent call" --query "skill invocation restriction" --query "user-only skills" --query "skill permission" --json
+[2026-01-21 11:08:14] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 11:08:14] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "skill access control" --query "subagent call" --query "skill invocation restriction" --query "user-only skills" --query "skill permission" --json
+[2026-01-21 11:08:18] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Agent Skills",
+    "headings": ["3.4. Restrict tool access with allowed-tools", "3.5. Run Skills in a forked context", "3.7. Control Skill visibility", "3.7.2. Example: model-only Skill", "3.8. Skills and subagents", "3.8.1. Give a subagent access to Skills", "3.8.2. Run a Skill in a subagent context"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Slash commands",
+    "headings": ["5.1. What the Skill tool can invoke", "5.2. Skill tool access control", "5.5. Skill permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Identity and Access Management",
+    "headings": ["2. Access control and permissions", "2.1. Permission system", "2.2.1. Permission modes", "2.2.3. Tool-specific permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Create custom subagents",
+    "headings": ["3.5. Control subagent capabilities", "3.5.2. Permission modes"]
+  }
+]' --format json --with-metadata
+[2026-01-21 11:08:19] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:08:19] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Agent Skills",
+    "headings": ["3.4. Restrict tool access with allowed-tools", "3.5. Run Skills in a forked context", "3.7. Control Skill visibility", "3.7.2. Example: model-only Skill", "3.8. Skills and subagents", "3.8.1. Give a subagent access to Skills", "3.8.2. Run a Skill in a subagent context"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Slash commands",
+    "headings": ["5.1. What the Skill tool can invoke", "5.2. Skill tool access control", "5.5. Skill permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Identity and Access Management",
+    "headings": ["2. Access control and permissions", "2.1. Permission system", "2.2.1. Permission modes", "2.2.3. Tool-specific permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Create custom subagents",
+    "headings": ["3.5. Control subagent capabilities", "3.5.2. Permission modes"]
+  }
+]' --format json --with-metadata
+[2026-01-21 11:12:29] [INFO] 验证命令: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "skills file access restrictions" --query "skills permissions configuration" --query "skills access control rules" --query "prevent skills from accessing files" --query "skills file access deny configuration" --json
+[2026-01-21 11:12:30] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 11:12:30] [INFO] 安全验证通过: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "skills file access restrictions" --query "skills permissions configuration" --query "skills access control rules" --query "prevent skills from accessing files" --query "skills file access deny configuration" --json
+[2026-01-21 11:12:35] [INFO] 验证命令: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Agent Skills","headings":["3.4. Restrict tool access with allowed-tools","3.5. Run Skills in a forked context","3.7. Control Skill visibility"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Slash commands","headings":["5.5. Skill permission rules"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Identity and Access Management","headings":["2. Access control and permissions","2.2. Configuring permissions","2.3. Additional permission control with hooks"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Hooks reference","headings":["1.4. Hooks in Skills, Agents, and Slash Commands","5.2.2. PreToolUse Decision Control","5.2.3. PermissionRequest Decision Control"],"doc_set":"Claude_Code_Docs:latest"}]' --format json --with-metadata
+[2026-01-21 11:12:36] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:12:36] [INFO] 安全验证通过: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Agent Skills","headings":["3.4. Restrict tool access with allowed-tools","3.5. Run Skills in a forked context","3.7. Control Skill visibility"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Slash commands","headings":["5.5. Skill permission rules"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Identity and Access Management","headings":["2. Access control and permissions","2.2. Configuring permissions","2.3. Additional permission control with hooks"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Hooks reference","headings":["1.4. Hooks in Skills, Agents, and Slash Commands","5.2.2. PreToolUse Decision Control","5.2.3. PermissionRequest Decision Control"],"doc_set":"Claude_Code_Docs:latest"}]' --format json --with-metadata
+[2026-01-21 11:12:39] [INFO] 验证命令: cat /Users/zorro/project/doc4llm/md_docs_base/Claude_Code_Docs:latest/Agent Skills/docTOC.md | head -20
+[2026-01-21 11:12:40] [ERROR] 不允许的操作: cat /Users/zorro/project/doc4llm/md_docs_base/Claude_Code_Docs:latest/Agent Skills/docTOC.md | head -20
+[2026-01-21 11:20:31] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Restrict tool access allowed-tools" --query "Control Skill visibility" --query "Skill permission rules" --query "Skill tool access control" --query "model-only Skill" --json
+[2026-01-21 11:20:31] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 11:20:31] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Restrict tool access allowed-tools" --query "Control Skill visibility" --query "Skill permission rules" --query "Skill tool access control" --query "model-only Skill" --json
+[2026-01-21 11:20:37] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Agent Skills",
+    "headings": ["3.4. Restrict tool access with allowed-tools", "3.7. Control Skill visibility", "3.7.2. Example: model-only Skill"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Slash commands",
+    "headings": ["5.5. Skill permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Hooks reference",
+    "headings": ["5.2.2. PreToolUse Decision Control"]
+  }
+]' --format json
+[2026-01-21 11:20:38] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:20:38] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Agent Skills",
+    "headings": ["3.4. Restrict tool access with allowed-tools", "3.7. Control Skill visibility", "3.7.2. Example: model-only Skill"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Slash commands",
+    "headings": ["5.5. Skill permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Hooks reference",
+    "headings": ["5.2.2. PreToolUse Decision Control"]
+  }
+]' --format json
+[2026-01-21 11:20:41] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Hooks reference" --headings "5.2.2. PreToolUse Decision Control" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:20:42] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:20:42] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Hooks reference" --headings "5.2.2. PreToolUse Decision Control" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:20:46] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Hooks reference",
+    "headings": ["5. Decision Control Hooks", "5.2.2. PreToolUse Decision Control"]
+  }
+]' --format json
+[2026-01-21 11:20:46] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:20:46] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Hooks reference",
+    "headings": ["5. Decision Control Hooks", "5.2.2. PreToolUse Decision Control"]
+  }
+]' --format json
+[2026-01-21 11:20:49] [INFO] 验证命令: head -100 "/Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Hooks reference/docContent.md"
+[2026-01-21 11:20:50] [ERROR] 不允许的操作: head -100 "/Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Hooks reference/docContent.md"
+[2026-01-21 11:20:52] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Hooks reference" --doc-set "Claude_Code_Docs:latest" --headings "Decision Control Hooks" --format json
+[2026-01-21 11:20:53] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:20:53] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Hooks reference" --doc-set "Claude_Code_Docs:latest" --headings "Decision Control Hooks" --format json
+[2026-01-21 11:23:16] [INFO] 验证命令: find /Users/zorro/project/doc4llm/.claude -type f -name "*.md" | head -20
+[2026-01-21 11:23:17] [ERROR] 不允许的操作: find /Users/zorro/project/doc4llm/.claude -type f -name "*.md" | head -20
+[2026-01-21 11:23:20] [INFO] 验证命令: ls -la /Users/zorro/project/doc4llm/.claude/scripts/
+[2026-01-21 11:23:20] [ERROR] 不允许的操作: ls -la /Users/zorro/project/doc4llm/.claude/scripts/
+[2026-01-21 11:43:20] [INFO] 验证命令: ls -la .claude/skills/ | head -20
+[2026-01-21 11:43:21] [INFO] 匹配允许操作: ^ls -[la1]+ \.claude/
+[2026-01-21 11:43:21] [INFO] 安全验证通过: ls -la .claude/skills/ | head -20
+[2026-01-21 11:43:28] [INFO] 验证命令: ls -la ~/project/md_docs_base/
+[2026-01-21 11:43:28] [INFO] 匹配允许操作: ^ls.*md_docs
+[2026-01-21 11:43:28] [INFO] 安全验证通过: ls -la ~/project/md_docs_base/
+[2026-01-21 11:43:30] [INFO] 验证命令: ls -la ~/project/md_docs_base/Claude_Code_Docs:latest/
+[2026-01-21 11:43:31] [INFO] 匹配允许操作: ^ls.*md_docs
+[2026-01-21 11:43:31] [INFO] 安全验证通过: ls -la ~/project/md_docs_base/Claude_Code_Docs:latest/
+[2026-01-21 11:43:38] [INFO] 验证命令: cd /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher && python scripts/search_documents.py "Agent Skills access control" "skills file access restrictions" "skills permissions configuration" "sandboxing skills" "Security skills file access" --json
+[2026-01-21 11:43:38] [CRITICAL] 检测到危险操作: &&.*rm in cd /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher && python scripts/search_documents.py "Agent Skills access control" "skills file access restrictions" "skills permissions configuration" "sandboxing skills" "Security skills file access" --json
+[2026-01-21 11:50:00] [INFO] 验证命令: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Claude Code Read tool access configuration" --query "file path filtering blocking patterns" --query "tool permissions file access control" --query "Claude Code configuration restrict file access" --json
+[2026-01-21 11:50:01] [INFO] 匹配允许操作: ^python .*/doc_searcher_cli\.py
+[2026-01-21 11:50:01] [INFO] 安全验证通过: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Claude Code Read tool access configuration" --query "file path filtering blocking patterns" --query "tool permissions file access control" --query "Claude Code configuration restrict file access" --json
+[2026-01-21 11:50:14] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "3.4. Restrict tool access with allowed-tools" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:15] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:50:15] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "3.4. Restrict tool access with allowed-tools" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:16] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Identity and Access Management" \
+  --headings "2. Access control and permissions,2.2. Configuring permissions,2.2.3. Tool-specific permission rules,2.3. Additional permission control with hooks" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:16] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:50:16] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Identity and Access Management" \
+  --headings "2. Access control and permissions,2.2. Configuring permissions,2.2.3. Tool-specific permission rules,2.3. Additional permission control with hooks" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:17] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Hooks reference" \
+  --headings "4.1.1. Bash tool,4.1.2. Write tool,4.1.3. Edit tool,4.1.4. Read tool" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:17] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:50:17] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Hooks reference" \
+  --headings "4.1.1. Bash tool,4.1.2. Write tool,4.1.3. Edit tool,4.1.4. Read tool" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:18] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Get started with Claude Code hooks" \
+  --headings "3.4. File Protection Hook" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:19] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:50:19] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Get started with Claude Code hooks" \
+  --headings "3.4. File Protection Hook" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:23] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Hooks reference" \
+  --headings "5.1. Simple: Exit Code,5.1.1. Exit Code 2 Behavior,5.2.2. PreToolUse Decision Control" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:24] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:50:24] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Hooks reference" \
+  --headings "5.1. Simple: Exit Code,5.1.1. Exit Code 2 Behavior,5.2.2. PreToolUse Decision Control" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:25] [INFO] 验证命令: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Claude Code settings" \
+  --headings "6. Tools available to Claude" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:25] [INFO] 匹配允许操作: ^python .*/extract_md_doc\.py
+[2026-01-21 11:50:25] [INFO] 安全验证通过: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Claude Code settings" \
+  --headings "6. Tools available to Claude" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:54:14] [INFO] 验证命令: find /Users/zorro/project/doc4llm/md_docs/Claude_Code_Docs:latest -name "*.md" -type f ! -name "docTOC.md" | head -5
+[2026-01-21 11:54:14] [ERROR] 不允许的操作: find /Users/zorro/project/doc4llm/md_docs/Claude_Code_Docs:latest -name "*.md" -type f ! -name "docTOC.md" | head -5
+[2026-01-21 12:20:44] [INFO] 验证命令: ls md_docs
+[2026-01-21 12:20:45] [INFO] 匹配允许操作: ^ls.*md_docs
+[2026-01-21 12:20:45] [INFO] 安全验证通过: ls md_docs
+[2026-01-21 12:20:46] [INFO] 验证命令: rm -rf /etc/passwd
+[2026-01-21 12:20:46] [CRITICAL] 检测到危险操作: rm -rf in rm -rf /etc/passwd
+[2026-01-21 12:20:52] [INFO] 验证命令: ls md_docs
+[2026-01-21 12:20:53] [INFO] 匹配允许操作: ^ls.*md_docs
+[2026-01-21 12:20:53] [INFO] 安全验证通过: ls md_docs
+[2026-01-21 12:21:09] [INFO] 验证命令: ls md_docs
+[2026-01-21 12:21:09] [INFO] 匹配允许操作: ^ls.*md_docs
+[2026-01-21 12:21:10] [INFO] 安全验证通过: ls md_docs
+[2026-01-21 12:21:12] [INFO] 验证命令: rm -rf /etc/passwd
+[2026-01-21 12:21:12] [CRITICAL] 检测到危险操作: rm -rf in rm -rf /etc/passwd

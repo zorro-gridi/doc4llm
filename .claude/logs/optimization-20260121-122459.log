@@ -1,0 +1,146 @@
+=== doc-retriever 系统优化开始 (k8s 环境) ===
+时间: 2026-01-21 12:24:59
+日志文件: .claude/logs/optimization-20260121-122459.log
+
+开始执行优化步骤...
+
+[1/6] 系统依赖修复
+执行: ./.claude/scripts/system-recovery.sh
+=== doc-retriever 系统恢复开始 ===
+[1/6] 修复 doc4llm 包依赖...
+✅ doc4llm 包已可用
+[2/6] 清理磁盘空间...
+当前磁盘使用率: 91%
+✅ 磁盘空间充足
+[3/6] 检查文档集一致性...
+文档数量:       97, 目录数量:       50
+⚠️  文档和目录数量不匹配，建议检查文档集完整性
+[4/6] 初始化日志文件...
+✅ 日志文件初始化完成
+[5/6] 更新会话管理脚本...
+[6/6] 验证系统状态...
+✅ MarkdownDocExtractor 可用
+✅ 核心功能验证通过
+=== 系统恢复完成 ===
+建议运行: ./.claude/scripts/doc-retriever-health-check.sh 进行全面检查
+✅ 系统依赖修复 完成
+
+[2/6] 性能优化
+执行: ./.claude/scripts/performance-optimizer.sh
+API 测试通过
+✅ 性能优化 完成
+
+[3/6] 系统健康检查
+执行: ./.claude/scripts/doc-retriever-health-check.sh
+🔍 doc-retriever 健康检查开始...
+📁 检查必要目录...
+  ✅ .claude/agents
+  ✅ .claude/skills/md-doc-query-optimizer
+  ✅ .claude/skills/md-doc-searcher
+  ✅ .claude/skills/md-doc-reader
+  ✅ .claude/skills/md-doc-processor
+  ✅ md_docs
+📄 检查技能文件...
+  ✅ .claude/skills/md-doc-query-optimizer/SKILL.md
+  ✅ .claude/skills/md-doc-searcher/SKILL.md
+  ✅ .claude/skills/md-doc-reader/SKILL.md
+  ✅ .claude/skills/md-doc-processor/SKILL.md
+🐍 检查 Python 依赖...
+  ✅ MarkdownDocExtractor 可用
+📚 检查文档集...
+  📊 发现        1 个文档集
+    - Claude_Code_Docs:latest
+📝 检查日志配置...
+  ✅ 日志目录可写
+✨ 健康检查完成
+✅ 系统健康检查 完成
+
+[4/6] 系统诊断
+执行: ./.claude/scripts/doc-retriever-diagnose.sh
+🔧 doc-retriever 系统诊断工具
+==================================
+[INFO] 开始系统诊断 - Wed Jan 21 12:25:02 CST 2026
+
+🌍 环境检查
+----------
+[INFO] Python 版本: Python 3.10.14
+[INFO] jq 已安装
+[INFO] doc4llm 包可用
+[INFO] MarkdownDocExtractor 模块可用
+
+📁 文件系统检查
+-------------
+[INFO] .claude 存在 (drwxr-xr-x@)
+[INFO] .claude/agents 存在 (drwxr-xr-x@)
+[INFO] .claude/skills 存在 (drwxr-xr-x@)
+[INFO] .claude/scripts 存在 (drwxr-xr-x@)
+[INFO] .claude/logs 存在 (drwxr-xr-x@)
+[INFO] md_docs 存在 (drwxr-xr-x@)
+[WARN] .claude/agents/doc-retriever.md 存在但不可执行
+[INFO] .claude/scripts/log-retrieval.sh 存在且可执行
+[INFO] .claude/scripts/validate-doc-operation.sh 存在且可执行
+[INFO] .claude/scripts/cleanup-doc-session.sh 存在且可执行
+
+🎯 技能配置检查
+-------------
+[INFO] md-doc-query-optimizer 技能配置正确
+[INFO] md-doc-query-optimizer 包含描述
+[INFO] md-doc-searcher 技能配置正确
+[INFO] md-doc-searcher 包含描述
+[INFO] md-doc-reader 技能配置正确
+[INFO] md-doc-reader 包含描述
+[INFO] md-doc-processor 技能配置正确
+[INFO] md-doc-processor 包含描述
+
+📚 文档集检查
+-----------
+[INFO] 发现        1 个文档集
+[INFO] Claude_Code_Docs:latest:       49 个文档,       48 个目录
+[WARN] Claude_Code_Docs:latest: 文档和目录数量不匹配
+
+📝 日志和监控检查
+---------------
+[INFO] doc-retrieval.log: 49K,      508 行
+[INFO] doc-retrieval.log 最后活动: 2026-01-21 12:23:38
+[INFO] security-validation.log: 75K,      746 行
+[INFO] security-validation.log 最后活动: 2026-01-21 12:21:12
+[INFO] performance-monitor.log: 2.8K,       54 行
+[INFO] performance-monitor.log 最后活动: 2026-01-21 12:24:59
+
+⚡ 性能测试
+--------
+[INFO] 开始性能测试...
+[INFO] 文档读取测试: 0s
+[INFO] 目录遍历测试: 0s
+
+💡 修复建议
+--------
+⚠️  发现 2 个警告:
+  [WARN] .claude/agents/doc-retriever.md 存在但不可执行
+  [WARN] Claude_Code_Docs:latest: 文档和目录数量不匹配
+
+建议关注这些警告以优化系统性能。
+
+📋 诊断完成
+===========
+详细诊断报告已保存到: .claude/logs/diagnostic-20260121-122502.log
+[INFO] 诊断完成 - Wed Jan 21 12:25:04 CST 2026
+✅ 系统诊断 完成
+
+[5/6] 性能监控
+执行: ./.claude/scripts/doc-retriever-monitor.sh
+🔍 开始性能监控...
+✅ 性能监控完成，日志已保存到 .claude/logs/performance-monitor.log
+✅ 性能监控 完成
+
+[6/6] 最终验证
+验证核心功能...
+✅ 最终验证通过
+
+=== 优化报告 ===
+优化完成时间: 2026-01-21 12:25:06
+文档数量:       97
+磁盘使用率: 92%
+doc4llm 包状态: ✅ 可用
+
+=== 优化完成 ===

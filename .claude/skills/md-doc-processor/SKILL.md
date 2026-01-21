@@ -5,6 +5,7 @@ allowed-tools:
   - Read
   - Bash
 context: fork
+disable-model-invocation: true
 ---
 
 # Markdown Document Post-Processor

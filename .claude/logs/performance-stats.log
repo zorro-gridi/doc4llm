@@ -1,0 +1,22 @@
+[2026-01-21 12:24:45] === 性能统计报告 ===
+[2026-01-21 12:24:45] diagnostic-20260121-122351.log: 1.5K
+[2026-01-21 12:24:45] doc-retrieval.log: 49K
+[2026-01-21 12:24:45] doc-session-stats.log: 147B
+[2026-01-21 12:24:45] logs-health.log: 837B
+[2026-01-21 12:24:45] module-status-20260121-122339.log: 187B
+[2026-01-21 12:24:45] performance-monitor.log: 2.0K
+[2026-01-21 12:24:45] performance-stats.log: 361B
+[2026-01-21 12:24:45] security-validation.log: 75K
+[2026-01-21 12:24:45] 操作成功率: 100.00%
+[2026-01-21 12:25:04] === 性能统计报告 ===
+[2026-01-21 12:25:04] diagnostic-20260121-122351.log: 1.5K
+[2026-01-21 12:25:04] diagnostic-20260121-122502.log: 1.6K
+[2026-01-21 12:25:04] doc-retrieval.log: 49K
+[2026-01-21 12:25:04] doc-session-stats.log: 147B
+[2026-01-21 12:25:04] logs-health.log: 837B
+[2026-01-21 12:25:04] module-status-20260121-122339.log: 187B
+[2026-01-21 12:25:04] optimization-20260121-122459.log: 4.2K
+[2026-01-21 12:25:04] performance-monitor.log: 4.0K
+[2026-01-21 12:25:04] performance-stats.log: 990B
+[2026-01-21 12:25:04] security-validation.log: 75K
+[2026-01-21 12:25:04] 操作成功率: 100.00%

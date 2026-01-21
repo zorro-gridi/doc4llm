@@ -242,3 +242,267 @@ print(f'Individual counts: {result.individual_counts}')
 [2026-01-21 10:29:25] Command: wc -l /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Create\ custom\ subagents/docContent.md
 [2026-01-21 10:29:25] Document extraction detected: wc -l /Users/zorro/project/md_docs_base/Claude_Code_Docs:latest/Create\ custom\ subagents/docContent.md
 [2026-01-21 10:37:18] doc-retriever session ended: 1e3bdd3c-7e4d-4716-afe9-6a315fbf3c68 (status: completed)
+[2026-01-21 10:48:52] doc-retriever: Bash tool used
+[2026-01-21 10:48:52] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent keyword trigger" --query "subagent invoke keywords" --query "define subagent trigger" --query "subagent configuration keywords" --query "Agent Skills invoke" --json
+[2026-01-21 10:48:57] doc-retriever: Bash tool used
+[2026-01-21 10:48:57] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-json '[{"title":"Agent Skills","headings":["3.8. Skills and subagents","3.8.1. Give a subagent access to Skills","3.8.2. Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Create custom subagents","headings":["2. Quickstart: create your first subagent","3.3. Write subagent files","3. Subagent configuration"],"doc_set":"Claude_Code_Docs:latest"}]' \
+  --format json \
+  --with-metadata
+[2026-01-21 10:48:57] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-json '[{"title":"Agent Skills","headings":["3.8. Skills and subagents","3.8.1. Give a subagent access to Skills","3.8.2. Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Create custom subagents","headings":["2. Quickstart: create your first subagent","3.3. Write subagent files","3. Subagent configuration"],"doc_set":"Claude_Code_Docs:latest"}]' \
+  --format json \
+  --with-metadata
+[2026-01-21 10:49:09] doc-retriever session ended: 5f2b9897-cf15-423e-b0c9-3b29e094c177 (status: completed)
+[2026-01-21 10:54:19] doc-retriever: Bash tool used
+[2026-01-21 10:54:19] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent trigger methods" --query "custom subagent invocation" --query "subagent configuration" --query "create custom subagent" --query "Agent Skills best practices" --json
+[2026-01-21 10:54:25] doc-retriever: Bash tool used
+[2026-01-21 10:54:25] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.8. Skills and subagents,3.8.1. Give a subagent access to Skills,3.8.2. Run a Skill in a subagent context" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:25] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.8. Skills and subagents,3.8.1. Give a subagent access to Skills,3.8.2. Run a Skill in a subagent context" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:27] doc-retriever: Bash tool used
+[2026-01-21 10:54:27] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:27] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:28] doc-retriever: Bash tool used
+[2026-01-21 10:54:28] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Claude Code settings" --headings "3. Subagent configuration" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:28] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Claude Code settings" --headings "3. Subagent configuration" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:29] doc-retriever: Bash tool used
+[2026-01-21 10:54:29] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "6. Skills vs slash commands,6.2. Use Skills for" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:29] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "6. Skills vs slash commands,6.2. Use Skills for" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:34] doc-retriever: Bash tool used
+[2026-01-21 10:54:34] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --headings "2. Quickstart: create your first subagent,3.2. Choose the subagent scope,3.3. Write subagent files,3.5. Control subagent capabilities,3.6.1. Hooks in subagent frontmatter,3.6.2. Project-level hooks for subagent events,4.5. Manage subagent context" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:34] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Create custom subagents" --headings "2. Quickstart: create your first subagent,3.2. Choose the subagent scope,3.3. Write subagent files,3.5. Control subagent capabilities,3.6.1. Hooks in subagent frontmatter,3.6.2. Project-level hooks for subagent events,4.5. Manage subagent context" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:38] doc-retriever: Bash tool used
+[2026-01-21 10:54:38] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.5. Run Skills in a forked context,3. Configure Skills" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:54:38] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.5. Run Skills in a forked context,3. Configure Skills" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 10:55:22] doc-retriever session ended: 9782c019-1aaa-4aca-a5c8-81e3cdb310c9 (status: completed)
+[2026-01-21 10:59:58] doc-retriever: Bash tool used
+[2026-01-21 10:59:58] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Use proactively" --query "agent description" --query "proactively invoke" --json
+[2026-01-21 11:00:03] doc-retriever: Bash tool used
+[2026-01-21 11:00:03] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "agent description" --query "invoke keywords" --query "skill configuration" --json
+[2026-01-21 11:00:35] doc-retriever: Bash tool used
+[2026-01-21 11:00:35] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.7. Control Skill visibility,3.7.1. When to use each setting,5.2. Skill not triggering" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:35] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.7. Control Skill visibility,3.7.1. When to use each setting,5.2. Skill not triggering" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:40] doc-retriever: Bash tool used
+[2026-01-21 11:00:40] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "doc-retriever" --query "agent orchestration" --json
+[2026-01-21 11:00:51] doc-retriever: Bash tool used
+[2026-01-21 11:00:51] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.1. Write SKILL.md,5. Troubleshooting" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:51] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --headings "3.1. Write SKILL.md,5. Troubleshooting" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:55] doc-retriever: Bash tool used
+[2026-01-21 11:00:55] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "automatic discovery" --query "trigger" --query "invoke" --json
+[2026-01-21 11:00:59] doc-retriever: Bash tool used
+[2026-01-21 11:00:59] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "5.1. What the Skill tool can invoke,4.2.1. Dynamic discovery" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:00:59] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Slash commands" --headings "5.1. What the Skill tool can invoke,4.2.1. Dynamic discovery" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:01:14] doc-retriever: Bash tool used
+[2026-01-21 11:01:14] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --doc-set "Claude_Code_Docs:latest" --with-metadata
+[2026-01-21 11:01:14] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --doc-set "Claude_Code_Docs:latest" --with-metadata
+[2026-01-21 11:01:49] doc-retriever session ended: 9782c019-1aaa-4aca-a5c8-81e3cdb310c9 (status: completed)
+[2026-01-21 11:03:30] doc-retriever: Bash tool used
+[2026-01-21 11:03:30] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "subagent invoke methods" --query "create custom subagent" --query "agent invocation" --query "skill triggers" --json
+[2026-01-21 11:03:35] doc-retriever: Bash tool used
+[2026-01-21 11:03:35] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Create custom subagents","doc_set":"Claude_Code_Docs:latest"},{"title":"Agent Skills","headings":["Give a subagent access to Skills","Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Slash commands","headings":["Skill tool","What the Skill tool can invoke","Skill permission rules"],"doc_set":"Claude_Code_Docs:latest"}]' --format json
+[2026-01-21 11:03:35] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Create custom subagents","doc_set":"Claude_Code_Docs:latest"},{"title":"Agent Skills","headings":["Give a subagent access to Skills","Run a Skill in a subagent context"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Slash commands","headings":["Skill tool","What the Skill tool can invoke","Skill permission rules"],"doc_set":"Claude_Code_Docs:latest"}]' --format json
+[2026-01-21 11:06:36] doc-retriever session ended: b0807d16-f12d-4fe2-99f4-33365464f816 (status: completed)
+[2026-01-21 11:08:14] doc-retriever: Bash tool used
+[2026-01-21 11:08:14] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "skill access control" --query "subagent call" --query "skill invocation restriction" --query "user-only skills" --query "skill permission" --json
+[2026-01-21 11:08:19] doc-retriever: Bash tool used
+[2026-01-21 11:08:19] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Agent Skills",
+    "headings": ["3.4. Restrict tool access with allowed-tools", "3.5. Run Skills in a forked context", "3.7. Control Skill visibility", "3.7.2. Example: model-only Skill", "3.8. Skills and subagents", "3.8.1. Give a subagent access to Skills", "3.8.2. Run a Skill in a subagent context"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Slash commands",
+    "headings": ["5.1. What the Skill tool can invoke", "5.2. Skill tool access control", "5.5. Skill permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Identity and Access Management",
+    "headings": ["2. Access control and permissions", "2.1. Permission system", "2.2.1. Permission modes", "2.2.3. Tool-specific permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Create custom subagents",
+    "headings": ["3.5. Control subagent capabilities", "3.5.2. Permission modes"]
+  }
+]' --format json --with-metadata
+[2026-01-21 11:08:19] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Agent Skills",
+    "headings": ["3.4. Restrict tool access with allowed-tools", "3.5. Run Skills in a forked context", "3.7. Control Skill visibility", "3.7.2. Example: model-only Skill", "3.8. Skills and subagents", "3.8.1. Give a subagent access to Skills", "3.8.2. Run a Skill in a subagent context"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Slash commands",
+    "headings": ["5.1. What the Skill tool can invoke", "5.2. Skill tool access control", "5.5. Skill permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Identity and Access Management",
+    "headings": ["2. Access control and permissions", "2.1. Permission system", "2.2.1. Permission modes", "2.2.3. Tool-specific permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Create custom subagents",
+    "headings": ["3.5. Control subagent capabilities", "3.5.2. Permission modes"]
+  }
+]' --format json --with-metadata
+[2026-01-21 11:09:05] doc-retriever session ended: 60bdb65a-c98c-432a-900c-56d83f86e60c (status: completed)
+[2026-01-21 11:12:30] doc-retriever: Bash tool used
+[2026-01-21 11:12:30] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "skills file access restrictions" --query "skills permissions configuration" --query "skills access control rules" --query "prevent skills from accessing files" --query "skills file access deny configuration" --json
+[2026-01-21 11:12:36] doc-retriever: Bash tool used
+[2026-01-21 11:12:36] Command: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Agent Skills","headings":["3.4. Restrict tool access with allowed-tools","3.5. Run Skills in a forked context","3.7. Control Skill visibility"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Slash commands","headings":["5.5. Skill permission rules"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Identity and Access Management","headings":["2. Access control and permissions","2.2. Configuring permissions","2.3. Additional permission control with hooks"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Hooks reference","headings":["1.4. Hooks in Skills, Agents, and Slash Commands","5.2.2. PreToolUse Decision Control","5.2.3. PermissionRequest Decision Control"],"doc_set":"Claude_Code_Docs:latest"}]' --format json --with-metadata
+[2026-01-21 11:12:36] Document extraction detected: python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[{"title":"Agent Skills","headings":["3.4. Restrict tool access with allowed-tools","3.5. Run Skills in a forked context","3.7. Control Skill visibility"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Slash commands","headings":["5.5. Skill permission rules"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Identity and Access Management","headings":["2. Access control and permissions","2.2. Configuring permissions","2.3. Additional permission control with hooks"],"doc_set":"Claude_Code_Docs:latest"},{"title":"Hooks reference","headings":["1.4. Hooks in Skills, Agents, and Slash Commands","5.2.2. PreToolUse Decision Control","5.2.3. PermissionRequest Decision Control"],"doc_set":"Claude_Code_Docs:latest"}]' --format json --with-metadata
+[2026-01-21 11:13:02] doc-retriever session ended: d713390e-f3ca-42b1-b67f-590dff7b6962 (status: completed)
+[2026-01-21 11:20:32] doc-retriever: Bash tool used
+[2026-01-21 11:20:32] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Restrict tool access allowed-tools" --query "Control Skill visibility" --query "Skill permission rules" --query "Skill tool access control" --query "model-only Skill" --json
+[2026-01-21 11:20:38] doc-retriever: Bash tool used
+[2026-01-21 11:20:38] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Agent Skills",
+    "headings": ["3.4. Restrict tool access with allowed-tools", "3.7. Control Skill visibility", "3.7.2. Example: model-only Skill"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Slash commands",
+    "headings": ["5.5. Skill permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Hooks reference",
+    "headings": ["5.2.2. PreToolUse Decision Control"]
+  }
+]' --format json
+[2026-01-21 11:20:38] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Agent Skills",
+    "headings": ["3.4. Restrict tool access with allowed-tools", "3.7. Control Skill visibility", "3.7.2. Example: model-only Skill"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Slash commands",
+    "headings": ["5.5. Skill permission rules"]
+  },
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Hooks reference",
+    "headings": ["5.2.2. PreToolUse Decision Control"]
+  }
+]' --format json
+[2026-01-21 11:20:42] doc-retriever: Bash tool used
+[2026-01-21 11:20:42] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Hooks reference" --headings "5.2.2. PreToolUse Decision Control" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:20:42] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Hooks reference" --headings "5.2.2. PreToolUse Decision Control" --doc-set "Claude_Code_Docs:latest" --format json
+[2026-01-21 11:20:47] doc-retriever: Bash tool used
+[2026-01-21 11:20:47] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Hooks reference",
+    "headings": ["5. Decision Control Hooks", "5.2.2. PreToolUse Decision Control"]
+  }
+]' --format json
+[2026-01-21 11:20:47] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --sections-json '[
+  {
+    "doc_set": "Claude_Code_Docs:latest",
+    "title": "Hooks reference",
+    "headings": ["5. Decision Control Hooks", "5.2.2. PreToolUse Decision Control"]
+  }
+]' --format json
+[2026-01-21 11:20:53] doc-retriever: Bash tool used
+[2026-01-21 11:20:53] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Hooks reference" --doc-set "Claude_Code_Docs:latest" --headings "Decision Control Hooks" --format json
+[2026-01-21 11:20:53] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Hooks reference" --doc-set "Claude_Code_Docs:latest" --headings "Decision Control Hooks" --format json
+[2026-01-21 11:21:35] doc-retriever session ended: f3a76a1d-461b-4603-b05a-7df5ebf5957b (status: completed)
+[2026-01-21 11:24:15] doc-retriever session ended: a09b3ec9-e7cc-48b3-bb27-c833783f7c50 (status: completed)
+[2026-01-21 11:36:22] doc-retriever session ended: f357403f-f59b-4254-a1a9-9b5271da7b3b (status: completed)
+[2026-01-21 11:43:21] doc-retriever: Bash tool used
+[2026-01-21 11:43:21] Command: ls -la .claude/skills/ | head -20
+[2026-01-21 11:43:29] doc-retriever: Bash tool used
+[2026-01-21 11:43:29] Command: ls -la ~/project/md_docs_base/
+[2026-01-21 11:43:29] Document extraction detected: ls -la ~/project/md_docs_base/
+[2026-01-21 11:43:31] doc-retriever: Bash tool used
+[2026-01-21 11:43:31] Command: ls -la ~/project/md_docs_base/Claude_Code_Docs:latest/
+[2026-01-21 11:43:31] Document extraction detected: ls -la ~/project/md_docs_base/Claude_Code_Docs:latest/
+[2026-01-21 11:45:34] doc-retriever session ended: 62f8f08e-f97d-4c07-a4c6-41d8e8f28312 (status: completed)
+[2026-01-21 11:50:01] doc-retriever: Bash tool used
+[2026-01-21 11:50:01] Command: python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "Claude Code Read tool access configuration" --query "file path filtering blocking patterns" --query "tool permissions file access control" --query "Claude Code configuration restrict file access" --json
+[2026-01-21 11:50:15] doc-retriever: Bash tool used
+[2026-01-21 11:50:15] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "3.4. Restrict tool access with allowed-tools" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:15] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --headings "3.4. Restrict tool access with allowed-tools" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:17] doc-retriever: Bash tool used
+[2026-01-21 11:50:17] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Identity and Access Management" \
+  --headings "2. Access control and permissions,2.2. Configuring permissions,2.2.3. Tool-specific permission rules,2.3. Additional permission control with hooks" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:17] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Identity and Access Management" \
+  --headings "2. Access control and permissions,2.2. Configuring permissions,2.2.3. Tool-specific permission rules,2.3. Additional permission control with hooks" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:18] doc-retriever: Bash tool used
+[2026-01-21 11:50:18] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Hooks reference" \
+  --headings "4.1.1. Bash tool,4.1.2. Write tool,4.1.3. Edit tool,4.1.4. Read tool" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:18] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Hooks reference" \
+  --headings "4.1.1. Bash tool,4.1.2. Write tool,4.1.3. Edit tool,4.1.4. Read tool" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:19] doc-retriever: Bash tool used
+[2026-01-21 11:50:19] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Get started with Claude Code hooks" \
+  --headings "3.4. File Protection Hook" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:19] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Get started with Claude Code hooks" \
+  --headings "3.4. File Protection Hook" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:24] doc-retriever: Bash tool used
+[2026-01-21 11:50:24] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Hooks reference" \
+  --headings "5.1. Simple: Exit Code,5.1.1. Exit Code 2 Behavior,5.2.2. PreToolUse Decision Control" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:24] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Hooks reference" \
+  --headings "5.1. Simple: Exit Code,5.1.1. Exit Code 2 Behavior,5.2.2. PreToolUse Decision Control" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:26] doc-retriever: Bash tool used
+[2026-01-21 11:50:26] Command: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Claude Code settings" \
+  --headings "6. Tools available to Claude" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:26] Document extraction detected: python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Claude Code settings" \
+  --headings "6. Tools available to Claude" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --format json
+[2026-01-21 11:50:46] doc-retriever session ended: 5483e559-2cd0-41d4-839e-f3ec924c7373 (status: completed)
+[2026-01-21 11:54:32] doc-retriever session ended: 21540307-2028-46fe-80a0-0f3a26e669f7 (status: completed)
+[2026-01-21 11:57:09] doc-retriever session ended: 81d08edc-4463-45a2-8eca-13509a6e6966 (status: completed)
+[2026-01-21 12:21:36] doc-retriever: Bash tool used
+[2026-01-21 12:21:36] Command: ls md_docs
+[2026-01-21 12:21:36] Document extraction detected: ls md_docs
+[2026-01-21 12:21:36] Session: test-session-123
+[2026-01-21 12:22:10] doc-retriever session ended: test-session-456 (status: completed)
+[2026-01-21 12:23:10] doc-retriever session ended: test-session-456 (status: completed)
+[2026-01-21 12:23:35] doc-retriever: Test tool used
+[2026-01-21 12:23:38] doc-retriever: Bash tool used
+[2026-01-21 12:23:38] Command: echo test

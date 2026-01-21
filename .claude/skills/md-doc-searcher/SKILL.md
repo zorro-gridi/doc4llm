@@ -5,9 +5,20 @@ allowed-tools:
   - Read
   - Glob
   - Bash
+disable-model-invocation: true
 context: fork
 protocol: AOP
 protocol_version: "1.0"
+hooks:
+    PreToolUse:
+      - matcher: "Read"
+        hooks:
+          - type: command
+            command: |
+                if [[ "$TOOL_FILE_PATH" == *"docContent.md" ]]; then
+                echo "DENY: Access to docContent.md is blocked"
+                exit 1
+                fi
 ---
 
 # Markdown Document Headings Searcher

@@ -94,28 +94,49 @@ done
 
 # 4. 允许的文档操作白名单
 ALLOWED_DOC_OPERATIONS=(
+    # ls 操作 - 支持文档目录和 .claude 目录
     "^ls -[la1]+ .* (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
+    "^ls -[la1]+ .* \.claude/"
+    "^ls -[la1]+ \.claude/"
+    "^ls.*md_docs"
+    "^ls.*/project/md_docs"
+
+    # find 操作 - 支持文档目录和 .claude 目录
     "^find (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
+    "^find .*\.claude/"
+
+    # grep 操作
     "^grep -[lrEinRH]+ .* (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
     "^grep -[lrEinRH]+"
+    "^grep.*\.claude/scripts"
+
+    # Python 脚本执行
     "^python .*/extract_md_doc\.py"
     "^python .*/doc_searcher_cli\.py"
     "^python -m doc4llm"
-    "^conda run -n k8s python .*/extract_md_doc\.py"
-    "^conda run -n k8s python .*/doc_searcher_cli\.py"
-    "^cat (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/.*/doc(Content|TOC)\.md"
-    "^head -n [0-9]+ (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
-    "^tail -n [0-9]+ (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
-    "^wc -l"
-    "^echo"
-    "^mkdir -p \.claude/(logs|temp)"
     "^python.*doc4llm"
     "^python.*md_doc"
     "^python -c.*from doc4llm"
     "^python3 -c.*from doc4llm"
-    "^ls.*md_docs"
-    "^ls.*/project/md_docs"
-    "^grep.*\.claude/scripts"
+
+    # Conda 环境执行
+    "^conda run -n k8s python .*/extract_md_doc\.py"
+    "^conda run -n k8s python .*/doc_searcher_cli\.py"
+
+    # 文件读取操作
+    "^cat (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/.*/doc(Content|TOC)\.md"
+
+    # head 操作 - 限制最大 50 行
+    "^head -[n ]?([1-9]|[1-4][0-9]|50) "
+    "^head -n ([1-9]|[1-4][0-9]|50) "
+
+    # tail 操作
+    "^tail -n [0-9]+ (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/"
+
+    # 其他工具命令
+    "^wc -l"
+    "^echo"
+    "^mkdir -p \.claude/(logs|temp)"
 )
 
 IS_ALLOWED_OPERATION=false

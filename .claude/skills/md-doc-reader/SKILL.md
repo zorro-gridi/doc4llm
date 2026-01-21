@@ -2,9 +2,8 @@
 name: md-doc-reader
 description: Extract content from markdown documents by title in the knowledge base configured in `.claude/knowledge_base.json`. Use this skill when Claude needs to read documentation pages that were previously scraped and converted to markdown, query specific titles within documentation sets, extract content from the knowledge base directory or individual .md files, or search and list available documentation titles. Supports exact, case-insensitive, fuzzy, and partial matching modes.
 allowed-tools:
-  - Read
-  - Glob
   - Bash
+disable-model-invocation: true
 context: fork
 ---
 
@@ -26,31 +25,78 @@ Extract content from markdown documents in the knowledge base directory configur
 - Default to returning content in the **original document language**
 - If user requests translation or explanation, respond in **Chinese by default**
 
+## CLI-First Design
+
+This skill uses a **CLI-first design**. All operations are executed through CLI scripts to ensure zero context overhead and consistent behavior.
+
 ## Quick Start
 
-**For agent/skill usage (recommended - zero context overhead):**
+**CLI (recommended - zero context overhead):**
 ```bash
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills"
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --doc-set "doc_set:version"
 ```
 
-**For Python integration:**
-```python
-from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
-extractor = MarkdownDocExtractor()
-content = extractor.extract_by_title("Agent Skills")
+## MANDATORY: CLI-Only Extraction
+
+**CRITICAL: You MUST use CLI for all document extraction operations.**
+
+**NEVER use Read/Glob tools to directly access docContent.md files.**
+
+### Why CLI-Only is Required
+
+1. **Zero context overhead**: CLI scripts execute without loading into context
+2. **Consistent behavior**: All extractions go through the same code path
+3. **Proper metadata**: CLI provides line counts, document info, and extraction results
+4. **Error handling**: CLI scripts provide consistent error messages
+
+### CLI-Only Patterns
+
+| Instead of... | Always use... |
+|--------------|---------------|
+| `Read "path/to/docContent.md"` | `python scripts/extract_md_doc.py --title "Page Title" --doc-set "doc_set:version"` |
+| `wc -l path/to/docContent.md` | `python scripts/extract_md_doc.py --title "Page Title" --doc-set "doc_set:version" --doc-info` |
+| `Glob "**/docContent.md"` | `python scripts/extract_md_doc.py --list --doc-set "doc_set:version"` |
+| Manual file traversal | CLI extraction with appropriate parameters |
+
+### Quick CLI Reference
+
+```bash
+# Extract full document (REQUIRED pattern)
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --doc-set "Claude_Code_Docs:latest"
+
+# Extract with metadata (for threshold checking)
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --with-metadata
+
+# Get document info
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --title "Agent Skills" \
+  --doc-set "Claude_Code_Docs:latest" \
+  --doc-info
+
+# List documents
+python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --list \
+  --doc-set "Claude_Code_Docs:latest"
 ```
+
+**VIOLATION: Using Read/Glob tools for docContent.md access is prohibited.**
 
 ## Usage Scenarios
 
-| Scenario | Recommended Approach | Reason |
-|----------|---------------------|--------|
-| Called from other skills/agents | **CLI** | Zero context overhead - script executes without loading into context |
-| Python code integration | **Python API** | Direct programmatic access |
+| Scenario | Approach | Reason |
+|----------|----------|--------|
+| Called from other skills/agents | **CLI (MANDATORY)** | Zero context overhead - script executes without loading into context |
 | Interactive exploration | **CLI** | Quick ad-hoc queries |
+
+**NOTE: Direct Read/Glob tool access to docContent.md is PROHIBITED. Always use CLI.**
 
 For complete documentation:
 - [CLI Reference](reference/cli.md) - Complete CLI documentation
-- [Python API](reference/python_api.md) - API documentation
 - [Configuration](reference/config.md) - Config options and priority
 
 ## Search Modes
@@ -96,27 +142,6 @@ python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
 - **`--doc-set`**: **Required for ALL CLI invocations**
 
 These parameters ensure the correct document and section are targeted from the correct document set.
-
-### Python API
-
-```python
-from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
-
-extractor = MarkdownDocExtractor()
-
-# Extract specific sections by headings
-sections = extractor.extract_by_headings(
-    page_title="Agent Skills",
-    headings=["Create Skills", "Configure Hooks"],
-    doc_set="code_claude_com:latest"
-)
-
-# Returns: Dict[str, str] mapping heading to section content
-# {
-#     "Create Skills": "## Create Skills\n\nTo create a skill...",
-#     "Configure Hooks": "### Configure Hooks\n\nHooks allow..."
-# }
-```
 
 **Benefits:**
 - Token-efficient: Only extract relevant sections identified by md-doc-searcher
@@ -167,35 +192,6 @@ python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
 ### Scenario 4: Multi-Section Extraction (Multiple Documents with Headings)
 
 **NEW:** Extract specific sections from multiple documents, maintaining title-headings associations.
-
-**Python API:**
-```python
-from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor, ExtractionResult
-
-extractor = MarkdownDocExtractor()
-
-# Section specifications with title-headings associations
-sections = [
-    {
-        "title": "Agent Skills",
-        "headings": ["Create Skills", "Configure Hooks"],
-        "doc_set": "code_claude_com:latest"
-    },
-    {
-        "title": "Hooks Reference",
-        "headings": ["Hook Types", "Configuration"],
-        "doc_set": "code_claude_com:latest"
-    }
-]
-
-result = extractor.extract_multi_by_headings(sections=sections, threshold=2100)
-
-# Returns: ExtractionResult with composite keys "{title}::{heading}"
-# - result.contents: Dict mapping "Agent Skills::Create Skills" to content
-# - result.total_line_count: Cumulative line count
-# - result.requires_processing: Whether threshold exceeded
-# - result.individual_counts: Per-section line counts
-```
 
 **CLI Usage (JSON file):**
 ```bash

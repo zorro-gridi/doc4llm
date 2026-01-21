@@ -55,10 +55,18 @@ fi
 # 生成详细会话统计
 if [ -f "$LOG_FILE" ]; then
     # 统计操作数量
-    OPERATION_COUNT=$(grep -c "doc-retriever:" "$LOG_FILE" 2>/dev/null || echo "0")
-    ERROR_COUNT=$(grep -c "ERROR\|FAILED" "$LOG_FILE" 2>/dev/null || echo "0")
-    EXTRACTION_COUNT=$(grep -c "Document extraction detected" "$LOG_FILE" 2>/dev/null || echo "0")
-    
+    OPERATION_COUNT=$(grep -c "doc-retriever:" "$LOG_FILE" 2>/dev/null || echo 0)
+    ERROR_COUNT=$(grep -c "ERROR\|FAILED" "$LOG_FILE" 2>/dev/null || echo 0)
+    EXTRACTION_COUNT=$(grep -c "Document extraction detected" "$LOG_FILE" 2>/dev/null || echo 0)
+
+    # 确保变量是纯数字（去除可能的空格和前导零问题）
+    OPERATION_COUNT=$(echo "$OPERATION_COUNT" | grep -oE '[0-9]+' | head -1)
+    ERROR_COUNT=$(echo "$ERROR_COUNT" | grep -oE '[0-9]+' | head -1)
+    EXTRACTION_COUNT=$(echo "$EXTRACTION_COUNT" | grep -oE '[0-9]+' | head -1)
+    : "${OPERATION_COUNT:=0}"
+    : "${ERROR_COUNT:=0}"
+    : "${EXTRACTION_COUNT:=0}"
+
     # 计算成功率
     if [ "$OPERATION_COUNT" -gt 0 ]; then
         SUCCESS_RATE=$(( (OPERATION_COUNT - ERROR_COUNT) * 100 / OPERATION_COUNT ))
