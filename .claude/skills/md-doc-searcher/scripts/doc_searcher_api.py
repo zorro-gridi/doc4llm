@@ -37,6 +37,7 @@ from reranker import HeadingReranker, RerankerConfig
 
 # Import transformer matcher from md_doc_retrieval
 import sys
+
 for _ in range(4):  # Search up to 4 levels up
     if (Path(__file__).parent.parent / "doc4llm").exists():
         sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -107,7 +108,9 @@ class DocSearcherAPI:
                 break
             current = current.parent
         if not project_root:
-            raise ValueError(f"knowledge_base.json not found in parent directories of {__file__}")
+            raise ValueError(
+                f"knowledge_base.json not found in parent directories of {__file__}"
+            )
         try:
             with open(project_root, "r", encoding="utf-8") as f:
                 config = json.load(f)
@@ -174,7 +177,7 @@ class DocSearcherAPI:
             "zh" if Chinese character ratio >= threshold, "en" otherwise
         """
         # Count Chinese characters (Unicode range for CJK Unified Ideographs)
-        chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', text))
+        chinese_chars = len(re.findall(r"[\u4e00-\u9fff]", text))
         total_chars = len(text.strip())
 
         if total_chars == 0:
@@ -207,7 +210,9 @@ class DocSearcherAPI:
 
         # Sample files
         sample_files = toc_files[:sample_size]
-        self._debug_print(f"Sampling {len(sample_files)} TOC files for language detection")
+        self._debug_print(
+            f"Sampling {len(sample_files)} TOC files for language detection"
+        )
 
         # Collect all text from sampled files
         all_text = []
@@ -216,7 +221,11 @@ class DocSearcherAPI:
                 with open(toc_file, "r", encoding="utf-8") as f:
                     content = f.read()
                     # Extract headings (lines starting with #)
-                    headings = [line for line in content.split("\n") if line.strip().startswith("#")]
+                    headings = [
+                        line
+                        for line in content.split("\n")
+                        if line.strip().startswith("#")
+                    ]
                     all_text.extend(headings)
             except Exception as e:
                 self._debug_print(f"Error reading {toc_file}: {e}")
@@ -256,10 +265,7 @@ class DocSearcherAPI:
 
         # Check consistency
         if query_lang != corpus_lang:
-            lang_names = {
-                "zh": "中文",
-                "en": "英文"
-            }
+            lang_names = {"zh": "中文", "en": "英文"}
             raise ValueError(
                 f"Language mismatch detected: Query is in {lang_names[query_lang]} "
                 f"but corpus '{doc_set}' is primarily in {lang_names[corpus_lang]}. "
@@ -519,13 +525,13 @@ class DocSearcherAPI:
         return results
 
     def search(
-        self, query: Union[str, List[str]], doc_sets: Optional[List[str]] = None
+        self, query: Union[str, List[str]], target_doc_sets: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """
         Execute document search.
 
         Main flow:
-            STATE 1: Identify doc-set using keyword matching (Jaccard)
+            STATE 1: Determine target doc-sets (from target_doc_sets param or auto-detect)
             STATE 2: Identify page-titles using BM25
             STATE 3: Identify headings using BM25
             STATE 4: (Optional) Re-rank headings using transformer
@@ -537,7 +543,9 @@ class DocSearcherAPI:
 
         Args:
             query: Search query string or list of query strings
-            doc_sets: Optional list of doc-sets to search (default: all)
+            target_doc_sets: Target doc-sets from md-doc-query-optimizer output.
+                             If provided, skip internal Jaccard matching and use directly.
+                             If None, auto-detect from available doc-sets.
 
         Returns:
             Dictionary with:
@@ -565,12 +573,15 @@ class DocSearcherAPI:
                 "message": "No doc-sets found",
             }
 
-        if doc_sets:
-            target_doc_sets = [ds for ds in doc_sets if ds in available_doc_sets]
+        # Use provided target_doc_sets or auto-detect
+        if target_doc_sets:
+            search_doc_sets = [ds for ds in target_doc_sets if ds in available_doc_sets]
+            self._debug_print(f"Using provided target_doc_sets: {search_doc_sets}")
         else:
-            target_doc_sets = available_doc_sets
+            search_doc_sets = available_doc_sets
+            self._debug_print(f"Auto-detected doc-sets: {search_doc_sets}")
 
-        if not target_doc_sets:
+        if not search_doc_sets:
             return {
                 "success": False,
                 "doc_sets_found": [],
@@ -579,30 +590,11 @@ class DocSearcherAPI:
                 "message": "No matching doc-sets found",
             }
 
-        self._debug_print(f"Available doc-sets: {target_doc_sets}")
-
-        matched_doc_set = self._match_doc_sets(query, target_doc_sets)
-        if matched_doc_set is None:
-            self._debug_print(
-                "No doc-set matched with threshold >= {self.threshold_doc_set}"
-            )
-            return {
-                "success": False,
-                "doc_sets_found": target_doc_sets,
-                "results": [],
-                "fallback_used": None,
-                "message": "No doc-set matched",
-            }
-
-        self._debug_print(f"Matched doc-set: {matched_doc_set}")
-
-        # Validate language consistency
-        self._validate_language_consistency(query, matched_doc_set)
-
+        # Skip Jaccard matching when target_doc_sets is provided
+        # Process all provided doc-sets
         all_results = []
-        self._debug_print(f"Processing {matched_doc_set}")
 
-        # BM25 recall
+        # BM25 recall initialization (outside loop for efficiency)
         bm25_recall = BM25Recall(
             base_dir=self.base_dir,
             k1=self.bm25_k1,
@@ -612,39 +604,47 @@ class DocSearcherAPI:
             threshold_precision=self.threshold_precision,
             debug=self.debug,
         )
-        scored_pages = bm25_recall.recall_pages(
-            matched_doc_set, query, min_headings=self.min_headings
-        )
-        self._debug_print(f"Found {len(scored_pages)} scored pages")
 
-        # Transformer re-ranking for headings
-        if self._reranker:
-            self._debug_print("Applying transformer re-ranking to headings")
-            for page in scored_pages:
-                original_headings = page["headings"]
-                if original_headings:
-                    reranked_headings = self._reranker.rerank_headings(
-                        combined_query, original_headings
-                    )
-                    page["headings"] = reranked_headings
-                    page["heading_count"] = len(reranked_headings)
-                    page["precision_count"] = sum(
-                        1 for h in reranked_headings if h.get("is_precision", False)
-                    )
-                    self._debug_print(
-                        f"  Page: {page['page_title']}, headings: {len(original_headings)} -> {len(reranked_headings)}"
-                    )
+        for doc_set in search_doc_sets:
+            self._debug_print(f"Processing doc-set: {doc_set}")
 
-        for page in scored_pages:
-            self._debug_print(
-                f"  Page: {page['page_title']}, score: {page['score']:.2f}, headings: {page['heading_count']}/{page.get('precision_count', 0)} precision"
+            # Validate language consistency for each doc-set
+            self._validate_language_consistency(query, doc_set)
+
+            # BM25 recall for this doc-set
+            scored_pages = bm25_recall.recall_pages(
+                doc_set, query, min_headings=self.min_headings
             )
-            if page["heading_count"] >= self.min_headings:
-                all_results.append(page)
-            else:
+            self._debug_print(f"  Found {len(scored_pages)} scored pages")
+
+            # Transformer re-ranking for headings
+            if self._reranker:
+                self._debug_print("  Applying transformer re-ranking to headings")
+                for page in scored_pages:
+                    original_headings = page["headings"]
+                    if original_headings:
+                        reranked_headings = self._reranker.rerank_headings(
+                            combined_query, original_headings
+                        )
+                        page["headings"] = reranked_headings
+                        page["heading_count"] = len(reranked_headings)
+                        page["precision_count"] = sum(
+                            1 for h in reranked_headings if h.get("is_precision", False)
+                        )
+                        self._debug_print(
+                            f"    Page: {page['page_title']}, headings: {len(original_headings)} -> {len(reranked_headings)}"
+                        )
+
+            for page in scored_pages:
                 self._debug_print(
-                    f"    Skipped: heading_count ({page['heading_count']}) < min_headings ({self.min_headings})"
+                    f"  Page: {page['page_title']}, score: {page['score']:.2f}, headings: {page['heading_count']}/{page.get('precision_count', 0)} precision"
                 )
+                if page["heading_count"] >= self.min_headings:
+                    all_results.append(page)
+                else:
+                    self._debug_print(
+                        f"    Skipped: heading_count ({page['heading_count']}) < min_headings ({self.min_headings})"
+                    )
 
         self._debug_print(f"Total pages in all_results: {len(all_results)}")
 
@@ -655,7 +655,7 @@ class DocSearcherAPI:
 
         if not success:
             self._debug_print("Main flow failed, trying FALLBACK_1")
-            grep_results = self._fallback1_grep_search(query, [matched_doc_set])
+            grep_results = self._fallback1_grep_search(query, search_doc_sets)
 
             if grep_results:
                 from bm25_recall import calculate_bm25_similarity, BM25Config
@@ -702,9 +702,7 @@ class DocSearcherAPI:
 
         if not success:
             self._debug_print("FALLBACK_1 failed, trying FALLBACK_2")
-            context_results = self._fallback2_grep_context_bm25(
-                query, [matched_doc_set]
-            )
+            context_results = self._fallback2_grep_context_bm25(query, search_doc_sets)
 
             if context_results:
                 all_results = context_results
@@ -731,7 +729,7 @@ class DocSearcherAPI:
 
         return {
             "success": success,
-            "doc_sets_found": target_doc_sets,
+            "doc_sets_found": search_doc_sets,
             "results": results,
             "fallback_used": fallback_used,
             "message": "Search completed"

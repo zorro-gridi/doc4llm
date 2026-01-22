@@ -39,13 +39,13 @@ Search and discover markdown documents headings in the local knowledge base usin
 
 ```bash
 # Use json format output for better dataflow
-conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "hooks configuration" --json --reranker
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "hooks configuration" --json --reranker --doc-sets OpenCode_Docs:latest
 
 # Multiple queries (search for multiple terms)
-conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "authentication" --query "JWT" --query "OAuth" --reranker
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "authentication" --query "JWT" --query "OAuth" --reranker --doc-sets OpenCode_Docs:latest
 
 # Search with BM25 recalled and transformer reranker parameters
-conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "api reference" --bm25-k1 1.5 --bm25-b 0.8 --reranker --reranker-threshold 0.68
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "api reference" --bm25-k1 1.5 --bm25-b 0.8 --reranker --reranker-threshold 0.68 --doc-sets OpenCode_Docs:latest
 ```
 
 ### CLI Arguments
@@ -53,6 +53,7 @@ conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.
 | Argument | Type | Default | Description |
 |----------|------|---------|-------------|
 | `--query` | string | **required** | Search query string (can be specified multiple times) |
+| `--doc-sets` | string | **required** | Search query scope |
 | `--bm25-k1` | float | 1.2 | BM25 k1 parameter |
 | `--bm25-b` | float | 0.75 | BM25 b parameter |
 | `--reranker-threshold` | float | 0.68 | Similarity threshold for filtering headings (default: 0.68). Headings with score < threshold are filtered out. |

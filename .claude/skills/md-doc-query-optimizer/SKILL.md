@@ -13,6 +13,7 @@ Optimize user queries to improve document retrieval quality in the doc4llm syste
 ## Purpose
 
 Improve search relevance by:
+- **Detecting** target documentation sets from local knowledge base
 - **Decomposing** complex queries into simpler sub-queries
 - **Expanding** queries with synonyms and related terms
 - **Generating** multiple query variations for broader coverage
@@ -28,7 +29,25 @@ Use this skill when:
 
 ---
 
-## Three-Phase Optimization Protocol
+## Four-Phase Optimization Protocol
+
+### Phase 0: Doc-Set Detection (NEW)
+
+Before query analysis, identify target documentation sets:
+
+**Knowledge Base Configuration:**
+- Read `.claude/knowledge_base.json` → get `base_dir`
+- List all first-level subdirectories under `<base_dir>/`
+- Subdirectory naming pattern: `<doc_name>:<doc_version>` (e.g., `code_claude_com:latest`)
+
+**Matching Strategy:**
+1. **Direct Match**: Query contains doc-set identifier (e.g., "Claude Code hooks")
+2. **Keyword Match**: Query keywords match doc-set naming conventions
+3. **Domain Inference**: Technical terms suggest specific documentation domain
+4. **No Match**: Return empty list `[]` → Suggest online search
+
+**Output:**
+- `doc_set`: List[str] - e.g., `["code_claude_com:latest"]` or `[]` (empty = suggest online search)
 
 ### Phase 1: Intent Recognition
 
@@ -141,23 +160,32 @@ For English terms:
 
 ---
 
-## Integration Protocol
+## Integration Protocol (Updated)
 
-This skill is designed to work with `md-doc-searcher` in the following workflow:
+This skill works with `md-doc-searcher` in the following workflow:
 
 **Step 1:** Receive user query
-**Step 2:** Apply this optimization protocol to generate 3-5 queries
-**Step 3:** Pass optimized queries to `md-doc-searcher`
-**Step 4:** Aggregate and deduplicate results
-**Step 5:** Present most relevant documents to user
-
-The output format from this skill is a simple ranked list of query strings, ready to be passed directly to document search functions.
+**Step 2:** Phase 0 - Detect target doc-sets from local knowledge base
+**Step 3:** Apply optimization protocol to generate 3-5 queries
+**Step 4:** Output BOTH formats:
+   - Human-readable format (for display)
+   - JSON format (for md-doc-searcher)
+**Step 5:**
+   - If `doc_set` is empty → Suggest online search, DO NOT call doc_searcher_cli.py
+   - If `doc_set` has values → Proceed with md-doc-searcher CLI
+**Step 6:** md-doc-searcher searches specified doc-sets
+**Step 7:** Aggregate and deduplicate results
+**Step 8:** Present most relevant documents to user
 
 ---
 
 ## Output Format
 
-Return optimized queries as a structured list with annotations:
+**Dual Output Support:**
+- **Human-readable**: For user display (default)
+- **JSON format**: For machine parsing by downstream skills
+
+### Human-Readable Format (Default)
 
 ```
 ## Query Analysis Summary
@@ -166,28 +194,115 @@ Return optimized queries as a structured list with annotations:
 - Complexity: {low/medium/high}
 - Ambiguity: {low/medium/high}
 - Applied Strategies: {strategy_list}
+- Doc-Set: <doc_name>:<doc_version>  [can be multiple, comma-separated]
 
 ## Optimized Queries (Ranked)
 1. "{primary_query}" - {strategy_applied}: {rationale}
 2. "{secondary_query}" - {strategy_applied}: {rationale}
 3. "{tertiary_query}" - {strategy_applied}: {rationale}
 ...
+
+## Search Recommendation
+**Online Search Suggested** - No matching documentation set found.
+Please try online search for: "{original_query}"
 ```
 
-**Example Output:**
+### JSON Output Format (For md-doc-searcher)
 
+```json
+{
+  "query_analysis": {
+    "original": "{original_query}",
+    "language": "{detected_language}",
+    "complexity": "{low|medium|high}",
+    "ambiguity": "{low|medium|high}",
+    "strategies": ["{strategy1}", "{strategy2}"],
+    "doc_set": ["<doc_name>:<doc_version>"]
+  },
+  "optimized_queries": [
+    {
+      "rank": 1,
+      "query": "{primary_query}",
+      "strategy": "{strategy_applied}",
+      "rationale": "{rationale}"
+    },
+    {
+      "rank": 2,
+      "query": "{secondary_query}",
+      "strategy": "{strategy_applied}",
+      "rationale": "{rationale}"
+    }
+  ],
+  "search_recommendation": {
+    "online_suggested": true,
+    "reason": "No matching documentation set found in local knowledge base"
+  }
+}
 ```
-## Query Analysis Summary
-- Original: "如何配置 hooks"
-- Language: Chinese
-- Complexity: low
-- Ambiguity: medium
-- Applied Strategies: translation, expansion
 
-## Optimized Queries (Ranked)
-1. "hooks configuration" - translation: Direct English translation
-2. "setup hooks" - expansion: Action-oriented variation
-3. "hooks settings" - expansion: Synonym for configuration
-4. "configure hooks" - expansion: Alternative verb form
-5. "hooks setup guide" - expansion: Documentation type variation
+**Usage Rules:**
+- If `doc_set` is empty array → Do NOT call doc_searcher_cli.py
+- Output recommendation for online search
+- If `doc_set` has values → Proceed with md-doc-searcher CLI
+
+**Example Output (JSON):**
+
+```json
+{
+  "query_analysis": {
+    "original": "如何配置 hooks",
+    "language": "Chinese",
+    "complexity": "low",
+    "ambiguity": "medium",
+    "strategies": ["translation", "expansion"],
+    "doc_set": ["code_claude_com:latest"]
+  },
+  "optimized_queries": [
+    {
+      "rank": 1,
+      "query": "hooks configuration",
+      "strategy": "translation",
+      "rationale": "Direct English translation"
+    },
+    {
+      "rank": 2,
+      "query": "setup hooks",
+      "strategy": "expansion",
+      "rationale": "Action-oriented variation"
+    },
+    {
+      "rank": 3,
+      "query": "hooks settings",
+      "strategy": "expansion",
+      "rationale": "Synonym for configuration"
+    }
+  ]
+}
+```
+
+**Example Output (No Match - JSON):**
+
+```json
+{
+  "query_analysis": {
+    "original": "machine learning basics",
+    "language": "English",
+    "complexity": "low",
+    "ambiguity": "high",
+    "strategies": ["expansion"],
+    "doc_set": []
+  },
+  "optimized_queries": [
+    {
+      "rank": 1,
+      "query": "machine learning basics",
+      "strategy": "none",
+      "rationale": "No optimization needed"
+    }
+  ],
+  "search_recommendation": {
+    "online_suggested": true,
+    "reason": "No matching documentation set found in local knowledge base"
+  }
+}
 ```

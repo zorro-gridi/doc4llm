@@ -6,33 +6,33 @@ Command-line interface for searching markdown documents in the doc4llm
 knowledge base using BM25-based retrieval.
 
 Usage:
-    python doc_searcher_cli.py --base-dir <DIR> --query "search query"
-    python doc_searcher_cli.py --base-dir <DIR> --query "query1" --query "query2"
-    python doc_searcher_cli.py --base-dir <DIR> --query "query" --bm25-k1 1.5
-    python doc_searcher_cli.py --base-dir <DIR> --query "query" --doc-sets "doc1:v1,doc2:v2"
-    python doc_searcher_cli.py --base-dir <DIR> --query "query" --no-fallback
+    python doc_searcher_cli.py --query "search query" --doc-sets "doc1:v1,doc2:v2"
+    python doc_searcher_cli.py --query "query1" --query "query2" --doc-sets "doc:v1"
+    python doc_searcher_cli.py --query "query" --doc-sets "doc:v1" --bm25-k1 1.5
+    python doc_searcher_cli.py --query "query" --doc-sets "doc:v1" --no-fallback
 
 Examples:
-    Search with default settings:
-        python doc_searcher_cli.py --base-dir ~/md_docs --query "hooks configuration"
+    Search single doc-set:
+        python doc_searcher_cli.py --query "hooks configuration" --doc-sets "code_claude_com:latest"
 
-    Search with multiple queries:
-        python doc_searcher_cli.py --base-dir ~/md_docs --query "authentication" --query "JWT" --query "OAuth"
+    Search multiple doc-sets:
+        python doc_searcher_cli.py --query "authentication" --doc-sets "api_doc:v1,auth_service:v2"
 
     Search with custom BM25 parameters:
-        python doc_searcher_cli.py --base-dir ~/md_docs --query "api reference" --bm25-k1 1.5 --bm25-b 0.8
-
-    Search specific doc-sets:
-        python doc_searcher_cli.py --base-dir ~/md_docs --query "deployment" --doc-sets "docs:v1"
+        python doc_searcher_cli.py --query "api reference" --doc-sets "docs:latest" --bm25-k1 1.5 --bm25-b 0.8
 
     Disable fallback strategies:
-        python doc_searcher_cli.py --base-dir ~/md_docs --query "skills" --no-fallback
+        python doc_searcher_cli.py --query "skills" --doc-sets "code_claude_com:latest" --no-fallback
 
     Save output to file:
-        python doc_searcher_cli.py --base-dir ~/md_docs --query "configuration" --output results.txt
+        python doc_searcher_cli.py --query "configuration" --doc-sets "docs:latest" --output results.txt
 
     Enable debug mode:
-        python doc_searcher_cli.py --base-dir ~/md_docs --query "hooks" --debug
+        python doc_searcher_cli.py --query "hooks" --doc-sets "code_claude_com:latest" --debug
+
+Note:
+    --doc-sets is REQUIRED. Use md-doc-query-optimizer skill to detect target doc-sets
+    from the local knowledge base before calling this CLI.
 """
 
 import argparse
@@ -49,34 +49,27 @@ def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Markdown Document Searcher - BM25 based retrieval for doc4llm knowledge base",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__
+        epilog=__doc__,
     )
 
     parser.add_argument(
         "--query",
         required=True,
         action="append",
-        help="Search query string (can be specified multiple times for multiple queries)"
+        help="Search query string (can be specified multiple times for multiple queries)",
     )
 
     parser.add_argument(
         "--base-dir",
-        default="~/project/md_docs_base",
-        help="Knowledge base base directory"
+        help="Knowledge base base directory (loaded from knowledge_base.json by default)",
     )
 
     # BM25 parameters
     parser.add_argument(
-        "--bm25-k1",
-        type=float,
-        default=1.2,
-        help="BM25 k1 parameter (default: 1.2)"
+        "--bm25-k1", type=float, default=1.2, help="BM25 k1 parameter (default: 1.2)"
     )
     parser.add_argument(
-        "--bm25-b",
-        type=float,
-        default=0.75,
-        help="BM25 b parameter (default: 0.75)"
+        "--bm25-b", type=float, default=0.75, help="BM25 b parameter (default: 0.75)"
     )
 
     # Threshold parameters
@@ -84,19 +77,19 @@ def create_parser() -> argparse.ArgumentParser:
         "--threshold-page-title",
         type=float,
         default=0.6,
-        help="Page title matching threshold (default: 0.6)"
+        help="Page title matching threshold (default: 0.6)",
     )
     parser.add_argument(
         "--threshold-headings",
         type=float,
         default=0.25,
-        help="Headings matching threshold (default: 0.25)"
+        help="Headings matching threshold (default: 0.25)",
     )
     parser.add_argument(
         "--threshold-precision",
         type=float,
         default=0.7,
-        help="Precision matching threshold for headings (default: 0.7)"
+        help="Precision matching threshold for headings (default: 0.7)",
     )
 
     # Minimum count parameters
@@ -104,44 +97,36 @@ def create_parser() -> argparse.ArgumentParser:
         "--min-page-titles",
         type=int,
         default=1,
-        help="Minimum page titles per doc-set (default: 1)"
+        help="Minimum page titles per doc-set (default: 1)",
     )
     parser.add_argument(
         "--min-headings",
         type=int,
         default=2,
-        help="Minimum headings per doc-set (default: 2)"
+        help="Minimum headings per doc-set (default: 2)",
     )
 
-    # Optional doc-sets filter
+    # Required doc-sets filter
     parser.add_argument(
         "--doc-sets",
-        help="Comma-separated list of doc-sets to search (default: all)"
+        required=True,
+        help="Comma-separated list of doc-sets to search (required, from md-doc-query-optimizer)",
     )
 
     # Behavior control
     parser.add_argument(
-        "--no-fallback",
-        action="store_true",
-        help="Disable fallback strategies"
+        "--no-fallback", action="store_true", help="Disable fallback strategies"
     )
 
     # Output control
-    parser.add_argument(
-        "--output",
-        help="Output file path (default: stdout)"
-    )
-    parser.add_argument(
-        "--debug",
-        action="store_true",
-        help="Enable debug mode"
-    )
+    parser.add_argument("--output", help="Output file path (default: stdout)")
+    parser.add_argument("--debug", action="store_true", help="Enable debug mode")
 
     # JSON output mode
     parser.add_argument(
         "--json",
         action="store_true",
-        help="Output raw JSON result instead of AOP format"
+        help="Output raw JSON result instead of AOP format",
     )
 
     # Reranker parameters
@@ -149,37 +134,37 @@ def create_parser() -> argparse.ArgumentParser:
         "--reranker",
         action="store_true",
         default=True,
-        help="Enable transformer-based semantic re-ranking for headings"
+        help="Enable transformer-based semantic re-ranking for headings",
     )
     parser.add_argument(
         "--reranker-model-zh",
         type=str,
         default="BAAI/bge-large-zh-v1.5",
-        help="Chinese model ID for reranker (default: BAAI/bge-large-zh-v1.5)"
+        help="Chinese model ID for reranker (default: BAAI/bge-large-zh-v1.5)",
     )
     parser.add_argument(
         "--reranker-model-en",
         type=str,
         default="BAAI/bge-large-en-v1.5",
-        help="English model ID for reranker (default: BAAI/bge-large-en-v1.5)"
+        help="English model ID for reranker (default: BAAI/bge-large-en-v1.5)",
     )
     parser.add_argument(
         "--reranker-threshold",
         type=float,
         default=0.68,
-        help="Similarity threshold for filtering headings (default: 0.68). Headings with score < threshold are filtered out."
+        help="Similarity threshold for filtering headings (default: 0.68). Headings with score < threshold are filtered out.",
     )
     parser.add_argument(
         "--reranker-top-k",
         type=int,
         default=None,
-        help="Keep top K headings after re-ranking (default: None = keep all above threshold)"
+        help="Keep top K headings after re-ranking (default: None = keep all above threshold)",
     )
     parser.add_argument(
         "--reranker-lang-threshold",
         type=float,
         default=0.6,
-        help="Language detection threshold (default: 0.6). Ratio of Chinese characters >= this value uses Chinese model, otherwise English model."
+        help="Language detection threshold (default: 0.6). Ratio of Chinese characters >= this value uses Chinese model, otherwise English model.",
     )
 
     return parser
@@ -189,20 +174,12 @@ def parse_doc_sets(doc_sets_str: Optional[str]) -> Optional[List[str]]:
     """Parse comma-separated doc-sets string."""
     if not doc_sets_str:
         return None
-    return [ds.strip() for ds in doc_sets_str.split(',') if ds.strip()]
+    return [ds.strip() for ds in doc_sets_str.split(",") if ds.strip()]
 
 
 def validate_args(args: argparse.Namespace) -> bool:
     """Validate CLI arguments."""
-    # Validate base_dir exists (expand ~ to user home directory)
-    base_dir = Path(args.base_dir).expanduser()
-    if not base_dir.exists():
-        print(f"Error: Base directory does not exist: {base_dir}")
-        return False
-
-    if not base_dir.is_dir():
-        print(f"Error: Base path is not a directory: {base_dir}")
-        return False
+    # base_dir is optional - loaded from knowledge_base.json by DocSearcherAPI if not provided
 
     # Validate BM25 parameters
     if not 0.0 <= args.bm25_k1 <= 5.0:
@@ -265,9 +242,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Parse doc-sets
     doc_sets = parse_doc_sets(args.doc_sets)
 
-    # Create API instance
-    api = DocSearcherAPI(
-        base_dir=args.base_dir,
+    # Build API kwargs - only pass base_dir if provided
+    api_kwargs = dict(
         bm25_k1=args.bm25_k1,
         bm25_b=args.bm25_b,
         threshold_page_title=args.threshold_page_title,
@@ -283,15 +259,16 @@ def main(argv: Optional[List[str]] = None) -> int:
         reranker_top_k=args.reranker_top_k,
         reranker_lang_threshold=args.reranker_lang_threshold,
     )
+    if args.base_dir:
+        api_kwargs["base_dir"] = args.base_dir
 
-    # Execute search
-    # args.query is a list due to action="append", pass directly
-    result = api.search(
-        query=args.query,
-        doc_sets=doc_sets
-    )
+    # Create API instance
+    api = DocSearcherAPI(**api_kwargs)
 
-    # Format output
+    # Execute search - pass target_doc_sets to skip internal Jaccard matching
+    result = api.search(query=args.query, target_doc_sets=doc_sets)
+
+    # Format output (JSON is default since --json flag is required for AOP format)
     if args.json:
         output = api.format_structured_output(result)
     else:
