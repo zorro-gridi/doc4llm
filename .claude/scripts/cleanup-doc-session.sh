@@ -73,10 +73,10 @@ if [ -f "$LOG_FILE" ]; then
     else
         SUCCESS_RATE=0
     fi
-    
+
     # 记录详细统计
     echo "[$TIMESTAMP] 会话统计: $SESSION_ID | 状态: $SESSION_STATUS | 操作: $OPERATION_COUNT | 提取: $EXTRACTION_COUNT | 错误: $ERROR_COUNT | 成功率: ${SUCCESS_RATE}% | 清理文件: $CLEANED_FILES" >> .claude/logs/doc-session-stats.log
-    
+
     # 如果会话失败，记录到错误日志
     if [ "$SESSION_STATUS" = "failed" ]; then
         echo "[$TIMESTAMP] SESSION FAILURE: $SESSION_ID - 操作数: $OPERATION_COUNT, 错误数: $ERROR_COUNT" >> .claude/logs/error.log

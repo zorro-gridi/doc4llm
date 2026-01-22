@@ -1,0 +1,403 @@
+URL,状态,标题,长度,链接类型,重定向,深度,敏感信息类型,敏感信息数量,敏感信息详细清单,是否重复
+https://opencode.ai/docs/skills,200,Agent Skills | OpenCode,61526,接口,,0,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/models/,200,Models | OpenCode,72836,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/OpenCode,404,请求失败，状态码: 404,97,接口,,1,,,,否
+https://opencode.ai/docs/width=device-width,404,请求失败，状态码: 404,107,接口,,1,,,,否
+https://opencode.ai/docs/Starlight,404,请求失败，状态码: 404,98,接口,,1,,,,否
+https://opencode.ai/docs/en,404,请求失败，状态码: 404,91,接口,,1,,,,否
+https://opencode.ai/docs/summary_large_image,404,请求失败，状态码: 404,108,接口,,1,,,,否
+https://opencode.ai/docs/Astro,404,请求失败，状态码: 404,94,接口,,1,,,,否
+https://opencode.ai/docs/skills/,200,Agent Skills | OpenCode,61526,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/permissions/,200,Permissions | OpenCode,70242,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/Agent,404,请求失败，状态码: 404,94,接口,,1,,,,否
+https://opencode.ai/docs/article,404,请求失败，状态码: 404,96,接口,,1,,,,否
+https://opencode.ai/docs/Define,404,请求失败，状态码: 404,95,接口,,1,,,,否
+https://opencode.ai/docs/zen/,200,Zen | OpenCode,66380,接口,,1,IP地址|邮箱,5|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|邮箱:contact@anoma.ly,否
+https://opencode.ai/docs/rules/,200,Rules | OpenCode,67175,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/models/Configuring,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/models/article,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/ide/,200,IDE | OpenCode,40816,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/models/Astro,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/cli/,200,CLI | OpenCode,95005,接口,,1,内网IP|IP地址,1|7,"内网IP:('10.20.30.40', '')|IP地址:31.2.69.82; 0.0.0.0; 1.9.91.08; 5.92.42.36; 10.20.30.40; 4.32.08.08; 2.03.08.08",否
+https://opencode.ai/docs/models/OpenCode,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/models/Starlight,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/troubleshooting/,200,Troubleshooting | OpenCode,52229,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/models/width=device-width,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/models/summary_large_image,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/models/Models,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/1-0/,200,Migrating to 1.0 | OpenCode,42019,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/models/en,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/skills/Starlight,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/skills/Define,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/skills/article,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/skills/OpenCode,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/skills/width=device-width,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/skills/Astro,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/skills/en,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/skills/summary_large_image,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/skills/Agent,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/permissions/width=device-width,404,请求失败，状态码: 404,119,接口,,2,,,,否
+https://opencode.ai/docs/permissions/Astro,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/acp/,200,ACP Support | OpenCode,64445,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/permissions/Permissions,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/permissions/OpenCode,404,请求失败，状态码: 404,109,接口,,2,,,,否
+https://opencode.ai/docs/agents/,200,Agents | OpenCode,155335,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/permissions/Starlight,404,请求失败，状态码: 404,110,接口,,2,,,,否
+https://opencode.ai/docs/permissions/article,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/permissions/en,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/permissions/Control,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/permissions/summary_large_image,404,请求失败，状态码: 404,120,接口,,2,,,,否
+https://opencode.ai/docs/troubleshooting/en,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/troubleshooting/width=device-width,404,请求失败，状态码: 404,123,接口,,2,,,,否
+https://opencode.ai/docs/tui/,200,TUI | OpenCode,85790,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/troubleshooting/OpenCode,404,请求失败，状态码: 404,113,接口,,2,,,,否
+https://opencode.ai/docs/troubleshooting/article,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/keybinds/,200,Keybinds | OpenCode,80517,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/troubleshooting/Starlight,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/troubleshooting/Astro,404,请求失败，状态码: 404,110,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/Astro,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/width=device-width,404,请求失败，状态码: 404,117,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/Ecosystem,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/Projects,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/ide/summary_large_image,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/ide/Astro,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/share/,200,Share | OpenCode,50198,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/ide/en,404,请求失败，状态码: 404,95,接口,,2,,,,否
+https://opencode.ai/docs/ide/width=device-width,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/formatters/,200,Formatters | OpenCode,53949,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/ide/IDE,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/share/article,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/sdk/,200,SDK | OpenCode,94224,接口,,1,内网IP|IP地址,1|6,"内网IP:('127.0.0.1', '')|IP地址:31.2.69.82; 1.9.91.08; 127.0.0.1; 5.92.42.36; 4.32.08.08; 2.03.08.08",否
+https://opencode.ai/docs/share/Astro,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/ide/The,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/share/summary_large_image,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/share/Share,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/share/en,404,请求失败，状态码: 404,97,接口,,2,,,,否
+https://opencode.ai/docs/share/width=device-width,404,请求失败，状态码: 404,113,接口,,2,,,,否
+https://opencode.ai/docs/enterprise/,200,Enterprise | OpenCode,54067,接口,,1,IP地址|邮箱,5|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|邮箱:contact@anoma.ly,否
+https://opencode.ai/docs/zen/summary_large_image,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/share/Starlight,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/zen/width=device-width,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/zen/article,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/zen/Starlight,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/zen/Curated,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/zen/Astro,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/zen/en,404,请求失败，状态码: 404,95,接口,,2,,,,否
+https://opencode.ai/docs/zen/Zen,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/rules/article,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/zen/OpenCode,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/keybinds,200,Keybinds | OpenCode,80517,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/rules/width=device-width,404,请求失败，状态码: 404,113,接口,,2,,,,否
+https://opencode.ai/docs/rules/summary_large_image,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/rules/Rules,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/rules/OpenCode,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/rules/Starlight,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/rules/Astro,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/rules/Set,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/,200,Ecosystem | OpenCode,47793,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/rules/en,404,请求失败，状态码: 404,97,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/Starlight,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/en,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/OpenCode,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/summary_large_image,404,请求失败，状态码: 404,118,接口,,2,,,,否
+https://opencode.ai/docs/keybinds/en,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/keybinds/Astro,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/keybinds/article,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/keybinds/Starlight,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/keybinds/summary_large_image,404,请求失败，状态码: 404,117,接口,,2,,,,否
+https://opencode.ai/docs/keybinds/Keybinds,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/keybinds/OpenCode,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/ide/article,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/keybinds/width=device-width,404,请求失败，状态码: 404,116,接口,,2,,,,否
+https://opencode.ai/docs/ide/OpenCode,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/gitlab/article,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/cli/width=device-width,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/ide/Starlight,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/cli/Astro,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/cli/Starlight,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/cli/en,404,请求失败，状态码: 404,95,接口,,2,,,,否
+https://opencode.ai/docs/cli/OpenCode,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/network/,200,Network | OpenCode,46724,接口,,1,内网IP|IP地址|邮箱|Basic认证|Authorization,1|6|1|1|1,"内网IP:('127.0.0.1', '')|IP地址:31.2.69.82; 1.9.91.08; 127.0.0.1; 5.92.42.36; 4.32.08.08; 2.03.08.08|邮箱:password@proxy.example.com|Basic认证:basic authentication|Authorization:basic authentication",否
+https://opencode.ai/docs/cli/article,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/tools/,200,Tools | OpenCode,89143,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/cli/CLI,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/cli/summary_large_image,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/troubleshooting/Troubleshooting,404,请求失败，状态码: 404,120,接口,,2,,,,否
+https://opencode.ai/docs/troubleshooting/summary_large_image,404,请求失败，状态码: 404,124,接口,,2,,,,否
+https://opencode.ai/docs/themes/,200,Themes | OpenCode,108429,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/troubleshooting/Common,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/1-0/width=device-width,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/1-0/article,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/1-0/Astro,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/config/,200,Config | OpenCode,144896,接口,,1,IP地址|Basic认证|Authorization,6|1|2,IP地址:31.2.69.82; 0.0.0.0; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|Basic认证:basic structure|Authorization:basic structure; Bearer tokens,否
+https://opencode.ai/docs/1-0/summary_large_image,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/1-0/What,404,请求失败，状态码: 404,97,接口,,2,,,,否
+https://opencode.ai/docs/1-0/OpenCode,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/1-0/Migrating,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/commands/Create,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/1-0/Starlight,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/1-0/en,404,请求失败，状态码: 404,95,接口,,2,,,,否
+https://opencode.ai/docs/server/,200,Server | OpenCode,76210,接口,,1,内网IP|IP地址,1|6,"内网IP:('127.0.0.1', '')|IP地址:31.2.69.82; 1.9.91.08; 127.0.0.1; 5.92.42.36; 4.32.08.08; 2.03.08.08",否
+https://opencode.ai/docs/commands/Astro,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/gitlab/,200,GitLab | OpenCode,70906,接口,,1,IP地址|邮箱,5|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|邮箱:opencode@gitlab.com,否
+https://opencode.ai/docs/gitlab/summary_large_image,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/gitlab/width=device-width,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/gitlab/Starlight,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/gitlab/Use,404,请求失败，状态码: 404,99,接口,,2,,,,否
+https://opencode.ai/docs/gitlab/en,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/providers,200,Providers | OpenCode,294346,接口,,2,内网IP|IP地址|Basic认证|Authorization,1|6|1|3,"内网IP:('127.0.0.1', '')|IP地址:31.2.69.82; 1.9.91.08; 127.0.0.1; 5.92.42.36; 4.32.08.08; 2.03.08.08|Basic认证:bearer token|Authorization:Bearer Token; Bearer custom-token; bearer token",否
+https://opencode.ai/docs/formatters/Astro,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/acp/article,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/formatters/Formatters,404,请求失败，状态码: 404,110,接口,,2,,,,否
+https://opencode.ai/docs/gitlab/OpenCode,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/acp/Astro,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/formatters/width=device-width,404,请求失败，状态码: 404,118,接口,,2,,,,否
+https://opencode.ai/docs/formatters/OpenCode,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/acp/OpenCode,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/acp/en,404,请求失败，状态码: 404,95,接口,,2,,,,否
+https://opencode.ai/docs/providers/,200,Providers | OpenCode,294346,接口,,1,内网IP|IP地址|Basic认证|Authorization,1|6|1|3,"内网IP:('127.0.0.1', '')|IP地址:31.2.69.82; 1.9.91.08; 127.0.0.1; 5.92.42.36; 4.32.08.08; 2.03.08.08|Basic认证:bearer token|Authorization:Bearer Token; Bearer custom-token; bearer token",否
+https://opencode.ai/docs/acp/summary_large_image,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/acp/Starlight,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/acp/Use,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/lsp/,200,LSP Servers | OpenCode,55107,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/agents/OpenCode,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/agents/Starlight,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/acp/width=device-width,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/acp/ACP,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/agents/Agents,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/agents/width=device-width,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/enterprise,200,Enterprise | OpenCode,54067,接口,,2,IP地址|邮箱,5|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|邮箱:contact@anoma.ly,否
+https://opencode.ai/docs/agents/summary_large_image,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/agents/Astro,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/agents/article,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/agents/en,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/tui/width=device-width,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/agents/Configure,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/tui/this,404,请求失败，状态码: 404,97,接口,,2,,,,否
+https://opencode.ai/docs/tui/OpenCode,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/tui/Astro,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/tui/Using,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/tui/en,404,请求失败，状态码: 404,95,接口,,2,,,,否
+https://opencode.ai/docs/tui/article,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/tui/TUI,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/tui/c,404,请求失败，状态码: 404,94,接口,,2,,,,否
+https://opencode.ai/docs/,200,Intro | OpenCode,86445,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/keybinds/Customize,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/tui/Starlight,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/web/OpenCode,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/web/article,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/web/en,404,请求失败，状态码: 404,95,接口,,2,,,,否
+https://opencode.ai/docs/tui/summary_large_image,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/custom-tools/,200,Custom Tools | OpenCode,68809,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/custom-tools/summary_large_image,404,请求失败，状态码: 404,121,接口,,2,,,,否
+https://opencode.ai/docs/web/Starlight,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/custom-tools/Custom,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/custom-tools/Starlight,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/themes/Themes,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/themes/article,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/themes/en,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/custom-tools/article,404,请求失败，状态码: 404,109,接口,,2,,,,否
+https://opencode.ai/docs/themes/summary_large_image,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/themes/Starlight,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/formatters/summary_large_image,404,请求失败，状态码: 404,119,接口,,2,,,,否
+https://opencode.ai/docs/formatters/article,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/themes/Astro,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/themes/OpenCode,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/formatters/Starlight,404,请求失败，状态码: 404,109,接口,,2,,,,否
+https://opencode.ai/docs/share/OpenCode,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/sdk/width=device-width,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/themes/Select,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/sdk/en,404,请求失败，状态码: 404,95,接口,,2,,,,否
+https://opencode.ai/docs/config,200,Config | OpenCode,144896,接口,,2,IP地址|Basic认证|Authorization,6|1|2,IP地址:31.2.69.82; 0.0.0.0; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|Basic认证:basic structure|Authorization:basic structure; Bearer tokens,否
+https://opencode.ai/docs/sdk/SDK,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/enterprise/width=device-width,404,请求失败，状态码: 404,118,接口,,2,,,,否
+https://opencode.ai/docs/enterprise/article,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/formatters/en,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/sdk/Type-safe,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/enterprise/Enterprise,404,请求失败，状态码: 404,110,接口,,2,,,,否
+https://opencode.ai/docs/sdk/article,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/sdk/OpenCode,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/sdk/summary_large_image,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/enterprise/Astro,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/enterprise/Using,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/config/Config,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/enterprise/Starlight,404,请求失败，状态码: 404,109,接口,,2,,,,否
+https://opencode.ai/docs/enterprise/OpenCode,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/enterprise/en,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/sdk/Astro,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/github/,200,GitHub | OpenCode,88690,接口,,1,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/enterprise/summary_large_image,404,请求失败，状态码: 404,119,接口,,2,,,,否
+https://opencode.ai/docs/config/Starlight,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/sdk/Starlight,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/config/Astro,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/Keybinds,404,请求失败，状态码: 404,97,接口,,3,,,,否
+https://opencode.ai/docs/config/en,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/Customize,404,请求失败，状态码: 404,98,接口,,3,,,,否
+https://opencode.ai/docs/lsp/summary_large_image,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/config/Using,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/lsp/en,404,请求失败，状态码: 404,95,接口,,2,,,,否
+https://opencode.ai/docs/lsp/OpenCode,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/lsp/width=device-width,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/config//custom-instructions.md,404,请求失败，状态码: 404,119,MD,,2,,,,否
+https://opencode.ai/docs/config/summary_large_image,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/lsp/Starlight,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/lsp/LSP,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/ecosystem/article,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/lsp/article,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/lsp/Astro,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/plugins/Write,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/plugins/width=device-width,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/,200,MCP servers | OpenCode,116885,接口,,1,IP地址|Authorization,5|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|Authorization:Bearer MY_API_KEY,否
+https://opencode.ai/docs/plugins/article,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/plugins/Astro,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/plugins/OpenCode,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/network/Starlight,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/plugins/Plugins,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/plugins/summary_large_image,404,请求失败，状态码: 404,116,接口,,2,,,,否
+https://opencode.ai/docs/plugins/en,404,请求失败，状态码: 404,99,接口,,2,,,,否
+https://opencode.ai/docs/network/article,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/network/en,404,请求失败，状态码: 404,99,接口,,2,,,,否
+https://opencode.ai/docs/network/Configure,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/network/summary_large_image,404,请求失败，状态码: 404,116,接口,,2,,,,否
+https://opencode.ai/docs/network/OpenCode,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/network/Astro,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/network/Network,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/tools/article,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/tools/en,404,请求失败，状态码: 404,97,接口,,2,,,,否
+https://opencode.ai/docs/network/width=device-width,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/tools/OpenCode,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/tools/Starlight,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/server,200,Server | OpenCode,76210,接口,,2,内网IP|IP地址,1|6,"内网IP:('127.0.0.1', '')|IP地址:31.2.69.82; 1.9.91.08; 127.0.0.1; 5.92.42.36; 4.32.08.08; 2.03.08.08",否
+https://opencode.ai/docs/tools/Manage,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/tools/Astro,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/tools/summary_large_image,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/tools/width=device-width,404,请求失败，状态码: 404,113,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/summary_large_image,404,请求失败，状态码: 404,120,接口,,2,,,,否
+https://opencode.ai/docs/themes/width=device-width,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/Astro,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/tools/Tools,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/web/,200,Web | OpenCode,55926,接口,,1,内网IP|IP地址,2|8,"内网IP:('192.168.1.100', ''); ('127.0.0.1', '')|IP地址:31.2.69.82; 0.0.0.0; 192.168.1.100; 1.9.91.08; 127.0.0.1; 5.92.42.36; 4.32.08.08; 2.03.08.08",否
+https://opencode.ai/docs/config/OpenCode,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/config/article,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/config/width=device-width,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/plugins/,200,Plugins | OpenCode,92958,接口,,1,IP地址|Authorization,5|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|Authorization:Basic structure,否
+https://opencode.ai/docs/server/article,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/Using,404,请求失败，状态码: 404,94,接口,,3,,,,否
+https://opencode.ai/docs/server/Starlight,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/server/Interact,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/server/OpenCode,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/server/Server,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/server/summary_large_image,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/server/en,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/commands/,200,Commands | OpenCode,76339,接口,,1,IP地址|Basic认证|Authorization,5|1|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|Basic认证:basic structure|Authorization:basic structure,否
+https://opencode.ai/docs/server/Astro,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/gitlab/Astro,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/gitlab/GitLab,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/...,404,请求失败，状态码: 404,92,,,3,,,,否
+https://opencode.ai/docs/server/width=device-width,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/Providers,404,请求失败，状态码: 404,98,接口,,3,,,,否
+https://opencode.ai/docs/providers/summary_large_image,404,请求失败，状态码: 404,118,接口,,2,,,,否
+https://opencode.ai/docs/providers/Providers,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/providers/OpenCode,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/providers/article,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/providers/Using,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/providers/...,404,请求失败，状态码: 404,102,,,2,,,,否
+https://opencode.ai/docs/providers/width=device-width,404,请求失败，状态码: 404,117,接口,,2,,,,否
+https://opencode.ai/docs/providers/Starlight,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/providers/Astro,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/Enterprise,404,请求失败，状态码: 404,99,接口,,3,,,,否
+https://opencode.ai/docs/c,404,请求失败，状态码: 404,90,接口,,2,,,,否
+https://opencode.ai/docs/custom-tools/en,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/custom-tools/width=device-width,404,请求失败，状态码: 404,120,接口,,2,,,,否
+https://opencode.ai/docs/Intro,404,请求失败，状态码: 404,94,接口,,2,,,,否
+https://opencode.ai/docs/custom-tools/OpenCode,404,请求失败，状态码: 404,110,接口,,2,,,,否
+https://opencode.ai/docs/this,404,请求失败，状态码: 404,93,接口,,2,,,,否
+https://opencode.ai/docs/Get,404,请求失败，状态码: 404,92,接口,,2,,,,否
+https://opencode.ai/docs/providers/en,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/custom-tools/Create,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/custom-tools/Astro,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/Config,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/custom-instructions.md,404,请求失败，状态码: 404,111,MD,,3,,,,否
+https://opencode.ai/docs/github/GitHub,404,请求失败，状态码: 404,102,接口,,2,,,,否
+https://opencode.ai/docs/github/Astro,404,请求失败，状态码: 404,101,接口,,2,,,,否
+https://opencode.ai/docs/github/width=device-width,404,请求失败，状态码: 404,114,接口,,2,,,,否
+https://opencode.ai/docs/github/summary_large_image,404,请求失败，状态码: 404,115,接口,,2,,,,否
+https://opencode.ai/docs/github/article,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/rules,200,Rules | OpenCode,67175,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/github/en,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/github/Starlight,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/github/Use,404,请求失败，状态码: 404,99,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/Starlight,404,请求失败，状态码: 404,110,接口,,2,,,,否
+https://opencode.ai/docs/Zen,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/github/OpenCode,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/en,404,请求失败，状态码: 404,103,接口,,2,,,,否
+https://opencode.ai/docs/commands/width=device-width,404,请求失败，状态码: 404,116,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/Add,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/article,404,请求失败，状态码: 404,108,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/width=device-width,404,请求失败，状态码: 404,119,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/OpenCode,404,请求失败，状态码: 404,109,接口,,2,,,,否
+https://opencode.ai/docs/commands/Commands,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/web/Web,404,请求失败，状态码: 404,96,接口,,2,,,,否
+https://opencode.ai/docs/Server,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/Interact,404,请求失败，状态码: 404,97,接口,,3,,,,否
+https://opencode.ai/docs/commands/OpenCode,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/mcp-servers/MCP,404,请求失败，状态码: 404,104,接口,,2,,,,否
+https://opencode.ai/docs/plugins/Starlight,404,请求失败，状态码: 404,106,接口,,2,,,,否
+https://opencode.ai/docs/web/Using,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/Select,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/web/summary_large_image,404,请求失败，状态码: 404,112,接口,,2,,,,否
+https://opencode.ai/docs/web/width=device-width,404,请求失败，状态码: 404,111,接口,,2,,,,否
+https://opencode.ai/docs/web/Astro,404,请求失败，状态码: 404,98,接口,,2,,,,否
+https://opencode.ai/docs/Set,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/commands/article,404,请求失败，状态码: 404,105,接口,,2,,,,否
+https://opencode.ai/docs/commands/en,404,请求失败，状态码: 404,100,接口,,2,,,,否
+https://opencode.ai/docs/commands/Starlight,404,请求失败，状态码: 404,107,接口,,2,,,,否
+https://opencode.ai/docs/Rules,404,请求失败，状态码: 404,94,接口,,3,,,,否
+https://opencode.ai/docs/commands/summary_large_image,404,请求失败，状态码: 404,117,接口,,2,,,,否
+https://opencode.ai/docs/Control,404,请求失败，状态码: 404,96,接口,,3,,,,否
+https://opencode.ai/docs/models,200,Models | OpenCode,72836,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/Models,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/zen,200,Zen | OpenCode,66380,接口,,2,IP地址|邮箱,5|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|邮箱:contact@anoma.ly,否
+https://opencode.ai/docs/Configuring,404,请求失败，状态码: 404,100,接口,,3,,,,否
+https://opencode.ai/docs/Curated,404,请求失败，状态码: 404,96,接口,,3,,,,否
+https://opencode.ai/docs/share,200,Share | OpenCode,50198,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/tui,200,TUI | OpenCode,85790,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/Share,404,请求失败，状态码: 404,94,接口,,3,,,,否
+https://opencode.ai/docs/TUI,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/themes,200,Themes | OpenCode,108429,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/permissions,200,Permissions | OpenCode,70242,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/Plugins,404,请求失败，状态码: 404,96,接口,,3,,,,否
+https://opencode.ai/docs/skills,200,Agent Skills | OpenCode,61526,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,是
+https://opencode.ai/docs/Themes,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/ide,200,IDE | OpenCode,40816,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/Permissions,404,请求失败，状态码: 404,100,接口,,3,,,,否
+https://opencode.ai/docs/The,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/IDE,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/plugins,200,Plugins | OpenCode,92958,接口,,2,IP地址|Authorization,5|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|Authorization:Basic structure,否
+https://opencode.ai/docs/Manage,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/sdk,200,SDK | OpenCode,94224,接口,,2,内网IP|IP地址,1|6,"内网IP:('127.0.0.1', '')|IP地址:31.2.69.82; 1.9.91.08; 127.0.0.1; 5.92.42.36; 4.32.08.08; 2.03.08.08",否
+https://opencode.ai/docs/Custom,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/Write,404,请求失败，状态码: 404,94,接口,,3,,,,否
+https://opencode.ai/docs/agents,200,Agents | OpenCode,155335,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/github,200,GitHub | OpenCode,88690,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/Type-safe,404,请求失败，状态码: 404,98,接口,,3,,,,否
+https://opencode.ai/docs/SDK,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/Configure,404,请求失败，状态码: 404,98,接口,,3,,,,否
+https://opencode.ai/docs/mcp-servers,200,MCP servers | OpenCode,116885,接口,,2,IP地址|Authorization,5|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|Authorization:Bearer MY_API_KEY,否
+https://opencode.ai/docs/MCP,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/Agents,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/formatters,200,Formatters | OpenCode,53949,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/GitHub,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/Use,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/tools,200,Tools | OpenCode,89143,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/commands,200,Commands | OpenCode,76339,接口,,2,IP地址|Basic认证|Authorization,5|1|1,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08|Basic认证:basic structure|Authorization:basic structure,否
+https://opencode.ai/docs/Add,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/LSP,404,请求失败，状态码: 404,92,接口,,3,,,,否
+https://opencode.ai/docs/custom-tools,200,Custom Tools | OpenCode,68809,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/Formatters,404,请求失败，状态码: 404,99,接口,,3,,,,否
+https://opencode.ai/docs/lsp,200,LSP Servers | OpenCode,55107,接口,,2,IP地址,5,IP地址:31.2.69.82; 1.9.91.08; 5.92.42.36; 4.32.08.08; 2.03.08.08,否
+https://opencode.ai/docs/Tools,404,请求失败，状态码: 404,94,接口,,3,,,,否
+https://opencode.ai/docs/cli,200,CLI | OpenCode,95005,接口,,2,内网IP|IP地址,1|7,"内网IP:('10.20.30.40', '')|IP地址:31.2.69.82; 0.0.0.0; 1.9.91.08; 5.92.42.36; 10.20.30.40; 4.32.08.08; 2.03.08.08",否
+https://opencode.ai/docs/Commands,404,请求失败，状态码: 404,97,接口,,3,,,,否
+https://opencode.ai/docs/Create,404,请求失败，状态码: 404,95,接口,,3,,,,否
+https://opencode.ai/docs/CLI,404,请求失败，状态码: 404,92,接口,,3,,,,否

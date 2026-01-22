@@ -1,14 +1,12 @@
 ---
 name: md-doc-query-optimizer
-description: "Optimize and rewrite user queries for better document retrieval. Use when the user's query is ambiguous, complex, or could benefit from expansion. Supports query decomposition, expansion, synonym replacement, and multi-query generation. Returns optimized queries for document search."
+description: "Optimize and rewrite user queries for better document retrieval. Supports query decomposition, expansion, synonym replacement, and multi-query generation. Returns optimized queries for document search."
 disable-model-invocation: true
 ---
 
 # Markdown Document Query Optimizer
 
 Optimize user queries to improve document retrieval quality in the doc4llm system through pure prompt-based analysis and transformation.
-
-**IMPORTANT:** This is a pure prompt-based skill. DO NOT call any external tools or services. Analyze the user query using only the instructions below and return optimized queries based on linguistic analysis and transformation rules.
 
 ## Purpose
 
@@ -22,16 +20,14 @@ Improve search relevance by:
 ## When to Use
 
 Use this skill when:
-1. User query is **complex** (multiple concepts/conjunctions)
-2. User query is **ambiguous** (could mean multiple things)
-3. Initial search results are **poor quality** (low similarity)
-4. User query uses **non-English** language that doesn't match documentation terminology
+1. User query uses "**use contextZ**" or "**use contextz**" keywords
+2. doc-retriever subagent invoked
 
 ---
 
 ## Four-Phase Optimization Protocol
 
-### Phase 0: Doc-Set Detection (NEW)
+### Phase 0: Doc-Set Detection
 
 Before query analysis, identify target documentation sets:
 
@@ -280,7 +276,7 @@ Please try online search for: "{original_query}"
 }
 ```
 
-**Example Output (No Match - JSON):**
+**Example Output (No Match with empty doc-sest - JSON):**
 
 ```json
 {

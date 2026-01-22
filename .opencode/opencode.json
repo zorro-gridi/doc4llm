@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    ".opencode/rules/*.md"
+  ],
+  "agent": {
+    "doc-retriever": {
+      "description": "Local knowledge base retrieval for doc4llm. Orchestrates four-phase workflow: query optimization → document discovery → content extraction → post-processing.",
+      "mode": "subagent",
+      "skills": [
+        "md-doc-query-optimizer",
+        "md-doc-searcher",
+        "md-doc-reader",
+        "md-doc-processor"
+      ],
+      "temperature": 0.1,
+      "tools": {
+        "Read": true,
+        "Glob": true,
+        "Grep": true,
+        "Bash": true,
+        "Write": false,
+        "Edit": false
+      }
+    }
+  }
+}

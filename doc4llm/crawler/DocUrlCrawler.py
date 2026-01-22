@@ -85,6 +85,10 @@ class DocUrlCrawler(DebugMixin):
         self.NON_TOC_LINK_PATTERNS = toc_filter_config.get('non_toc_link_patterns', NON_TOC_LINK_PATTERNS)
         self.TOC_END_MARKERS = toc_filter_config.get('toc_end_markers', [])
 
+        # 加载 exclude_fuzzy 黑名单配置
+        filters = self.config.toc_url_filters or {}
+        self.EXCLUDE_FUZZY = filters.get('exclude_fuzzy', [])
+
         # 使用布隆过滤器去重
         self.bloom_filter = BloomFilter(expected_elements=10000, false_positive_rate=0.001)
 
@@ -422,6 +426,11 @@ class DocUrlCrawler(DebugMixin):
         anchor_text = a_tag.get_text(strip=True)
         full_url = f"{base_url}{href}"
 
+        # 使用 fuzzy_match 白名单过滤锚点名称
+        if not self._match_anchor_pattern(anchor_name, anchor_text):
+            self._debug_print(f"过滤不匹配的锚点: #{anchor_name} (text: {anchor_text})")
+            return
+
         # 使用布隆过滤器去重
         if full_url in self.bloom_filter:
             with self.lock:
@@ -495,6 +504,26 @@ class DocUrlCrawler(DebugMixin):
                     return 4
 
             # 如果找不到对应元素，尝试通过锚点名称的命名规则判断
+            # 优先检查 fuzzy_match 配置：如果锚点匹配 fuzzy_match 模式，默认为 level 1
+            filters = self.config.toc_url_filters or {}
+            fuzzy_match = filters.get('fuzzy_match', [])
+
+            if fuzzy_match:
+                # 移除空的 pattern
+                fuzzy_match = [p for p in fuzzy_match if p]
+
+                for pattern in fuzzy_match:
+                    pattern_lower = pattern.lower()
+
+                    # 特殊处理：如果 pattern 是 "#"，表示所有锚点都是 level 1
+                    if pattern_lower == '#':
+                        return 1
+
+                    # 检查锚点名称是否匹配
+                    if pattern_lower in anchor_name.lower():
+                        self._debug_print(f"fuzzy_match 匹配锚点名称: '{anchor_name}' 匹配模式 '{pattern}'，设为 level 1")
+                        return 1
+
             if any(prefix in anchor_name.lower() for prefix in ['chapter', 'section', 'part']):
                 return 1
             elif any(prefix in anchor_name.lower() for prefix in ['sub', 'subsection', 'topic']):
@@ -508,6 +537,79 @@ class DocUrlCrawler(DebugMixin):
         except Exception as e:
             self._debug_print(f"判断锚点层级时出错: {e}")
             return 4
+
+    def _match_anchor_pattern(self, anchor_name: str, anchor_text: str) -> bool:
+        """
+        检查锚点是否匹配过滤规则
+
+        过滤逻辑（优先级从高到低）：
+        1. 黑名单检查（exclude_fuzzy）：匹配则返回 False（过滤）
+        2. 白名单检查（fuzzy_match）：匹配则返回 True（保留）
+
+        如果 exclude_fuzzy 和 fuzzy_match 都为空，则返回 True（保留所有锚点）
+
+        Args:
+            anchor_name: 锚点名称（href 中的 # 后面的部分）
+            anchor_text: 锚点显示文本
+
+        Returns:
+            bool: 是否匹配（True=保留，False=过滤）
+        """
+        # ========== 黑名单检查（exclude_fuzzy）==========
+        if self.EXCLUDE_FUZZY:
+            # 移除空的 pattern
+            exclude_fuzzy = [p for p in self.EXCLUDE_FUZZY if p]
+
+            for pattern in exclude_fuzzy:
+                pattern_lower = pattern.lower()
+
+                # 检查锚点名称是否匹配黑名单
+                if pattern_lower in anchor_name.lower():
+                    self._debug_print(f"黑名单过滤锚点名称: '{anchor_name}' 匹配模式 '{pattern}'")
+                    return False
+
+                # 检查锚点文本是否匹配黑名单
+                if anchor_text and pattern_lower in anchor_text.lower():
+                    self._debug_print(f"黑名单过滤锚点文本: '{anchor_text}' 匹配模式 '{pattern}'")
+                    return False
+
+        # ========== 白名单检查（fuzzy_match）==========
+        # 获取 fuzzy_match 配置
+        filters = self.config.toc_url_filters or {}
+        fuzzy_match = filters.get('fuzzy_match', [])
+
+        # 如果 fuzzy_match 为空，不过滤，保留所有锚点
+        if not fuzzy_match:
+            return True
+
+        # 移除空的 pattern
+        fuzzy_match = [p for p in fuzzy_match if p]
+
+        # 如果 fuzzy_match 为空（移除空值后），不过滤，保留所有锚点
+        if not fuzzy_match:
+            return True
+
+        # 使用 OR 条件：只要匹配任一模式即保留
+        for pattern in fuzzy_match:
+            pattern_lower = pattern.lower()
+
+            # 特殊处理：如果 pattern 是 "#"，表示保留所有锚点
+            if pattern_lower == '#':
+                return True
+
+            # 检查锚点名称是否匹配
+            if pattern_lower in anchor_name.lower():
+                self._debug_print(f"锚点名称匹配: '{anchor_name}' 匹配模式 '{pattern}'")
+                return True
+
+            # 检查锚点文本是否匹配
+            if anchor_text and pattern_lower in anchor_text.lower():
+                self._debug_print(f"锚点文本匹配: '{anchor_text}' 匹配模式 '{pattern}'")
+                return True
+
+        # 没有匹配任何模式
+        self._debug_print(f"过滤不匹配的锚点: #{anchor_name} (text: {anchor_text})")
+        return False
 
     def _filter_toc_end_markers(self, anchor_links: List[Dict]) -> List[Dict]:
         """

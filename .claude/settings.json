@@ -8,7 +8,14 @@
       "Read(.claude/.env)",
       "Read(**/.claude/.env)",
       "Read(**/docContent.md)",
-      "Read(docContent.md)"
+      "Read(/Users/zorro/project/md_docs_base/**/docContent.md)",
+      "Read(**/doc_searcher_cli.py)",
+      "Read(**/doc_searcher_api.py)",
+      "Read(**/extract_md_doc.py)"
     ]
+  },
+  "env": {
+    "BASH_DEFAULT_TIMEOUT_MS": "300000",
+    "BASH_MAX_TIMEOUT_MS": "600000"
   }
 }

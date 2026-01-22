@@ -1,0 +1,102 @@
+---
+name: md-doc-searcher
+description: "Search and discover markdown documents in the local knowledge base using BM25-based retrieval via CLI interface. Performs comprehensive search across documentation sets and returns headings lists matching query criteria."
+context: fork
+---
+
+# Markdown Document Headings Searcher
+
+Search and discover markdown documents headings in the local knowledge base using BM25-based retrieval via CLI interface.
+
+## Critical Constraints
+
+- **NO docContent.md access**: Only search docTOC.md files
+- **Headings hierarchy**: Maintain page_title → headings structure in output
+- **AOP format**: Output must follow AOP specification exactly
+- **KEEP THE SAME LANGUAGE WITH THE SOURCE DOCS**
+- **Pass through**: AOP-FINAL output must not be modified
+
+## Knowledge base config info
+`.opencode/knowledge_base.json`
+
+## CLI Usage
+
+### You MUST Run one of the following Basic Commands
+
+```bash
+# Use json format output for better dataflow
+conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "hooks configuration" --json --reranker --doc-sets OpenCode_Docs:latest --base-dir <knowledge_base_dir>
+
+# Multiple queries (search for multiple terms)
+conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "authentication" --query "JWT" --query "OAuth" --reranker --doc-sets OpenCode_Docs:latest --base-dir <knowledge_base_dir>
+
+# Search with BM25 recalled and transformer reranker parameters
+conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "api reference" --bm25-k1 1.5 --bm25-b 0.8 --reranker --reranker-threshold 0.68 --doc-sets OpenCode_Docs:latest --base-dir <knowledge_base_dir>
+```
+
+### CLI Arguments
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| `--query` | string | **required** | Search query string (can be specified multiple times) |
+| `--base-dir` | string | **required** | local knowledge base root dir |
+| `--doc-sets` | string | **required** | Search query scope |
+| `--bm25-k1` | float | 1.2 | BM25 k1 parameter |
+| `--bm25-b` | float | 0.75 | BM25 b parameter |
+| `--reranker-threshold` | float | 0.68 | Similarity threshold for filtering headings (default: 0.68). Headings with score < threshold are filtered out. |
+| `--json` | flag | false | Output structured JSON metadata instead of AOP-FINAL format |
+| `--reranker` | flag | false | Must add to cli to perform a rerank operaton |
+
+### Structured JSON Output
+
+When using `--json` flag, the searcher outputs machine-parsable JSON metadata:
+
+```json
+{
+  "success": true,
+  "doc_sets_found": ["code_claude_com:latest"],
+  "results": [
+    {
+      "doc_set": "code_claude_com:latest",
+      "page_title": "Agent Skills",
+      "toc_path": "/path/to/docTOC.md",
+      "headings": [
+        {"level": 2, "text": "Create Skills"},
+        {"level": 3, "text": "Configure Hooks"}
+      ]
+    }
+  ]
+}
+```
+
+**Purpose:** Enable downstream skills (md-doc-reader) to extract content by specific headings for token-efficient retrieval.
+
+**Multi-Document Extraction:** When multiple results are returned, the JSON output enables md-doc-reader to extract multiple sections from multiple documents using `--sections-file` or `--sections-json` parameters, maintaining proper title-headings associations.
+
+```markdown
+=== AOP-FINAL | agent=md-doc-searcher | results={count} | doc_sets={sets} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
+
+**{doc_name}:{doc_version}**
+
+**{PageTitle}
+   - TOC 路径: `{base_dir}/{doc_name}:{doc_version}/{PageTitle}/docTOC.md`
+   - **匹配Heading列表**:
+     - ## {Heading1}
+     - ### {Heading2}
+
+=== END-AOP-FINAL ===
+```
+
+### No Headings Found
+
+If no headings found after all fallbacks:
+
+```markdown
+=== AOP-FINAL | agent=md-doc-searcher | results=0 | doc_sets={sets} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
+
+No matched headings found!
+
+=== END-AOP-FINAL ===
+```

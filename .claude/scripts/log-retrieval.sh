@@ -27,7 +27,7 @@ echo "[$TIMESTAMP] doc-retriever: $TOOL_NAME tool used" >> "$LOG_FILE"
 if [ "$TOOL_NAME" = "Bash" ]; then
     COMMAND=$(echo "$TOOL_INPUT" | jq -r '.command // empty' 2>/dev/null || echo "N/A")
     echo "[$TIMESTAMP] Command: $COMMAND" >> "$LOG_FILE"
-    
+
     # 检查是否是文档检索相关命令
     if echo "$COMMAND" | grep -qE "(extract_md_doc|MarkdownDocExtractor|md_docs)"; then
         echo "[$TIMESTAMP] Document extraction detected: $COMMAND" >> "$LOG_FILE"

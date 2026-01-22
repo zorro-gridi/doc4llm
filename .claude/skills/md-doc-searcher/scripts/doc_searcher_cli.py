@@ -61,6 +61,7 @@ def create_parser() -> argparse.ArgumentParser:
 
     parser.add_argument(
         "--base-dir",
+        default=None,
         help="Knowledge base base directory (loaded from knowledge_base.json by default)",
     )
 
@@ -179,7 +180,14 @@ def parse_doc_sets(doc_sets_str: Optional[str]) -> Optional[List[str]]:
 
 def validate_args(args: argparse.Namespace) -> bool:
     """Validate CLI arguments."""
-    # base_dir is optional - loaded from knowledge_base.json by DocSearcherAPI if not provided
+    if args.base_dir:
+        base_path = Path(args.base_dir).expanduser().resolve()
+        if not base_path.exists():
+            print(f"Error: base-dir path does not exist: {args.base_dir}")
+            return False
+        if not base_path.is_dir():
+            print(f"Error: base-dir is not a directory: {args.base_dir}")
+            return False
 
     # Validate BM25 parameters
     if not 0.0 <= args.bm25_k1 <= 5.0:
@@ -242,7 +250,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Parse doc-sets
     doc_sets = parse_doc_sets(args.doc_sets)
 
-    # Build API kwargs - only pass base_dir if provided
+    # Build API kwargs - only pass base_dir if provided (None or empty means use config default)
     api_kwargs = dict(
         bm25_k1=args.bm25_k1,
         bm25_b=args.bm25_b,

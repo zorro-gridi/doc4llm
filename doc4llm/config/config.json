@@ -147,10 +147,7 @@
       "#"
     ],
     "exclude_fuzzy": [
-      "/blog/",
-      "/news/",
-      "/community/",
-      "/forum/"
+      "_some_anchor_name"
     ]
   },
   "doc_max_depth": 10,

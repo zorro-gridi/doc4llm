@@ -3006,3 +3006,85 @@ URL数量: 50
 总锚点数: 982
 ============================================================
 
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 19:38:16
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 19:55:17
+=== 配置文件 Config/opencode.json 不存在，使用默认配置 ===
+错误：必须通过 -u 或 -f 至少指定一个扫描目标！
+提示：mode 2 且不使用 -force-scan 时，如果CSV文件已存在且有内容，可以不指定 -u 或 -f
+提示：使用 -u <URL> 或 -f <文件> 指定扫描目标
+
+=== 常用命令示例 ===
+基本URL扫描: python cli.py -u https://example.com
+文档爬取模式: python cli.py -u https://example.com -mode 3 -force-scan 1
+批量URL扫描: python cli.py -f urls.txt -workers 20
+使用配置文件: python cli.py -config custom_config.json
+==================================================
+
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 19:56:24
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 20:06:01
+错误：必须通过 -u 或 -f 至少指定一个扫描目标！
+提示：使用 -u <URL> 或 -f <文件> 指定扫描目标
+
+=== 常用命令示例 ===
+基本URL扫描: python cli.py -u https://example.com
+文档爬取模式: python cli.py -u https://example.com -mode 3 -force-scan 1
+批量URL扫描: python cli.py -f urls.txt -workers 20
+使用配置文件: python cli.py -config custom_config.json
+==================================================
+
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 20:06:19
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 20:07:54
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 20:09:10
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 20:12:18
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 20:13:53
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-01-22 20:16:05

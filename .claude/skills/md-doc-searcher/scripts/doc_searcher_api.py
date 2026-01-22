@@ -80,7 +80,7 @@ class DocSearcherAPI:
         config: Configuration dictionary
     """
 
-    base_dir: str  # Required, loaded from knowledge_base.json
+    base_dir: Optional[str] = None
     bm25_k1: float = 1.2
     bm25_b: float = 0.75
     threshold_page_title: float = 0.6
@@ -121,7 +121,17 @@ class DocSearcherAPI:
             raise ValueError(
                 "base_dir not found in knowledge_base.json['knowledge_base']"
             )
-        self.base_dir = str(Path(kb_base_dir).expanduser())
+
+        # Use user-provided base_dir if specified, otherwise use config value
+        if self.base_dir:
+            path = Path(self.base_dir).expanduser()
+            if not path.exists():
+                raise ValueError(f"base_dir does not exist: '{self.base_dir}'")
+            if not path.is_dir():
+                raise ValueError(f"base_dir is not a directory: '{self.base_dir}'")
+            self.base_dir = str(path.resolve())
+        else:
+            self.base_dir = str(Path(kb_base_dir).expanduser().resolve())
         self.config = {
             "bm25_k1": self.bm25_k1,
             "bm25_b": self.bm25_b,

@@ -224,6 +224,42 @@ conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --format json
 ```
 
+### Scenario 5: Cross-Doc-Set Extraction
+
+**NEW:** Extract specific sections from multiple doc-sets in a single job. Each section item can specify a different doc-set.
+
+**CLI Usage:**
+```bash
+# Extract from multiple doc-sets in one job
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --sections-json '[
+    {"title":"Agent Skills","headings":["Create Skills"],"doc_set":"OpenCode_Docs:latest"},
+    {"title":"API Reference","headings":["Authentication"],"doc_set":"Anthropic_Docs:v2"}
+  ]' \
+  --format json
+```
+
+**JSON Structure:**
+```json
+[
+  {
+    "title": "Agent Skills",
+    "headings": ["Create Skills"],
+    "doc_set": "OpenCode_Docs:latest"
+  },
+  {
+    "title": "API Reference",
+    "headings": ["Authentication", "Rate Limits"],
+    "doc_set": "Anthropic_Docs:v2"
+  }
+]
+```
+
+**Benefits:**
+- Single extraction job across multiple documentation sets
+- Each section item independently targets its own doc-set
+- Results are combined with composite keys for downstream processing
+
 **Benefits:**
 - Token-efficient: Only extract relevant sections from multiple documents
 - Maintains associations: Title-headings pairs preserved via composite keys
@@ -236,8 +272,9 @@ conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
 What do you want to extract?
 │
 ├─ Multiple documents, each with specific sections?
-│  └─ Use: --sections-file sections.json OR --sections-json '[...]' (NEW)
+│  └─ Use: --sections-file sections.json OR --sections-json '[...]'
 │     └─ Format: JSON array of {title, headings[], doc_set} objects
+│     └─ Cross-doc-set: Each item can specify a different doc_set
 │
 ├─ Single document, full content?
 │  └─ Use: --title "Document Title" --doc-set "doc_set:version"

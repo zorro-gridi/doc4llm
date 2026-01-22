@@ -1,6 +1,6 @@
 ---
 name: doc-retriever
-description: "Local knowledge base retrieval. Not local project module explain. When use: user input with a keyword `use contextZ` or `use contextz`."
+description: "Local knowledge base `.claude/knowledge_base.json` retrieval. When use: user input with a keyword `use contextZ` or `use contextz`."
 skills:
   - md-doc-query-optimizer   # Phase 0: 查询优化
   - md-doc-searcher          # Phase 1: 文档发现
@@ -110,29 +110,6 @@ Help users read and extract content from markdown documentation stored in the kn
 | **Phase 2** | 内容提取准确性验证 | 重试 + 部分结果 | 确保内容完整性 |
 | **Phase 3** | 输出格式和引用检查 | 强制添加引用 | 确保结果可追溯 |
 
-### Skill Availability Guarantee
-
-**预加载技能的质量优势:**
-
-```python
-# 预加载模式：技能始终可用，工作流可靠
-def execute_retrieval_workflow(query):
-    # Phase 0: 查询优化 - 技能已加载，立即可用
-    optimized_queries = md_doc_query_optimizer.optimize(query)
-
-    # Phase 1: 文档发现 - 无需担心技能调用失败
-    documents = md_doc_searcher.search(optimized_queries)
-
-    # Phase 2: 内容提取 - 保证执行
-    content = md_doc_reader.extract(documents)
-
-    # Phase 2.5: 质量检查 - 基于预设标准
-    if requires_processing(content):
-        # Phase 3: 后处理 - 确保执行
-        final_output = md_doc_processor.process(query, content)
-
-    return final_output  # 保证质量的结果
-```
 
 ## Four-Phase Progressive Disclosure Workflow
 
