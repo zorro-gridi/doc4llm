@@ -33,7 +33,7 @@ This skill uses a **CLI-first design**. All operations are executed through CLI 
 
 **CLI (recommended - zero context overhead):**
 ```bash
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --doc-set "doc_set:version"
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --doc-set "doc_set:version"
 ```
 
 ## MANDATORY: CLI-Only Extraction
@@ -62,24 +62,24 @@ python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Ski
 
 ```bash
 # Extract full document (REQUIRED pattern)
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --title "Agent Skills" \
   --doc-set "Claude_Code_Docs:latest"
 
 # Extract with metadata (for threshold checking)
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --title "Agent Skills" \
   --doc-set "Claude_Code_Docs:latest" \
   --with-metadata
 
 # Get document info
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --title "Agent Skills" \
   --doc-set "Claude_Code_Docs:latest" \
   --doc-info
 
 # List documents
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --list \
   --doc-set "Claude_Code_Docs:latest"
 ```
@@ -116,13 +116,13 @@ For complete documentation:
 
 ```bash
 # Extract specific sections by headings
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --title "Agent Skills" \
   --headings "Create Skills,Configure Hooks" \
   --doc-set "code_claude_com:latest"
 
 # Output in JSON format
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --title "Agent Skills" \
   --headings "Create Skills,Configure Hooks" \
   --format json
@@ -165,7 +165,7 @@ Where `<base_dir>` is configured in `.claude/knowledge_base.json` (default: `md_
 ### Scenario 1: Single Document (Full Content)
 ```bash
 # CRITICAL: --doc-set is REQUIRED for all CLI calls
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --title "Agent Skills" \
   --doc-set "code_claude_com:latest"
 ```
@@ -173,7 +173,7 @@ python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
 ### Scenario 2: Section Extraction (by Headings)
 ```bash
 # Extract specific sections - --doc-set is REQUIRED
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --title "Agent Skills" \
   --headings "Create Skills,Configure Hooks" \
   --doc-set "code_claude_com:latest"
@@ -182,7 +182,7 @@ python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
 ### Scenario 3: Multiple Documents (Full Content)
 ```bash
 # Extract multiple documents with metadata - --doc-set is REQUIRED
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --titles-csv "Agent Skills,Slash Commands,Hooks" \
   --doc-set "code_claude_com:latest" \
   --with-metadata \
@@ -212,14 +212,14 @@ cat > sections.json << 'EOF'
 EOF
 
 # Extract using --sections-file
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --sections-file sections.json \
   --format json
 ```
 
 **CLI Usage (inline JSON):**
 ```bash
-python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --sections-json '[{"title":"Agent Skills","headings":["Create Skills"],"doc_set":"code_claude_com:latest"}]' \
   --format json
 ```

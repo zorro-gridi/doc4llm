@@ -377,6 +377,7 @@ def extract_section_by_title(content: str, title: str) -> str | None:
 
     This function searches for a heading matching the given title and returns
     the complete section content until the next heading of the same or higher level.
+    Supports matching titles with or without numeric prefixes (e.g., "1. Title").
 
     Args:
         content: Full markdown document content
@@ -389,18 +390,37 @@ def extract_section_by_title(content: str, title: str) -> str | None:
         >>> content = "# Doc\\n\\n## Section 1\\nContent\\n## Section 2\\nMore"
         >>> extract_section_by_title(content, "Section 1")
         "## Section 1\\nContent"
+        >>> content = "## 1. Create your first Skill\\nContent"
+        >>> extract_section_by_title(content, "Create your first Skill")
+        "## 1. Create your first Skill\\nContent"
     """
     lines = content.splitlines()
     start_idx = None
     heading_level = None
 
+    # Normalize the input title by removing common numeric prefixes
+    # This handles patterns like: "1. Title", "1.1 Title", "2) Title", "1- Title"
+    normalized_title = re.sub(r'^[\d\.]+[\)\-]?\s*', '', title.strip())
+
+    # Build list of title variants to try (in order of preference)
+    title_variants = [title, normalized_title]
+    # Remove duplicates while preserving order
+    seen = set()
+    title_variants = [x for x in title_variants if not (x in seen or seen.add(x))]
+
     # Find the heading
     for i, line in enumerate(lines):
-        # Match the title as a heading (case-insensitive)
-        match = re.match(r'^(#+)\s+' + re.escape(title) + r'\s*$', line, re.IGNORECASE)
-        if match:
-            start_idx = i
-            heading_level = len(match.group(1))
+        # Try each title variant
+        for title_variant in title_variants:
+            # Match the title as a heading (case-insensitive)
+            # Also allow optional numeric prefix in the document
+            pattern = r'^(#+)\s+(?:[\d\.]+[\)\-]?\s*)?' + re.escape(title_variant) + r'\s*$'
+            match = re.match(pattern, line, re.IGNORECASE)
+            if match:
+                start_idx = i
+                heading_level = len(match.group(1))
+                break
+        if start_idx is not None:
             break
 
     if start_idx is None:

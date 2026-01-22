@@ -1,6 +1,6 @@
 ---
 name: doc-retriever
-description: "When use: user input with a keyword 'use contextZ' or 'use contextz'"
+description: "Local knowledge base retrieval. Not local project module explain. When use: user input with a keyword `use contextZ` or `use contextz`."
 skills:
   - md-doc-query-optimizer   # Phase 0: 查询优化
   - md-doc-searcher          # Phase 1: 文档发现
@@ -16,7 +16,7 @@ disallowedTools:
   - Edit
 permissionMode: bypassPermissions
 protocol: AOP
-protocol_version: "1.1"
+protocol_version: "1.0"
 # 性能优化配置
 optimization:
   skill_loading: "progressive"    # 渐进式加载：启动时加载核心技能，运行时优化内存
@@ -28,11 +28,16 @@ hooks:
       hooks:
         - type: command
           command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/validate-doc-operation.sh"'
-  PostToolUse:
-    - matcher: "Bash"
-      hooks:
         - type: command
           command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/log-retrieval.sh"'
+    - matcher: "Read"
+      hooks:
+        - type: command
+          command: |
+            if [[ "$TOOL_FILE_PATH" == *"docContent.md" ]]; then
+            echo "DENY: Access to docContent.md is blocked"
+            exit 1
+            fi
   Stop:
     - hooks:
         - type: command

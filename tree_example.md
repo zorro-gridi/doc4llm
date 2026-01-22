@@ -1,7 +1,7 @@
 ## Knowledge Base Path Tree
 
 ```
-<Knowledge_Dir>/
+<base_dir>/
 └── <doc_name>:<doc_version>/
     └── <PageTitle>/
         ├── docContent.md

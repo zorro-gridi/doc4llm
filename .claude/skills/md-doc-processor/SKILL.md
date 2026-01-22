@@ -4,7 +4,6 @@ description: "Post-process extracted markdown documentation to decide between re
 allowed-tools:
   - Read
   - Bash
-context: fork
 disable-model-invocation: true
 ---
 

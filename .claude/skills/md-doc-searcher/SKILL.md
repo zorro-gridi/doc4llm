@@ -39,13 +39,13 @@ Search and discover markdown documents headings in the local knowledge base usin
 
 ```bash
 # Use json format output for better dataflow
-python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "hooks configuration" --json
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "hooks configuration" --json --reranker
 
 # Multiple queries (search for multiple terms)
-python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "authentication" --query "JWT" --query "OAuth"
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "authentication" --query "JWT" --query "OAuth" --reranker
 
 # Search with BM25 recalled and transformer reranker parameters
-python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "api reference" --bm25-k1 1.5 --bm25-b 0.8 --reranker-threshold 0.68
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "api reference" --bm25-k1 1.5 --bm25-b 0.8 --reranker --reranker-threshold 0.68
 ```
 
 ### CLI Arguments
@@ -57,6 +57,7 @@ python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "api r
 | `--bm25-b` | float | 0.75 | BM25 b parameter |
 | `--reranker-threshold` | float | 0.68 | Similarity threshold for filtering headings (default: 0.68). Headings with score < threshold are filtered out. |
 | `--json` | flag | false | Output structured JSON metadata instead of AOP-FINAL format |
+| `--reranker` | flag | false | Must add to cli to perform a rerank operaton |
 
 ### Structured JSON Output
 

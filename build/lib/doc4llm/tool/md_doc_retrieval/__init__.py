@@ -21,6 +21,11 @@ Agentic matching:
     >>> from doc4llm.tool.md_doc_retrieval import AgenticDocMatcher
     >>> matcher = AgenticDocMatcher(extractor)
     >>> results = matcher.match("skills")
+
+Transformer-based semantic matching:
+    >>> from doc4llm.tool.md_doc_retrieval import TransformerMatcher
+    >>> matcher = TransformerMatcher()
+    >>> results = matcher.rerank("query text", ["candidate1", "candidate2"])
 """
 
 from .basic_matcher import (
@@ -63,6 +68,10 @@ from .bm25_matcher import (
     create_bm25_matcher_from_files,
     tokenize_text,
 )
+from .transformer_matcher import (
+    TransformerMatcher,
+    TransformerConfig,
+)
 
 __all__ = [
     # Main extractor class
@@ -102,6 +111,9 @@ __all__ = [
     "calculate_bm25_similarity",
     "create_bm25_matcher_from_files",
     "tokenize_text",
+    # Transformer matcher (v3.3.0)
+    "TransformerMatcher",
+    "TransformerConfig",
 ]
 
-__version__ = "3.2.0"
+__version__ = "3.3.0"

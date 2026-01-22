@@ -111,17 +111,11 @@ ALLOWED_DOC_OPERATIONS=(
     "^grep.*\.claude/scripts"
 
     # Python 脚本执行
-    "^python .*/extract_md_doc\.py"
-    "^python .*/doc_searcher_cli\.py"
-    "^python -m doc4llm"
-    "^python.*doc4llm"
-    "^python.*md_doc"
-    "^python -c.*from doc4llm"
-    "^python3 -c.*from doc4llm"
+    "^python .*"
+    "^python3 .*"
 
     # Conda 环境执行
-    "^conda run -n k8s python .*/extract_md_doc\.py"
-    "^conda run -n k8s python .*/doc_searcher_cli\.py"
+    "^conda .*"
 
     # 文件读取操作
     "^cat (md_docs|md_docs_base|~/project/md_docs_base|/Users/.*/project/md_docs_base)/.*/doc(Content|TOC)\.md"

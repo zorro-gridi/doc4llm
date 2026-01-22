@@ -4,6 +4,9 @@
       "Skill"
     ],
     "deny": [
+      "Read(**/.env)",
+      "Read(.claude/.env)",
+      "Read(**/.claude/.env)",
       "Read(**/docContent.md)",
       "Read(docContent.md)"
     ]

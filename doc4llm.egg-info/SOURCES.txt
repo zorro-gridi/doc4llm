@@ -46,6 +46,7 @@ requirements.txt
 ./doc4llm/tool/md_doc_retrieval/bm25_matcher.py
 ./doc4llm/tool/md_doc_retrieval/doc_extractor.py
 ./doc4llm/tool/md_doc_retrieval/exceptions.py
+./doc4llm/tool/md_doc_retrieval/transformer_matcher.py
 ./doc4llm/tool/md_doc_retrieval/utils.py
 doc4llm/__init__.py
 doc4llm/__main__.py
@@ -93,6 +94,7 @@ doc4llm/tool/md_doc_retrieval/basic_matcher.py
 doc4llm/tool/md_doc_retrieval/bm25_matcher.py
 doc4llm/tool/md_doc_retrieval/doc_extractor.py
 doc4llm/tool/md_doc_retrieval/exceptions.py
+doc4llm/tool/md_doc_retrieval/transformer_matcher.py
 doc4llm/tool/md_doc_retrieval/utils.py
 tests/test_agentic_matcher.py
 tests/test_bm25_matcher.py
