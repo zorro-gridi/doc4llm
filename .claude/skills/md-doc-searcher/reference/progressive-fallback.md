@@ -75,27 +75,27 @@ keywords = SearchHelpers.extract_keywords("how to configure hooks for deployment
 # Then build grep command
 SearchHelpers.build_level2_grep_command(
     keywords=["configure", "hooks", "deployment"],
-    doc_set="Claude_Code_Docs:latest"
+    doc_set="Claude_Code_Docs@latest"
 )
-# → "grep -r -iE '(configure|hooks|deployment)' {knowledge_base}/Claude_Code_Docs:latest/*/docTOC.md"
+# → "grep -r -iE '(configure|hooks|deployment)' {knowledge_base}/Claude_Code_Docs@latest/*/docTOC.md"
 ```
 
 **Execute via Bash tool:**
 ```bash
-grep -r -iE '(configure|hooks|deployment)' {knowledge_base}/Claude_Code_Docs:latest/*/docTOC.md
+grep -r -iE '(configure|hooks|deployment)' {knowledge_base}/Claude_Code_Docs@latest/*/docTOC.md
 ```
 
 **Annotate results with PageTitle ownership (REQUIRED):**
 ```python
 # Parse grep results first
 grep_results = [
-    {"file": "{knowledge_base}/Claude_Code_Docs:latest/Agent Skills/docTOC.md", "match": "Configure Skills"},
-    {"file": "{knowledge_base}/Claude_Code_Docs:latest/Agent Skills/docTOC.md", "match": "Write SKILL.md"}
+    {"file": "{knowledge_base}/Claude_Code_Docs@latest/Agent Skills/docTOC.md", "match": "Configure Skills"},
+    {"file": "{knowledge_base}/Claude_Code_Docs@latest/Agent Skills/docTOC.md", "match": "Write SKILL.md"}
 ]
 
 # CRITICAL: Annotate with PageTitle ownership
 annotated_results = SearchHelpers.annotate_headings_with_page_title(
-    grep_results, "Claude_Code_Docs:latest"
+    grep_results, "Claude_Code_Docs@latest"
 )
 
 # Then score headings
@@ -154,7 +154,7 @@ SearchHelpers.build_doc_set_filter_pattern(["Claude", "Code"])
 # → "{knowledge_base}/*Claude* {knowledge_base}/*Code*"
 
 # For "Claude Code skills", only search:
-# - Claude_Code_Docs:latest
+# - Claude_Code_Docs@latest
 # NOT: Python_Docs, React_Docs, etc.
 ```
 
@@ -200,10 +200,10 @@ else:
 # Use helper to build command
 SearchHelpers.build_level3_content_grep_command(
     keywords=["design philosophy"],
-    doc_sets=["Claude_Code_Docs:latest"],
+    doc_sets=["Claude_Code_Docs@latest"],
     context_lines=10
 )
-# → "grep -r -i -B 10 'design philosophy' {knowledge_base}/Claude_Code_Docs:latest/*/docContent.md"
+# → "grep -r -i -B 10 'design philosophy' {knowledge_base}/Claude_Code_Docs@latest/*/docContent.md"
 ```
 
 **Execute via Bash tool:**
@@ -255,10 +255,10 @@ for result in content_results:
 **Helper for title extraction:**
 ```python
 SearchHelpers.build_title_extraction_command(
-    "{knowledge_base}/Claude_Code_Docs:latest/Agent Skills/docContent.md",
+    "{knowledge_base}/Claude_Code_Docs@latest/Agent Skills/docContent.md",
     max_lines=5
 )
-# → "head -5 {knowledge_base}/Claude_Code_Docs:latest/Agent Skills/docContent.md"
+# → "head -5 {knowledge_base}/Claude_Code_Docs@latest/Agent Skills/docContent.md"
 ```
 
 **Success Condition:**
@@ -281,7 +281,7 @@ else:
 ```markdown
 Found N relevant document(s) via Level 3.2 content search:
 
-1. **Document Title** (Doc_Set:Version)
+1. **Document Title** (Doc_Set@version)
    - Relevance: Content contains "keyword" in section context
    - Context: [Brief excerpt from grep -B 10 output]
    - PageTitle归属: [PageTitle Name]

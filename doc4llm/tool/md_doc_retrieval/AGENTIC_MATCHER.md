@@ -135,7 +135,7 @@ def _is_satisfied(results):
     "title": "Agent Skills",
     "similarity": 0.85,          # 最终相似度分数
     "match_type": "toc_section", # 匹配类型
-    "doc_name_version": "code_claude_com:latest",
+    "doc_name_version": "code_claude_com@latest",
     "source": "toc",             # 来源: title/toc/preview
     "content_preview": "...",    # 内容预览 (可选)
     "sections_matched": [        # 匹配的章节 (TOC)

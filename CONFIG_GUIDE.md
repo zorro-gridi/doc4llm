@@ -1307,7 +1307,7 @@ python -m doc4llm -u https://docs.example.com -mode 3 -enable-inline-extraction 
 
 ```
 md_docs/
-└── <doc_name>:<doc_version>/
+└── <doc_name>@<doc_version>/
     ├── <页面1标题>/
     │   ├── docContent.md    # 文档正文内容
     │   └── docTOC.md        # 目录锚点链接

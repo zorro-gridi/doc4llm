@@ -33,7 +33,7 @@
 === 启用fuzz: 0
 ==============================================
 === 锚点链接爬取模式已启用 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 检测到CSV文件已存在且有内容，跳过URL扫描 ===
@@ -46,7 +46,7 @@
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 URL数量: 1
 ============================================================
 
@@ -98,7 +98,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 锚点链接爬取模式已启用 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 检测到CSV文件已存在且有内容，跳过URL扫描 ===
@@ -111,7 +111,7 @@ URL数量: 1
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 URL数量: 1
 ============================================================
 
@@ -163,7 +163,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 检测到CSV文件已存在且有内容，跳过URL扫描 ===
@@ -176,7 +176,7 @@ URL数量: 1
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 最大深度: 10
 ============================================================
 
@@ -200,7 +200,7 @@ URL数量: 1
 失败: 0
 跳过: 0
 过滤: 0
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -209,7 +209,7 @@ URL数量: 1
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 URL数量: 1
 ============================================================
 
@@ -260,7 +260,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 检测到CSV文件已存在且有内容，跳过URL扫描 ===
@@ -273,7 +273,7 @@ URL数量: 1
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 最大深度: 10
 ============================================================
 
@@ -297,7 +297,7 @@ URL数量: 1
 失败: 0
 跳过: 0
 过滤: 0
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -306,7 +306,7 @@ URL数量: 1
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 URL数量: 1
 ============================================================
 
@@ -358,7 +358,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 检测到CSV文件已存在且有内容，跳过URL扫描 ===
@@ -371,7 +371,7 @@ URL数量: 1
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 最大深度: 10
 ============================================================
 
@@ -395,7 +395,7 @@ URL数量: 1
 失败: 0
 跳过: 0
 过滤: 0
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -404,7 +404,7 @@ URL数量: 1
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 URL数量: 1
 ============================================================
 
@@ -456,7 +456,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 检测到CSV文件已存在且有内容，跳过URL扫描 ===
@@ -469,7 +469,7 @@ URL数量: 1
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 最大深度: 10
 ============================================================
 
@@ -493,7 +493,7 @@ URL数量: 1
 失败: 0
 跳过: 0
 过滤: 0
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -502,7 +502,7 @@ URL数量: 1
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 URL数量: 1
 ============================================================
 
@@ -563,7 +563,7 @@ doc4llm: error: argument -mode: invalid int value: '3clear'
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 检测到CSV文件已存在且有内容，跳过URL扫描 ===
@@ -576,7 +576,7 @@ doc4llm: error: argument -mode: invalid int value: '3clear'
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 最大深度: 10
 ============================================================
 
@@ -600,7 +600,7 @@ doc4llm: error: argument -mode: invalid int value: '3clear'
 失败: 0
 跳过: 0
 过滤: 0
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -609,7 +609,7 @@ doc4llm: error: argument -mode: invalid int value: '3clear'
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 URL数量: 1
 ============================================================
 
@@ -661,7 +661,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 检测到CSV文件已存在且有内容，跳过URL扫描 ===
@@ -674,7 +674,7 @@ URL数量: 1
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 最大深度: 10
 ============================================================
 
@@ -698,7 +698,7 @@ URL数量: 1
 失败: 0
 跳过: 0
 过滤: 0
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -707,7 +707,7 @@ URL数量: 1
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 URL数量: 1
 ============================================================
 
@@ -758,7 +758,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 检测到CSV文件已存在且有内容，跳过URL扫描 ===
@@ -771,7 +771,7 @@ URL数量: 1
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 最大深度: 10
 ============================================================
 
@@ -795,7 +795,7 @@ URL数量: 1
 失败: 0
 跳过: 0
 过滤: 0
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -804,7 +804,7 @@ URL数量: 1
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/code_claude_com:latest
+输出目录: md_docs/code_claude_com@latest
 URL数量: 1
 ============================================================
 
@@ -898,7 +898,7 @@ doc4llm: error: unrecognized arguments: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/auto-detected:latest
+=== 文档输出目录: md_docs/auto-detected@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 第一步：执行URL扫描 ===
@@ -1993,7 +1993,7 @@ doc4llm: error: unrecognized arguments: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/Claude_Code_Docs:latest
+=== 文档输出目录: md_docs/Claude_Code_Docs@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 第一步：执行URL扫描 ===
@@ -2004,9 +2004,9 @@ doc4llm: error: unrecognized arguments: 1
 扫描被用户中断!
 
 
-扫描完成! 共扫描 0 个URL 
-完整报告已保存至: results/code.claude.com_20260117_181844.csv 
-============================================== 
+扫描完成! 共扫描 0 个URL
+完整报告已保存至: results/code.claude.com_20260117_181844.csv
+==============================================
 ==============================================
 未发现危险链接
 ==============================================
@@ -2047,7 +2047,7 @@ doc4llm: error: unrecognized arguments: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/Claude_Code_Docs:latest
+=== 文档输出目录: md_docs/Claude_Code_Docs@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 第一步：执行URL扫描 ===
@@ -2057,9 +2057,9 @@ doc4llm: error: unrecognized arguments: 1
 [深度:0] [Err] [0] [接口] [===========] https://code.claude.com/docs/en/skills [0.00s]
 
 
-扫描完成! 共扫描 1 个URL 
-完整报告已保存至: results/code.claude.com_20260117_182244.csv 
-============================================== 
+扫描完成! 共扫描 1 个URL
+完整报告已保存至: results/code.claude.com_20260117_182244.csv
+==============================================
 ==============================================
 未发现危险链接
 ==============================================
@@ -2071,7 +2071,7 @@ doc4llm: error: unrecognized arguments: 1
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 最大深度: 10
 ============================================================
 
@@ -2088,7 +2088,7 @@ doc4llm: error: unrecognized arguments: 1
 失败: 1
 跳过: 0
 过滤: 0
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -2097,7 +2097,7 @@ doc4llm: error: unrecognized arguments: 1
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 URL数量: 1
 ============================================================
 
@@ -2148,7 +2148,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/Claude_Code_Docs:latest
+=== 文档输出目录: md_docs/Claude_Code_Docs@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 第一步：执行URL扫描 ===
@@ -2159,9 +2159,9 @@ URL数量: 1
 扫描被用户中断!
 
 
-扫描完成! 共扫描 0 个URL 
-完整报告已保存至: results/code.claude.com_20260117_182513.csv 
-============================================== 
+扫描完成! 共扫描 0 个URL
+完整报告已保存至: results/code.claude.com_20260117_182513.csv
+==============================================
 ==============================================
 未发现危险链接
 ==============================================
@@ -2202,7 +2202,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/Claude_Code_Docs:latest
+=== 文档输出目录: md_docs/Claude_Code_Docs@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 第一步：执行URL扫描 ===
@@ -2212,9 +2212,9 @@ URL数量: 1
 [深度:0] [Err] [0] [接口] [===========] https://code.claude.com/docs/en/skills [0.00s]
 
 
-扫描完成! 共扫描 1 个URL 
-完整报告已保存至: results/code.claude.com_20260117_182644.csv 
-============================================== 
+扫描完成! 共扫描 1 个URL
+完整报告已保存至: results/code.claude.com_20260117_182644.csv
+==============================================
 ==============================================
 未发现危险链接
 ==============================================
@@ -2226,7 +2226,7 @@ URL数量: 1
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 最大深度: 10
 ============================================================
 
@@ -2243,7 +2243,7 @@ URL数量: 1
 失败: 1
 跳过: 0
 过滤: 0
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -2252,7 +2252,7 @@ URL数量: 1
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 URL数量: 1
 ============================================================
 
@@ -2303,7 +2303,7 @@ URL数量: 1
 === 启用fuzz: 0
 ==============================================
 === 组合模式已启用：依次执行文档内容爬取和锚点链接提取 ===
-=== 文档输出目录: md_docs/Claude_Code_Docs:latest
+=== 文档输出目录: md_docs/Claude_Code_Docs@latest
 === 文档版本: latest
 === 最大爬取深度: 10
 === 第一步：执行URL扫描 ===
@@ -2590,23 +2590,23 @@ URL数量: 1
 TOC提取成功: 42
 TOC提取失败: 0
 无锚点页面: 0
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 平均处理时间: 70.648秒/任务
 ============================================================
 
 
 
-扫描完成! 共扫描 355 个URL 
-完整报告已保存至: results/code.claude.com_20260117_184630.csv 
-============================================== 
+扫描完成! 共扫描 355 个URL
+完整报告已保存至: results/code.claude.com_20260117_184630.csv
+==============================================
 
 === 扫描过程中发现的危险链接汇总 ===
 共发现 2 个危险链接:
 [  1] https://code.claude.com/docs/en/Delegate
 [  2] https://code.claude.com/logout
 
-危险链接已经追加到报告文件: results/code.claude.com_20260117_184630.csv 
- 
+危险链接已经追加到报告文件: results/code.claude.com_20260117_184630.csv
+
 ==============================================
 总耗时: 463.11秒 | 平均速度: 0.1 URL/秒
 扫描结束!
@@ -2616,7 +2616,7 @@ TOC提取失败: 0
 ============================================================
 开始爬取文档站点
 起始URL: https://code.claude.com/docs/en/skills
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 最大深度: 10
 ============================================================
 
@@ -2932,7 +2932,7 @@ TOC提取失败: 0
 失败: 0
 跳过: 0
 过滤: 0
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 ============================================================
 
 === 第三步：从CSV文件提取锚点链接 ===
@@ -2941,7 +2941,7 @@ TOC提取失败: 0
 ============================================================
 开始提取文档锚点链接（仅TOC目录）
 CSV文件: results/url_extration_list.csv
-输出目录: md_docs/Claude_Code_Docs:latest
+输出目录: md_docs/Claude_Code_Docs@latest
 URL数量: 50
 ============================================================
 

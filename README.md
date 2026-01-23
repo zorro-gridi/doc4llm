@@ -195,7 +195,7 @@ results/
 
 ```
 md_docs/
-└── <doc_name>:<doc_version>/
+└── <doc_name>@<doc_version>/
     ├── Page 1 Title/
     │   └── docContent.md
     ├── Page 2 Title/

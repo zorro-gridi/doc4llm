@@ -1,0 +1,49 @@
+[
+  {
+    "title": "Create custom subagents",
+    "headings": [
+      "3.5. Control subagent capabilities",
+      "2. Quickstart: create your first subagent",
+      "3.2. Choose the subagent scope",
+      "4.5. Manage subagent context",
+      "3.3. Write subagent files",
+      "3.6.1. Hooks in subagent frontmatter",
+      "3.6.2. Project-level hooks for subagent events"
+    ],
+    "doc_set": "Claude_Code_Docs@latest"
+  },
+  {
+    "title": "Agent Skills",
+    "headings": [
+      "3.8.2. Run a Skill in a subagent context",
+      "3.8.1. Give a subagent access to Skills"
+    ],
+    "doc_set": "Claude_Code_Docs@latest"
+  },
+  {
+    "title": "Agents",
+    "headings": [
+      "6.11. Task permissions",
+      "2.1. Primary agents",
+      "7. Create agents",
+      "9.1. Documentation agent"
+    ],
+    "doc_set": "OpenCode_Docs@latest"
+  },
+  {
+    "title": "Agent Skills",
+    "headings": [
+      "10. Override per agent",
+      "11. Disable the skill tool"
+    ],
+    "doc_set": "OpenCode_Docs@latest"
+  },
+  {
+    "title": "Config",
+    "headings": [
+      "4.6. Agents",
+      "4.7. Default agent"
+    ],
+    "doc_set": "OpenCode_Docs@latest"
+  }
+]

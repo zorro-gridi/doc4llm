@@ -74,7 +74,7 @@ def main():
             # 文档爬取模式
             doc_name_display = config.doc_name or "auto-detected"
             print(f"{Fore.GREEN}=== 文档爬取模式已启用 ==={Style.RESET_ALL}")
-            print(f"{Fore.CYAN}=== 文档输出目录: {config.doc_dir}/{doc_name_display}:{config.doc_version}{Style.RESET_ALL}")
+            print(f"{Fore.CYAN}=== 文档输出目录: {config.doc_dir}/{doc_name_display}@{config.doc_version}{Style.RESET_ALL}")
             print(f"{Fore.CYAN}=== 文档版本: {config.doc_version}{Style.RESET_ALL}")
             print(f"{Fore.CYAN}=== 最大爬取深度: {config.doc_max_depth}{Style.RESET_ALL}")
 
@@ -133,7 +133,7 @@ def main():
             # 锚点链接爬取模式
             print(f"{Fore.GREEN}=== 锚点链接爬取模式已启用 ==={Style.RESET_ALL}")
             doc_name_display = config.doc_name or "auto-detected"
-            print(f"{Fore.CYAN}=== 输出目录: {config.doc_dir}/{doc_name_display}:{config.doc_version}{Style.RESET_ALL}")
+            print(f"{Fore.CYAN}=== 输出目录: {config.doc_dir}/{doc_name_display}@{config.doc_version}{Style.RESET_ALL}")
 
             # 检查是否需要执行URL扫描
             csv_file_exists_and_has_content = False
@@ -183,7 +183,7 @@ def main():
                 print(f"{Fore.CYAN}=== 从起始URL自动设置文档名称: {config.doc_name} ==={Style.RESET_ALL}")
                 # 更新显示的文档名称
                 doc_name_display = config.doc_name
-                print(f"{Fore.CYAN}=== 输出目录: {config.doc_dir}/{doc_name_display}:{config.doc_version}{Style.RESET_ALL}")
+                print(f"{Fore.CYAN}=== 输出目录: {config.doc_dir}/{doc_name_display}@{config.doc_version}{Style.RESET_ALL}")
 
             # 第二步：从CSV文件读取URL并提取锚点链接
             print(f"{Fore.CYAN}=== 第二步：从CSV文件提取锚点链接 ==={Style.RESET_ALL}")

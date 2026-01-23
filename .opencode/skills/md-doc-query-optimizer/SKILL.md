@@ -37,7 +37,7 @@ Before query analysis, identify target documentation sets:
 **Knowledge Base Configuration:**
 - Read `.opencode/knowledge_base.json` → get `base_dir`
 - List all first-level subdirectories under `<base_dir>/`
-- Subdirectory naming pattern: `<doc_name>:<doc_version>` (e.g., `code_claude_com:latest`)
+- Subdirectory naming pattern: `<doc_name>@<doc_version>` (e.g., `code_claude_com@latest`)
 
 **Matching Strategy:**
 1. **Direct Match**: Query contains doc-set identifier (e.g., "Claude Code hooks")
@@ -46,7 +46,7 @@ Before query analysis, identify target documentation sets:
 4. **No Match**: Return empty list `[]` → Suggest online search
 
 **Output:**
-- `doc_set`: List[str] - e.g., `["code_claude_com:latest"]` or `[]` (empty = suggest online search)
+- `doc_set`: List[str] - e.g., `["code_claude_com@latest"]` or `[]` (empty = suggest online search)
 
 ### Phase 1: Intent Recognition
 
@@ -193,7 +193,7 @@ This skill works with `md-doc-searcher` in the following workflow:
 - Complexity: {low/medium/high}
 - Ambiguity: {low/medium/high}
 - Applied Strategies: {strategy_list}
-- Doc-Set: <doc_name>:<doc_version>  [can be multiple, comma-separated]
+- Doc-Set: <doc_name>@<doc_version>  [can be multiple, comma-separated]
 
 ## Optimized Queries (Ranked)
 1. "{primary_query}" - {strategy_applied}: {rationale}
@@ -202,8 +202,7 @@ This skill works with `md-doc-searcher` in the following workflow:
 ...
 
 ## Search Recommendation
-**Online Search Suggested** - No matching documentation set found.
-Please try online search for: "{original_query}"
+Perform online search - No matching documentation set found in local knowledge base.
 ```
 
 ### JSON Output Format (For md-doc-searcher)
@@ -216,7 +215,7 @@ Please try online search for: "{original_query}"
     "complexity": "{low|medium|high}",
     "ambiguity": "{low|medium|high}",
     "strategies": ["{strategy1}", "{strategy2}"],
-    "doc_set": ["<doc_name>:<doc_version>"]
+    "doc_set": ["<doc_name>@<doc_version>"]
   },
   "optimized_queries": [
     {
@@ -234,7 +233,7 @@ Please try online search for: "{original_query}"
   ],
   "search_recommendation": {
     "online_suggested": true,
-    "reason": "No matching documentation set found in local knowledge base"
+    "reason": "Only when after no matching documentation set found - perform online search"
   }
 }
 ```
@@ -254,7 +253,7 @@ Please try online search for: "{original_query}"
     "complexity": "low",
     "ambiguity": "medium",
     "strategies": ["translation", "expansion"],
-    "doc_set": ["code_claude_com:latest"]
+    "doc_set": ["code_claude_com@latest"]
   },
   "optimized_queries": [
     {
@@ -301,7 +300,7 @@ Please try online search for: "{original_query}"
   ],
   "search_recommendation": {
     "online_suggested": true,
-    "reason": "No matching documentation set found in local knowledge base"
+    "reason": "Only when after no matching documentation set found - perform online search"
   }
 }
 ```

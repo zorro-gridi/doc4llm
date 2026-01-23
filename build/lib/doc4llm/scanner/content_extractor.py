@@ -141,7 +141,7 @@ class ContentExtractor(DebugMixin):
     def _build_doc_root_path(self) -> str:
         """
         构建文档根目录路径
-        格式: doc_dir/<doc_name>:<doc_version>/
+        格式: doc_dir/<doc_name>@<doc_version>/
 
         Returns:
             str: 文档根目录的绝对路径
@@ -154,7 +154,7 @@ class ContentExtractor(DebugMixin):
             else:
                 doc_name = 'documentation'
 
-        dir_name = f"{doc_name}:{self.config.doc_version}"
+        dir_name = f"{doc_name}@{self.config.doc_version}"
         full_path = os.path.join(self.config.doc_dir, dir_name)
 
         # 创建目录

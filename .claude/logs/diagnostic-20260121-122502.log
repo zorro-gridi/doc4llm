@@ -22,8 +22,8 @@
 [INFO] md-doc-processor 技能配置正确
 [INFO] md-doc-processor 包含描述
 [INFO] 发现        1 个文档集
-[INFO] Claude_Code_Docs:latest:       49 个文档,       48 个目录
-[WARN] Claude_Code_Docs:latest: 文档和目录数量不匹配
+[INFO] Claude_Code_Docs@latest:       49 个文档,       48 个目录
+[WARN] Claude_Code_Docs@latest: 文档和目录数量不匹配
 [INFO] doc-retrieval.log: 49K,      508 行
 [INFO] doc-retrieval.log 最后活动: 2026-01-21 12:23:38
 [INFO] security-validation.log: 75K,      746 行

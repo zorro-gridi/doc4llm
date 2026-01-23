@@ -31,16 +31,16 @@ if [ "$INITIAL_USAGE" -gt 95 ]; then
     echo "清理 Python 缓存文件..."
     find . -name "*.pyc" -delete 2>/dev/null || true
     find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
-    
+
     echo "清理日志文件 (保留最近3天)..."
     find .claude/logs -name "*.log" -mtime +3 -delete 2>/dev/null || true
-    
+
     echo "清理构建文件..."
     rm -rf build/ dist/ *.egg-info/ 2>/dev/null || true
-    
+
     FINAL_USAGE=$(df . | tail -1 | awk '{print $5}' | sed 's/%//')
     echo "清理后磁盘使用率: ${FINAL_USAGE}%"
-    
+
     if [ "$FINAL_USAGE" -gt 90 ]; then
         echo "⚠️  磁盘空间仍然紧张，建议手动清理更多文件"
     else
@@ -52,8 +52,8 @@ fi
 
 # 3. 修复文档集一致性
 echo "[3/6] 检查文档集一致性..."
-DOC_COUNT=$(find md_docs/Claude_Code_Docs:latest -name "*.md" -type f | wc -l)
-DIR_COUNT=$(find md_docs/Claude_Code_Docs:latest -type d | wc -l)
+DOC_COUNT=$(find md_docs/Claude_Code_Docs@latest -name "*.md" -type f | wc -l)
+DIR_COUNT=$(find md_docs/Claude_Code_Docs@latest -type d | wc -l)
 echo "文档数量: $DOC_COUNT, 目录数量: $DIR_COUNT"
 
 if [ "$DOC_COUNT" -ne "$((DIR_COUNT - 1))" ]; then

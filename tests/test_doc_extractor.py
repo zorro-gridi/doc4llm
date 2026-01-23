@@ -28,7 +28,7 @@ class TestMarkdownDocExtractorV2(TestCase):
     def setUp(self):
         """Set up test fixtures."""
         self.test_dir = tempfile.mkdtemp()
-        self.doc_set = f"{self.test_dir}/test_docs:latest"
+        self.doc_set = f"{self.test_dir}/test_docs@latest"
         os.makedirs(self.doc_set, exist_ok=True)
 
         # Create test documents
@@ -110,12 +110,12 @@ class TestMarkdownDocExtractorV2(TestCase):
         extractor = MarkdownDocExtractor(base_dir=self.test_dir)
 
         # Search with doc set filter
-        results = extractor.semantic_search_titles("skill", doc_set="test_docs:latest")
+        results = extractor.semantic_search_titles("skill", doc_set="test_docs@latest")
 
         self.assertGreater(len(results), 0)
 
         # Search with non-existent doc set
-        results = extractor.semantic_search_titles("skill", doc_set="nonexistent:latest")
+        results = extractor.semantic_search_titles("skill", doc_set="nonexistent@latest")
         self.assertEqual(len(results), 0)
 
     def test_extract_with_compression_enabled(self):

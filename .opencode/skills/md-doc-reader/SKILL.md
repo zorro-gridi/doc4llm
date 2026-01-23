@@ -30,7 +30,7 @@ This skill uses a **CLI-first design**. All operations are executed through CLI 
 
 **CLI (recommended - zero context overhead):**
 ```bash
-conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py --title "Agent Skills" --doc-set "doc_set:version"
+conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py --page-title "Agent Skills" --doc-set "doc_set@version"
 ```
 
 ## MANDATORY: CLI-Only Extraction
@@ -50,9 +50,9 @@ conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py
 
 | Instead of... | Always use... |
 |--------------|---------------|
-| `Read "path/to/docContent.md"` | `python scripts/extract_md_doc.py --title "Page Title" --doc-set "doc_set:version"` |
-| `wc -l path/to/docContent.md` | `python scripts/extract_md_doc.py --title "Page Title" --doc-set "doc_set:version" --doc-info` |
-| `Glob "**/docContent.md"` | `python scripts/extract_md_doc.py --list --doc-set "doc_set:version"` |
+| `Read "path/to/docContent.md"` | `python scripts/extract_md_doc.py --page-title "Page Title" --doc-set "doc_set@version"` |
+| `wc -l path/to/docContent.md` | `python scripts/extract_md_doc.py --page-title "Page Title" --doc-set "doc_set@version" --doc-info` |
+| `Glob "**/docContent.md"` | `python scripts/extract_md_doc.py --list --doc-set "doc_set@version"` |
 | Manual file traversal | CLI extraction with appropriate parameters |
 
 ### Quick CLI Reference
@@ -60,25 +60,25 @@ conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py
 ```bash
 # Extract full document (REQUIRED pattern)
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --title "Agent Skills" \
-  --doc-set "Claude_Code_Docs:latest"
+  --page-title "Agent Skills" \
+  --doc-set "Claude_Code_Docs@latest"
 
 # Extract with metadata (for threshold checking)
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --title "Agent Skills" \
-  --doc-set "Claude_Code_Docs:latest" \
+  --page-title "Agent Skills" \
+  --doc-set "Claude_Code_Docs@latest" \
   --with-metadata
 
 # Get document info
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --title "Agent Skills" \
-  --doc-set "Claude_Code_Docs:latest" \
+  --page-title "Agent Skills" \
+  --doc-set "Claude_Code_Docs@latest" \
   --doc-info
 
 # List documents
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
   --list \
-  --doc-set "Claude_Code_Docs:latest"
+  --doc-set "Claude_Code_Docs@latest"
 ```
 
 **VIOLATION: Using Read/Glob tools for docContent.md access is prohibited.**
@@ -114,13 +114,13 @@ For complete documentation:
 ```bash
 # Extract specific sections by headings
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --title "Agent Skills" \
+  --page-title "Agent Skills" \
   --headings "Create Skills,Configure Hooks" \
-  --doc-set "code_claude_com:latest"
+  --doc-set "code_claude_com@latest"
 
 # Output in JSON format
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --title "Agent Skills" \
+  --page-title "Agent Skills" \
   --headings "Create Skills,Configure Hooks" \
   --format json
 ```
@@ -129,13 +129,13 @@ conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py
 
 | Argument | Type | Description |
 |----------|------|-------------|
-| `--title` | string | **Required** document page title |
+| `--page-title` | string | **Required** document page title |
 | `--headings` | string | Comma-separated heading names for section extraction (optional) |
-| `--doc-set` | string | **Required** document set identifier (e.g., "code_claude_com:latest") |
+| `--doc-set` | string | **Required** document set identifier (e.g., "code_claude_com@latest") |
 | `--format` | string | Output format: `text` (default), `json`, or `summary` |
 
 **CRITICAL REQUIRED PARAMETERS:**
-- **`--title`**: **Required for ALL CLI invocations** (except when using `--list`, `--titles-csv`, `--titles-file`, or `--semantic-search`)
+- **`--page-title`**: **Required for ALL CLI invocations** (except when using `--list`, `--page-titles-csv`, `--page-titles-file`, or `--semantic-search`)
 - **`--doc-set`**: **Required for ALL CLI invocations**
 
 These parameters ensure the correct document and section are targeted from the correct document set.
@@ -150,7 +150,7 @@ These parameters ensure the correct document and section are targeted from the c
 Expected format:
 ```
 <base_dir>/
-└── <doc_name>:<doc_version>/
+└── <doc_name>@<doc_version>/
     └── <PageTitle>/
         └── docContent.md
 ```
@@ -163,25 +163,25 @@ Where `<base_dir>` is configured in `.opencode/knowledge_base.json` (default: `m
 ```bash
 # CRITICAL: --doc-set is REQUIRED for all CLI calls
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --title "Agent Skills" \
-  --doc-set "code_claude_com:latest"
+  --page-title "Agent Skills" \
+  --doc-set "code_claude_com@latest"
 ```
 
 ### Scenario 2: Section Extraction (by Headings)
 ```bash
 # Extract specific sections - --doc-set is REQUIRED
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --title "Agent Skills" \
+  --page-title "Agent Skills" \
   --headings "Create Skills,Configure Hooks" \
-  --doc-set "code_claude_com:latest"
+  --doc-set "code_claude_com@latest"
 ```
 
 ### Scenario 3: Multiple Documents (Full Content)
 ```bash
 # Extract multiple documents with metadata - --doc-set is REQUIRED
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --titles-csv "Agent Skills,Slash Commands,Hooks" \
-  --doc-set "code_claude_com:latest" \
+  --page-titles-csv "Agent Skills,Slash Commands,Hooks" \
+  --doc-set "code_claude_com@latest" \
   --with-metadata \
   --threshold 2100
 ```
@@ -198,12 +198,12 @@ cat > sections.json << 'EOF'
   {
     "title": "Agent Skills",
     "headings": ["Create Skills", "Configure Hooks"],
-    "doc_set": "code_claude_com:latest"
+    "doc_set": "code_claude_com@latest"
   },
   {
     "title": "Hooks Reference",
     "headings": ["Hook Types", "Configuration"],
-    "doc_set": "code_claude_com:latest"
+    "doc_set": "code_claude_com@latest"
   }
 ]
 EOF
@@ -217,7 +217,7 @@ conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py
 **CLI Usage (inline JSON):**
 ```bash
 conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --sections-json '[{"title":"Agent Skills","headings":["Create Skills"],"doc_set":"code_claude_com:latest"}]' \
+  --sections-json '[{"title":"Agent Skills","headings":["Create Skills"],"doc_set":"code_claude_com@latest"}]' \
   --format json
 ```
 
@@ -237,20 +237,20 @@ What do you want to extract?
 │     └─ Format: JSON array of {title, headings[], doc_set} objects
 │
 ├─ Single document, full content?
-│  └─ Use: --title "Document Title" --doc-set "doc_set:version"
+│  └─ Use: --page-title "Document Title" --doc-set "doc_set@version"
 │     └─ --doc-set: **REQUIRED**
 │
 ├─ Specific sections within a single document?
-│  └─ Use: --title "Document Title" --headings "Heading1,Heading2" --doc-set "doc_set:version"
+│  └─ Use: --page-title "Document Title" --headings "Heading1,Heading2" --doc-set "doc_set@version"
 │     └─ --doc-set: **REQUIRED**
 │
 ├─ Multiple documents, full content?
-│  └─ Use: --titles-csv "Doc1,Doc2,Doc3" --doc-set "doc_set:version"
+│  └─ Use: --page-titles-csv "Doc1,Doc2,Doc3" --doc-set "doc_set@version"
 │     └─ --with-metadata: Recommended (gets line counts)
 │     └─ --doc-set: **REQUIRED**
 │
 └─ List available documents?
-   └─ Use: --list --doc-set "doc_set:version"
+   └─ Use: --list --doc-set "doc_set@version"
       └─ --doc-set: **REQUIRED**
 ```
 
@@ -258,15 +258,15 @@ What do you want to extract?
 
 | Mistake | Error | Fix |
 |---------|-------|-----|
-| **Missing `--title` in ANY CLI call** | `--title is required unless using --list, --titles-csv, --titles-file, --semantic-search, --sections-file, or --sections-json` | **Always add** `--title "Your Page Title"` |
-| **Missing `--doc-set` in ANY CLI call** | Document not found or ambiguous results | **Always add** `--doc-set "your_doc_set:version"` |
-| Using `--title` with `--titles-csv` | Conflicting arguments | Use only one title specification method |
-| Wrong `--doc-set` format | Document not found | Use format: `"doc_name:version"` (e.g., `"code_claude_com:latest"`) |
+| **Missing `--page-title` in ANY CLI call** | `--page-title is required unless using --list, --page-titles-csv, --page-titles-file, --semantic-search, --sections-file, or --sections-json` | **Always add** `--page-title "Your Page Title"` |
+| **Missing `--doc-set` in ANY CLI call** | Document not found or ambiguous results | **Always add** `--doc-set "your_doc_set@version"` |
+| Using `--page-title` with `--page-titles-csv` | Conflicting arguments | Use only one title specification method |
+| Wrong `--doc-set` format | Document not found | Use format: `"doc_name@version"` (e.g., `"code_claude_com@latest"`) |
 | **Invalid JSON in `--sections-json`** | JSON decode error | Ensure valid JSON array with proper escaping |
 
 ### Why --doc-set is Always Required
 
-1. **Multiple document sets**: Your knowledge base may contain multiple document sets (e.g., "code_claude_com:latest", "anthropic_docs:v2")
+1. **Multiple document sets**: Your knowledge base may contain multiple document sets (e.g., "code_claude_com@latest", "anthropic_docs@v2")
 2. **Title collisions**: Different document sets may contain pages with identical titles
 3. **Deterministic behavior**: Explicitly specifying the document set ensures consistent and predictable results
 4. **Performance**: Directly targeting a specific document set is faster than searching all sets

@@ -2,7 +2,7 @@
 
 ```
 <base_dir>/
-└── <doc_name>:<doc_version>/
+└── <doc_name>@<doc_version>/
     └── <PageTitle>/
         ├── docContent.md
         └── docTOC.md

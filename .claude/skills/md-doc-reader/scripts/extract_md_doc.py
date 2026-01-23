@@ -22,9 +22,9 @@ def main():
         description="Extract markdown document content by title"
     )
     parser.add_argument(
-        "--title",
+        "--page-title",
         "-t",
-        help="Document title to extract (required unless using --list)",
+        help="Document page title to extract (required unless using --list)",
     )
     parser.add_argument(
         "--base-dir",
@@ -87,12 +87,12 @@ def main():
         help="Enable debug output",
     )
     parser.add_argument(
-        "--titles-csv",
-        help="Comma-separated titles for multi-document extraction",
+        "--page-titles-csv",
+        help="Comma-separated page titles for multi-document extraction",
     )
     parser.add_argument(
-        "--titles-file",
-        help="File containing titles (one per line)",
+        "--page-titles-file",
+        help="File containing page titles (one per line)",
     )
     parser.add_argument(
         "--with-metadata",
@@ -138,7 +138,7 @@ def main():
     )
     parser.add_argument(
         "--doc-set",
-        help="Document set identifier (e.g., 'code_claude_com:latest') - REQUIRED for section extraction (--headings)",
+        help="Document set identifier (e.g., 'code_claude_com@latest') - REQUIRED for section extraction (--headings)",
     )
     parser.add_argument(
         "--headings",
@@ -178,12 +178,12 @@ def main():
     # Validate arguments
     # Allow --list, --titles-csv, --titles-file, --semantic-search, --sections-file, --sections-json without --title
     requires_title = not (
-        args.list or args.titles_csv or args.titles_file or args.semantic_search or
+        args.list or args.page_titles_csv or args.page_titles_file or args.semantic_search or
         args.sections_file or args.sections_json
     )
-    if requires_title and not args.title:
+    if requires_title and not args.page_title:
         parser.error(
-            "--title is required unless using --list, --titles-csv, --titles-file, --semantic-search, --sections-file, or --sections-json"
+            "--page-title is required unless using --list, --page-titles-csv, --page-titles-file, --semantic-search, --sections-file, or --sections-json"
         )
 
     # Validate mutually exclusive arguments
@@ -273,11 +273,11 @@ def main():
 
         # Search for documents
         if args.search:
-            results = extractor.search_documents(args.title)
+            results = extractor.search_documents(args.page_title)
             if args.format == "json":
                 print(json.dumps({"results": results}, indent=2))
             else:
-                print(f"Search results for '{args.title}':")
+                print(f"Search results for '{args.page_title}':")
                 for result in results:
                     print(f"  - {result['title']}")
                     print(f"    Similarity: {result['similarity']:.2f}")
@@ -285,12 +285,12 @@ def main():
             return 0
 
         # Multi-document extraction
-        if args.titles_csv or args.titles_file:
+        if args.page_titles_csv or args.page_titles_file:
             titles = []
-            if args.titles_csv:
-                titles.extend([t.strip() for t in args.titles_csv.split(",")])
-            if args.titles_file:
-                with open(args.titles_file, "r") as f:
+            if args.page_titles_csv:
+                titles.extend([t.strip() for t in args.page_titles_csv.split(",")])
+            if args.page_titles_file:
+                with open(args.page_titles_file, "r") as f:
                     titles.extend([line.strip() for line in f if line.strip()])
 
             if args.with_metadata:
@@ -328,7 +328,7 @@ def main():
         # Compression mode
         if args.compress:
             result = extractor.extract_with_compression(
-                title=args.title, query=args.compress_query
+                title=args.page_title, query=args.compress_query
             )
             output_compression_result(result, args.format)
             return 0
@@ -336,7 +336,7 @@ def main():
         # Candidate extraction
         if args.candidates:
             candidates = extractor.extract_by_title_with_candidates(
-                title=args.title,
+                title=args.page_title,
                 max_candidates=args.max_candidates,
                 min_threshold=args.min_threshold,
             )
@@ -346,7 +346,7 @@ def main():
         # Semantic search
         if args.semantic_search:
             results = extractor.semantic_search_titles(
-                query=args.title,
+                query=args.page_title,
                 doc_set=args.doc_set,
                 max_results=args.max_results or 10,
             )
@@ -355,7 +355,7 @@ def main():
 
         # Document info
         if args.doc_info:
-            info = extractor.get_document_info(args.title)
+            info = extractor.get_document_info(args.page_title)
             output_doc_info(info, args.format)
             return 0
 
@@ -363,7 +363,7 @@ def main():
         if args.headings:
             headings = [h.strip() for h in args.headings.split(",")]
             sections = extractor.extract_by_headings(
-                page_title=args.title, headings=headings, doc_set=args.doc_set
+                page_title=args.page_title, headings=headings, doc_set=args.doc_set
             )
             if args.format == "json":
                 print(json.dumps(sections, indent=2, ensure_ascii=False))
@@ -375,14 +375,14 @@ def main():
             return 0
 
         # Extract content by title
-        content = extractor.extract_by_title(args.title)
+        content = extractor.extract_by_title(args.page_title)
 
         if content is None:
-            print(f"No document found with title: '{args.title}'", file=sys.stderr)
+            print(f"No document found with title: '{args.page_title}'", file=sys.stderr)
             return 1
         elif content == "":
             print(
-                f"Title does not match in single-file mode: '{args.title}'",
+                f"Title does not match in single-file mode: '{args.page_title}'",
                 file=sys.stderr,
             )
             return 1
@@ -391,7 +391,7 @@ def main():
                 print(
                     json.dumps(
                         {
-                            "title": args.title,
+                            "title": args.page_title,
                             "content": content,
                             "length": len(content),
                         },

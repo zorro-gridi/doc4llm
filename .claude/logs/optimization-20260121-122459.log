@@ -49,7 +49,7 @@ API 测试通过
   ✅ MarkdownDocExtractor 可用
 📚 检查文档集...
   📊 发现        1 个文档集
-    - Claude_Code_Docs:latest
+    - Claude_Code_Docs@latest
 📝 检查日志配置...
   ✅ 日志目录可写
 ✨ 健康检查完成
@@ -95,8 +95,8 @@ API 测试通过
 📚 文档集检查
 -----------
 [INFO] 发现        1 个文档集
-[INFO] Claude_Code_Docs:latest:       49 个文档,       48 个目录
-[WARN] Claude_Code_Docs:latest: 文档和目录数量不匹配
+[INFO] Claude_Code_Docs@latest:       49 个文档,       48 个目录
+[WARN] Claude_Code_Docs@latest: 文档和目录数量不匹配
 
 📝 日志和监控检查
 ---------------
@@ -117,7 +117,7 @@ API 测试通过
 --------
 ⚠️  发现 2 个警告:
   [WARN] .claude/agents/doc-retriever.md 存在但不可执行
-  [WARN] Claude_Code_Docs:latest: 文档和目录数量不匹配
+  [WARN] Claude_Code_Docs@latest: 文档和目录数量不匹配
 
 建议关注这些警告以优化系统性能。
 

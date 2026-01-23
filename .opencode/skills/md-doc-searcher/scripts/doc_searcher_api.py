@@ -196,6 +196,14 @@ class DocSearcherAPI:
         ratio = chinese_chars / total_chars
         return "zh" if ratio >= self.reranker_lang_threshold else "en"
 
+    def _remove_url_from_heading(self, heading_text: str) -> str:
+        """从 heading 文本中移除 URL 链接，只保留纯文本用于 BM25 匹配。"""
+        link_pattern = re.compile(r"\[([^\]]+)\]\([^\)]+\)")
+        anchor_pattern = re.compile(r"：https://[^\s]+|: https://[^\s]+")
+        text = link_pattern.sub(r"\1", heading_text)
+        text = anchor_pattern.sub("", text).strip()
+        return text
+
     def _detect_docset_language(self, doc_set: str, sample_size: int = 5) -> str:
         """
         Detect the primary language of a doc-set by sampling docTOC.md files.
@@ -356,7 +364,7 @@ class DocSearcherAPI:
             return []
         doc_sets = []
         for item in base.iterdir():
-            if item.is_dir() and ":" in item.name:
+            if item.is_dir() and "@" in item.name:
                 doc_sets.append(item.name)
         return sorted(doc_sets)
 
@@ -416,7 +424,9 @@ class DocSearcherAPI:
                     if "#" in match_content:
                         heading_match = re.search(r"(#{1,6}\s+[^\n]+)", match_content)
                         if heading_match:
-                            heading_text = heading_match.group(1).strip()
+                            heading_text = self._remove_url_from_heading(
+                                heading_match.group(1)
+                            )
 
                     if heading_text:
                         results.append(
@@ -492,7 +502,7 @@ class DocSearcherAPI:
                     if match:
                         heading_candidates.append(
                             {
-                                "text": line.strip(),
+                                "text": self._remove_url_from_heading(line.strip()),
                                 "level": len(match.group(1)),
                                 "context": "",
                             }
@@ -597,7 +607,7 @@ class DocSearcherAPI:
                 "doc_sets_found": [],
                 "results": [],
                 "fallback_used": None,
-                "message": "No matching doc-sets found",
+                "message": "No matching documentation set found - perform online search",
             }
 
         # Skip Jaccard matching when target_doc_sets is provided

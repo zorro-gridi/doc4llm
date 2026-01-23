@@ -256,11 +256,11 @@ After the main content, always append a Sources section:
 
 1. **Document Title**
    - 原文链接: https://original-url.com/docs/page
-    - 路径: `<base_dir>/<doc_name>:<doc_version>/<PageTitle>/docContent.md`
+    - 路径: `<base_dir>/<doc_name>@<doc_version>/<PageTitle>/docContent.md`
 
 2. **Another Document Title**
    - 原文链接: https://original-url.com/docs/another-page
-   - 路径: `<base_dir>/<doc_name>:<doc_version>/<AnotherPageTitle>/docContent.md`
+   - 路径: `<base_dir>/<doc_name>@<doc_version>/<AnotherPageTitle>/docContent.md`
 ```
 
 ### Example with Sources
@@ -282,7 +282,7 @@ Hooks are automation scripts that run at specific points in your workflow...
 
 1. **Hooks reference**
    - 原文链接: https://code.claude.com/docs/en/hooks
-   - 路径: `md_docs/Claude_Code_Docs:latest/Hooks reference/docContent.md`
+   - 路径: `md_docs/Claude_Code_Docs@latest/Hooks reference/docContent.md`
 ```
 
 ### How to Get Source Information
@@ -296,7 +296,7 @@ Extract from the docContent.md files:
 
 2. **Local Path**: Construct using the directory structure:
    ```
-   <base_dir>/<doc_name>:<doc_version>/<PageTitle>/docContent.md
+   <base_dir>/<doc_name>@<doc_version>/<PageTitle>/docContent.md
    ```
 
 ### Why Sources Are Required
@@ -329,7 +329,7 @@ Extract from the docContent.md files:
 
 1. **Hooks reference**
     - 原文链接: https://code.claude.com/docs/en/hooks
-    - 路径: `<base_dir>/Claude_Code_Docs:latest/Hooks reference/docContent.md`
+    - 路径: `<base_dir>/Claude_Code_Docs@latest/Hooks reference/docContent.md`
 ```
 
 ---
@@ -365,7 +365,7 @@ Extract from the docContent.md files:
 
 1. **Agent Skills**
     - 原文链接: https://code.claude.com/docs/en/agent-skills
-    - 路径: `<base_dir>/Claude_Code_Docs:latest/Agent Skills/docContent.md`
+    - 路径: `<base_dir>/Claude_Code_Docs@latest/Agent Skills/docContent.md`
 ```
 
 ---
@@ -419,7 +419,7 @@ Hooks 是在工作流特定时间点运行的自动化脚本...
 
 1. **Hooks reference**
     - 原文链接: https://code.claude.com/docs/en/hooks
-    - 路径: `<base_dir>/Claude_Code_Docs:latest/Hooks reference/docContent.md`
+    - 路径: `<base_dir>/Claude_Code_Docs@latest/Hooks reference/docContent.md`
 ```
 
 ---

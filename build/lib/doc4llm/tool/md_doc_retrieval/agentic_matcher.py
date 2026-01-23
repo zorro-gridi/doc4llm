@@ -253,8 +253,8 @@ class ProgressiveRetriever:
     def _read_toc(self, doc_key: str, title: str) -> Optional[str]:
         """Read TOC content for a document."""
         try:
-            if ":" in doc_key:
-                doc_name, doc_version = doc_key.split(":", 1)
+            if "@" in doc_key:
+                doc_name, doc_version = doc_key.split("@", 1)
             else:
                 doc_name = doc_key
                 doc_version = "latest"
@@ -276,8 +276,8 @@ class ProgressiveRetriever:
     def _read_preview(self, doc_key: str, title: str, max_lines: int = 50) -> Optional[str]:
         """Read content preview for a document."""
         try:
-            if ":" in doc_key:
-                doc_name, doc_version = doc_key.split(":", 1)
+            if "@" in doc_key:
+                doc_name, doc_version = doc_key.split("@", 1)
             else:
                 doc_name = doc_key
                 doc_version = "latest"

@@ -195,7 +195,7 @@ Search for documents matching a title pattern with detailed information includin
 **Returns:** List of dictionaries containing:
 - `title`: The matched document title
 - `similarity`: Similarity score (for fuzzy search)
-- `doc_name_version`: Document name and version (e.g., `"code_claude_com:latest"`)
+- `doc_name_version`: Document name and version (e.g., `"code_claude_com@latest"`)
 
 ```python
 extractor = MarkdownDocExtractor(search_mode="fuzzy")
@@ -218,7 +218,7 @@ def list_available_documents(
 List all available document titles.
 
 **Parameters:**
-- `doc_name_version`: Optional document name and version filter (e.g., `"code_claude_com:latest"`). If None, lists all documents from all sets.
+- `doc_name_version`: Optional document name and version filter (e.g., `"code_claude_com@latest"`). If None, lists all documents from all sets.
 
 **Returns:** List of available document titles
 
@@ -229,7 +229,7 @@ extractor = MarkdownDocExtractor()
 all_docs = extractor.list_available_documents()
 
 # List from specific document set
-claude_docs = extractor.list_available_documents("code_claude_com:latest")
+claude_docs = extractor.list_available_documents("code_claude_com@latest")
 ```
 
 #### get_document_info()
@@ -309,7 +309,7 @@ Semantic search across document titles using multiple search strategies. Combine
 
 **Parameters:**
 - `query`: The search query
-- `doc_set`: Optional document set filter (e.g., `"code_claude_com:latest"`)
+- `doc_set`: Optional document set filter (e.g., `"code_claude_com@latest"`)
 - `max_results`: Maximum number of results to return
 
 **Returns:** List of dictionaries containing:
@@ -423,7 +423,7 @@ The expected directory structure is:
 
 ```
 md_docs/
-└── <doc_name>:<doc_version>/
+└── <doc_name>@<doc_version>/
     └── <PageTitle>/
         └── docContent.md
 ```
@@ -431,7 +431,7 @@ md_docs/
 **Example:**
 ```
 md_docs/
-└── code_claude_com:latest/
+└── code_claude_com@latest/
     ├── Agent Skills - Claude Code Docs/
     │   └── docContent.md
     ├── Slash Commands/

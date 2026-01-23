@@ -6,29 +6,29 @@ Command-line interface for searching markdown documents in the doc4llm
 knowledge base using BM25-based retrieval.
 
 Usage:
-    python doc_searcher_cli.py --query "search query" --doc-sets "doc1:v1,doc2:v2"
-    python doc_searcher_cli.py --query "query1" --query "query2" --doc-sets "doc:v1"
-    python doc_searcher_cli.py --query "query" --doc-sets "doc:v1" --bm25-k1 1.5
-    python doc_searcher_cli.py --query "query" --doc-sets "doc:v1" --no-fallback
+    python doc_searcher_cli.py --query "search query" --doc-sets "doc1@v1,doc2@v2"
+    python doc_searcher_cli.py --query "query1" --query "query2" --doc-sets "doc@v1"
+    python doc_searcher_cli.py --query "query" --doc-sets "doc@v1" --bm25-k1 1.5
+    python doc_searcher_cli.py --query "query" --doc-sets "doc@v1" --no-fallback
 
 Examples:
     Search single doc-set:
-        python doc_searcher_cli.py --query "hooks configuration" --doc-sets "code_claude_com:latest"
+        python doc_searcher_cli.py --query "hooks configuration" --doc-sets "code_claude_com@latest"
 
     Search multiple doc-sets:
-        python doc_searcher_cli.py --query "authentication" --doc-sets "api_doc:v1,auth_service:v2"
+        python doc_searcher_cli.py --query "authentication" --doc-sets "api_doc@v1,auth_service@v2"
 
     Search with custom BM25 parameters:
-        python doc_searcher_cli.py --query "api reference" --doc-sets "docs:latest" --bm25-k1 1.5 --bm25-b 0.8
+        python doc_searcher_cli.py --query "api reference" --doc-sets "docs@latest" --bm25-k1 1.5 --bm25-b 0.8
 
     Disable fallback strategies:
-        python doc_searcher_cli.py --query "skills" --doc-sets "code_claude_com:latest" --no-fallback
+        python doc_searcher_cli.py --query "skills" --doc-sets "code_claude_com@latest" --no-fallback
 
     Save output to file:
-        python doc_searcher_cli.py --query "configuration" --doc-sets "docs:latest" --output results.txt
+        python doc_searcher_cli.py --query "configuration" --doc-sets "docs@latest" --output results.txt
 
     Enable debug mode:
-        python doc_searcher_cli.py --query "hooks" --doc-sets "code_claude_com:latest" --debug
+        python doc_searcher_cli.py --query "hooks" --doc-sets "code_claude_com@latest" --debug
 
 Note:
     --doc-sets is REQUIRED. Use md-doc-query-optimizer skill to detect target doc-sets

@@ -183,10 +183,10 @@ User Response
 ```json
 {
   "success": true,
-  "doc_sets_found": ["doc_set_name:version"],
+  "doc_sets_found": ["doc_set_name@version"],
   "results": [
     {
-      "doc_set": "doc_set_name:version",
+      "doc_set": "doc_set_name@version",
       "page_title": "Document Title",
       "toc_path": "/path/to/docTOC.md",
       "headings": [
@@ -393,7 +393,7 @@ This is the standard AOP format that tells the calling agent (or main AI) that t
 
 **Parameters:**
 - `{actual_line_count}`: The actual line count of the content being returned
-- `{doc_set_name}`: The document set name (e.g., "Claude_Code_Docs:latest")
+- `{doc_set_name}`: The document set name (e.g., "Claude_Code_Docs@latest")
 
 ---
 

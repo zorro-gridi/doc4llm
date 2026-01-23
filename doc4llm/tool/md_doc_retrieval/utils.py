@@ -97,7 +97,7 @@ def build_doc_path(
     """Build the full path to a document's docContent.md file.
 
     Constructs the path following the documentation structure:
-    <base_dir>/<doc_name>:<doc_version>/<title>/docContent.md
+    <base_dir>/<doc_name>@<doc_version>/<title>/docContent.md
 
     Args:
         base_dir: Base documentation directory (e.g., "md_docs")
@@ -113,7 +113,7 @@ def build_doc_path(
 
     Examples:
         >>> build_doc_path("md_docs", "code_claude_com", "latest", "Skills")
-        'md_docs/code_claude_com:latest/Skills/docContent.md'
+        'md_docs/code_claude_com@latest/Skills/docContent.md'
     """
     from .exceptions import InvalidTitleError
 
@@ -124,7 +124,7 @@ def build_doc_path(
     normalized_title = normalize_title(title)
 
     # Build the document directory name with version
-    doc_dir_name = f"{doc_name}:{doc_version}"
+    doc_dir_name = f"{doc_name}@{doc_version}"
 
     # Construct the full path using pathlib for cross-platform compatibility
     path = Path(base_dir) / doc_dir_name / normalized_title / "docContent.md"
@@ -140,7 +140,7 @@ def parse_doc_structure(base_dir: str) -> Dict[str, List[str]]:
 
     The expected structure is:
         <base_dir>/
-        └── <doc_name>:<doc_version>/
+        └── <doc_name>@<doc_version>/
             └── <PageTitle>/
                 └── docContent.md
 
@@ -148,7 +148,7 @@ def parse_doc_structure(base_dir: str) -> Dict[str, List[str]]:
         base_dir: Path to the documentation output directory
 
     Returns:
-        A dictionary where keys are document names (e.g., "code_claude_com:latest")
+        A dictionary where keys are document names (e.g., "code_claude_com@latest")
         and values are lists of page titles (e.g., ["Agent Skills", "Slash Commands"])
 
     Raises:
@@ -158,8 +158,8 @@ def parse_doc_structure(base_dir: str) -> Dict[str, List[str]]:
     Examples:
         >>> parse_doc_structure("md_docs")
         {
-            "code_claude_com:latest": ["Agent Skills - Claude Code Docs", "Slash Commands"],
-            "other_docs:latest": ["Page 1", "Page 2"]
+            "code_claude_com@latest": ["Agent Skills - Claude Code Docs", "Slash Commands"],
+            "other_docs@latest": ["Page 1", "Page 2"]
         }
     """
     from .exceptions import BaseDirectoryNotFoundError, NoDocumentsFoundError
@@ -174,13 +174,13 @@ def parse_doc_structure(base_dir: str) -> Dict[str, List[str]]:
 
     result: Dict[str, List[str]] = {}
 
-    # Iterate through all <doc_name>:<doc_version> directories
+    # Iterate through all <doc_name>@<doc_version> directories
     for doc_dir in base_path.iterdir():
         if not doc_dir.is_dir():
             continue
 
-        # Check if directory name matches the expected pattern (contains ":")
-        if ":" not in doc_dir.name:
+        # Check if directory name matches the expected pattern (contains "@")
+        if "@" not in doc_dir.name:
             continue
 
         doc_key = doc_dir.name
@@ -294,10 +294,10 @@ def is_valid_doc_directory(path: str) -> bool:
 def extract_doc_name_and_version(doc_dir: str) -> Tuple[str, str]:
     """Extract document name and version from a directory string.
 
-    The directory name is expected to be in the format "name:version".
+    The directory name is expected to be in the format "name@version".
 
     Args:
-        doc_dir: Directory name string (e.g., "code_claude_com:latest")
+        doc_dir: Directory name string (e.g., "code_claude_com@latest")
 
     Returns:
         A tuple of (doc_name, doc_version)
@@ -306,24 +306,24 @@ def extract_doc_name_and_version(doc_dir: str) -> Tuple[str, str]:
         InvalidTitleError: If the directory name format is invalid
 
     Examples:
-        >>> extract_doc_name_and_version("code_claude_com:latest")
+        >>> extract_doc_name_and_version("code_claude_com@latest")
         ("code_claude_com", "latest")
-        >>> extract_doc_name_and_version("docs:v1.0.0")
+        >>> extract_doc_name_and_version("docs@v1.0.0")
         ("docs", "v1.0.0")
     """
     from .exceptions import InvalidTitleError
 
-    if ":" not in doc_dir:
+    if "@" not in doc_dir:
         raise InvalidTitleError(
             doc_dir,
-            "Directory name must contain ':' separator between name and version"
+            "Directory name must contain '@' separator between name and version"
         )
 
-    parts = doc_dir.split(":", 1)
+    parts = doc_dir.split("@", 1)
     if len(parts) != 2 or not parts[0] or not parts[1]:
         raise InvalidTitleError(
             doc_dir,
-            "Directory name must be in format 'name:version'"
+            "Directory name must be in format 'name@version'"
         )
 
     return parts[0], parts[1]

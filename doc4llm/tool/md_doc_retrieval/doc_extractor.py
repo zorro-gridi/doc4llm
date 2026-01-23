@@ -84,7 +84,7 @@ class MarkdownDocExtractor(DebugMixin):
 
     The expected directory structure is:
         md_docs/
-        └── <doc_name>:<doc_version>/
+        └── <doc_name>@<doc_version>/
             └── <PageTitle>/
                 └── docContent.md
 
@@ -415,8 +415,8 @@ class MarkdownDocExtractor(DebugMixin):
             return None
 
         # Parse doc name and version
-        if ":" in doc_name_version:
-            doc_name, doc_version = doc_name_version.split(":", 1)
+        if "@" in doc_name_version:
+            doc_name, doc_version = doc_name_version.split("@", 1)
         else:
             doc_name = doc_name_version
             doc_version = "latest"
@@ -584,7 +584,7 @@ class MarkdownDocExtractor(DebugMixin):
         Args:
             page_title: The document page title
             headings: List of heading titles to extract (without # prefix)
-            doc_set: Optional doc_set identifier (e.g., "code_claude_com:latest").
+            doc_set: Optional doc_set identifier (e.g., "code_claude_com@latest").
                      If None, searches all doc_sets.
 
         Returns:
@@ -648,8 +648,8 @@ class MarkdownDocExtractor(DebugMixin):
             )
 
         # Parse doc name and version
-        if ":" in target_doc_set:
-            doc_name, doc_version = target_doc_set.split(":", 1)
+        if "@" in target_doc_set:
+            doc_name, doc_version = target_doc_set.split("@", 1)
         else:
             doc_name = target_doc_set
             doc_version = "latest"
@@ -688,7 +688,7 @@ class MarkdownDocExtractor(DebugMixin):
             List of dictionaries containing:
                 - title: The matched document title
                 - similarity: Similarity score (for fuzzy search)
-                - doc_name_version: Document name and version (e.g., "code_claude_com:latest")
+                - doc_name_version: Document name and version (e.g., "code_claude_com@latest")
 
             In single file mode: returns a single entry if the title matches,
             or an empty list if it doesn't match.
@@ -798,7 +798,7 @@ class MarkdownDocExtractor(DebugMixin):
 
         Args:
             doc_name_version: Optional document name and version filter
-                             (e.g., "code_claude_com:latest"). If None,
+                             (e.g., "code_claude_com@latest"). If None,
                              lists all documents from all sets.
 
         Returns:
@@ -810,7 +810,7 @@ class MarkdownDocExtractor(DebugMixin):
         Examples:
             >>> extractor = MarkdownDocExtractor()
             >>> all_docs = extractor.list_available_documents()
-            >>> claude_docs = extractor.list_available_documents("code_claude_com:latest")
+            >>> claude_docs = extractor.list_available_documents("code_claude_com@latest")
         """
         self._debug_print("Listing available documents")
 
@@ -900,8 +900,8 @@ class MarkdownDocExtractor(DebugMixin):
             return None
 
         # Parse doc name and version
-        if ":" in doc_name_version:
-            doc_name, doc_version = doc_name_version.split(":", 1)
+        if "@" in doc_name_version:
+            doc_name, doc_version = doc_name_version.split("@", 1)
         else:
             doc_name = doc_name_version
             doc_version = "latest"
@@ -1042,8 +1042,8 @@ class MarkdownDocExtractor(DebugMixin):
                 # Try to get content preview
                 content_preview = ""
                 try:
-                    if ":" in doc_key:
-                        doc_name, doc_version = doc_key.split(":", 1)
+                    if "@" in doc_key:
+                        doc_name, doc_version = doc_key.split("@", 1)
                     else:
                         doc_name = doc_key
                         doc_version = "latest"
@@ -1084,7 +1084,7 @@ class MarkdownDocExtractor(DebugMixin):
 
         Args:
             query: The search query
-            doc_set: Optional document set filter (e.g., "code_claude_com:latest")
+            doc_set: Optional document set filter (e.g., "code_claude_com@latest")
             max_results: Maximum number of results to return
 
         Returns:
@@ -1443,7 +1443,7 @@ class MarkdownDocExtractor(DebugMixin):
             sections: List of section specifications. Each spec is a dict with:
                 - "title" (str): Document page title
                 - "headings" (List[str]): List of heading names to extract
-                - "doc_set" (str): Document set identifier (e.g., "code_claude_com:latest")
+                - "doc_set" (str): Document set identifier (e.g., "code_claude_com@latest")
             threshold: Line count threshold for requiring post-processing (default: 2100)
 
         Returns:
@@ -1465,12 +1465,12 @@ class MarkdownDocExtractor(DebugMixin):
             ...     {
             ...         "title": "Agent Skills",
             ...         "headings": ["Create Skills", "Configure Hooks"],
-            ...         "doc_set": "code_claude_com:latest"
+            ...         "doc_set": "code_claude_com@latest"
             ...     },
             ...     {
             ...         "title": "Hooks Reference",
             ...         "headings": ["Hook Types", "Configuration"],
-            ...         "doc_set": "code_claude_com:latest"
+            ...         "doc_set": "code_claude_com@latest"
             ...     }
             ... ]
             >>> result = extractor.extract_multi_by_headings(sections)

@@ -17,7 +17,7 @@ class MatchResult:
     Attributes:
         title: The matched document title
         similarity: Similarity score between 0.0 and 1.0
-        doc_name_version: Document identifier (e.g., "code_claude_com:latest")
+        doc_name_version: Document identifier (e.g., "code_claude_com@latest")
         match_type: Type of match ("exact", "partial", "fuzzy")
     """
     title: str
@@ -250,7 +250,7 @@ class BasicDocMatcher:
 
         Example:
             >>> matcher = BasicDocMatcher(search_mode="partial")
-            >>> titles = [("Agent Skills", "docs:latest"), ("Skill Guide", "docs:latest")]
+            >>> titles = [("Agent Skills", "docs@latest"), ("Skill Guide", "docs@latest")]
             >>> results = matcher.search_all("skill", titles)
             >>> for r in results:
             ...     print(f"{r.title}: {r.similarity}")
@@ -323,7 +323,7 @@ class BasicDocMatcher:
 
         Example:
             >>> matcher = BasicDocMatcher()
-            >>> titles = [("Agent Skills", "docs:latest"), ("Slash Commands", "docs:latest")]
+            >>> titles = [("Agent Skills", "docs@latest"), ("Slash Commands", "docs@latest")]
             >>> results = matcher.semantic_search("skill", titles)
             >>> for r in results:
             ...     print(f"{r.title}: {r.match_type} ({r.similarity})")

@@ -34,7 +34,7 @@ Before query analysis, identify target documentation sets:
 **Knowledge Base Configuration:**
 - Read `.claude/knowledge_base.json` → get `base_dir`
 - List all first-level subdirectories under `<base_dir>/`
-- Subdirectory naming pattern: `<doc_name>:<doc_version>` (e.g., `code_claude_com:latest`)
+- Subdirectory naming pattern: `<doc_name>@<doc_version>` (e.g., `code_claude_com@latest`)
 
 **Matching Strategy:**
 1. **Direct Match**: Query contains doc-set identifier (e.g., "Claude Code hooks")
@@ -43,7 +43,7 @@ Before query analysis, identify target documentation sets:
 4. **No Match**: Return empty list `[]` → Suggest online search
 
 **Output:**
-- `doc_set`: List[str] - e.g., `["code_claude_com:latest"]` or `[]` (empty = suggest online search)
+- `doc_set`: List[str] - e.g., `["code_claude_com@latest"]` or `[]` (empty = suggest online search)
 
 ### Phase 1: Intent Recognition
 
@@ -181,29 +181,7 @@ This skill works with `md-doc-searcher` in the following workflow:
 - **Human-readable**: For user display (default)
 - **JSON format**: For machine parsing by downstream skills
 
-### Human-Readable Format (Default)
-
-```
-## Query Analysis Summary
-- Original: "{original_query}"
-- Language: {detected_language}
-- Complexity: {low/medium/high}
-- Ambiguity: {low/medium/high}
-- Applied Strategies: {strategy_list}
-- Doc-Set: <doc_name>:<doc_version>  [can be multiple, comma-separated]
-
-## Optimized Queries (Ranked)
-1. "{primary_query}" - {strategy_applied}: {rationale}
-2. "{secondary_query}" - {strategy_applied}: {rationale}
-3. "{tertiary_query}" - {strategy_applied}: {rationale}
-...
-
-## Search Recommendation
-**Online Search Suggested** - No matching documentation set found.
-Please try online search for: "{original_query}"
-```
-
-### JSON Output Format (For md-doc-searcher)
+### JSON Output Format (default: For md-doc-searcher)
 
 ```json
 {
@@ -213,7 +191,7 @@ Please try online search for: "{original_query}"
     "complexity": "{low|medium|high}",
     "ambiguity": "{low|medium|high}",
     "strategies": ["{strategy1}", "{strategy2}"],
-    "doc_set": ["<doc_name>:<doc_version>"]
+    "doc_set": ["<doc_name>@<doc_version>"]
   },
   "optimized_queries": [
     {
@@ -231,9 +209,30 @@ Please try online search for: "{original_query}"
   ],
   "search_recommendation": {
     "online_suggested": true,
-    "reason": "No matching documentation set found in local knowledge base"
+    "reason": "Only when after no matching documentation set found - perform online search"
   }
 }
+```
+
+### Human-Readable Format
+
+```
+## Query Analysis Summary
+- Original: "{original_query}"
+- Language: {detected_language}
+- Complexity: {low/medium/high}
+- Ambiguity: {low/medium/high}
+- Applied Strategies: {strategy_list}
+- Doc-Set: <doc_name>@<doc_version>  [can be multiple, comma-separated]
+
+## Optimized Queries (Ranked)
+1. "{primary_query}" - {strategy_applied}: {rationale}
+2. "{secondary_query}" - {strategy_applied}: {rationale}
+3. "{tertiary_query}" - {strategy_applied}: {rationale}
+...
+
+## Search Recommendation
+Perform online search - No matching documentation set found in local knowledge base.
 ```
 
 **Usage Rules:**
@@ -251,7 +250,7 @@ Please try online search for: "{original_query}"
     "complexity": "low",
     "ambiguity": "medium",
     "strategies": ["translation", "expansion"],
-    "doc_set": ["code_claude_com:latest"]
+    "doc_set": ["code_claude_com@latest"]
   },
   "optimized_queries": [
     {
@@ -298,7 +297,7 @@ Please try online search for: "{original_query}"
   ],
   "search_recommendation": {
     "online_suggested": true,
-    "reason": "No matching documentation set found in local knowledge base"
+    "reason": "Only when after no matching documentation set found - perform online search"
   }
 }
 ```

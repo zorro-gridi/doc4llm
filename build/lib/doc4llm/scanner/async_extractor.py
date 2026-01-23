@@ -249,7 +249,7 @@ class AsyncContentExtractor(DebugMixin):
             else:
                 doc_name = 'documentation'
 
-        dir_name = f"{doc_name}:{self.config.doc_version}"
+        dir_name = f"{doc_name}@{self.config.doc_version}"
         full_path = os.path.join(self.config.doc_dir, dir_name)
         os.makedirs(full_path, exist_ok=True)
 

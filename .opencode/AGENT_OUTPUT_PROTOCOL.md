@@ -346,8 +346,8 @@ def validate_aop_output(output: str) -> bool:
 
 ---
 **Source:** https://code.claude.com/docs/en/skills
-**Path:** md_docs/Claude_Code_Docs:latest/Agent Skills/docContent.md
-**Document Set:** Claude_Code_Docs:latest
+**Path:** md_docs/Claude_Code_Docs@latest/Agent Skills/docContent.md
+**Document Set:** Claude_Code_Docs@latest
 
 === END-AOP-FINAL ===
 ```

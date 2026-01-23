@@ -25,7 +25,7 @@ The expected documentation directory structure is:
 
 ```
 md_docs/
-└── <doc_name>:<doc_version>/
+└── <doc_name>@<doc_version>/
     └── <PageTitle>/
         └── docContent.md
 ```
@@ -33,7 +33,7 @@ md_docs/
 Example:
 ```
 md_docs/
-└── code_claude_com:latest/
+└── code_claude_com@latest/
     ├── Agent Skills - Claude Code Docs/
     │   └── docContent.md
     └── Slash Commands/

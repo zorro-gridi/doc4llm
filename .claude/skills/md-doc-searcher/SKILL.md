@@ -42,21 +42,21 @@ Search and discover markdown documents headings in the local knowledge base usin
 
 ```bash
 # Use json format output for better dataflow
-conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "hooks configuration" --json --reranker --doc-sets OpenCode_Docs:latest --base-dir <knowledge_base_dir>
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "hooks configuration" --json --reranker --doc-sets OpenCode_Docs@latest --base-dir <knowledge_base_dir>
 
 # Multiple queries (search for multiple terms)
-conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "authentication" --query "JWT" --query "OAuth" --reranker --doc-sets OpenCode_Docs:latest --base-dir <knowledge_base_dir>
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "authentication" --query "JWT" --query "OAuth" --reranker --doc-sets OpenCode_Docs@latest --base-dir <knowledge_base_dir>
 
 
 # Search with BM25 recalled and transformer reranker parameters
-conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "api reference" --bm25-k1 1.5 --bm25-b 0.8 --reranker --reranker-threshold 0.68 --doc-sets OpenCode_Docs:latest --base-dir <knowledge_base_dir>
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "api reference" --bm25-k1 1.5 --bm25-b 0.8 --reranker --reranker-threshold 0.68 --doc-sets OpenCode_Docs@latest --base-dir <knowledge_base_dir>
 
 
 # Search multiple doc-sets simultaneously
-conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "compare claude code vs opencode of authentication" --doc-sets "OpenCode_Docs:latest,Anthropic_Docs:v2" --reranker --base-dir <knowledge_base_dir>
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "compare claude code vs opencode of authentication" --doc-sets "OpenCode_Docs@latest,Anthropic_Docs@v2" --reranker --base-dir <knowledge_base_dir>
 
 # Multi-query with multiple doc-sets
-conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "API" --query "authentication" --doc-sets "api_doc:v1,auth_service:v2" --reranker --base-dir <knowledge_base_dir>
+conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "API" --query "authentication" --doc-sets "api_doc@v1,auth_service@v2" --reranker --base-dir <knowledge_base_dir>
 ```
 
 ### CLI Arguments
@@ -65,7 +65,7 @@ conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.
 |----------|------|---------|-------------|
 | `--query` | string | **required** | Search query string (can be specified multiple times) |
 | `--base-dir` | string | **required** | local knowledge base root dir |
-| `--doc-sets` | string | **required** | Comma-separated list of doc-sets to search (e.g., "doc1:v1,doc2:v2") |
+| `--doc-sets` | string | **required** | Comma-separated list of doc-sets to search (e.g., "doc1@v1,doc2@v2") |
 | `--bm25-k1` | float | 1.2 | BM25 k1 parameter |
 | `--bm25-b` | float | 0.75 | BM25 b parameter |
 | `--reranker-threshold` | float | 0.68 | Similarity threshold for filtering headings (default: 0.68). Headings with score < threshold are filtered out. |
@@ -79,10 +79,10 @@ When using `--json` flag, the searcher outputs machine-parsable JSON metadata:
 ```json
 {
   "success": true,
-  "doc_sets_found": ["code_claude_com:latest"],
+  "doc_sets_found": ["code_claude_com@latest"],
   "results": [
     {
-      "doc_set": "code_claude_com:latest",
+      "doc_set": "code_claude_com@latest",
       "page_title": "Agent Skills",
       "toc_path": "/path/to/docTOC.md",
       "headings": [

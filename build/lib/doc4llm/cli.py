@@ -582,7 +582,7 @@ class ModeExecutor:
         """打印文档模式信息"""
         doc_name_display = self.config.doc_name or "auto-detected"
         print(f"{Fore.GREEN}=== {mode_name} ==={Style.RESET_ALL}")
-        print(f"{Fore.CYAN}=== 文档输出目录: {self.config.doc_dir}/{doc_name_display}:{self.config.doc_version}{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}=== 文档输出目录: {self.config.doc_dir}/{doc_name_display}@{self.config.doc_version}{Style.RESET_ALL}")
         print(f"{Fore.CYAN}=== 文档版本: {self.config.doc_version}{Style.RESET_ALL}")
         print(f"{Fore.CYAN}=== 最大爬取深度: {self.config.doc_max_depth}{Style.RESET_ALL}")
 

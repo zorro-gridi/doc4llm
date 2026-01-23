@@ -111,7 +111,7 @@ class DocUrlCrawler(DebugMixin):
     def _build_doc_root_path(self) -> str:
         """
         构建文档根目录路径
-        格式: doc_dir/<doc_name>:<doc_version>/
+        格式: doc_dir/<doc_name>@<doc_version>/
 
         Returns:
             str: 文档根目录的绝对路径
@@ -126,8 +126,8 @@ class DocUrlCrawler(DebugMixin):
             else:
                 doc_name = 'documentation'
 
-        # 构建目录名称: <doc_name>:<doc_version>
-        dir_name = f"{doc_name}:{self.config.doc_version}"
+        # 构建目录名称: <doc_name>@<doc_version>
+        dir_name = f"{doc_name}@{self.config.doc_version}"
 
         # 构建完整路径
         full_path = os.path.join(self.config.doc_dir, dir_name)
