@@ -178,10 +178,9 @@ This skill works with `md-doc-searcher` in the following workflow:
 ## Output Format
 
 **Dual Output Support:**
-- **Human-readable**: For user display (default)
 - **JSON format**: For machine parsing by downstream skills
 
-### JSON Output Format (default: For md-doc-searcher)
+### JSON Output Format (default: For md-doc-searcher skill better understand)
 
 ```json
 {
@@ -212,27 +211,6 @@ This skill works with `md-doc-searcher` in the following workflow:
     "reason": "Only when after no matching documentation set found - perform online search"
   }
 }
-```
-
-### Human-Readable Format
-
-```
-## Query Analysis Summary
-- Original: "{original_query}"
-- Language: {detected_language}
-- Complexity: {low/medium/high}
-- Ambiguity: {low/medium/high}
-- Applied Strategies: {strategy_list}
-- Doc-Set: <doc_name>@<doc_version>  [can be multiple, comma-separated]
-
-## Optimized Queries (Ranked)
-1. "{primary_query}" - {strategy_applied}: {rationale}
-2. "{secondary_query}" - {strategy_applied}: {rationale}
-3. "{tertiary_query}" - {strategy_applied}: {rationale}
-...
-
-## Search Recommendation
-Perform online search - No matching documentation set found in local knowledge base.
 ```
 
 **Usage Rules:**
@@ -300,4 +278,3 @@ Perform online search - No matching documentation set found in local knowledge b
     "reason": "Only when after no matching documentation set found - perform online search"
   }
 }
-```

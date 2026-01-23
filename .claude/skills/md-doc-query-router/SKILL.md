@@ -21,12 +21,12 @@ Given a user query, classify it into one of seven scenes and compute routing par
 
 | Scene | Base Threshold | Description |
 |-------|----------------|-------------|
-| `fact_lookup` | 0.85 | Precise fact retrieval |
-| `faithful_reference` | 0.90 | High-fidelity original text |
-| `faithful_how_to` | 0.82 | Original text + step-by-step procedures |
+| `fact_lookup` | 0.80 | Precise fact retrieval |
+| `faithful_reference` | 0.75 | High-fidelity original text |
+| `faithful_how_to` | 0.68 | Original text + step-by-step procedures |
 | `concept_learning` | 0.65 | Systematic concept understanding |
-| `how_to` | 0.75 | Step-by-step procedures |
-| `comparison` | 0.70 | Multi-option comparison |
+| `how_to` | 0.7 | Step-by-step procedures |
+| `comparison` | 0.63 | Multi-option comparison |
 | `exploration` | 0.55 | Deep research with broad context |
 
 For detailed scene definitions, examples, and patterns, see [references/scenes.md](references/scenes.md).
@@ -71,7 +71,7 @@ reranker_threshold = base_threshold
   + 0.10 * coverage_need
 ```
 
-**Final value must be clamped to [0.30, 0.95]**
+**Final value must be clamped to [0.30, 0.80]**
 
 ## Output Format
 

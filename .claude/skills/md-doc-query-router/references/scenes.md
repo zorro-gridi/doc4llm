@@ -100,8 +100,8 @@ User requests **high-fidelity reproduction** of documentation content that conta
 - Include prerequisites as documented
 - Minimal summarization or rewording
 
-### Why High Threshold?
-Combines the precision requirements of faithful_reference (0.90) with the procedural accuracy needs of how_to (0.75). The threshold bridges both - **exact procedural content matters** - better to omit weakly related steps than to introduce incorrect or incomplete procedures.
+### Why Medium-Lower Threshold?
+Need to both consider the faithful_reference & how_to retrieval output, so just lower the threshold to get more message to make a decision.
 
 ---
 
@@ -138,7 +138,7 @@ Learning benefits from **multiple perspectives** - not a single correct answer. 
 
 ## 5. How-To (how_to)
 
-**Base Threshold:** 0.75
+**Base Threshold:** 0.70
 
 ### Definition
 User wants to know **how to execute an operation or follow a process**.
@@ -178,7 +178,7 @@ Steps should be accurate, but **multiple valid approaches may exist**. Don't req
 
 ## 6. Comparison (comparison)
 
-**Base Threshold:** 0.70
+**Base Threshold:** 0.63
 
 ### Definition
 User wants **comparative analysis** of multiple options with recommendations.
@@ -243,10 +243,10 @@ Encourage **exploration and association** - allow loosely related context into t
 
 | Scene | Precision | Breadth | Multiple Answers OK? | Threshold |
 |-------|-----------|---------|---------------------|-----------|
-| fact_lookup | Very High | Very Low | No | 0.85 |
-| faithful_reference | Highest | Minimal | No | 0.90 |
-| faithful_how_to | Very High | Low | No | 0.82 |
+| fact_lookup | Very High | Very Low | No | 0.80 |
+| faithful_reference | Highest | Minimal | No | 0.75 |
+| faithful_how_to | Very High | Low | No | 0.68 |
 | concept_learning | Medium | Medium | Yes | 0.65 |
-| how_to | High | Low-Medium | Sometimes | 0.75 |
-| comparison | Medium | High | Yes | 0.70 |
+| how_to | High | Low-Medium | Sometimes | 0.70 |
+| comparison | Medium | High | Yes | 0.63 |
 | exploration | Low | Very High | Yes | 0.55 |

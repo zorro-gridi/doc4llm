@@ -1,88 +1,139 @@
 ---
 name: md-doc-sence-output
-description: "The Document Processor is a post-retrieval module that formats and delivers retrieved documents based on the **query scene classification** produced by the Query Router. Its purpose is to apply different output strategies for different user intents, ensuring the final response matches the user’s precision, fidelity, and coverage needs."
+description: >
+  Scene-based Response Composer.
+  Receives classified query scene, routing parameters,
+  and processed markdown document from md-doc-processor.
+  Produces the final user-facing answer using scene-specific
+  output strategies (precision, fidelity, coverage, depth).
 context: fork
 disable-model-invocation: true
 ---
 
+# Scene-Based Output Composer
 
-#### Core Responsibilities
+## Role
 
-1. **Input Handling**
+This skill is the **final output phase** of the doc-retriever workflow.
 
-   * Accepts:
+It is responsible for:
+- Formatting the final answer based on query scene
+- Choosing fidelity vs synthesis vs analysis style
+- Assembling Sources
+- Applying default language rules
+- Adding compression notices when applicable
 
-     * Classified `scene` (one of the seven types)
-     * Routing parameters (`confidence`, `ambiguity`, `coverage_need`, `reranker_threshold`)
-     * A ranked list of retrieved document chunks
+It does NOT:
+- Perform document compression
+- Modify raw document content for size
 
-2. **Scene-Specific Output Templates**
-   The processor selects an output template and formatting strategy based on the scene:
+---
 
-   * **fact_lookup**
+## Input Contract
 
-     * Output: Short, precise answer
-     * Strategy: Extract exact facts, values, or definitions
-     * Style: Minimal text, citation-first, no extra context
+```json
+{
+  "scene": "fact_lookup | faithful_reference | faithful_how_to | concept_learning | how_to | comparison | exploration",
+  "routing_params": {
+    "confidence": 0.82,
+    "ambiguity": 0.15,
+    "coverage_need": 0.7,
+    "reranker_threshold": 0.63
+  },
+  "processed_doc": "string (markdown)",
+  "compression_meta": {
+    "compression_applied": true,
+    "original_line_count": 2850,
+    "output_line_count": 1980
+  },
+  "doc_meta": {
+    "title": "Hooks reference",
+    "source_url": "https://code.claude.com/docs/en/hooks",
+    "local_path": "md_docs/Claude_Code_Docs@latest/Hooks reference/docContent.md"
+  }
+}
+````
 
-   * **faithful_reference**
+---
 
-     * Output: High-fidelity original text
-     * Strategy: Preserve wording, structure, and paragraph layout
-     * Style: Verbatim reproduction, minimal or no paraphrasing
+## Default Output Rules
 
-   * **faithful_how_to**
+* Default language: Chinese (中文)
+* Technical terms: English in parentheses on first appearance
+* Code blocks: Never translated
+* Always include Sources section
 
-     * Output: Original procedural steps
-     * Strategy: Keep exact step sequence and formatting
-     * Style: Verbatim instructions with prerequisites and ordered steps
+---
 
-   * **concept_learning**
+## Scene → Output Strategy
 
-     * Output: Structured educational explanation
-     * Strategy: Synthesize multiple sources
-     * Style: Definition → Principles → Relationships → Examples
+| Scene              | Output Strategy                  |
+| ------------------ | -------------------------------- |
+| fact_lookup        | Short, precise answer + citation |
+| faithful_reference | Verbatim original paragraphs     |
+| faithful_how_to    | Verbatim ordered steps           |
+| concept_learning   | 教学式结构化讲解                         |
+| how_to             | 规范化可执行步骤                         |
+| comparison         | 表格 + 优缺点 + 推荐                    |
+| exploration        | 多角度深度分析                          |
 
-   * **how_to**
+---
 
-     * Output: Practical step-by-step guide
-     * Strategy: Normalize steps from multiple sources
-     * Style: Clear, actionable, reproducible instructions
+## Output Assembly Rules
 
-   * **comparison**
+### 1. Main Content
 
-     * Output: Comparative analysis
-     * Strategy: Aggregate multiple options
-     * Style: Table or structured pros/cons + recommendation
+Format content based on scene:
 
-   * **exploration**
+* faithful_* → minimal paraphrasing
+* concept / exploration → structured explanation
+* how_to → ordered, actionable steps
+* comparison → table + recommendation
 
-     * Output: Deep multi-angle analysis
-     * Strategy: Broaden context and connect ideas
-     * Style: Long-form, research-oriented, trend + implication driven
+---
 
-3. **Adaptive Content Processing**
+### 2. Compression Notice (Conditional)
 
-   * Applies different transformations per scene:
+If `compression_meta.compression_applied == true`:
 
-     * Compression (for long documents)
-     * Fidelity preservation (for faithful_* scenes)
-     * Synthesis and abstraction (for concept / exploration)
-     * Normalization and step ordering (for how_to)
+Append:
 
-4. **Output Assembly**
+```markdown
+---
 
-   * Produces a final response that:
+**注意：源文档已被压缩输出；原文: {{original_line_count}} 行，当前输出: {{output_line_count}} 行**
+```
 
-     * Matches the user’s intent precision level
-     * Aligns with the scene’s information breadth
-     * Avoids hallucination in high-fidelity scenes
-     * Encourages insight and coverage in exploration scenes
+---
 
-5. **Safety and Quality Controls**
+### 3. Sources Section (REQUIRED)
 
-   * Enforces:
+Always append:
 
-     * High relevance in faithful scenes
-     * Low paraphrasing where exact text is required
-     * Clear structure in educational and procedural outputs
+```markdown
+---
+
+### 文档来源 (Sources)
+
+1. **{{doc_meta.title}}**
+   - 原文链接: {{doc_meta.source_url}}
+   - 路径: `{{doc_meta.local_path}}`
+```
+
+---
+
+## Output Rules
+
+* Output must be valid Markdown
+* Do NOT hallucinate facts in faithful scenes
+* Do NOT omit Sources
+* Do NOT change code or configs
+
+---
+
+## Quality Controls
+
+* High fidelity in faithful_* scenes
+* Clear structure in concept/how_to
+* Depth and insight in exploration
+* Precision in fact_lookup
