@@ -135,6 +135,21 @@ CONTENT_PRESERVE_SELECTORS = [
 ]
 
 
+#: 强制删除选择器（优先级最高）
+# 这些选择器匹配的元素会被强制删除，即使它们在保护区域内
+FORCE_REMOVE_SELECTORS = [
+    # 默认为空，由用户根据需要配置
+]
+
+#: 级联保护标签黑名单
+# 这些标签在级联保护检查时会被忽略，即使位于保护区域内也可以被删除
+PROTECTED_TAG_BLACKLIST = [
+    'footer',     # 页脚
+    'aside',      # 侧边栏
+    'nav',        # 导航
+]
+
+
 # ============================================================================
 # 日志过滤配置
 # ============================================================================
@@ -298,6 +313,8 @@ def get_filter_config(
     custom_fuzzy_keywords: Optional[List[str]] = None,
     custom_log_levels: Optional[List[str]] = None,
     custom_meaningless_content: Optional[List[str]] = None,
+    custom_force_remove_selectors: Optional[List[str]] = None,
+    custom_protected_tag_blacklist: Optional[List[str]] = None,
     merge_mode: str = 'extend'
 ) -> Dict[str, Any]:
     """
@@ -309,6 +326,8 @@ def get_filter_config(
         custom_fuzzy_keywords: 自定义模糊匹配关键词
         custom_log_levels: 自定义日志级别
         custom_meaningless_content: 自定义无意义内容
+        custom_force_remove_selectors: 自定义强制删除选择器（优先级最高）
+        custom_protected_tag_blacklist: 自定义级联保护标签黑名单
         merge_mode: 合并模式 ('extend' 或 'replace')
 
     Returns:
@@ -346,6 +365,16 @@ def get_filter_config(
         'content_end_markers': CONTENT_END_MARKERS,
         'content_preserve_selectors': CONTENT_PRESERVE_SELECTORS,
         'code_container_selectors': CODE_CONTAINER_SELECTORS,
+        'force_remove_selectors': merge_selectors(
+            FORCE_REMOVE_SELECTORS,
+            custom_force_remove_selectors,
+            merge_mode
+        ),
+        'protected_tag_blacklist': merge_selectors(
+            PROTECTED_TAG_BLACKLIST,
+            custom_protected_tag_blacklist,
+            merge_mode
+        ),
     }
 
 
@@ -385,6 +414,8 @@ class FilterConfigLoader:
             custom_fuzzy_keywords=filter_config.get('fuzzy_keywords'),
             custom_log_levels=filter_config.get('log_levels'),
             custom_meaningless_content=filter_config.get('meaningless_content'),
+            custom_force_remove_selectors=filter_config.get('force_remove_selectors'),
+            custom_protected_tag_blacklist=filter_config.get('protected_tag_blacklist'),
             merge_mode=filter_config.get('merge_mode', 'extend')
         )
 
@@ -480,6 +511,8 @@ DEFAULT_CONFIG = {
     'content_end_markers': CONTENT_END_MARKERS,
     'content_preserve_selectors': CONTENT_PRESERVE_SELECTORS,
     'code_container_selectors': CODE_CONTAINER_SELECTORS,
+    'force_remove_selectors': FORCE_REMOVE_SELECTORS,
+    'protected_tag_blacklist': PROTECTED_TAG_BLACKLIST,
     'documentation_framework_presets': DOCUMENTATION_FRAMEWORK_PRESETS,
     # TOC URL 过滤配置
     'toc_class_patterns': TOC_CLASS_PATTERNS,

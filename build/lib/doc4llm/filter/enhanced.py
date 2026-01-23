@@ -22,6 +22,8 @@ from .config import (
     CONTENT_PRESERVE_SELECTORS,
     CONTENT_END_MARKERS,
     DOCUMENTATION_FRAMEWORK_PRESETS,
+    FORCE_REMOVE_SELECTORS as DEFAULT_FORCE_REMOVE_SELECTORS,
+    PROTECTED_TAG_BLACKLIST as DEFAULT_PROTECTED_TAG_BLACKLIST,
     merge_selectors,
     get_filter_config,
 )
@@ -95,6 +97,8 @@ class EnhancedContentFilter(BaseContentFilter):
         self.content_end_markers = config['content_end_markers']
         self.content_preserve_selectors = config['content_preserve_selectors']
         self.code_container_selectors = config['code_container_selectors']
+        self.force_remove_selectors = config.get('force_remove_selectors', [])
+        self.protected_tag_blacklist = config.get('protected_tag_blacklist', [])
 
     def detect_framework(self, soup: BeautifulSoup, url: str) -> Optional[str]:
         """
@@ -289,6 +293,10 @@ class EnhancedContentFilter(BaseContentFilter):
         """
         检查元素是否匹配 content_preserve_selectors（应该被保护）
 
+        级联保护规则：
+        - 如果元素在 protected_tag_blacklist 中，则不进行级联保护检查
+        - 否则，检查元素及其父元素是否匹配保护选择器
+
         Args:
             elem: BeautifulSoup Tag 对象
 
@@ -297,6 +305,11 @@ class EnhancedContentFilter(BaseContentFilter):
         """
         if not self.content_preserve_selectors:
             return False
+
+        # 新增：如果元素在黑名单中，不进行级联保护检查
+        if self.protected_tag_blacklist:
+            if elem.name.lower() in [s.lower() for s in self.protected_tag_blacklist]:
+                return False
 
         # 检查元素本身是否匹配保护选择器
         for selector in self.content_preserve_selectors:
@@ -313,6 +326,12 @@ class EnhancedContentFilter(BaseContentFilter):
         # 检查父元素是否匹配保护选择器（级联保护）
         parent = elem.find_parent()
         while parent:
+            # 如果父元素在黑名单中，跳过级联保护检查
+            if self.protected_tag_blacklist:
+                if parent.name.lower() in [s.lower() for s in self.protected_tag_blacklist]:
+                    parent = parent.find_parent()
+                    continue
+
             for selector in self.content_preserve_selectors:
                 try:
                     if selector.lower() == parent.name.lower():
@@ -328,6 +347,11 @@ class EnhancedContentFilter(BaseContentFilter):
     def filter_non_content_blocks(self, soup: BeautifulSoup) -> BeautifulSoup:
         """
         过滤非正文内容（增强版）
+
+        优先级顺序：
+        1. force_remove_selectors (强制删除，最高优先级)
+        2. content_preserve_selectors (保护，级联保护受黑名单限制)
+        3. non_content_selectors (常规删除，最低优先级)
 
         Args:
             soup: BeautifulSoup 对象
@@ -353,6 +377,22 @@ class EnhancedContentFilter(BaseContentFilter):
             # 将主要内容区域转换为新的 soup
             soup = BeautifulSoup(str(main_content), 'html.parser')
 
+        # 1. 先处理强制删除（优先级最高）
+        for selector in self.force_remove_selectors:
+            try:
+                elements = soup.select(selector)
+                for elem in elements:
+                    try:
+                        print(f"强制删除: <{elem.name} class=\"{' '.join(elem.get('class', []))}\">")
+                        elem.decompose()
+                        self.removed_count += 1
+                    except Exception:
+                        continue
+            except Exception as e:
+                print(f"处理强制删除选择器 {selector} 时出现警告: {e}")
+                continue
+
+        # 2. 然后处理常规非内容删除（带保护检查）
         # 移除精确匹配的元素
         for selector in self.non_content_selectors:
             try:

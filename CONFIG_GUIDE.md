@@ -1091,6 +1091,8 @@ TOC 锚点链接的直接父元素类名（白名单）：
 
 ## 内容过滤配置
 
+> **📘 详细文档**：内容过滤器配置有独立文档 [FILTER_CONFIG.md](doc4llm/filter/FILTER_CONFIG.md)，包含完整的配置说明、选择器类型、框架预设和最佳实践。
+
 ### `content_filter`
 
 | 参数 | 类型 | 默认值 |
@@ -1098,6 +1100,15 @@ TOC 锚点链接的直接父元素类名（白名单）：
 | 内容过滤配置 | object | `{...}` |
 
 **作用**：配置文档内容提取时的过滤规则，用于移除非正文内容（导航栏、页脚等）
+
+**📋 FILTER_CONFIG.md 内容概要**：
+
+- **配置结构**：核心配置项（`non_content_selectors`、`force_remove_selectors`、`protected_tag_blacklist` 等）
+- **选择器类型**：语义化选择器、通用选择器、模糊匹配关键词、内容保留选择器
+- **配置优先级**：三层优先级机制（强制删除 > 内容保护 > 常规删除）
+- **框架预设**：Mintlify、Docusaurus、VitePress、GitBook
+- **编程配置**：Python 代码中使用过滤器的方法
+- **最佳实践**：选择器优先级建议、模糊匹配注意事项
 
 **配置示例**：
 ```json

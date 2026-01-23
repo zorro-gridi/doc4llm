@@ -177,6 +177,12 @@
     "non_content_selectors": [
       "#content-side-layout"
     ],
+    "force_remove_selectors": [],
+    "protected_tag_blacklist": [
+      "footer",
+      "aside",
+      "nav"
+    ],
     "fuzzy_keywords": [],
     "log_levels": [],
     "meaningless_content": [

@@ -34,12 +34,127 @@
 | 配置项 | 类型 | 描述 |
 |--------|------|------|
 | `non_content_selectors` | `List[str]` | 非正文内容的 CSS 选择器列表 |
+| `force_remove_selectors` | `List[str]` | 强制删除选择器（优先级最高，不受保护机制限制） |
+| `protected_tag_blacklist` | `List[str]` | 级联保护标签黑名单（这些标签即使位于保护区域内也可被删除） |
 | `fuzzy_keywords` | `List[str]` | 用于模糊匹配 class/id 的关键词列表 |
 | `log_levels` | `List[str]` | 日志级别正则表达式列表 |
 | `meaningless_content` | `List[str]` | 需要移除的无意义文本列表 |
 | `content_end_markers` | `List[str]` | 标记正文结束的正则表达式 |
 | `content_preserve_selectors` | `List[str]` | 需要优先保留的正文内容选择器 |
 | `code_container_selectors` | `List[str]` | 代码块容器选择器 |
+
+### 配置优先级
+
+内容过滤器的配置选项按以下优先级顺序执行（从高到低）：
+
+1. **force_remove_selectors** - 强制删除（最高优先级）
+   - 这些选择器匹配的元素会被强制删除
+   - 即使元素在保护区域内（如 `<main>`、`<article>` 内）也会被删除
+   - 不受任何保护机制限制
+
+2. **content_preserve_selectors** - 内容保护（中等优先级）
+   - 匹配的元素及其子元素会被保护
+   - 但 `protected_tag_blacklist` 中的标签不受此保护
+   - 支持级联保护：检查父元素是否匹配保护选择器
+
+3. **non_content_selectors** - 常规删除（最低优先级）
+   - 这些选择器匹配的元素会被删除
+   - 受保护机制限制：如果元素在保护区域内，不会被删除
+
+**示例场景**：
+
+```html
+<main id="content-area">
+  <article>
+    <p>正文内容</p>
+  </article>
+  <footer class="doc">
+    <p>页脚内容</p>
+  </footer>
+</main>
+```
+
+| 配置 | 结果 |
+|------|------|
+| 默认配置 | footer 被保留（因为父元素 `<main>` 匹配保护选择器） |
+| `protected_tag_blacklist: ["footer"]` | footer 被删除（标签在黑名单中，不受保护） |
+| `force_remove_selectors: ["footer"]` | footer 被删除（强制删除，不受保护限制） |
+
+---
+
+## 选择器类型说明
+
+### 强制删除选择器（FORCE_REMOVE_SELECTORS）
+
+强制删除选择器是优先级最高的删除机制，这些选择器匹配的元素会被强制删除，即使它们位于保护区域内。
+
+**使用场景**：
+- 需要确保某些元素被删除，无论它们在页面的什么位置
+- 解决级联保护机制导致的删除失败问题
+
+**配置示例**：
+
+```json
+{
+  "content_filter": {
+    "force_remove_selectors": [
+      "footer",
+      ".page-footer",
+      "[class*=\"footer\"]"
+    ]
+  }
+}
+```
+
+### 级联保护标签黑名单（PROTECTED_TAG_BLACKLIST）
+
+级联保护标签黑名单指定了在级联保护检查时应该忽略的标签。这些标签即使位于保护区域内（如 `<main>`、`<article>` 内），也不会被保护。
+
+**默认值**：
+```python
+PROTECTED_TAG_BLACKLIST = [
+    'footer',     # 页脚
+    'aside',      # 侧边栏
+    'nav',        # 导航
+]
+```
+
+**使用场景**：
+- 希望某些语义标签始终能被常规删除逻辑处理
+- 不希望这些标签受到级联保护的影响
+
+**配置示例**：
+
+```json
+{
+  "content_filter": {
+    "protected_tag_blacklist": [
+      "footer",
+      "aside",
+      "nav",
+      "header"
+    ]
+  }
+}
+```
+
+**推荐配置**：
+
+对于大多数文档站点，推荐将以下标签添加到黑名单：
+
+```json
+{
+  "content_filter": {
+    "protected_tag_blacklist": [
+      "footer",
+      "aside",
+      "nav"
+    ]
+  }
+}
+```
+
+因为这些语义标签通常表示非正文内容，即使它们在主内容区域内，也应该被删除。
 
 ---
 
@@ -174,6 +289,8 @@ LOG_LEVELS = [
 | `merge_mode` | `string` | `"extend"` | 合并模式：`extend` 或 `replace` |
 | `documentation_preset` | `string` | `null` | 文档框架预设：`null`/`mintlify`/`docusaurus`/`vitepress`/`gitbook` |
 | `non_content_selectors` | `array` | `[]` | 自定义非正文选择器（会扩展默认选择器） |
+| `force_remove_selectors` | `array` | `[]` | 强制删除选择器（优先级最高，不受保护机制限制） |
+| `protected_tag_blacklist` | `array` | `["footer", "aside", "nav"]` | 级联保护标签黑名单（这些标签即使位于保护区域内也可被删除） |
 | `fuzzy_keywords` | `array` | `[]` | 自定义模糊关键词（会扩展默认关键词） |
 | `log_levels` | `array` | `[]` | 自定义日志级别（会扩展默认级别） |
 | `meaningless_content` | `array` | `[]` | 自定义无意义内容（会扩展默认内容） |
@@ -672,6 +789,56 @@ Next steps
 - `WebTextCrawler.py` - 支持从 config.json 加载配置
 - `DocContentCrawler.py` - 支持从 config.json 加载配置和调用 filter_content_end_markers
 - `config.json` - 添加 content_filter 配置段
+
+---
+
+### v2.1.0 (2025-01-23) - 级联保护机制优化
+
+**核心改进**：
+
+1. **新增强制删除选择器** (`force_remove_selectors`)
+   - 优先级最高的删除机制
+   - 这些选择器匹配的元素会被强制删除，即使它们在保护区域内
+   - 不受任何保护机制限制
+   - 解决了级联保护机制导致的删除失败问题
+
+2. **新增级联保护标签黑名单** (`protected_tag_blacklist`)
+   - 指定在级联保护检查时应该忽略的标签
+   - 这些标签即使位于保护区域内，也不会被保护
+   - 默认值：`['footer', 'aside', 'nav']`
+   - 推荐配置，因为这些语义标签通常应该被删除
+
+3. **配置优先级机制**
+   - 明确定义了三层优先级：
+     1. `force_remove_selectors` (强制删除，最高优先级)
+     2. `content_preserve_selectors` (保护，级联保护受黑名单限制)
+     3. `non_content_selectors` (常规删除，最低优先级)
+
+4. **`_is_protected_element()` 方法增强**
+   - 新增黑名单检查逻辑
+   - 如果元素在 `protected_tag_blacklist` 中，直接返回 False
+   - 在级联保护检查时，跳过黑名单标签的父元素检查
+
+**修改文件**：
+- `filter/config.py` - 添加 `FORCE_REMOVE_SELECTORS` 和 `PROTECTED_TAG_BLACKLIST` 常量
+- `filter/config.py` - 更新 `get_filter_config()` 函数，添加新配置项
+- `filter/config.py` - 更新 `FilterConfigLoader.load_from_config()` 方法
+- `filter/enhanced.py` - 添加新配置属性的初始化
+- `filter/enhanced.py` - 修改 `filter_non_content_blocks()` 方法，添加强制删除逻辑
+- `filter/enhanced.py` - 修改 `_is_protected_element()` 方法，支持黑名单
+- `config.json` - 添加 `force_remove_selectors` 和 `protected_tag_blacklist` 配置
+- `filter/FILTER_CONFIG.md` - 添加新配置项说明和使用示例
+
+**使用示例**：
+
+```json
+{
+  "content_filter": {
+    "force_remove_selectors": ["footer"],
+    "protected_tag_blacklist": ["footer", "aside", "nav"]
+  }
+}
+```
 
 ---
 
