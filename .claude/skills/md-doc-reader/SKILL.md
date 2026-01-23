@@ -120,12 +120,6 @@ conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --page-title "Agent Skills" \
   --headings "Create Skills,Configure Hooks" \
   --doc-set "code_claude_com:latest"
-
-# Output in JSON format
-conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --page-title "Agent Skills" \
-  --headings "Create Skills,Configure Hooks" \
-  --format json
 ```
 
 ### CLI Arguments (Section Extraction)
@@ -213,15 +207,13 @@ EOF
 
 # Extract using --sections-file
 conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --sections-file sections.json \
-  --format json
+  --sections-file sections.json
 ```
 
 **CLI Usage (inline JSON):**
 ```bash
 conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --sections-json '[{"title":"Agent Skills","headings":["Create Skills"],"doc_set":"code_claude_com:latest"}]' \
-  --format json
+  --sections-json '[{"title":"Agent Skills","headings":["Create Skills"],"doc_set":"code_claude_com:latest"}]'
 ```
 
 ### Scenario 5: Cross-Doc-Set Extraction
@@ -235,11 +227,10 @@ conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
   --sections-json '[
     {"title":"Agent Skills","headings":["Create Skills"],"doc_set":"OpenCode_Docs:latest"},
     {"title":"API Reference","headings":["Authentication"],"doc_set":"Anthropic_Docs:v2"}
-  ]' \
-  --format json
+  ]'
 ```
 
-**JSON Structure:**
+**sections-json Structure:**
 ```json
 [
   {
