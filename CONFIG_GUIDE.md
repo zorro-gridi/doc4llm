@@ -13,6 +13,8 @@
 - [文档爬取模式](#文档爬取模式)
 - [TOC选择器详解](#toc选择器详解)
 - [TOC URL过滤配置](#toc-url过滤配置)
+- [内容过滤配置](#内容过滤配置)
+- [工具配置](#工具配置)
 - [内联提取优化](#内联提取优化)
 
 ---
@@ -129,6 +131,26 @@
 ```json
 "max_urls": 5000
 ```
+
+---
+
+### `smart_concatenation`
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| 智能URL拼接 | bool | `true` |
+
+**作用**：启用智能URL拼接功能
+
+**配置示例**：
+```json
+"smart_concatenation": true
+```
+
+**应用场景**：
+- 相对路径处理：自动处理相对路径和绝对路径的拼接
+- URL标准化：自动处理URL末尾斜杠、重复斜杠等问题
+- 参数保留：保留原有URL的查询参数和锚点
 
 ---
 
@@ -340,6 +362,49 @@
 
 ---
 
+### `allowed_api_list`
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| 允许的API端点列表 | array | `["/docs/en/"]` |
+
+**作用**：白名单API端点列表，即使在危险API过滤启用时也允许访问
+
+**配置示例**：
+```json
+"allowed_api_list": [
+  "/docs/en/",
+  "/api/v1/docs/"
+]
+```
+
+**应用场景**：
+- 特殊API：某些包含危险关键词但实际安全的API端点
+- 文档路径：如 `/docs/en/` 等文档相关路径
+- 白名单机制：在 `danger_filter_enabled=1` 时覆盖过滤规则
+
+---
+
+### `is_duplicate`
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| 启用重复URL处理 | int | `0` |
+
+**作用**：是否启用重复URL的去重处理
+
+**配置示例**：
+```json
+"is_duplicate": 1  // 1=开启, 0=关闭
+```
+
+**应用场景**：
+- 避免重复爬取：同一URL只访问一次
+- 节省资源：减少不必要的HTTP请求
+- 提高效率：在URL数量较多时提高扫描速度
+
+---
+
 ### `exclude_fuzzy`
 
 | 参数 | 类型 | 默认值 |
@@ -380,6 +445,36 @@
   "Service Unavailable"
 ]
 ```
+
+---
+
+### `title_cleanup_patterns`
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| 标题清理模式列表 | array | `["- Claude Code Docs", "\| Claude Code Docs", "— Claude Code Docs"]` |
+
+**作用**：从页面标题中移除指定的后缀或模式
+
+**配置示例**：
+```json
+"title_cleanup_patterns": [
+  "- Claude Code Docs",
+  "| Claude Code Docs",
+  "— Claude Code Docs",
+  " | Documentation",
+  " - API Reference"
+]
+```
+
+**应用场景**：
+- 标题标准化：移除网站名称后缀
+- 文件命名优化：生成更简洁的文件名
+- 内容提取：提取文档的核心标题
+
+**工作原理**：
+- 在提取页面标题后，自动移除匹配的模式
+- 支持中文破折号（—）、英文连字符（-）、竖线（|）等分隔符
 
 ---
 
@@ -994,6 +1089,456 @@ TOC 锚点链接的直接父元素类名（白名单）：
 
 ---
 
+## 内容过滤配置
+
+### `content_filter`
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| 内容过滤配置 | object | `{...}` |
+
+**作用**：配置文档内容提取时的过滤规则，用于移除非正文内容（导航栏、页脚等）
+
+**配置示例**：
+```json
+"content_filter": {
+  "merge_mode": "extend",
+  "documentation_preset": "mintlify",
+  "non_content_selectors": [".sidebar", ".footer"],
+  "fuzzy_keywords": ["nav", "menu"],
+  "log_levels": ["TRACE:", "VERBOSE:"],
+  "meaningless_content": ["Skip to content"],
+  "content_end_markers": ["Next steps"],
+  "content_preserve_selectors": ["aside"],
+  "code_container_selectors": ["pre", "code"]
+}
+```
+
+### 配置字段说明
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `merge_mode` | `string` | `"extend"` | 合并模式：`extend` 或 `replace` |
+| `documentation_preset` | `string\|null` | `null` | 框架预设：`mintlify` / `docusaurus` / `vitepress` / `gitbook` |
+| `non_content_selectors` | `array` | `[...]` | 非正文元素的 CSS 选择器列表 |
+| `fuzzy_keywords` | `array` | `[...]` | 模糊匹配关键词（用于 class/id 匹配） |
+| `log_levels` | `array` | `[...]` | 日志级别过滤（移除包含这些级别的行） |
+| `meaningless_content` | `array` | `[...]` | 无意义内容模式（从文档中移除） |
+| `content_end_markers` | `array` | `[...]` | 内容结束标识（遇到后停止提取） |
+| `content_preserve_selectors` | `array` | `[...]` | 保护选择器（匹配的元素不会被移除） |
+| `code_container_selectors` | `array` | `[...]` | 代码容器选择器（特殊处理代码块） |
+
+### `merge_mode` - 合并模式
+
+| 模式 | 说明 |
+|------|------|
+| `extend` | 扩展模式：保留默认配置，将自定义配置追加到列表中 |
+| `replace` | 替换模式：完全使用自定义配置，忽略默认配置 |
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "non_content_selectors": [".my-sidebar"]
+  }
+}
+```
+
+### `documentation_preset` - 框架预设
+
+**支持的预设**：
+
+| 预设名称 | 适用框架 | 说明 |
+|----------|----------|------|
+| `mintlify` | Mintlify | Claude Code Docs 等使用 Mintlify 的站点 |
+| `docusaurus` | Docusaurus | Meta 的 Docusaurus 文档框架 |
+| `vitepress` | VitePress | Vue 生态的 VitePress 框架 |
+| `gitbook` | GitBook | GitBook 文档平台 |
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "documentation_preset": "mintlify"
+  }
+}
+```
+
+### `non_content_selectors` - 非正文选择器
+
+**作用**：指定应该被移除的 CSS 选择器
+
+**默认配置**（部分）：
+- `.sidebar`, `.footer`, `.header`
+- `.navigation`, `.menu`
+- `.breadcrumbs`, `.pagination`
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "non_content_selectors": [
+      ".custom-sidebar",
+      ".site-footer",
+      "#top-navigation"
+    ]
+  }
+}
+```
+
+### `fuzzy_keywords` - 模糊匹配关键词
+
+**作用**：通过关键词模糊匹配 class/id 名称，自动移除匹配的元素
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "fuzzy_keywords": [
+      "nav",
+      "menu",
+      "sidebar",
+      "footer",
+      "header"
+    ]
+  }
+}
+```
+
+**工作原理**：
+- 如果元素的 class 或 id 包含这些关键词，将被移除
+- 例如：`.main-nav`, `#footer-menu`, `.sidebar-wrapper`
+
+### `log_levels` - 日志级别过滤
+
+**作用**：从文档内容中移除包含指定日志级别的行
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "log_levels": [
+      "TRACE:",
+      "VERBOSE:",
+      "DEBUG:",
+      "INFO:"
+    ]
+  }
+}
+```
+
+**应用场景**：
+- 技术文档中包含日志输出示例
+- 清理文档中的调试信息
+
+### `meaningless_content` - 无意义内容
+
+**作用**：从文档中移除无意义的文本内容
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "meaningless_content": [
+      "Copy\n\nAsk AI",
+      "Skip to main content",
+      "Navigation menu"
+    ]
+  }
+}
+```
+
+### `content_end_markers` - 内容结束标识
+
+**作用**：遇到这些文本后停止提取后续内容
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "content_end_markers": [
+      "Next steps",
+      "See also",
+      "Related articles",
+      "Further reading"
+    ]
+  }
+}
+```
+
+### `content_preserve_selectors` - 保护选择器（重要）
+
+**作用**：指定应该被保护的 CSS 选择器，匹配的元素及其子元素不会被移除
+
+**特性**：
+- **级联保护**：父元素匹配时，所有子元素也受保护
+- **优先级最高**：即使子元素匹配 `non_content_selectors`，只要父元素匹配保护选择器，就不会被移除
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "content_preserve_selectors": [
+      "aside",
+      ".callout",
+      ".admonition",
+      ".tip-box"
+    ]
+  }
+}
+```
+
+**应用场景**：
+- **Starlight 提示框**：保护 `<aside class="note">` 等提示元素
+- **Docusaurus 提示块**：保护 `.admonition` 元素
+- **Mintlify 提示卡片**：保护 `.callout` 元素
+
+**工作原理**：
+```
+假设配置：
+- non_content_selectors: [".sidebar"]
+- content_preserve_selectors: ["aside"]
+
+页面结构：
+<div class="sidebar">
+  <aside class="note">
+    <p>重要提示内容</p>
+  </aside>
+</div>
+
+结果：aside 元素及其内容被保护，不会被移除
+```
+
+### `code_container_selectors` - 代码容器选择器
+
+**作用**：指定代码块的容器选择器，进行特殊处理
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "code_container_selectors": [
+      "pre",
+      "code",
+      ".highlight",
+      ".code-block"
+    ]
+  }
+}
+```
+
+### 与 `toc_filter` 的配合使用
+
+```json
+{
+  "toc_filter": {
+    "merge_mode": "extend",
+    "toc_class_patterns": ["custom-toc"]
+  },
+  "content_filter": {
+    "merge_mode": "extend",
+    "non_content_selectors": [".sidebar"],
+    "content_preserve_selectors": ["aside"]
+  }
+}
+```
+
+---
+
+## 工具配置
+
+### `tool.markdown_extractor`
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| Markdown 提取器配置 | object | `{...}` |
+
+**作用**：配置 Markdown 内容提取和搜索的行为
+
+**配置示例**：
+```json
+"tool": {
+  "markdown_extractor": {
+    "default_search_mode": "exact",
+    "case_sensitive": false,
+    "max_results": 10,
+    "fuzzy_threshold": 0.6,
+    "enable_fallback": false,
+    "fallback_modes": ["case_insensitive", "partial", "fuzzy"],
+    "compress_threshold": 2000,
+    "enable_compression": false
+  }
+}
+```
+
+### 配置字段说明
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `default_search_mode` | `string` | `"exact"` | 默认搜索模式 |
+| `case_sensitive` | `bool` | `false` | 是否区分大小写 |
+| `max_results` | `int` | `10` | 模糊/部分搜索的最大结果数 |
+| `fuzzy_threshold` | `float` | `0.6` | 模糊匹配的最小相似度阈值 (0.0-1.0) |
+| `enable_fallback` | `bool` | `false` | 是否启用自动回退到其他搜索模式 |
+| `fallback_modes` | `array` | `[...]` | 回退时尝试的搜索模式列表 |
+| `compress_threshold` | `int` | `2000` | 内容压缩的行数阈值 |
+| `enable_compression` | `bool` | `false` | 是否启用自动内容压缩 |
+
+### `default_search_mode` - 搜索模式
+
+**支持的搜索模式**：
+
+| 模式 | 说明 | 适用场景 |
+|------|------|----------|
+| `exact` | 精确匹配（区分大小写由 `case_sensitive` 控制） | 精确查找标题 |
+| `case_insensitive` | 不区分大小写的精确匹配 | 标题大小写不确定 |
+| `partial` | 部分匹配（关键词匹配） | 查找包含关键词的标题 |
+| `fuzzy` | 模糊匹配（相似度匹配） | 标题可能有拼写变化 |
+
+**配置示例**：
+```json
+{
+  "tool": {
+    "markdown_extractor": {
+      "default_search_mode": "exact"
+    }
+  }
+}
+```
+
+### `case_sensitive` - 大小写敏感
+
+**作用**：控制搜索时是否区分大小写
+
+**配置示例**：
+```json
+{
+  "tool": {
+    "markdown_extractor": {
+      "case_sensitive": false
+    }
+  }
+}
+```
+
+### `max_results` - 最大结果数
+
+**作用**：模糊搜索或部分搜索时返回的最大结果数
+
+**配置示例**：
+```json
+{
+  "tool": {
+    "markdown_extractor": {
+      "max_results": 20
+    }
+  }
+}
+```
+
+### `fuzzy_threshold` - 模糊匹配阈值
+
+**作用**：模糊匹配的最小相似度阈值（0.0-1.0）
+
+| 阈值范围 | 说明 |
+|----------|------|
+| `0.0 - 0.4` | 宽松匹配，更多结果 |
+| `0.5 - 0.7` | 平衡模式（推荐） |
+| `0.8 - 1.0` | 严格匹配，较少结果 |
+
+**配置示例**：
+```json
+{
+  "tool": {
+    "markdown_extractor": {
+      "fuzzy_threshold": 0.7
+    }
+  }
+}
+```
+
+### `enable_fallback` - 启用回退机制
+
+**作用**：当默认搜索模式找不到结果时，自动尝试其他搜索模式
+
+**配置示例**：
+```json
+{
+  "tool": {
+    "markdown_extractor": {
+      "enable_fallback": true,
+      "fallback_modes": ["case_insensitive", "partial", "fuzzy"]
+    }
+  }
+}
+```
+
+**回退流程**：
+1. 尝试 `default_search_mode`（如 `exact`）
+2. 如果无结果，尝试 `fallback_modes[0]`（如 `case_insensitive`）
+3. 如果仍无结果，继续尝试下一个模式
+4. 直到找到结果或尝试完所有模式
+
+### `fallback_modes` - 回退模式列表
+
+**作用**：指定回退时尝试的搜索模式顺序
+
+**配置示例**：
+```json
+{
+  "tool": {
+    "markdown_extractor": {
+      "fallback_modes": [
+        "case_insensitive",
+        "partial",
+        "fuzzy"
+      ]
+    }
+  }
+}
+```
+
+### `compress_threshold` - 压缩阈值
+
+**作用**：当提取的内容行数超过此阈值时，触发压缩
+
+**配置示例**：
+```json
+{
+  "tool": {
+    "markdown_extractor": {
+      "compress_threshold": 1000
+    }
+  }
+}
+```
+
+### `enable_compression` - 启用压缩
+
+**作用**：是否启用自动内容压缩
+
+**配置示例**：
+```json
+{
+  "tool": {
+    "markdown_extractor": {
+      "enable_compression": true
+    }
+  }
+}
+```
+
+---
+
 ## 输出配置
 
 ### `results_dir`
@@ -1072,6 +1617,26 @@ TOC 锚点链接的直接父元素类名（白名单）：
 - 问题排查：记录详细的调试信息
 - 性能分析：跟踪程序执行流程
 - 开发调试：开发阶段的详细日志
+
+---
+
+### `log_max_lines`
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| 日志文件最大行数 | int | `10000` |
+
+**作用**：日志文件轮转前的最大行数，超过此数量时自动创建新的日志文件
+
+**配置示例**：
+```json
+"log_max_lines": 5000
+```
+
+**应用场景**：
+- 日志管理：防止单个日志文件过大
+- 文件分割：按行数自动分割日志文件
+- 存储优化：控制日志文件的磁盘占用
 
 ---
 
@@ -1358,7 +1923,19 @@ md_docs/
   "debug_mode": 0,
   "url_scope_mode": 0,
   "danger_filter_enabled": 1,
+  "danger_api_list": [
+    "del", "delete", "drop",
+    "truncate", "shutdown", "stop",
+    "deactivate", "disable", "remove"
+  ],
+  "allowed_api_list": [
+    "/docs/en/"
+  ],
+  "is_duplicate": 0,
   "fuzz": 0,
+  "custom_base_url": [],
+  "path_route": [],
+  "api_route": [],
   "exclude_fuzzy": [
     "/blog/", "/news/", "/forum/"
   ],
@@ -1366,6 +1943,11 @@ md_docs/
     "Page Not Found",
     "404 Not Found",
     "Access Denied"
+  ],
+  "title_cleanup_patterns": [
+    "- Claude Code Docs",
+    "| Claude Code Docs",
+    "— Claude Code Docs"
   ],
   "status_code_filter": [
     404, 503, 502, 504, 403, 401, 500
@@ -1390,7 +1972,8 @@ md_docs/
     "toc_link_class_patterns": ["custom-toc-item"],
     "toc_parent_class_patterns": ["custom-menu-item"],
     "content_area_patterns": ["custom-content-area"],
-    "non_toc_link_patterns": ["custom-exclude-link"]
+    "non_toc_link_patterns": ["custom-exclude-link"],
+    "toc_end_markers": ["See also", "Next steps"]
   },
   "content_filter": {
     "merge_mode": "extend",
@@ -1400,11 +1983,25 @@ md_docs/
     "log_levels": ["TRACE:", "VERBOSE:"],
     "meaningless_content": ["Custom skip text"],
     "content_end_markers": ["Next steps"],
-    "content_preserve_selectors": [],
+    "content_preserve_selectors": ["aside"],
     "code_container_selectors": []
   },
+  "tool": {
+    "markdown_extractor": {
+      "default_search_mode": "exact",
+      "case_sensitive": false,
+      "max_results": 10,
+      "fuzzy_threshold": 0.6,
+      "enable_fallback": false,
+      "fallback_modes": ["case_insensitive", "partial", "fuzzy"],
+      "compress_threshold": 2000,
+      "enable_compression": false
+    }
+  },
   "output_log_file": "results/output.out",
-  "debug_log_file": "results/debug.log"
+  "debug_log_file": "results/debug.log",
+  "log_max_lines": 10000,
+  "enable_inline_extraction": 1
 }
 ```
 
@@ -1478,11 +2075,21 @@ python -m doc4llm -u https://example.com -scope 3
 
 ---
 
-**文档版本**: v1.2
-**更新日期**: 2026-01-16
+**文档版本**: v1.5
+**更新日期**: 2026-01-23
 **项目**: doc4llm
 
 ## 更新日志
+
+### v1.5 (2026-01-23)
+- 新增 `smart_concatenation` 配置参数（智能URL拼接功能）
+- 新增 `log_max_lines` 配置参数（日志文件轮转行数）
+- 新增 `allowed_api_list` 配置参数（白名单API端点）
+- 新增 `is_duplicate` 配置参数（重复URL处理）
+- 新增 `title_cleanup_patterns` 配置参数（标题清理模式）
+- 新增"内容过滤配置"章节（完整的 `content_filter` 配置说明）
+- 新增"工具配置"章节（完整的 `tool.markdown_extractor` 配置说明）
+- 更新完整配置示例，包含所有新增参数
 
 ### v1.4 (2026-01-16)
 - 新增 `enable_inline_extraction` 配置参数（mode 1/2/3 时的内联提取优化）

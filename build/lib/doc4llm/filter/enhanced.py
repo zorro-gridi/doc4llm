@@ -285,6 +285,46 @@ class EnhancedContentFilter(BaseContentFilter):
 
         return max(score, 0)
 
+    def _is_protected_element(self, elem: Tag) -> bool:
+        """
+        检查元素是否匹配 content_preserve_selectors（应该被保护）
+
+        Args:
+            elem: BeautifulSoup Tag 对象
+
+        Returns:
+            True 如果元素应该被保护，False 否则
+        """
+        if not self.content_preserve_selectors:
+            return False
+
+        # 检查元素本身是否匹配保护选择器
+        for selector in self.content_preserve_selectors:
+            try:
+                # 检查元素的标签名
+                if selector.lower() == elem.name.lower():
+                    return True
+                # 检查 CSS 选择器匹配
+                if elem.select_one(selector):
+                    return True
+            except Exception:
+                continue
+
+        # 检查父元素是否匹配保护选择器（级联保护）
+        parent = elem.find_parent()
+        while parent:
+            for selector in self.content_preserve_selectors:
+                try:
+                    if selector.lower() == parent.name.lower():
+                        return True
+                    if parent.select_one(selector):
+                        return True
+                except Exception:
+                    continue
+            parent = parent.find_parent()
+
+        return False
+
     def filter_non_content_blocks(self, soup: BeautifulSoup) -> BeautifulSoup:
         """
         过滤非正文内容（增强版）
@@ -319,6 +359,10 @@ class EnhancedContentFilter(BaseContentFilter):
                 elements = soup.select(selector)
                 for elem in elements:
                     try:
+                        # 检查元素是否被保护
+                        if self._is_protected_element(elem):
+                            print(f"保护元素: <{elem.name} class=\"{' '.join(elem.get('class', []))}\">")
+                            continue
                         elem.decompose()
                         self.removed_count += 1
                     except Exception:
@@ -353,6 +397,10 @@ class EnhancedContentFilter(BaseContentFilter):
                                 keyword in elem_id or
                                 keyword in elem_role or
                                 elem.name in ['aside', 'nav', 'footer']):
+                                # 检查元素是否被保护
+                                if self._is_protected_element(elem):
+                                    print(f"保护元素: <{elem.name} class=\"{' '.join(elem.get('class', []))}\">")
+                                    continue
                                 elem.decompose()
                                 self.removed_count += 1
                         except Exception:
