@@ -31,7 +31,7 @@ Use this skill when:
 
 ---
 
-## Four-Phase Optimization Protocol
+## Five-Phase Optimization Protocol
 
 ---
 
@@ -74,58 +74,7 @@ or
 
 ---
 
-### Phase 1: Intent Recognition
-
-For each user query, analyze:
-
-1. **Complexity Check**
-
-   * Look for conjunctions: 和、以及、与、还有 / and, also, along with
-
-2. **Ambiguity Check**
-
-   * Detect generic terms: skills, hooks, features, setup
-
-3. **Language Detection**
-
-   * Chinese / English / Mixed
-
-4. **Technical Term Extraction**
-
-5. **Semantic Extraction**
-
-**Domain Nouns (实体名词 ONLY)**
-Concrete entities being queried about.
-
-Include:
-
-* Product names: Claude Code
-* Components: hooks, skills
-* Technical entities: middleware, authentication, API
-
-Exclude:
-
-* Abstract process nouns: creation, deployment, configuration (as a process)
-
-Rule:
-If it answers **"what thing is being queried about?" → include**
-If it answers **"what action is being done?" → exclude**
-
-**Predicate Verbs**
-
-Core action verbs:
-
-* create
-* configure
-* setup
-* deploy
-* build
-* install
-* integrate
-
----
-
-### Phase 2: Strategy Selection
+### Phase 1: Strategy Selection
 
 | Analysis Result      | Primary Strategy       | Secondary Actions            |
 | -------------------- | ---------------------- | ---------------------------- |
@@ -134,51 +83,6 @@ Core action verbs:
 | Chinese query        | Translation            | Expand translated terms      |
 | Mixed language       | Translation + preserve | Keep technical terms         |
 | Well-formed specific | None                   | Minor expansion only         |
-
----
-
-### Phase 3: Query Generation
-
-Generate optimized queries following:
-
-1. Prioritize **direct translations** for Chinese queries
-2. Add **domain-specific variations**
-3. Include documentation modifiers:
-
-   * reference, guide, tutorial, setup
-4. Preserve **core technical terms exactly**
-5. Rank by expected relevance (most direct first)
-
----
-
-### Optimized Query Count Logic
-
-The number of optimized queries returned is dynamically determined based on the number of extracted **Domain Nouns**.
-
-Use the following branching logic:
-
-```text
-IF domain_nouns_count == 1:
-    return 3–5 optimized queries
-ELSE IF domain_nouns_count == 2:
-    return 6–10 optimized queries
-ELSE IF domain_nouns_count >= 3:
-    base = 6
-    extra_nouns = domain_nouns_count - 2
-    return base + (extra_nouns * 3~5)
-```
-
-**Explanation**
-
-* 1 Domain Noun → return **3–5** optimized queries
-* 2 Domain Nouns → return **6–10** optimized queries
-* Each additional Domain Noun beyond 2 increases the result count by **3–5**
-
-This ensures:
-
-* Lightweight output for simple queries
-* Broad coverage for complex, multi-entity queries
-* Query volume scales with semantic complexity
 
 ---
 
@@ -218,14 +122,107 @@ When detecting conjunctions:
 
 ---
 
+### Phase 2: Query Generation
+
+Generate optimized queries following:
+
+1. Prioritize **direct translations** for Chinese queries
+2. Add **domain-specific variations**
+3. Include documentation modifiers:
+   * reference, guide, tutorial, setup
+4. Preserve **core technical terms exactly**
+5. Rank by expected relevance (most direct first)
+
+### Phase 3: Intent Recognition
+
+For each user query, analyze:
+
+1. **Complexity Check**
+
+   * Look for conjunctions: 和、以及、与、还有 / and, also, along with
+
+2. **Ambiguity Check**
+
+   * Detect generic terms: skills, hooks, features, setup
+
+3. **Language Detection**
+
+   * Chinese / English / Mixed
+
+4. **Technical Term Extraction**
+
+5. **Semantic Extraction**
+
+### Phase 4: Domain Nouns (实体名词 ONLY)
+
+**Core Extraction Rule**
+
+> *Return the noun that represents the true entity being discussed, analyzed, or acted upon in the query.*
+
+Include:
+
+* Product names: Claude Code
+* Components: hooks, skills
+* Technical entities: middleware, authentication, API
+
+Exclude:
+* Abstract process nouns: creation, deployment, configuration (as a process)
+
+Demo Extraction
+| query input | returned entities |
+| :--- | :--- |
+| opencode 如何创建 skills | skills |
+| opencode 的设计理念 | opencode |
+| opencode 和 Claude code 的 skills 对比分析 | skills |
+| opencode 和 claude code 对比分析 | opencode 和 Claude code |
+
+### Phase 5: Predicate Verbs
+
+Extrat Rules: **You should extract all the verbs base on the optimized query sets, not the user raw query input.**
+
+Core action verbs Examples:
+
+* create
+* configure
+* setup
+* deploy
+* build
+* install
+* integrate
+---
+
+### Optimized Query Count Logic
+
+The number of optimized queries returned is dynamically determined based on the number of extracted **Domain Nouns**.
+
+Use the following branching logic:
+
+```text
+IF domain_nouns_count == 1:
+    return 3–5 optimized queries
+ELSE IF domain_nouns_count == 2:
+    return 6–10 optimized queries
+ELSE IF domain_nouns_count >= 3:
+    base = 6
+    extra_nouns = domain_nouns_count - 2
+    return base + (extra_nouns * 3~5)
+```
+
+**Explanation**
+
+* 1 Domain Noun → return **3–5** optimized queries
+* 2 Domain Nouns → return **6–10** optimized queries
+* Each additional Domain Noun beyond 2 increases the result count by **3–5**
+
+This ensures:
+
+* Lightweight output for simple queries
+* Broad coverage for complex, multi-entity queries
+* Query volume scales with semantic complexity
+
+---
+
 ## Integration Protocol
-
-**Step 1** Receive user query
-**Step 2** Phase 0 – Detect doc-sets
-**Step 3** Generate optimized queries
-**Step 4** Output Human + JSON formats
-**Step 5**
-
 * If `doc_set` empty → Suggest online search
 * If not empty → Call `md-doc-searcher`
 

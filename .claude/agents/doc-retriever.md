@@ -221,7 +221,7 @@ As the doc-retriever agent, you are responsible for:
 ```
 User Query
     │
-    ├───▶ Phase 0a (md-doc-query-optimizer)
+    ├───▶ Phase 0a (md-doc-query-optimizer skill)
     │    Output: {
     |      "query_analysis" : [
     |        "doc_set": ["doc_name@version"],
@@ -231,7 +231,7 @@ User Query
     |     "search_recommendation": [...]
     │    }
     │
-    └───▶ Phase 0b (md-doc-query-router) [CONCURRENT]
+    └───▶ Phase 0b (md-doc-query-router skill) [CONCURRENT]
          Output: {
            "scene": "scene_name",
            "confidence": 0.xx,
@@ -240,7 +240,7 @@ User Query
            "reranker_threshold": 0.xx  ← PASSED TO Phase 1
          }
          │
-         └───▶ Phase 1 (md-doc-searcher)
+         └───▶ Phase 1 (md-doc-searcher skill)
               Input:
                 - optimized_queries (from Phase 0a)
                 - doc_set (from Phase 0a)
@@ -254,7 +254,7 @@ User Query
                 "headings": [{"level": N, "text": "xxx"}]
               }
               │
-         └───▶ Phase 2 (md-doc-reader)
+         └───▶ Phase 2 (md-doc-reader skill)
               Input: --sections-json '[{title, headings, doc_set}]'
               Output: ExtractionResult {
                 contents,
@@ -267,7 +267,7 @@ User Query
               Input: ExtractionResult.requires_processing
               Output: Decision (skip Phase 3 OR invoke)
               │
-         └───▶ Phase 3 (md-doc-processor) [Conditional]
+         └───▶ Phase 3 (md-doc-processor skill) [Conditional]
               Input: {
                 "user_query": "...",
                 "scene": "from Phase 0b",      ← CRITICAL!
@@ -283,7 +283,7 @@ User Query
                 "doc_meta": {...}
               }
               │
-         └───▶ Phase 4 (md-doc-sence-output)
+         └───▶ Phase 4 (md-doc-sence-output skill)
               Input: {
                 "scene": "from Phase 0b",
                 "routing_params": {
