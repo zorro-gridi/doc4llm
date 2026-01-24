@@ -37,11 +37,48 @@ Note:
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import List, Optional
 
 from doc_searcher_api import DocSearcherAPI
+
+
+def load_skiped_keywords() -> List[str]:
+    """Load skiped keywords from skiped_keywords.txt file."""
+    keywords_file = Path(__file__).parent / "skiped_keywords.txt"
+    if not keywords_file.exists():
+        return []
+    return [line.strip() for line in keywords_file.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def filter_query_keywords(query: str, skiped_keywords: List[str]) -> str:
+    """Filter out skiped keywords from query string (case-insensitive).
+
+    Args:
+        query: Original query string
+        skiped_keywords: List of keywords to remove
+
+    Returns:
+        Filtered query string with keywords removed (case-insensitive match)
+    """
+    # Strip query for processing
+    query_lower = query.strip()
+    result = query_lower
+
+    for keyword in skiped_keywords:
+        keyword_lower = keyword.strip().lower()
+        if not keyword_lower:
+            continue
+        # Case-insensitive replacement
+        pattern = keyword_lower
+        # Use regex with re.IGNORECASE flag
+        result = re.sub(re.escape(pattern), '', result, flags=re.IGNORECASE)
+
+    # Clean up extra spaces that may result from keyword removal
+    result = re.sub(r'\s+', ' ', result).strip()
+    return result
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -97,8 +134,8 @@ def create_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--min-page-titles",
         type=int,
-        default=1,
-        help="Minimum page titles per doc-set (default: 1)",
+        default=3,
+        help="Minimum page titles per doc-set (default: 3)",
     )
     parser.add_argument(
         "--min-headings",
@@ -117,6 +154,15 @@ def create_parser() -> argparse.ArgumentParser:
     # Behavior control
     parser.add_argument(
         "--no-fallback", action="store_true", help="Disable fallback strategies"
+    )
+    parser.add_argument(
+        "--fallback-mode",
+        type=str,
+        default="parallel",
+        choices=["serial", "parallel"],
+        help="Fallback strategy execution mode (default: parallel). "
+             "serial   - Execute fallbacks sequentially (FALLBACK_2 only if FALLBACK_1 fails). "
+             "parallel - Execute both fallbacks and merge results.",
     )
 
     # Output control
@@ -166,6 +212,14 @@ def create_parser() -> argparse.ArgumentParser:
         type=float,
         default=0.6,
         help="Language detection threshold (default: 0.6). Ratio of Chinese characters >= this value uses Chinese model, otherwise English model.",
+    )
+    parser.add_argument(
+        "--hierarchical-filter",
+        type=int,
+        default=1,
+        choices=[0, 1],
+        help="Enable hierarchical heading filtering (default: 1). "
+         "1=enabled (keep only highest-level headings), 0=disabled.",
     )
 
     return parser
@@ -250,7 +304,17 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Parse doc-sets
     doc_sets = parse_doc_sets(args.doc_sets)
 
-    # Build API kwargs - only pass base_dir if provided
+    # Filter query keywords
+    skiped_keywords = load_skiped_keywords()
+    if skiped_keywords:
+        filtered_queries = [filter_query_keywords(q, skiped_keywords) for q in args.query]
+        # Remove empty queries after filtering
+        args.query = [q for q in filtered_queries if q]
+        if not args.query:
+            print("Error: All queries filtered out by skiped_keywords.txt")
+            return 1
+
+    # Build API kwargs - only pass base_dir if provided (None or empty means use config default)
     api_kwargs = dict(
         bm25_k1=args.bm25_k1,
         bm25_b=args.bm25_b,
@@ -266,6 +330,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         reranker_threshold=args.reranker_threshold,
         reranker_top_k=args.reranker_top_k,
         reranker_lang_threshold=args.reranker_lang_threshold,
+        hierarchical_filter=args.hierarchical_filter,
+        fallback_mode=args.fallback_mode,
     )
     if args.base_dir:
         api_kwargs["base_dir"] = args.base_dir
@@ -278,7 +344,7 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     # Format output (JSON is default since --json flag is required for AOP format)
     if args.json:
-        output = api.format_structured_output(result)
+        output = api.format_structured_output(result, queries=args.query)
     else:
         output = api.format_aop_output(result)
 

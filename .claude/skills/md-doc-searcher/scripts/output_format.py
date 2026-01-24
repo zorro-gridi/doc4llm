@@ -12,7 +12,7 @@ Example:
 """
 
 import json
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 
 class OutputFormatter:
@@ -75,7 +75,7 @@ class OutputFormatter:
         return "\n".join(lines)
 
     @staticmethod
-    def format_structured(result: Dict[str, Any]) -> str:
+    def format_structured(result: Dict[str, Any], queries: Optional[List[str]] = None) -> str:
         """
         Format result as structured JSON for machine parsing.
 
@@ -86,12 +86,27 @@ class OutputFormatter:
 
         Args:
             result: Search result from DocSearcherAPI.search()
+            queries: Original query input list from --query parameter
 
         Returns:
             JSON string with structured metadata
         """
+        def _convert_to_json_serializable(obj):
+            """Convert numpy types and other non-serializable objects to JSON-serializable types."""
+            import numpy as np
+            if isinstance(obj, np.floating):
+                return float(obj)
+            elif isinstance(obj, np.integer):
+                return int(obj)
+            elif isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return obj
+
         structured = {
             "success": result.get("success", False),
+            "toc_fallback": result.get("toc_fallback", False),
+            "grep_fallback": result.get("grep_fallback", False),
+            "query": queries or [],
             "doc_sets_found": result.get("doc_sets_found", []),
             "results": [
                 {
@@ -99,7 +114,12 @@ class OutputFormatter:
                     "page_title": page["page_title"],
                     "toc_path": page["toc_path"],
                     "headings": [
-                        {"level": h.get("level", 2), "text": h["text"]}
+                        {
+                            "level": h.get("level", 2),
+                            "text": h["text"],
+                            "rerank_sim": _convert_to_json_serializable(h.get("score")),  # Reranker similarity
+                            "bm25_sim": _convert_to_json_serializable(h.get("bm25_sim")),  # BM25 similarity
+                        }
                         for h in page.get("headings", [])
                     ],
                 }

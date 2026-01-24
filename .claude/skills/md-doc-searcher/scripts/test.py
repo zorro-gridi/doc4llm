@@ -5,8 +5,8 @@ dotenv.load_dotenv('.claude/.env')
 from huggingface_hub import InferenceClient
 
 
-# MODEL_ID = 'BAAI/bge-large-en-v1.5'
-MODEL_ID = 'BAAI/bge-large-zh-v1.5'
+MODEL_ID = 'BAAI/bge-large-en-v1.5'
+# MODEL_ID = 'BAAI/bge-large-zh-v1.5'
 
 
 import numpy as np
@@ -37,14 +37,23 @@ def normalize(v):
 
 # ========== Demo ==========
 if __name__ == "__main__":
-    query = "苹果发布了新款 iPhone"
+    # query = "苹果发布了新款 iPhone"
 
+    # corpus = [
+    #     "苹果公司发布了新手机",
+    #     "今天北京下雨了",
+    #     "Apple released a new iPhone",
+    #     "微软推出了新的 Copilot 功能",
+    #     "特斯拉发布了新款电动车",
+    # ]
+
+    query = 'create rules'
     corpus = [
-        "苹果公司发布了新手机",
-        "今天北京下雨了",
-        "Apple released a new iPhone",
-        "微软推出了新的 Copilot 功能",
-        "特斯拉发布了新款电动车",
+        'Create a plugin',
+        'a plugin',
+        'agents',
+        'Create agents',
+        'Rules'
     ]
 
     # 1. 算 embedding

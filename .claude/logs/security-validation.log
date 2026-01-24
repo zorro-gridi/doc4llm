@@ -1704,3 +1704,88 @@ for root, dirs, files in os.walk(base_dir):
 [2026-01-23 17:30:00] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Agent Skills" 2>&1 | wc -l
 [2026-01-23 17:30:01] [INFO] 匹配允许操作: ^conda .*
 [2026-01-23 17:30:01] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Agent Skills" 2>&1 | wc -l
+[2026-01-24 13:06:33] [INFO] 验证命令: conda activate k8s && python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "如何在 OpenCode 编程工具中创建技能 技能结构 文件格式 SKILL.md 配置文件 技能创建工作流程 示例 模板"
+[2026-01-24 13:06:34] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:06:34] [INFO] 安全验证通过: conda activate k8s && python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "如何在 OpenCode 编程工具中创建技能 技能结构 文件格式 SKILL.md 配置文件 技能创建工作流程 示例 模板"
+[2026-01-24 13:06:35] [INFO] 验证命令: conda activate k8s && python .claude/skills/md-doc-query-router/scripts/route_query.py --query "如何在 OpenCode 编程工具中创建技能 技能结构 文件格式 SKILL.md 配置文件 技能创建工作流程 示例 模板"
+[2026-01-24 13:06:36] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:06:36] [INFO] 安全验证通过: conda activate k8s && python .claude/skills/md-doc-query-router/scripts/route_query.py --query "如何在 OpenCode 编程工具中创建技能 技能结构 文件格式 SKILL.md 配置文件 技能创建工作流程 示例 模板"
+[2026-01-24 13:06:40] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "如何在 OpenCode 编程工具中创建技能 技能结构 文件格式 SKILL.md 配置文件 技能创建工作流程 示例 模板"
+[2026-01-24 13:06:40] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:06:40] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "如何在 OpenCode 编程工具中创建技能 技能结构 文件格式 SKILL.md 配置文件 技能创建工作流程 示例 模板"
+[2026-01-24 13:06:43] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-query-router/scripts/route_query.py --query "如何在 OpenCode 编程工具中创建技能 技能结构 文件格式 SKILL.md 配置文件 技能创建工作流程 示例 模板"
+[2026-01-24 13:06:43] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:06:43] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-query-router/scripts/route_query.py --query "如何在 OpenCode 编程工具中创建技能 技能结构 文件格式 SKILL.md 配置文件 技能创建工作流程 示例 模板"
+[2026-01-24 13:06:59] [INFO] 验证命令: ls -la /Users/zorro/project/md_docs_base/
+[2026-01-24 13:07:00] [INFO] 匹配允许操作: ^ls.*md_docs
+[2026-01-24 13:07:00] [WARN] md_docs 目录不存在，操作可能失败
+[2026-01-24 13:07:00] [INFO] 安全验证通过: ls -la /Users/zorro/project/md_docs_base/
+[2026-01-24 13:07:09] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["skill structure", "skill file format", "SKILL.md", "create skill", "skill template", "skill configuration"], "doc_sets": "OpenCode_Docs@latest", "base_dir": "/Users/zorro/project/md_docs_base", "reranker": true, "reranker_threshold": 0.55, "json": true}'
+[2026-01-24 13:07:09] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:07:09] [WARN] md_docs 目录不存在，操作可能失败
+[2026-01-24 13:07:09] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["skill structure", "skill file format", "SKILL.md", "create skill", "skill template", "skill configuration"], "doc_sets": "OpenCode_Docs@latest", "base_dir": "/Users/zorro/project/md_docs_base", "reranker": true, "reranker_threshold": 0.55, "json": true}'
+[2026-01-24 13:07:23] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Commands" --output-format json
+[2026-01-24 13:07:24] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:07:24] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Commands" --output-format json
+[2026-01-24 13:07:27] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Web" --output-format json
+[2026-01-24 13:07:27] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:07:27] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Web" --output-format json
+[2026-01-24 13:07:29] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Plugins" --output-format json
+[2026-01-24 13:07:30] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:07:30] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Plugins" --output-format json
+[2026-01-24 13:07:36] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Commands" --format json
+[2026-01-24 13:07:37] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:07:37] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Commands" --format json
+[2026-01-24 13:07:40] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Web" --format json
+[2026-01-24 13:07:41] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:07:41] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Web" --format json
+[2026-01-24 13:07:44] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Plugins" --format json
+[2026-01-24 13:07:45] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:07:45] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Plugins" --format json
+[2026-01-24 13:07:54] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["Skills", "skill", "skills"], "doc_sets": "OpenCode_Docs@latest", "base_dir": "/Users/zorro/project/md_docs_base", "reranker": true, "reranker_threshold": 0.55, "json": true}'
+[2026-01-24 13:07:55] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:07:55] [WARN] md_docs 目录不存在，操作可能失败
+[2026-01-24 13:07:55] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["Skills", "skill", "skills"], "doc_sets": "OpenCode_Docs@latest", "base_dir": "/Users/zorro/project/md_docs_base", "reranker": true, "reranker_threshold": 0.55, "json": true}'
+[2026-01-24 13:08:07] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Tools" --format json
+[2026-01-24 13:08:07] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:08:07] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Tools" --format json
+[2026-01-24 13:08:10] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Agent Skills" --format json
+[2026-01-24 13:08:11] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:08:11] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Agent Skills" --format json
+[2026-01-24 13:08:19] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["OpenCode skill", "opencode skill", "custom skill opencode"], "doc_sets": "OpenCode_Docs@latest", "base_dir": "/Users/zorro/project/md_docs_base", "reranker": true, "reranker_threshold": 0.55, "json": true}'
+[2026-01-24 13:08:20] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:08:20] [WARN] md_docs 目录不存在，操作可能失败
+[2026-01-24 13:08:20] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["OpenCode skill", "opencode skill", "custom skill opencode"], "doc_sets": "OpenCode_Docs@latest", "base_dir": "/Users/zorro/project/md_docs_base", "reranker": true, "reranker_threshold": 0.55, "json": true}'
+[2026-01-24 13:08:40] [INFO] 验证命令: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Custom Tools" --format json
+[2026-01-24 13:08:40] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:08:40] [INFO] 安全验证通过: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Custom Tools" --format json
+[2026-01-24 13:08:49] [INFO] 验证命令: ls -la /Users/zorro/project/doc4llm/.claude/skills/
+[2026-01-24 13:08:49] [ERROR] 不允许的操作: ls -la /Users/zorro/project/doc4llm/.claude/skills/
+[2026-01-24 13:16:01] [INFO] 验证命令: conda activate k8s && python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:01] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:16:01] [INFO] 安全验证通过: conda activate k8s && python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:02] [INFO] 验证命令: conda activate k8s && python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-router/scripts/route_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:03] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:16:03] [INFO] 安全验证通过: conda activate k8s && python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-router/scripts/route_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:09] [INFO] 验证命令: source ~/miniconda3/etc/profile.d/conda.sh && conda activate k8s && python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:10] [CRITICAL] 检测到危险操作: /etc/ in source ~/miniconda3/etc/profile.d/conda.sh && conda activate k8s && python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:10] [INFO] 验证命令: source ~/miniconda3/etc/profile.d/conda.sh && conda activate k8s && python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-router/scripts/route_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:10] [CRITICAL] 检测到危险操作: /etc/ in source ~/miniconda3/etc/profile.d/conda.sh && conda activate k8s && python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-router/scripts/route_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:19] [INFO] 验证命令: conda run -n k8s python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:19] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:16:20] [INFO] 安全验证通过: conda run -n k8s python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:22] [INFO] 验证命令: conda run -n k8s python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-router/scripts/route_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:23] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:16:23] [INFO] 安全验证通过: conda run -n k8s python /Users/zorro/project/doc4llm/.claude/skills/md-doc-query-router/scripts/route_query.py --query "how to create OpenCode skills" --json
+[2026-01-24 13:16:31] [INFO] 验证命令: ls -la /Users/zorro/project/doc4llm/.claude/skills/
+[2026-01-24 13:16:32] [ERROR] 不允许的操作: ls -la /Users/zorro/project/doc4llm/.claude/skills/
+[2026-01-24 13:16:41] [INFO] 验证命令: ls -la /Users/zorro/project/md_docs_base/ 2>/dev/null | head -20
+[2026-01-24 13:16:41] [INFO] 匹配允许操作: ^ls.*md_docs
+[2026-01-24 13:16:41] [WARN] md_docs 目录不存在，操作可能失败
+[2026-01-24 13:16:41] [INFO] 安全验证通过: ls -la /Users/zorro/project/md_docs_base/ 2>/dev/null | head -20
+[2026-01-24 13:16:45] [INFO] 验证命令: conda run -n k8s python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "create skills" --doc-sets "OpenCode_Docs@latest" --reranker --reranker-threshold 0.5 --json
+[2026-01-24 13:16:46] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:16:46] [INFO] 安全验证通过: conda run -n k8s python /Users/zorro/project/doc4llm/.claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "create skills" --doc-sets "OpenCode_Docs@latest" --reranker --reranker-threshold 0.5 --json
+[2026-01-24 13:17:01] [INFO] 验证命令: conda run -n k8s python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Agent Skills" --json
+[2026-01-24 13:17:01] [INFO] 匹配允许操作: ^conda .*
+[2026-01-24 13:17:01] [INFO] 安全验证通过: conda run -n k8s python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py --doc-set "OpenCode_Docs@latest" --page-title "Agent Skills" --json

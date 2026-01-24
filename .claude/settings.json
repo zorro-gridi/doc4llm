@@ -8,10 +8,7 @@
       "Read(.claude/.env)",
       "Read(**/.claude/.env)",
       "Read(**/docContent.md)",
-      "Read(/Users/zorro/project/md_docs_base/**/docContent.md)",
-      "Read(**/doc_searcher_cli.py)",
-      "Read(**/doc_searcher_api.py)",
-      "Read(**/extract_md_doc.py)"
+      "Read(/Users/zorro/project/md_docs_base/**/docContent.md)"
     ]
   },
   "env": {

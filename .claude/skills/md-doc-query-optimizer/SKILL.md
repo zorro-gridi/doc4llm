@@ -8,71 +8,177 @@ disable-model-invocation: true
 
 Optimize user queries to improve document retrieval quality in the doc4llm system through pure prompt-based analysis and transformation.
 
+---
+
 ## Purpose
 
 Improve search relevance by:
-- **Detecting** target documentation sets from local knowledge base
-- **Decomposing** complex queries into simpler sub-queries
-- **Expanding** queries with synonyms and related terms
-- **Generating** multiple query variations for broader coverage
-- **Translating** non-English queries to documentation language
+
+- Detecting target documentation sets from local knowledge base
+- Decomposing complex queries into simpler sub-queries
+- Expanding queries with synonyms and related terms
+- Generating multiple query variations for broader coverage
+- Translating non-English queries to documentation language
+
+---
 
 ## When to Use
 
 Use this skill when:
-1. User query uses "**use contextZ**" or "**use contextz**" keywords
-2. doc-retriever subagent invoked
+
+1. User query uses **"use contextZ"** or **"use contextz"** keywords
+2. `doc-retriever` subagent is invoked
 
 ---
 
 ## Four-Phase Optimization Protocol
 
+---
+
 ### Phase 0: Doc-Set Detection
 
-Before query analysis, identify target documentation sets:
+Before query analysis, identify target documentation sets.
 
-**Knowledge Base Configuration:**
+**Knowledge Base Configuration**
+
 - Read `.claude/knowledge_base.json` → get `base_dir`
 - List all first-level subdirectories under `<base_dir>/`
-- Subdirectory naming pattern: `<doc_name>@<doc_version>` (e.g., `code_claude_com@latest`)
+- Subdirectory naming pattern: `<doc_name>@<doc_version>`
 
-**Matching Strategy:**
-1. **Direct Match**: Query contains doc-set identifier (e.g., "Claude Code hooks")
+Example:
+```
+
+code_claude_com@latest
+anthropic_api@v1
+
+````
+
+**Matching Strategy**
+
+1. **Direct Match**: Query contains doc-set identifier
 2. **Keyword Match**: Query keywords match doc-set naming conventions
-3. **Domain Inference**: Technical terms suggest specific documentation domain
+3. **Domain Inference**: Technical terms suggest documentation domain
 4. **No Match**: Return empty list `[]` → Suggest online search
 
-**Output:**
-- `doc_set`: List[str] - e.g., `["code_claude_com@latest"]` or `[]` (empty = suggest online search)
+**Output**
+
+```json
+"doc_set": ["code_claude_com@latest"]
+````
+
+or
+
+```json
+"doc_set": []
+```
+
+---
 
 ### Phase 1: Intent Recognition
 
 For each user query, analyze:
 
-1. **Complexity Check**: Scan for conjunctions (和、以及、与、还有 / and, as well as, along with, also) that indicate multiple distinct concepts
-2. **Ambiguity Check**: Identify generic terms (skills, hooks, features) or context-dependent terms (setup, configuration)
-3. **Language Detection**: Determine primary language - Chinese, English, or mixed (e.g., "hooks 配置")
-4. **Technical Term Extraction**: Identify domain vocabulary (product names, technical concepts, special terms)
+1. **Complexity Check**
+
+   * Look for conjunctions: 和、以及、与、还有 / and, also, along with
+
+2. **Ambiguity Check**
+
+   * Detect generic terms: skills, hooks, features, setup
+
+3. **Language Detection**
+
+   * Chinese / English / Mixed
+
+4. **Technical Term Extraction**
+
+5. **Semantic Extraction**
+
+**Domain Nouns (实体名词 ONLY)**
+Concrete entities being queried about.
+
+Include:
+
+* Product names: Claude Code
+* Components: hooks, skills
+* Technical entities: middleware, authentication, API
+
+Exclude:
+
+* Abstract process nouns: creation, deployment, configuration (as a process)
+
+Rule:
+If it answers **"what thing is being queried about?" → include**
+If it answers **"what action is being done?" → exclude**
+
+**Predicate Verbs**
+
+Core action verbs:
+
+* create
+* configure
+* setup
+* deploy
+* build
+* install
+* integrate
+
+---
 
 ### Phase 2: Strategy Selection
 
-| Analysis Result | Primary Strategy | Secondary Actions |
-|----------------|------------------|-------------------|
-| Has conjunctions | Decomposition | Expand each sub-query |
-| Generic/ambiguous term | Expansion | Generate multiple variations |
-| Chinese query | Translation | Expand translated terms |
-| Mixed language | Translation + preserve | Keep technical terms intact |
-| Well-formed specific | None | Return as-is or minor expansion |
+| Analysis Result      | Primary Strategy       | Secondary Actions            |
+| -------------------- | ---------------------- | ---------------------------- |
+| Has conjunctions     | Decomposition          | Expand each sub-query        |
+| Generic / ambiguous  | Expansion              | Generate multiple variations |
+| Chinese query        | Translation            | Expand translated terms      |
+| Mixed language       | Translation + preserve | Keep technical terms         |
+| Well-formed specific | None                   | Minor expansion only         |
+
+---
 
 ### Phase 3: Query Generation
 
-Generate 3-5 optimized queries following:
+Generate optimized queries following:
 
-1. **Prioritize direct translations** for Chinese queries (docs are often English)
-2. **Add domain-specific variations** (e.g., "configuration", "setup", "settings")
-3. **Include documentation-type modifiers** ("reference", "guide", "tutorial")
-4. **Preserve core technical terms** exactly as they appear
-5. **Rank by expected relevance** (most direct match first)
+1. Prioritize **direct translations** for Chinese queries
+2. Add **domain-specific variations**
+3. Include documentation modifiers:
+
+   * reference, guide, tutorial, setup
+4. Preserve **core technical terms exactly**
+5. Rank by expected relevance (most direct first)
+
+---
+
+### Optimized Query Count Logic
+
+The number of optimized queries returned is dynamically determined based on the number of extracted **Domain Nouns**.
+
+Use the following branching logic:
+
+```text
+IF domain_nouns_count == 1:
+    return 3–5 optimized queries
+ELSE IF domain_nouns_count == 2:
+    return 6–10 optimized queries
+ELSE IF domain_nouns_count >= 3:
+    base = 6
+    extra_nouns = domain_nouns_count - 2
+    return base + (extra_nouns * 3~5)
+```
+
+**Explanation**
+
+* 1 Domain Noun → return **3–5** optimized queries
+* 2 Domain Nouns → return **6–10** optimized queries
+* Each additional Domain Noun beyond 2 increases the result count by **3–5**
+
+This ensures:
+
+* Lightweight output for simple queries
+* Broad coverage for complex, multi-entity queries
+* Query volume scales with semantic complexity
 
 ---
 
@@ -80,107 +186,52 @@ Generate 3-5 optimized queries following:
 
 ### Decomposition Rules
 
-When detecting conjunctions (和、以及、与、and):
-- Create a focused query for each distinct concept
-- Generate variations for each sub-query
-- Include combined queries that capture relationships
-- Rank sub-queries by specificity (technical > general)
+When detecting conjunctions:
+
+* Create a focused query for each concept
+* Generate variations for each
+* Include combined queries
+* Rank by specificity
+
+---
 
 ### Expansion Rules
 
-For Chinese terms:
-- "配置" + noun → "{noun} configuration", "setup {noun}", "{noun} settings"
-- "部署" → "deployment", "deploy", "production setup", "release"
-- "安全" → "security", "secure", "authentication", "authorization"
-- noun + "相关" → "{noun}", "{noun} guide", "{noun} reference", "using {noun}"
+**Chinese**
 
-For English terms:
-- "how to {verb}" → "{verb} guide", "{verb} tutorial", "{verb} configuration"
-- "{noun} related" → "{noun}", "{noun} reference", "{noun} guide", "using {noun}"
-- "setup/configure {noun}" → "{noun} configuration", "{noun} setup"
+* 配置 + noun → `{noun} configuration`, `{noun} setup`, `{noun} settings`
+* 部署 → deployment, deploy, production setup
+* 安全 → security, authentication, authorization
+
+**English**
+
+* how to {verb} → `{verb} guide`, `{verb} tutorial`, `{verb} configuration`
+* {noun} related → `{noun}`, `{noun} reference`, `{noun} guide`
+
+---
 
 ### Translation Rules
 
-- Translate non-technical words to target language (usually English for docs)
-- Preserve technical terms in original form (API, hooks, middleware, etc.)
-- Handle mixed language by transliterating only non-technical words
+* Translate non-technical words
+* Preserve technical terms (API, hooks, middleware)
+* Handle mixed language carefully
 
 ---
 
-## Representative Examples
+## Integration Protocol
 
-### Example 1: Complex Query Decomposition
+**Step 1** Receive user query
+**Step 2** Phase 0 – Detect doc-sets
+**Step 3** Generate optimized queries
+**Step 4** Output Human + JSON formats
+**Step 5**
 
-**Input:** "Claude Code 中 hooks 如何配置，以及部署时的注意事项"
-
-**Analysis:** Contains "以及" (conjunction), Chinese, two concepts: (1) hooks configuration, (2) deployment considerations
-
-**Optimized Queries:**
-```
-1. Claude Code hooks configuration
-2. deployment hooks best practices
-3. hooks setup Claude Code
-4. Claude Code deployment setup
-5. deployment hooks注意事项
-```
-
-### Example 2: Ambiguous Query Expansion
-
-**Input:** "skills"
-
-**Analysis:** Generic term, English, likely "Agent Skills" in documentation context
-
-**Optimized Queries:**
-```
-1. Agent Skills
-2. skills reference
-3. using skills
-4. skills guide
-5. skills
-```
-
-### Example 3: Mixed Language Processing
-
-**Input:** "hooks 配置相关"
-
-**Analysis:** Mixed language, technical term "hooks" to preserve, "配置相关" → configuration/setup
-
-**Optimized Queries:**
-```
-1. hooks configuration
-2. setup hooks
-3. hooks settings
-4. configure hooks
-5. hooks setup guide
-```
+* If `doc_set` empty → Suggest online search
+* If not empty → Call `md-doc-searcher`
 
 ---
 
-## Integration Protocol (Updated)
-
-This skill works with `md-doc-searcher` in the following workflow:
-
-**Step 1:** Receive user query
-**Step 2:** Phase 0 - Detect target doc-sets from local knowledge base
-**Step 3:** Apply optimization protocol to generate 3-5 queries
-**Step 4:** Output BOTH formats:
-   - Human-readable format (for display)
-   - JSON format (for md-doc-searcher)
-**Step 5:**
-   - If `doc_set` is empty → Suggest online search, DO NOT call doc_searcher_cli.py
-   - If `doc_set` has values → Proceed with md-doc-searcher CLI
-**Step 6:** md-doc-searcher searches specified doc-sets
-**Step 7:** Aggregate and deduplicate results
-**Step 8:** Present most relevant documents to user
-
----
-
-## Output Format
-
-**Dual Output Support:**
-- **JSON format**: For machine parsing by downstream skills
-
-### JSON Output Format (default: For md-doc-searcher skill better understand)
+## Output Format (JSON)
 
 ```json
 {
@@ -189,46 +240,10 @@ This skill works with `md-doc-searcher` in the following workflow:
     "language": "{detected_language}",
     "complexity": "{low|medium|high}",
     "ambiguity": "{low|medium|high}",
-    "strategies": ["{strategy1}", "{strategy2}"],
-    "doc_set": ["<doc_name>@<doc_version>"]
-  },
-  "optimized_queries": [
-    {
-      "rank": 1,
-      "query": "{primary_query}",
-      "strategy": "{strategy_applied}",
-      "rationale": "{rationale}"
-    },
-    {
-      "rank": 2,
-      "query": "{secondary_query}",
-      "strategy": "{strategy_applied}",
-      "rationale": "{rationale}"
-    }
-  ],
-  "search_recommendation": {
-    "online_suggested": true,
-    "reason": "Only when after no matching documentation set found - perform online search"
-  }
-}
-```
-
-**Usage Rules:**
-- If `doc_set` is empty array → Do NOT call doc_searcher_cli.py
-- Output recommendation for online search
-- If `doc_set` has values → Proceed with md-doc-searcher CLI
-
-**Example Output (JSON):**
-
-```json
-{
-  "query_analysis": {
-    "original": "如何配置 hooks",
-    "language": "Chinese",
-    "complexity": "low",
-    "ambiguity": "medium",
-    "strategies": ["translation", "expansion"],
-    "doc_set": ["code_claude_com@latest"]
+    "strategies": ["translation","expansion"],
+    "doc_set": ["code_claude_com@latest"],
+    "domain_nouns": ["hooks","skills"],
+    "predicate_verbs": ["configure","setup"]
   },
   "optimized_queries": [
     {
@@ -236,45 +251,11 @@ This skill works with `md-doc-searcher` in the following workflow:
       "query": "hooks configuration",
       "strategy": "translation",
       "rationale": "Direct English translation"
-    },
-    {
-      "rank": 2,
-      "query": "setup hooks",
-      "strategy": "expansion",
-      "rationale": "Action-oriented variation"
-    },
-    {
-      "rank": 3,
-      "query": "hooks settings",
-      "strategy": "expansion",
-      "rationale": "Synonym for configuration"
-    }
-  ]
-}
-```
-
-**Example Output (No Match with empty doc-sest - JSON):**
-
-```json
-{
-  "query_analysis": {
-    "original": "machine learning basics",
-    "language": "English",
-    "complexity": "low",
-    "ambiguity": "high",
-    "strategies": ["expansion"],
-    "doc_set": []
-  },
-  "optimized_queries": [
-    {
-      "rank": 1,
-      "query": "machine learning basics",
-      "strategy": "none",
-      "rationale": "No optimization needed"
     }
   ],
   "search_recommendation": {
-    "online_suggested": true,
-    "reason": "Only when after no matching documentation set found - perform online search"
+    "online_suggested": false,
+    "reason": ""
   }
 }
+```

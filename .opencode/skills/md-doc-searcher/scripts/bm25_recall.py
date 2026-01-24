@@ -21,6 +21,124 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 
+class SimpleStemmer:
+    """A lightweight stemmer for common English word patterns.
+
+    This avoids external dependencies like nltk while handling common
+    inflectional patterns (pluralization, verb tenses, etc.).
+
+    Examples:
+        >>> stemmer = SimpleStemmer()
+        >>> stemmer.stem("agents")
+        'agent'
+        >>> stemmer.stem("running")
+        'run'
+        >>> stemmer.stem("quickly")
+        'quick'
+    """
+
+    # Common suffix removal rules (order matters!)
+    SUFFIX_RULES = [
+        # Plural forms
+        (r"ies$", "y"),          # cities → city
+        (r"ves$", "f"),          # wolves → wolf
+        (r"ses$", "s"),          # passes → pass
+        (r"xes$", "x"),          # boxes → box
+        (r"zes$", "z"),          # buzzes → buzz
+        (r"ches$", "ch"),        # catches → catch
+        (r"shes$", "sh"),        # wishes → wish
+        (r"men$", "man"),        # women → woman
+        (r"([^aeiou])es$", r"\1"),  # gases → gas
+        (r"s$", ""),             # cats → cat, agents → agent
+
+        # Verb tenses
+        (r"ying$", "ie"),        # tying → tie
+        (r"eed$", "ee"),         # agreed → agree
+        (r"eed$", "e"),          # feed → feed (no change, handled by order)
+        (r"ed$", ""),            # walked → walk
+        (r"ing$", ""),           # running → run
+
+        # Adverb/Adjective suffixes
+        (r"ly$", ""),            # quickly → quick
+        (r"er$", ""),            # faster → fast
+        (r"est$", ""),           # fastest → fast
+        (r"ness$", ""),          # happiness → happy
+
+        # Abstract noun suffixes
+        (r"ization$", "ize"),    # organization → organize
+        (r"ition$", "e"),        # composition → compose
+        (r"ment$", ""),          # development → develop
+        (r"ity$", "y"),          # ability → able
+        (r"ive$", ""),           # creative → create
+        (r"ic$", ""),            # heroic → hero
+        (r"al$", ""),            # removal → remove
+        (r"ful$", ""),           # helpful → help
+        (r"less$", ""),          # hopeless → hope
+
+        # Additional suffixes
+        (r"able$", ""),          # readable → read
+        (r"ible$", ""),          # visible → vis
+        (r"ant$", ""),           # assistant → assist
+        (r"ent$", ""),           # dependent → depend
+    ]
+
+    # Special cases that should not be stemmed
+    NO_STEM = {
+        "apis",  # API (plural)
+        "urls",  # URL (plural)
+        "ids",   # ID (plural)
+        "stats", # statistics (singular)
+        "docs",  # documents (abbreviation)
+        "apps",  # applications (abbreviation)
+        "logs",  # logs (always use this form)
+        "jobs",  # jobs (always use this form)
+        "users", # users (always use this form)
+        "admins", # admins (always use this form)
+        "settings", # settings (always use this form)
+        # Base forms that should not be stemmed
+        "agent",  # don't stem to "ag"
+        "get",    # don't stem to "g"
+        "set",    # don't stem to "s"
+        "let",    # don't stem to "l"
+        "put",    # don't stem to "p"
+        "use",    # don't stem to "u"
+    }
+
+    def __init__(self):
+        # Compile regex patterns for better performance
+        self._compiled_rules = [
+            (re.compile(pattern), replacement)
+            for pattern, replacement in self.SUFFIX_RULES
+        ]
+
+    def stem(self, word: str) -> str:
+        """Stem a single word.
+
+        Args:
+            word: The word to stem (assumed to be already lowercased)
+
+        Returns:
+            The stemmed word
+        """
+        if not word or len(word) < 3:
+            return word
+
+        # Don't stem words in the exclusion list
+        if word in self.NO_STEM:
+            return word
+
+        original = word
+        for pattern, replacement in self._compiled_rules:
+            new_word = pattern.sub(replacement, word)
+            if new_word != word:
+                # Check if result is too short or invalid
+                if len(new_word) >= 2:
+                    return new_word
+                # Otherwise, try the next rule
+
+        return original
+
+
 # Constants for tokenization
 STOP_WORDS = {
     "the",
@@ -94,6 +212,7 @@ class BM25Config:
     min_token_length: int = 2
     max_token_length: int = 30
     lowercase: bool = True
+    stemming: bool = True  # Enable word stemming for better matching
     stop_words: Optional[set] = None
 
 
@@ -141,6 +260,7 @@ class BM25Matcher:
         self._idf_cache: Dict[str, float] = {}
         self._avg_doc_length: float = 0.0
         self._total_docs: int = 0
+        self._stemmer = SimpleStemmer() if self.config.stemming else None
 
     def _tokenize(self, text: str) -> List[str]:
         tokens = re.findall(r"\b\w+\b", text)
@@ -148,6 +268,9 @@ class BM25Matcher:
         for token in tokens:
             if self.config.lowercase:
                 token = token.lower()
+            # Apply stemming if enabled
+            if self._stemmer:
+                token = self._stemmer.stem(token)
             if token in self.config.stop_words:
                 continue
             if len(token) < self.config.min_token_length:
@@ -234,9 +357,17 @@ class BM25Matcher:
 def calculate_bm25_similarity(
     query: str, content: str, config: Optional[BM25Config] = None
 ) -> float:
-    """Quick BM25 similarity calculation for a single document."""
+    """Quick BM25 similarity calculation for a single document.
+
+    For fallback strategy, defaults to stemming=True for better recall.
+    """
     if not query or not content:
         return 0.0
+    # Default to stemming=True for fallback strategy
+    if config is None:
+        config = BM25Config(stemming=True)
+    elif not hasattr(config, 'stemming'):
+        config.stemming = True
     matcher = BM25Matcher(config)
     matcher.build_index({"doc": content})
     results = matcher.search(query, top_k=1)
@@ -465,7 +596,7 @@ class BM25Recall:
         combined_query = " ".join(queries)
 
         toc_files = self._find_toc_files(doc_set)
-        matcher = BM25Matcher(BM25Config(k1=self.k1, b=self.b))
+        matcher = BM25Matcher(BM25Config(k1=self.k1, b=self.b, stemming=False))
 
         documents = {}
         for toc_path in toc_files:
@@ -493,7 +624,7 @@ class BM25Recall:
                     h_score = calculate_bm25_similarity(
                         combined_query,
                         heading["text"],
-                        BM25Config(k1=self.k1, b=self.b),
+                        BM25Config(k1=self.k1, b=self.b, stemming=False),
                     )
                     self._debug_print(
                         f"    Heading: {heading['text'][:50]}, score: {h_score:.2f}"

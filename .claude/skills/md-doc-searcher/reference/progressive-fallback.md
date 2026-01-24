@@ -1,511 +1,420 @@
-# Progressive Fallback Strategy
+# Progressive Fallback Strategy (ACTUAL IMPLEMENTATION)
 
-This document provides detailed information about the progressive fallback levels used in md-doc-searcher.
+> **Note**: This document describes the **actual implemented** fallback strategy in `doc_searcher_api.py`.
+> The previous version of this document described a deprecated semantic matching approach that was never implemented.
 
-## Overview
+## Actual Current Implementation
 
-The progressive fallback strategy ensures comprehensive document discovery by automatically escalating search sophistication when simpler methods fail.
+The current md-doc-searcher uses a **multi-stage BM25-based retrieval** with transformer-based semantic re-ranking:
 
-## Success Conditions Summary
+1. **Stage 1**: Jaccard similarity for doc-set matching
+2. **Stage 2**: BM25 for page title matching
+3. **Stage 3**: BM25 for heading matching
+4. **Stage 4**: Transformer re-ranking (BGE models)
+5. **Fallback**: Grep-based search + BM25 re-scoring
 
-| Level | Trigger | Success Condition |
-|-------|---------|-------------------|
-| 1 (Step 2) | Always (start) | PageTitle count >= 1 **AND** has precision match (>=0.7) |
-| Step 3 | After Level 1 success | Heading count >= 2 (per doc-set) |
-| 2 (Fallback 1) | Step 3 fails | Heading count >= 2 |
-| 3.1 | Level 2 fails | Heading count >= 2 (cross-set) |
-| 3.2 | Level 3.1 fails | Heading count >= 2 (with PageTitle attribution) |
+### Search Scope
 
-## Level 1: Semantic Title Matching (Default)
+- **Doc-set boundary**: Searches within specified doc-sets via `target_doc_sets` parameter
+- **Auto-detection**: Falls back to Jaccard-based doc-set matching when `target_doc_sets` not provided
+- **Grep fallback**: Falls back to grep-based search when BM25 retrieval fails
 
-**Purpose:** Fast semantic matching using LLM understanding
+---
 
-**How it works:**
-- Uses LLM semantic understanding to match query concepts to document titles
-- Leverages synonym recognition, domain knowledge, and context understanding
-- Fast operation: O(k) where k = number of matches
+## Retrieval Pipeline Overview
 
-**Quality threshold:** `max_similarity >= 0.7` for precision match
+```
+                    ┌─────────────────┐
+                    │   输入查询      │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │ Stage 1: Jaccard│
+                    │  匹配 Doc-set   │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┴──────────────┐
+              │    找到目标 doc-set?         │
+              └──────────────┬──────────────┘
+                    │ Yes   │ No → 返回第一个
+                             │
+                    ┌────────▼────────┐
+                    │ Stage 2: BM25   │
+                    │  匹配 Page Title│
+                    └────────┬────────┘
+                             │ score >= 0.6
+                    ┌────────▼────────┐
+                    │ Stage 3: BM25   │
+                    │  匹配 Headings  │
+                    └────────┬────────┘
+                             │ score >= 0.25
+              ┌──────────────┴──────────────┐
+              │    reranker_enabled?        │
+              └──────────────┬──────────────┘
+                    │ Yes   │ No
+                     │       │
+            ┌────────▼┐   ┌──▼─────────┐
+            │Transformer│  │ 过滤结果   │
+            │  重排序   │  │ 返回       │
+            └────┬─────┘  └────────────┘
+                 │ score >= 0.68
+              ┌──┴────────────┐
+              │ 结果不足或失败？│
+              └───────┬────────┘
+                  Yes │ No
+                      │
+         ┌────────────┴────────────┐
+         │  FALLBACK_1: Grep + BM25│
+         └────────────┬────────────┘
+                      │
+         ┌────────────┴────────────┐
+         │  结果仍不足？            │
+         └────────────┬────────────┘
+                  Yes │ No
+                      │
+         ┌────────────▼────────────┐
+         │ FALLBACK_2: Grep+BM25   │
+         │ (带上下文 -B 5/-B 20)   │
+         └─────────────────────────┘
+```
 
-**When triggered:** Always (starting point)
+---
+
+## Stage 1: Doc-set Matching (Jaccard Similarity)
+
+**Purpose:** Find the best matching doc-set when `target_doc_sets` not provided
+
+**Algorithm:**
+```python
+def _calculate_jaccard(set1: List[str], set2: List[str]) -> float:
+    s1, s2 = set(set1), set(set2)
+    if not s1 or not s2:
+        return 0.0
+    return len(s1 & s2) / len(s1 | s2)
+```
+
+**Keyword Extraction:**
+```python
+def _extract_keywords(text: str) -> List[str]:
+    return re.findall(r"[a-zA-Z]+", text.lower())
+```
+
+**Threshold:** `threshold_doc_set = 0.6`
+
+**When triggered:** When `target_doc_sets` is `None` (auto-detection mode)
+
+**Behavior:**
+- If only one doc-set available: return it directly (skip matching)
+- Otherwise: compute Jaccard similarity between query keywords and doc-set names
+- Return best match if score >= 0.6, else return first doc-set
+
+---
+
+## Stage 2: BM25 Page Title Matching
+
+**Purpose:** Find relevant page titles using BM25 scoring
+
+**BM25 Parameters:**
+```python
+k1: float = 1.2  # Term frequency saturation
+b: float = 0.75  # Length normalization
+threshold_page_title: float = 0.6
+```
+
+**BM25 Scoring Formula:**
+```
+score = Σ IDF(term) × (tf × (k1 + 1)) / (tf + k1 × (1 - b + b × doc_len/avg_doc_len))
+IDF(term) = log((N - df + 0.5) / (df + 0.5) + 1.0)
+```
+
+**Text Preprocessing:**
+- Tokenization: `r"\b\w+\b"`
+- Lowercasing: enabled
+- Stop words filtered: the, a, an, and, or, is, are, to, for, with...
+- **Stemming disabled** for page title matching
+
+**Threshold:** `threshold_page_title = 0.6`
 
 **Success Condition:**
 ```python
-# Must satisfy ALL:
-page_title_count >= 1  AND  precision_count >= 1
-
-# Validation
-page_title_valid, count = SearchHelpers.check_page_title_requirement(results, min_count=1)
-precision_valid, p_count = SearchHelpers.check_precision_requirement(results, precision_threshold=0.7)
-
-if page_title_valid and precision_valid:
-    # Level 1 SUCCESS - proceed to Step 3 (heading identification)
-    proceed_to_step_3()
-else:
-    # Level 1 FAILS - trigger Fallback Strategy 1 (Level 2)
-    trigger_fallback_level_2()
+is_basic = score >= threshold_page_title  # 0.6
 ```
 
-**Example:**
-```
-Query: "how to configure"
-Matches: "Settings", "Configuration", "Setup", "Preferences"
-Result: 4 PageTitles, 3 with score >= 0.7
-→ Level 1 SUCCESS ✓
-```
+---
 
-## Level 2: TOC Content Grep (Fallback Strategy 1)
+## Stage 3: BM25 Heading Matching
 
-**Purpose:** Search within TOC file contents when Level 1 success conditions not met
+**Purpose:** Find relevant headings within matched pages
 
-**Trigger:** Level 1 fails (PageTitle count < 1 OR no precision match)
+**Threshold:** `threshold_headings = 0.25`
 
-**How to use:**
+**Additional Thresholds:**
+- `threshold_precision = 0.7` (precision match)
+- `min_headings = 2` (minimum headings per page)
 
+**Parsing Headings:**
 ```python
-# Import from skill's scripts directory
-import sys
-sys.path.insert(0, '.claude/skills/md-doc-searcher/scripts')
-from search_helpers import SearchHelpers
-
-# First extract keywords
-keywords = SearchHelpers.extract_keywords("how to configure hooks for deployment")
-# → ['configure', 'hooks', 'deployment']
-
-# Then build grep command
-SearchHelpers.build_level2_grep_command(
-    keywords=["configure", "hooks", "deployment"],
-    doc_set="Claude_Code_Docs@latest"
-)
-# → "grep -r -iE '(configure|hooks|deployment)' {knowledge_base}/Claude_Code_Docs@latest/*/docTOC.md"
+heading_pattern = re.compile(r"^(#{1,6})\s+(.+)$")
+# Extracts level (# to ######) and text content
+# Removes markdown links: [text](url) → text
+# Removes anchor URLs: ：https://... or : https://...
 ```
 
-**Execute via Bash tool:**
+---
+
+## Stage 4: Transformer Re-ranking (Semantic Matching)
+
+**Purpose:** Re-rank BM25 results using semantic similarity
+
+**Language Detection:**
+```python
+ratio = chinese_chars / total_chars
+return "zh" if ratio >= 0.3 else "en"
+```
+
+**Models:**
+- Chinese: `BAAI/bge-large-zh-v1.5`
+- English: `BAAI/bge-large-en-v1.5`
+
+**Similarity Calculation:**
+```python
+# Cosine similarity via normalized dot product
+query_emb = self._normalize(query_emb)
+candidate_embs = self._normalize(candidate_embs)
+scores = query_emb @ candidate_embs.T  # dot product = cosine
+```
+
+**Reranker Configuration:**
+```python
+reranker_threshold: float = 0.5  # Default, configurable
+reranker_top_k: Optional[int] = None  # Keep all if None
+```
+
+**Text Preprocessing for Rerank:**
+```python
+def _preprocess_for_rerank(text, domain_nouns, predicate_verbs):
+    # Rule 1: If text contains domain_nouns, keep original
+    # Rule 2: If no domain_nouns, remove predicate_verbs
+    # Rule 3: Return processed text
+```
+
+**Key Insight:** Reranker is called **at most twice**:
+1. Once in main flow (if success)
+2. Once in fallback flow (if main fails)
+
+These two are mutually exclusive!
+
+---
+
+## Fallback Strategies
+
+### Fallback Mode: Parallel (Default)
+
+Both FALLBACK_1 and FALLBACK_2 execute in parallel, then results are merged.
+
+### Fallback Mode: Serial (Backward Compatible)
+
+FALLBACK_1 executes first; FALLBACK_2 only if FALLBACK_1 fails.
+
+---
+
+## FALLBACK_1: Grep TOC Search
+
+**Purpose:** Search TOC files directly using grep when BM25 fails
+
+**Trigger:** Main flow fails (success = False)
+
+**Command:**
 ```bash
-grep -r -iE '(configure|hooks|deployment)' {knowledge_base}/Claude_Code_Docs@latest/*/docTOC.md
+grep -r -i -E "pattern" {base_dir}/{doc_set} --include=docTOC.md
 ```
 
-**Annotate results with PageTitle ownership (REQUIRED):**
+**Keyword Extraction:**
 ```python
-# Parse grep results first
-grep_results = [
-    {"file": "{knowledge_base}/Claude_Code_Docs@latest/Agent Skills/docTOC.md", "match": "Configure Skills"},
-    {"file": "{knowledge_base}/Claude_Code_Docs@latest/Agent Skills/docTOC.md", "match": "Write SKILL.md"}
-]
-
-# CRITICAL: Annotate with PageTitle ownership
-annotated_results = SearchHelpers.annotate_headings_with_page_title(
-    grep_results, "Claude_Code_Docs@latest"
-)
-
-# Then score headings
-for result in annotated_results:
-    relevance = SearchHelpers.calculate_heading_relevance_score(
-        result["heading_text"], query, query_intent
-    )
-    result["score"] = relevance["score"]
+# Uses extract_keywords from bm25_recall.py
+# Supports Chinese and English keywords
+# Removes stop words
 ```
 
-**Benefits:**
-- Finds content within sections that don't match title exactly
-- Captures documents where relevant content is in subsections
-- Balanced performance: O(1) operation
+**Results Processing:**
+- Parse grep output to extract: `toc_path`, `match_content`
+- Extract page title from path: `docTOC.md` parent directory
+- Extract heading from match: find `#` pattern in match content
+- **Apply BM25 re-scoring** to filtered headings
+
+**BM25 Re-scoring:**
+```python
+score = calculate_bm25_similarity(
+    combined_query,
+    heading_text,
+    BM25Config(k1=1.2, b=0.75, stemming=True)
+)
+```
 
 **Success Condition:**
 ```python
-# Parse grep results to extract headings
-heading_results = parse_grep_results(grep_output)
-
-# Must satisfy:
-heading_count >= 2
-
-# Validation
-heading_valid, count = SearchHelpers.check_heading_requirement(heading_results, min_count=2)
-
-if heading_valid:
-    # Level 2 SUCCESS - proceed to heading extraction
-    proceed_to_step_5()
-else:
-    # Level 2 FAILS - trigger Level 3
-    trigger_fallback_level_3()
+is_basic = score >= threshold_headings  # 0.25
+is_precision = score >= threshold_precision  # 0.7
 ```
 
-## Level 3: Cross-Set + Content Search (Last Resort)
+---
 
-Level 3 has two sub-levels:
+## FALLBACK_2: Grep Context + BM25
 
-### Level 3.1: Cross-Set TOC Search (with Relevance Constraints)
+**Purpose:** Get context around matches and score nearest heading
 
-**Purpose:** Search across multiple documentation sets when single-set search fails
+**Trigger:** FALLBACK_1 fails or PARALLEL mode
 
-**Trigger:** Level 2 fails (heading count < 2)
-
-**Step 1: Extract domain keywords from user query** (LLM semantic analysis)
-```python
-# Example: User queries "Claude Code skills design philosophy"
-# Domain keywords: Claude, Code
-# Topic keywords: skills, design, philosophy
-```
-
-**Step 2: Filter documentation sets by domain relevance**
-```python
-# Use helper to build filter pattern
-SearchHelpers.build_doc_set_filter_pattern(["Claude", "Code"])
-# → "{knowledge_base}/*Claude* {knowledge_base}/*Code*"
-
-# For "Claude Code skills", only search:
-# - Claude_Code_Docs@latest
-# NOT: Python_Docs, React_Docs, etc.
-```
-
-**Step 3: Search TOC files in filtered sets**
+**Command with Context:**
 ```bash
-# Cross-set TOC search WITH domain filter
-grep -r -i "keyword" {knowledge_base}/*Claude*/*/docTOC.md {knowledge_base}/*Code*/*/docTOC.md
+# First attempt: -B 5
+grep -r -i -B 5 -E "pattern" {base_dir}/{doc_set} --include=docTOC.md
+
+# Fallback: -B 20 (if no results)
+grep -r -i -B 20 -E "pattern" {base_dir}/{doc_set} --include=docTOC.md
 ```
 
-**Why domain filtering matters:**
-Searching "best practices" across ALL doc sets could return Python, React, or other framework-specific practices that are irrelevant to the user's actual query context.
+**Processing:**
+1. Find all headings in grep context (lines starting with `#`)
+2. Take the **nearest heading** to the match
+3. Apply BM25 scoring to that heading
 
 **Success Condition:**
 ```python
-# Cross-set search results
-cross_set_results = cross_set_toc_search(keywords, filtered_sets)
-
-# Must satisfy:
-total_heading_count >= 2
-
-if len(cross_set_results) >= 2:
-    # Level 3.1 SUCCESS
-    proceed_to_step_5()
-else:
-    # Level 3.1 FAILS - trigger Level 3.2
-    trigger_fallback_level_3_2()
+is_basic = score >= threshold_headings  # 0.25
+is_precision = score >= threshold_precision  # 0.7
 ```
 
-### Level 3.2: docContent.md Context Search (with Traceback)
+---
 
-**Purpose:** Search within document contents when TOC search fails
+## Result Merging (PARALLEL Mode)
 
-**Trigger:** Level 3.1 fails (heading count < 2)
+When both fallbacks succeed, results are merged:
 
-**CRITICAL CONSTRAINTS:**
-- ❌ **NEVER** use `Read` tool to load entire docContent.md files
-- ✅ Only use `grep` with context to extract minimal information
-- ✅ Return docTOC.md paths for subsequent use by md-doc-reader
-- ✅ **Must include PageTitle attribution** in results
-
-**Search with context traceback:**
 ```python
-# Use helper to build command
-SearchHelpers.build_level3_content_grep_command(
-    keywords=["design philosophy"],
-    doc_sets=["Claude_Code_Docs@latest"],
-    context_lines=10
+def _merge_fallback_results(results):
+    # 1. Merge pages with same (doc_set, page_title)
+    # 2. Deduplicate headings within each page
+    # 3. Keep highest BM25 score for duplicates
+    # 4. Aggregate heading_count and precision_count
+```
+
+---
+
+## Hierarchical Heading Filter
+
+After all matching, apply hierarchical filtering:
+
+```python
+def filter_headings_hierarchically(headings, page_title):
+    # Keep only highest-level headings per section
+    # Removes nested subheadings under same parent
+```
+
+---
+
+## Complete Decision Flow
+
+```python
+# Main flow
+success = len(all_results) >= min_page_titles and any(
+    r["score"] >= threshold_precision for r in all_results
 )
-# → "grep -r -i -B 10 'design philosophy' {knowledge_base}/Claude_Code_Docs@latest/*/docContent.md"
+
+if not success:
+    if fallback_mode == "parallel":
+        # Execute both fallbacks
+        # Merge results
+        # Apply reranker once to merged results
+    else:  # serial
+        # Try FALLBACK_1
+        # If fails, try FALLBACK_2
 ```
 
-**Execute via Bash tool:**
-```bash
-grep -r -i -B 10 "design philosophy" {knowledge_base}/*Claude*/*/docContent.md
-```
+---
 
-**Parse results to extract:**
-1. **Documentation set name** - Extract from file path
-2. **Document title** - Extract from docContent.md (first 5 lines, look for `#` headings)
-3. **Match context** - The 10 lines before the match showing relevant section
-4. **PageTitle attribution** - **REQUIRED**: Note which PageTitle this heading belongs to
+## Threshold Summary
 
-**Traceback to heading (REQUIRED for Level 3.2):**
-```python
-# After grep finds match at specific line
-content_results = []
+| Parameter | Default | Purpose |
+|-----------|---------|---------|
+| `bm25_k1` | 1.2 | TF saturation |
+| `bm25_b` | 0.75 | Length normalization |
+| `threshold_page_title` | 0.6 | Page title match threshold |
+| `threshold_headings` | 0.25 | Heading match threshold |
+| `threshold_precision` | 0.7 | Precision match threshold |
+| `threshold_doc_set` | 0.6 | Doc-set match threshold |
+| `min_page_titles` | 2 | Minimum pages per doc-set |
+| `min_headings` | 2 | Minimum headings per page |
+| `reranker_threshold` | 0.5 | Transformer re-rank threshold |
+| `reranker_lang_threshold` | 0.3 | Chinese detection ratio |
 
-# For each grep match, trace back to heading
-for match in grep_output.split('\n'):
-    if 'docContent.md' in match:
-        # Extract file path and line number
-        parts = match.split(':')
-        file_path = parts[0]
-        line_num = int(parts[1])
+---
 
-        # Trace back to nearest heading
-        traceback = SearchHelpers.traceback_to_heading(
-            content_path=file_path,
-            match_line=line_num,
-            context_lines=10
-        )
+## Reranker Call Count Analysis
 
-        content_results.append({
-            "heading_text": traceback["heading_text"],
-            "page_title": traceback["page_title"],  # REQUIRED attribution
-            "heading_level": traceback["heading_level"],
-            "context_excerpt": traceback["context_excerpt"]
-        })
+**Key Insight: At most 2 calls total**
 
-# Then score headings
-for result in content_results:
-    relevance = SearchHelpers.calculate_heading_relevance_score(
-        result["heading_text"], query, query_intent
-    )
-    result["score"] = relevance["score"]
-```
+| Scenario | Call Count | Reason |
+|----------|------------|--------|
+| Main flow success | 1 | Processed all doc_set pages |
+| Main flow fails → Fallback success | 1 | Processed fallback results |
+| Both fail | 1 | Reranker applied but results filtered out |
 
-**Helper for title extraction:**
-```python
-SearchHelpers.build_title_extraction_command(
-    "{knowledge_base}/Claude_Code_Docs@latest/Agent Skills/docContent.md",
-    max_lines=5
-)
-# → "head -5 {knowledge_base}/Claude_Code_Docs@latest/Agent Skills/docContent.md"
-```
+**Explanation:**
+- Main flow and fallback are **mutually exclusive**
+- If main flow `success = True`, returns immediately (no fallback)
+- If main flow `success = False`, enters fallback (1 reranker call)
+- **Total reranker calls ≤ 2** (in practice 1 for any given search)
 
-**Success Condition:**
-```python
-# Content search results with PageTitle attribution
-content_results = content_search_with_context(keywords, doc_sets)
+---
 
-# Must satisfy:
-heading_count >= 2  AND  all_results_have_page_title_attribution
+## Output Format
 
-if len(content_results) >= 2 and all_has_attribution(content_results):
-    # Level 3.2 SUCCESS
-    proceed_to_step_5()
-else:
-    # Level 3.2 FAILS - ALL FALLBACKS EXHAUSTED
-    report_failure()
-```
-
-**Return format for Level 3.2:**
-```markdown
-Found N relevant document(s) via Level 3.2 content search:
-
-1. **Document Title** (Doc_Set@version)
-   - Relevance: Content contains "keyword" in section context
-   - Context: [Brief excerpt from grep -B 10 output]
-   - PageTitle归属: [PageTitle Name]
-   - TOC Path: `{knowledge_base}/<doc_set>/<PageTitle>/docTOC.md`
-
-**Note:** Use `/md-doc-reader "Document Title"` to view full TOC and structure.
-```
-
-## Progressive Fallback Flow Diagram
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    SEARCH REQUEST                            │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-              ┌───────────────────────────────┐
-              │  Level 1: Title Semantic Match │
-              │  - LLM semantic understanding  │
-              │  - Fast: O(k) where k = matches│
-              │  - Threshold: max_sim >= 0.7   │
-              └───────────────────────────────┘
-                              │
-              ┌───────────────┴───────────────┐
-              │                               │
-        [PageTitle≥1 AND                  [PageTitle<1 OR
-         has precision ≥0.7]               no precision match]
-              │                               │
-              ▼                               ▼
-    ┌────────────────────┐    ┌───────────────────────────────┐
-    │  Step 3: Identify  │    │  Level 2: TOC Grep Fallback   │
-    │  Matching Headings │    │  - grep -r across TOC files   │
-    │  Heading≥2?        │    │  - Balanced: O(1) operation   │
-    └────────────────────┘    └───────────────────────────────┘
-              │                         │
-              │               ┌─────────┴─────────┐
-              │               │                   │
-              │         [Heading≥2]         [Heading<2]
-              │               │                   │
-              ▼               ▼                   ▼
-    ┌────────────────────┐    ┌───────────────────────────────┐
-    │  Coverage Check    │    │  Level 3.1: Cross-Set TOC     │
-    │  Cross-DocSet      │    │  - Filter by domain           │
-    │  Validation        │    │  - grep -r across filtered    │
-    └────────────────────┘    │    doc sets                   │
-              │               └───────────────────────────────┘
-              │                         │
-              │               ┌─────────┴─────────┐
-              │               │                   │
-              │         [Heading≥2]         [Heading<2]
-              │               │                   │
-              │               ▼                   ▼
-              │    ┌────────────────────┐    ┌───────────────────────────────┐
-              │    │  Coverage Check    │    │  Level 3.2: Content Search    │
-              │    │  Cross-DocSet      │    │  - grep -B 10 for context     │
-              │    │  Validation        │    │  - Extract title from 5       │
-              │    └────────────────────┘    │    lines (retry: 20)          │
-              │               │              │  - Return TOC paths only      │
-              │               │              │  - PageTitle attribution REQ  │
-              │               │              └───────────────────────────────┘
-              │               │                        │
-              │               │              ┌─────────┴─────────┐
-              │               │              │                   │
-              │               │        [Heading≥2 +          [Heading<2 OR
-              │               │         attribution]          no attribution]
-              │               │              │                   │
-              │               │              ▼                   ▼
-              │               │    ┌────────────────────┐    ┌────────────────────┐
-              │               │    │  Coverage Check    │    │  FAILURE REPORT    │
-              │               │    │  Cross-DocSet      │    │  - All fallbacks   │
-              │               │    │  Validation        │    │    exhausted       │
-              │               │    └────────────────────┘    │  - Prompt user     │
-              │               │               │              └────────────────────┘
-              │               │               │
-              │               └───────────────┤
-              │                               │
-              ▼                               ▼
-    ┌─────────────────────────────────────────────────────────┐
-    │              SUCCESS - Return Results with              │
-    │              - PageTitle list with scores               │
-    │              - Heading list with scores                 │
-    │              - Match statistics by doc-set              │
-    │              - Sources and Coverage                     │
-    └─────────────────────────────────────────────────────────┘
-```
-
-## Decision Criteria Summary
-
-| Level | Trigger | Search Scope | Success Condition | Output |
-|-------|---------|--------------|-------------------|--------|
-| **1 (Step 2)** | Always (start) | Single set, titles only | PageTitle≥1 AND precision≥0.7 | Document titles with scores |
-| **Step 3** | After Level 1 success | From matched PageTitles | Heading≥2 (per doc-set) | Headings with scores |
-| **2 (Fallback 1)** | Step 3 fails | Single set, TOC contents | Heading≥2 | Document titles with heading context |
-| **3.1** | Level 2 fails | Multiple filtered sets, TOC | Heading≥2 | Document titles with heading context |
-| **3.2** | Level 3.1 fails | Multiple filtered sets, content | Heading≥2 AND attribution | Document titles with context + PageTitle attribution |
-
-## Validation Helpers Usage
-
-### Complete Validation Flow Example
-
-```python
-# Import from skill's scripts directory
-import sys
-sys.path.insert(0, '.claude/skills/md-doc-searcher/scripts')
-from search_helpers import SearchHelpers
-
-def search_with_validation(query, doc_set):
-    """Complete search with validation at each level"""
-
-    # Configure thresholds (optional, defaults exist)
-    SearchHelpers.set_basic_threshold(0.6)
-    SearchHelpers.set_precision_threshold(0.7)
-    SearchHelpers.set_min_page_title_matches(1)
-    SearchHelpers.set_min_heading_matches(2)
-
-    # =========================================
-    # LEVEL 1: Semantic Title Matching (Step 2)
-    # =========================================
-    level1_results = semantic_match(query, doc_set)
-
-    # Validate Level 1
-    pt_valid, pt_count = SearchHelpers.check_page_title_requirement(level1_results, min_count=1)
-    prec_valid, prec_count = SearchHelpers.check_precision_requirement(level1_results, precision_threshold=0.7)
-
-    if pt_valid and prec_valid:
-        # Level 1 SUCCESS - validate headings and proceed
-        heading_results = extract_headings_from_results(level1_results, query)
-        head_valid, head_count = SearchHelpers.check_heading_requirement(heading_results, min_count=2)
-
-        if head_valid:
-            return {
-                "level": 1,
-                "success": True,
-                "page_title_results": level1_results,
-                "heading_results": heading_results
-            }
-
-    # =========================================
-    # LEVEL 2: TOC Content Grep Fallback
-    # =========================================
-    keywords = SearchHelpers.extract_keywords(query)
-    cmd = SearchHelpers.build_level2_grep_command(keywords, doc_set)
-    grep_results = execute_bash(cmd)
-
-    level2_results = parse_grep_results(grep_results)
-    head_valid, head_count = SearchHelpers.check_heading_requirement(level2_results, min_count=2)
-
-    if head_valid:
-        return {
-            "level": 2,
-            "success": True,
-            "page_title_results": level2_results
+### Success Response
+```json
+{
+    "success": true,
+    "doc_sets_found": ["@docset1"],
+    "results": [
+        {
+            "doc_set": "@docset1",
+            "page_title": "Page Name",
+            "toc_path": "path/to/docTOC.md",
+            "headings": [
+                {
+                    "text": "## Heading Text",
+                    "level": 2,
+                    "score": 0.85,
+                    "bm25_sim": 0.32
+                }
+            ]
         }
-
-    # =========================================
-    # LEVEL 3.1: Cross-Set TOC Search
-    # =========================================
-    filtered_sets = filter_doc_sets_by_domain(query)
-    cross_set_results = cross_set_toc_search(keywords, filtered_sets)
-    head_valid, head_count = SearchHelpers.check_heading_requirement(cross_set_results, min_count=2)
-
-    if head_valid:
-        return {
-            "level": 3.1,
-            "success": True,
-            "page_title_results": cross_set_results
-        }
-
-    # =========================================
-    # LEVEL 3.2: Content Search with Traceback
-    # =========================================
-    content_results = content_search_with_context(keywords, filtered_sets, context_lines=10)
-
-    # Check for heading count AND PageTitle attribution
-    has_attribution = all("page_title" in r for r in content_results)
-    head_valid, head_count = SearchHelpers.check_heading_requirement(content_results, min_count=2)
-
-    if head_valid and has_attribution:
-        return {
-            "level": 3.2,
-            "success": True,
-            "page_title_results": content_results
-        }
-
-    # =========================================
-    # ALL FALLBACKS EXHAUSTED
-    # =========================================
-    return {
-        "level": "none",
-        "success": False,
-        "failure_reasons": [
-            "Level 1: PageTitle count < 2 or no precision match",
-            "Level 2: Heading count < 2",
-            "Level 3.1: Heading count < 2 (cross-set)",
-            "Level 3.2: Heading count < 2 or missing PageTitle attribution"
-        ]
-    }
+    ],
+    "fallback_used": null,
+    "message": "Search completed"
+}
 ```
 
-## Failure Reporting
+### Fallback Response
+```json
+{
+    "success": true,
+    "toc_fallback": true,
+    "grep_fallback": true,
+    "doc_sets_found": ["@docset1"],
+    "results": [...],
+    "fallback_used": "FALLBACK_1+FALLBACK_2",
+    "message": "Search completed"
+}
+```
 
-When all fallback levels are exhausted, report failure with clear diagnostic information:
-
-```markdown
-=== AOP-FINAL | agent=md-doc-searcher | results=0 | doc_sets=X ===
-**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
-
-## 检索失败报告 (Search Failure Report)
-
-### 失败的检索策略
-
-| 策略 | 条件要求 | 验证结果 | 状态 |
-|------|---------|---------|------|
-| Level 1: 语义标题匹配 | PageTitle≥1 且 精准匹配≥0.7 | PageTitle: X, 精准: Y | ❌ 失败 |
-| Step 3: Heading识别 | Heading≥2 (per doc-set) | Heading: Z | ❌ 失败 |
-| Level 2: TOC内容grep | Heading≥2 | Heading: Z | ❌ 失败 |
-| Level 3.1: 跨集TOC搜索 | Heading≥2 | Heading: W | ❌ 失败 |
-| Level 3.2: 全文内容搜索 | Heading≥2 且 PageTitle归属 | Heading: V, 归属: U | ❌ 失败 |
-
-### 可能原因
-1. [列出可能的原因]
-
-### 建议操作
-1. [提供用户建议]
-
-=== END-AOP-FINAL ===
+### Failure Response
+```json
+{
+    "success": false,
+    "doc_sets_found": [],
+    "results": [],
+    "fallback_used": "FALLBACK_1+FALLBACK_2",
+    "message": "No results found after all fallbacks"
+}
 ```

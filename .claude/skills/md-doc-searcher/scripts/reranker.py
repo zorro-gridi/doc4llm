@@ -116,9 +116,11 @@ class HeadingReranker:
             if semantic_score < self.config.min_score_threshold:
                 continue
 
-            # Update heading with semantic score
+            # Preserve original BM25 score before updating with semantic score
+            original_bm25_score = heading.get("score", 0.0)
             updated_heading = dict(heading)
-            updated_heading["score"] = semantic_score
+            updated_heading["bm25_sim"] = original_bm25_score  # Preserve BM25 score
+            updated_heading["score"] = semantic_score  # This becomes reranker score
             # Update is_basic and is_precision based on new score
             updated_heading["is_basic"] = True  # Passed threshold, so it's basic
             # Keep original is_precision if exists, otherwise set based on higher threshold
