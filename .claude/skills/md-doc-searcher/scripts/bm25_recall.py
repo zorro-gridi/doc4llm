@@ -593,7 +593,6 @@ class BM25Recall:
         """
         # Normalize query to list
         queries = [query] if isinstance(query, str) else query
-        combined_query = " ".join(queries)
 
         toc_files = self._find_toc_files(doc_set)
         matcher = BM25Matcher(BM25Config(k1=self.k1, b=self.b, stemming=False))
@@ -608,7 +607,19 @@ class BM25Recall:
             return []
 
         matcher.build_index(documents)
-        results = matcher.search(combined_query, top_k=100)
+
+        # 独立计算每个 query 的 BM25 分数，取最大值
+        # 结构: {page_title: max_score}
+        page_scores: Dict[str, float] = {}
+        for q in queries:
+            q_results = matcher.search(q, top_k=100)
+            for page_title, score in q_results:
+                if page_title not in page_scores or score > page_scores[page_title]:
+                    page_scores[page_title] = score
+
+        # 按分数排序
+        sorted_pages = sorted(page_scores.items(), key=lambda x: x[1], reverse=True)
+        results = sorted_pages[:100]
 
         scored_pages = []
         for page_title, score in results:
@@ -621,11 +632,17 @@ class BM25Recall:
 
                 scored_headings = []
                 for heading in headings:
-                    h_score = calculate_bm25_similarity(
-                        combined_query,
-                        heading["text"],
-                        BM25Config(k1=self.k1, b=self.b, stemming=False),
-                    )
+                    # 独立计算每个 query 的 BM25 分数，取最大值
+                    max_h_score = 0.0
+                    for q in queries:
+                        q_score = calculate_bm25_similarity(
+                            q,
+                            heading["text"],
+                            BM25Config(k1=self.k1, b=self.b, stemming=False),
+                        )
+                        if q_score > max_h_score:
+                            max_h_score = q_score
+                    h_score = max_h_score
                     self._debug_print(
                         f"    Heading: {heading['text'][:50]}, score: {h_score:.2f}"
                     )
@@ -660,8 +677,8 @@ class BM25Recall:
                     }
                 )
 
-        # Filter by min_headings
-        return [p for p in scored_pages if p["heading_count"] >= min_headings]
+        # BM25 召回的结果全部返回，min_headings 仅用于调用方判断是否需要 fallback
+        return scored_pages
 
 
 __all__ = [

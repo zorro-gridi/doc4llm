@@ -1,2 +1,3 @@
-doc4llm.egg-info
-build
+./doc4llm.egg-info
+./build
+./.opencode

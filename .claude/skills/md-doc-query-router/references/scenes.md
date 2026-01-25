@@ -6,7 +6,7 @@ This file contains detailed definitions, patterns, and examples for all seven re
 
 ## 1. Fact Lookup (fact_lookup)
 
-**Base Threshold:** 0.85
+**Base Threshold:** 0.60
 
 ### Definition
 User wants a **specific, unique, locatable** fact or direct quote from the documentation.
@@ -36,7 +36,7 @@ Precision matters - **better to miss than to hallucinate**. Only highly relevant
 
 ## 2. Faithful Reference (faithful_reference)
 
-**Base Threshold:** 0.90
+**Base Threshold:** 0.65
 
 ### Definition
 User requests **high-fidelity reproduction** of documentation content with minimal paraphrasing.
@@ -66,7 +66,7 @@ High-fidelity output requires **strong relevance** - avoid introducing any non-o
 
 ## 3. Faithful How-To (faithful_how_to)
 
-**Base Threshold:** 0.82
+**Base Threshold:** 0.58
 
 ### Definition
 User requests **high-fidelity reproduction** of documentation content that contains **procedural steps**, requiring both original text preservation AND actionable operational guidance.
@@ -107,7 +107,7 @@ Need to both consider the faithful_reference & how_to retrieval output, so just 
 
 ## 4. Concept Learning (concept_learning)
 
-**Base Threshold:** 0.65
+**Base Threshold:** 0.55
 
 ### Definition
 User seeks **systematic understanding** of a concept: definition, composition, principles, relationships.
@@ -138,7 +138,7 @@ Learning benefits from **multiple perspectives** - not a single correct answer. 
 
 ## 5. How-To (how_to)
 
-**Base Threshold:** 0.70
+**Base Threshold:** 0.50
 
 ### Definition
 User wants to know **how to execute an operation or follow a process**.
@@ -178,7 +178,7 @@ Steps should be accurate, but **multiple valid approaches may exist**. Don't req
 
 ## 6. Comparison (comparison)
 
-**Base Threshold:** 0.63
+**Base Threshold:** 0.53
 
 ### Definition
 User wants **comparative analysis** of multiple options with recommendations.
@@ -209,7 +209,7 @@ Comparisons require **covering multiple options** - cannot rely on single-answer
 
 ## 7. Exploration (exploration)
 
-**Base Threshold:** 0.55
+**Base Threshold:** 0.45
 
 ### Definition
 User wants **deep, multi-angle research** on a topic: underlying logic, trends, connections, future directions.
@@ -236,17 +236,3 @@ User wants **deep, multi-angle research** on a topic: underlying logic, trends, 
 
 ### Why Lowest Threshold?
 Encourage **exploration and association** - allow loosely related context into the candidate set for serendipitous discoveries.
-
----
-
-## Quick Reference Table
-
-| Scene | Precision | Breadth | Multiple Answers OK? | Threshold |
-|-------|-----------|---------|---------------------|-----------|
-| fact_lookup | Very High | Very Low | No | 0.80 |
-| faithful_reference | Highest | Minimal | No | 0.75 |
-| faithful_how_to | Very High | Low | No | 0.68 |
-| concept_learning | Medium | Medium | Yes | 0.65 |
-| how_to | High | Low-Medium | Sometimes | 0.70 |
-| comparison | Medium | High | Yes | 0.63 |
-| exploration | Low | Very High | Yes | 0.55 |

@@ -346,7 +346,7 @@ if not success:
 | `min_page_titles` | 2 | Minimum pages per doc-set |
 | `min_headings` | 2 | Minimum headings per page |
 | `reranker_threshold` | 0.5 | Transformer re-rank threshold |
-| `reranker_lang_threshold` | 0.3 | Chinese detection ratio |
+| `reranker_lang_threshold` | 0.9 | Chinese detection ratio |
 
 ---
 

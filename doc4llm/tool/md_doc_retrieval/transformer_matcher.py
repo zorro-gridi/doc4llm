@@ -206,6 +206,37 @@ class TransformerMatcher:
 
         return reranked
 
+    def rerank_batch(
+        self,
+        queries: List[str],
+        candidates: List[str]
+    ) -> Tuple[np.ndarray, List[str]]:
+        """Batch calculate similarity matrix for multiple queries and candidates.
+
+        Args:
+            queries: List of query strings
+            candidates: List of candidate texts
+
+        Returns:
+            sim_matrix: [Q, C] similarity matrix where sim_matrix[q_idx][c_idx] = similarity(queries[q_idx], candidates[c_idx])
+            returned_candidates: The candidate list (corresponds to sim_matrix columns)
+        """
+        if not queries or not candidates:
+            return np.array([]), []
+
+        # Batch encode all queries and candidates
+        query_embs = self.encode(queries)  # [Q, D]
+        candidate_embs = self.encode(candidates)  # [C, D]
+
+        # Normalize for cosine similarity
+        query_embs = self._normalize(query_embs)
+        candidate_embs = self._normalize(candidate_embs)
+
+        # Similarity matrix via dot product
+        sim_matrix = query_embs @ candidate_embs.T  # [Q, C]
+
+        return sim_matrix, candidates
+
 
 # Import Path for relative path resolution
 from pathlib import Path

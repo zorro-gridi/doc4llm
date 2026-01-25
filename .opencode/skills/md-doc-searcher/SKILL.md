@@ -9,6 +9,7 @@ context: fork
 Search and discover markdown documents headings in the local knowledge base using BM25-based retrieval via CLI interface.
 
 ## Critical Constraints
+
 - **NO docContent.md access**: Only search docTOC.md files
 - **Headings hierarchy**: Maintain page_title → headings structure in output
 - **AOP format**: Output must follow AOP specification exactly
@@ -33,9 +34,10 @@ Use the `--config` parameter to pass configuration via a JSON file path or JSON 
 {
   "query": ["hooks configuration"],  // Multi-query: ["query1", "query2", "query3"]
   "base_dir": "/path/to/knowledge_base",
-  "doc_sets": "OpenCode_Docs@latest",  // Multi doc-set: "doc1@v1,doc2@v2,doc3@latest"
+  "doc_sets": "OpenCode_Docs@latest",  // Multi doc-set: ["doc1@v1", "doc2@v2", "doc3@v3"]
   "bm25_k1": 1.2,
   "bm25_b": 0.75,
+  "reranker": true,
   "reranker_threshold": 0.68,
   "domain_nouns": ["hook", "tool", "agent"],
   "predicate_verbs": ["create", "delete"],
@@ -51,6 +53,7 @@ Use the `--config` parameter to pass configuration via a JSON file path or JSON 
   "query": ["authentication", "JWT", "OAuth"],
   "base_dir": "/path/to/knowledge_base",
   "doc_sets": "api_doc@v1,auth_service@v2",
+  "reranker": true,
   "reranker_threshold": 0.68,
   "json": true
 }
@@ -71,7 +74,7 @@ conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cl
 
 **query**: 支持多个查询词，格式为字符串数组 `["query1", "query2", "query3"]`
 
-**doc_sets**: 支持多个文档集，格式为逗号分隔的字符串 `"doc1@v1,doc2@v2,doc3@latest"`
+**doc_sets**: 支持多个文档集，格式为字符串数组 `["doc1@v1", "doc2@v2", "doc3@v3"]`
 
 #### JSON Config Parameters
 
@@ -81,7 +84,8 @@ When using `--config`, the following parameters are supported (Python naming con
 |------------|------|---------|----------------|
 | `query` | string[] | **required** | `--query` (multiple times) |
 | `base_dir` | string | **required** | `--base-dir` |
-| `doc_sets` | string | **required** | `--doc-sets` |
+| `doc_sets` | string[] | **required** | `--doc-sets` (multiple times)|
+| `reranker` | boolean | true | `--reranker` |
 | `reranker_threshold` | float | 0.68 | `--reranker-threshold` |
 | `bm25_k1` | float | 1.2 | `--bm25-k1` |
 | `bm25_b` | float | 0.75 | `--bm25-b` |

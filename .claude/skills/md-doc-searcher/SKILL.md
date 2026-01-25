@@ -51,7 +51,7 @@ Use the `--config` parameter to pass configuration via a JSON file path or JSON 
 {
   "query": ["hooks configuration"],  // Multi-query: ["query1", "query2", "query3"]
   "base_dir": "/path/to/knowledge_base",
-  "doc_sets": "OpenCode_Docs@latest",  // Multi doc-set: "doc1@v1,doc2@v2,doc3@latest"
+  "doc_sets": "OpenCode_Docs@latest",  // Multi doc-set: ["doc1@v1", "doc2@v2", "doc3@v3"]
   "bm25_k1": 1.2,
   "bm25_b": 0.75,
   "reranker": true,
@@ -91,7 +91,7 @@ conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.
 
 **query**: 支持多个查询词，格式为字符串数组 `["query1", "query2", "query3"]`
 
-**doc_sets**: 支持多个文档集，格式为逗号分隔的字符串 `"doc1@v1,doc2@v2,doc3@latest"`
+**doc_sets**: 支持多个文档集，格式为字符串数组 `["doc1@v1", "doc2@v2", "doc3@v3"]`
 
 #### JSON Config Parameters
 
@@ -101,7 +101,8 @@ When using `--config`, the following parameters are supported (Python naming con
 |------------|------|---------|----------------|
 | `query` | string[] | **required** | `--query` (multiple times) |
 | `base_dir` | string | **required** | `--base-dir` |
-| `doc_sets` | string | **required** | `--doc-sets` |
+| `doc_sets` | string[] | **required** | `--doc-sets` (multiple times)|
+| `reranker` | boolean | true | `--reranker` |
 | `reranker_threshold` | float | 0.68 | `--reranker-threshold` |
 | `bm25_k1` | float | 1.2 | `--bm25-k1` |
 | `bm25_b` | float | 0.75 | `--bm25-b` |
@@ -110,7 +111,7 @@ When using `--config`, the following parameters are supported (Python naming con
 | `threshold_precision` | float | 0.7 | `--threshold-precision` |
 | `min_page_titles` | int | 3 | `--min-page-titles` |
 | `min_headings` | int | 2 | `--min-headings` |
-| `json` | boolean | false | `--json` |
+| `json` | boolean | true | `--json` |
 | `hierarchical_filter` | int | 1 | `--hierarchical-filter` |
 | `domain_nouns` | string[] | [] | `--domain-nouns` |
 | `predicate_verbs` | string[] | [] | `--predicate-verbs` |
@@ -149,8 +150,6 @@ When using `--json` flag, the searcher outputs machine-parsable JSON metadata:
 ```
 
 **Purpose:** Enable downstream skills (md-doc-reader) to extract content by specific headings for token-efficient retrieval.
-
-**Multi-Document Extraction:** When multiple results are returned, the JSON output enables md-doc-reader to extract multiple sections from multiple documents using `--config` with `sections` or `sections_file` parameter, maintaining proper title-headings associations.
 
 ```markdown
 === AOP-FINAL | agent=md-doc-searcher | results={count} | doc_sets={sets} ===

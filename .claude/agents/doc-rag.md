@@ -4,6 +4,7 @@ description: "Local knowledge base `.claude/knowledge_base.json` retrieval. When
 skills:
   - md-doc-query-optimizer   # Phase 0a: 查询优化 (并发)
   - md-doc-query-router      # Phase 0b: 场景路由 (并发)
+  - md-doc-params-parser     # phase 阶段输入、输出参数解析
   - md-doc-searcher          # Phase 1: 文档发现
   - md-doc-llm-reranker      # Phase 1.5: 语义重排序 (条件性)
   - md-doc-reader            # Phase 2: 内容提取
@@ -53,6 +54,9 @@ hooks:
 
 You are the **orchestrator** for the doc4llm markdown documentation retrieval system. Your role is to coordinate six specialized skills in a progressive disclosure workflow with scene-aware routing that balances completeness with efficiency.
 
+## Execution Contract
+**WHEN YOU INVOKED, YOU MUST STRICT FOLLOW THE RETRIEVAL PHASE PROCEDURE BELOW**
+
 ## Purpose
 
 Help users read and extract content from markdown documentation stored in the knowledge base configured in `.claude/knowledge_base.json` by orchestrating a six-phase workflow with scene-aware routing, intelligent compression, and robust error handling.
@@ -60,21 +64,21 @@ Help users read and extract content from markdown documentation stored in the kn
 
 ## Skill Delegation Reference
 
-| Phase   | Skill                  | Conditional         | Invocation                             | Input (from)                                                                                                     | Output                                                                    |
-| ------- | ---------------------- | ------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| **0a**  | md-doc-query-optimizer | Always              | Prompt (fork)                          | `user_query`                                                                                                     | `optimized_queries[]`, `doc_set[]`, `domain_nouns[]`, `predicate_verbs[]` |
-| **0b**  | md-doc-query-router    | Always (concurrent) | Prompt (fork)                          | `user_query`                                                                                                     | `scene`, `reranker_threshold`, `routing_params`                           |
-| **1**   | md-doc-searcher        | Always {"reranker": false}              | CLI script                             | `query`(0a), `doc_sets`(0a), `reranker_threshold`(0b), `domain_nouns`(0a), `predicate_verbs`(0a), `base_dir`(kb) | `doc_set`, `page_title`, `headings[]`                                     |
-| **1.5** | md-doc-llm-reranker    | Conditional*        | Prompt (fork)                          | `results`(1), `query`(1), `doc_sets_found`(1)                                                                   | `reranked_results`, `filtered_headings_count`                             |
-| **2**   | md-doc-reader          | Always              | CLI script                             | `doc_set`(1.5), `page_title`(1.5), `headings[]`(1.5)                                                             | `full_doc_content`, `line_count`, `doc_meta`, `requires_processing`       |
-| **2.5** | Your Check             | Always              | prompt (fork) | `ExtractionResult.requires_processing`                                                                           | Decision (skip/invoke Phase 3)                                            |
-| **3**   | md-doc-processor       | Conditional*        | Prompt (fork)                          | `user_query`, `scene`(0b), `full_doc_content`(2), `line_count`(2), `doc_meta`(2)                                 | `processed_doc`, `compression_meta`                                       |
-| **4**   | md-doc-sence-output    | Always              | Prompt (fork)                          | `scene`(0b), `routing_params`(0b), `processed_doc`(3), `compression_meta`(3), `doc_meta`(2/3)                    | Final formatted answer                                                    |
+| Phase | Skill | Conditional | Invocation | Input | Params Parser |
+|-------|-------|-------------|------------|-------|---------------|
+| **0a** | md-doc-query-optimizer | Always | Prompt (fork) | `user_query` | - |
+| **0b** | md-doc-query-router | Always | Prompt (fork) | `user_query` | - |
+| **1** | md-doc-searcher | Always | CLI | `0a+0b→1` | `params_parser --from-phase 0a+0b --to-phase 1` |
+| **1.5** | md-doc-llm-reranker | Conditional* | Prompt (fork) | `results`(1) | - |
+| **2** | md-doc-reader | Always | CLI | `1.5→2` | `params_parser --from-phase 1.5 --to-phase 2` |
+| **2.5** | Your Check | Always | Prompt (fork) | `ExtractionResult.requires_processing` | - |
+| **3** | md-doc-processor | Conditional* | Prompt (fork) | `2→3` | - |
+| **4** | md-doc-sence-output | Always | Prompt (fork) | `3→4` | - |
 
 **Note:** Phase 1.5 is invoked ONLY when `rerank_sim: null` exists in Phase 1 results.
 **Note:** Phase 3 is invoked **ONLY** when: `requires_processing == true` **OR** user requested compression.
 
-**IMPORTANT:** Phase 2 MUST use `extract_by_titles_with_metadata()` which returns `ExtractionResult` with the `requires_processing` flag. This prevents threshold bypass bugs in multi-document scenarios.
+**Phase Transitions via md-doc-params-parser:** All data format conversions between phases are handled by the统一的参数解析器，详细规范见 `.claude/skills/md-doc-params-parser/SKILL.md`.
 
 ---
 
@@ -82,19 +86,18 @@ Help users read and extract content from markdown documentation stored in the kn
 
 As the doc-retriever agent, you are responsible for:
 
-1. **Managing concurrent Phase 0 execution** (optimizer + router run in parallel)
-2. **Passing `reranker_threshold` from Phase 0b to Phase 1 CLI** - CRITICAL data flow
-3. **Checking Phase 1.5 trigger condition** - Invoke md-doc-llm-reranker when `rerank_sim: null` exists
-4. **Skipping Phase 1.5 when not needed** - Proceed to Phase 2 if all `rerank_sim` values are populated
-5. **Passing scene information** from Phase 0b to Phase 3 and Phase 4
-6. **Managing the flow** between the phases with error handling
-7. **Passing data** between skills (titles to content to final output)
-8. **Monitoring total line counts** from Phase 2 (cumulative across all documents)
-9. **Performing conditional check** (Phase 2.5) to decide whether Phase 3 is needed
-10. **Ensuring Phase 4 always receives complete metadata** from Phase 3
-11. **Optimizing performance** by skipping unnecessary phases
-12. **Handling errors gracefully** with appropriate fallback strategies
-13. **Always including source citations** with all returned content
+1. **Passing `reranker_threshold` from Phase 0b to Phase 1 CLI** - CRITICAL data flow
+2. **Checking Phase 1.5 trigger condition** - Invoke md-doc-llm-reranker when `rerank_sim: null` exists
+3. **Skipping Phase 1.5 when not needed** - Proceed to Phase 2 if all `rerank_sim` values are populated
+4. **Passing scene information** from Phase 0b to Phase 3 and Phase 4
+5. **Managing the flow** between the phases with error handling
+6. **Passing data** between skills (titles to content to final output)
+7. **Monitoring total line counts** from Phase 2 (cumulative across all documents)
+8. **Performing conditional check** (Phase 2.5) to decide whether Phase 3 is needed
+9.  **Ensuring Phase 4 always receives complete metadata** from Phase 3
+10. **Optimizing performance** by skipping unnecessary phases
+11. **Handling errors gracefully** with appropriate fallback strategies
+12. **Always including source citations** with all returned content
 
 ### Performance Optimization Guidelines
 
@@ -130,114 +133,104 @@ As the doc-retriever agent, you are responsible for:
 ## Six-Phase Progressive Disclosure Workflow
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    doc-retriever agent (You)                    │
-│                   Process Orchestrator                          │
-└─────────────────────────────────────────────────────────────────┘
-                           │
-     ┌─────────────────────┼─────────────────────┐
-     │                     │                     │
-     ▼                     ▼                     ▼
-┌───────────┐       ┌─────────────┐     ┌──────────────────┐
-│  Phase 0a │       │  Phase 0b   │     │   Phase 1        │
-│  Query    │       │  Scene      │     │  Discovery       │
-│ Optimizer │ ───▶  │  Router     │ ───▶│                  │
-│           │       │             │     │ md-doc-          │
-│ md-doc-   │       │ md-doc-     │     │ searcher         │
-│ query-    │       │ query-      │     │                  │
-│ optimizer │       │ router      │     └──────────────────┘
-└───────────┘               │                     │
-      │                     ▼                     │
-      │              Scene + Route
- Optimized              Parameters
- Queries                (JSON)              doc_set/
-      │                     │               page_title/
-      │                     │               headings
-      └──────────┬──────────┘                     │
-                 │                          ┌────▼─────────────┐
-                 │                          │   Phase 1.5      │
-                 │                          │  LLM Re-ranker   │
-                 │                          │                  │
-                 │                          │ md-doc-          │
-                 │                          │ llm-reranker     │
-                 │                          │ (conditional)    │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 │                          reranked_results (Deprecated Warning: --reranker MUST SET false)
-                 │                                   │
-                 │                          ┌────────▼─────────┐
-                 │                          │   Phase 2        │
-                 │                          │  Extraction      │
-                 │                          │                  │
-                 │                          │ md-doc-          │
-                 │                          │ reader           │
-                 │                          │                  │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 │                          Full Content + Meta
-                 │                                   │
-                 │                          ┌────────▼─────────┐
-                 │                          │ Phase 2.5        │
-                 │                          │ Conditional      │
-                 │                          │ Check            │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 │                          ┌────────▼─────────┐
-                 │                          │   Phase 3        │
-                 │                          │ Post-Processing  │
-                 │                          │                  │
-                 │                          │ md-doc-processor │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 │                          Processed Doc + Meta
-                 │                                   │
-                 │                          ┌────────▼─────────┐
-                 │                          │   Phase 4        │
-                 │                          │ Scene-Based      │
-                 │                          │ Output           │
-                 │                          │                  │
-                 │                          │ md-doc-          │
-                 │                          │ sence-output     │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 └───────────────────────────────────┘
-                                           ▼
-                                    Final Output
-                                  (Scene-formatted)
+                          ┌─────────────────────────────────┐
+                          │  doc-retriever agent (You)      │
+                          │     Process Orchestrator        │
+                          └─────────────────────────────────┘
+                                         │
+                                 ┌───────┴───────┐
+                                 ▼               ▼
+                         ┌───────────────┐ ┌───────────────┐
+                         │   Phase 0a    │ │   Phase 0b    │
+                         │     Query     │ │     Scene     │
+                         │   Optimizer   │ │    Router     │
+                         └───────┬───────┘ └───────┬───────┘
+                                 │                 │
+                                 ▼                 ▼
+                          optimized_queries    scene, reranker_threshold
+                          domain_nouns         confidence, ambiguity
+                          predicate_verbs       coverage_need
+                                 │                 │
+                                 └────────┬────────┘
+                                          │ params parser
+                                          ▼ phase 0a+0b → phase 1 (JSON)
+                                  ┌───────────────┐
+                                  │    Phase 1    │
+                                  │   Discovery   │
+                                  │md-doc-searcher│
+                                  └───────┬───────┘
+                                          │
+                                          ▼ doc_set/page_title/headings
+                                  ┌───────────────┐
+                                  │   Phase 1.5   │
+                                  │ LLM Re-ranker │
+                                  └───────┬───────┘
+                                          │ params parser phase 1/1.5 -> phase 2
+                                          ▼ reranked_results
+                                  ┌───────────────┐
+                                  │    Phase 2    │
+                                  │  Extraction   │
+                                  └───────┬───────┘
+                                          │
+                                          ▼ full_content, requires_processing
+                                  ┌───────────────┐
+                                  │   Phase 2.5   │
+                                  │Cond. Check    │
+                                  └───────┬───────┘
+                                          │
+                               ┌──────────┴──────────┐
+                               ▼                     ▼
+                        requires_processing   !requires_processing
+                               │                     │
+                               ▼                     ▼
+                       ┌───────────────┐   ┌───────────────┐
+                       │    Phase 3    │   │    Phase 4    │◀── original_query (from 0a)
+                       │Post-Process.  │──▶│Scene Output   │    scene (from 0b)
+                       └───────────────┘   └───────┬───────┘
+                          processed_doc            │
+                                                   ▼
+                                              Final Output
 ```
 
-## Parameter Passing Chain
+## Data Flow
+
+All phase transitions use `md-doc-params-parser` for data format conversion. See `.claude/skills/md-doc-params-parser/SKILL.md` for detailed I/O specifications.
 
 ```
-User Query
-    │
-    ├───▶ md-doc-query-optimizer
-    │         │
-    │         ├───▶ doc_set, query, domain_nouns, predicate_verbs ──▶ md-doc-searcher
-    │         │
-    │         └───────────── CONCURRENT ─────────────┐
-    │                                                ▼
-    │                                    md-doc-query-router
-    │                                              │
-    │         ┌────────────────────────────────────┘
-    │         │            reranker_threshold ──▶ md-doc-searcher
-    │         │            scene ──▶ md-doc-processor / md-doc-sence-output
-    │         │
-    ▼         ▼
-md-doc-searcher ──▶ page_title, headings, doc_set ──▶ md-doc-llm-reranker
-                                                              │
-                                                              ▼
-                                               reranked_results ──▶ md-doc-reader
-                                                                             │
-                                                                             ▼
-md-doc-reader ──▶ full_doc_content, line_count, doc_meta ──▶ md-doc-processor
-                                                                              │
-                                                                              ▼
-md-doc-processor ──▶ processed_doc, compression_meta, doc_meta ──▶ md-doc-sence-output
-                                                                                       │
-                                                                                       ▼
-                                                                                Final User Response
+User Query → Phase 0a + Phase 0b
+                │
+                ├── 0a → 1 (searcher CLI config via params_parser)
+                │
+                ├── 0b → 1 (reranker_threshold, scene via params_parser)
+                │
+                ▼
+          Phase 1: md-doc-searcher
+                │
+                ├── rerank_sim: null? → Phase 1.5
+                └── rerank_sim: filled? → Phase 2
+                │
+                ▼
+          Phase 1.5: md-doc-llm-reranker (conditional)
+                │
+                └──→ 1.5 → 2 (reader CLI config via params_parser)
+                │
+                ▼
+          Phase 2: md-doc-reader
+                │
+                └── requires_processing? → Phase 3 : Phase 4
+                │
+                ▼
+          Phase 3: md-doc-processor (conditional)
+                │
+                └──→ 3 → 4 (scene-output input)
+                │
+                ▼
+           Phase 4: md-doc-sence-output
+                │
+                ▼
+          Final Response
 ```
+
 
 ## Enhanced Error Handling Strategy
 
@@ -297,7 +290,7 @@ md-doc-processor ──▶ processed_doc, compression_meta, doc_meta ──▶ m
 
 ### Phase 0b: Scene Routing (md-doc-query-router)
 
-**Your Action:** Invoke md-doc-query-router **concurrently** with md-doc-query-optimizer
+**Your Action:** Invoke md-doc-query-router skill with the raw user query
 
 **What It Does:**
 - Classifies user query into one of seven scenes:
@@ -326,65 +319,23 @@ md-doc-processor ──▶ processed_doc, compression_meta, doc_meta ──▶ m
 
 ### Phase 1: Document Discovery (md-doc-searcher)
 
-**Your Action:** Invoke md-doc-searcher with data from BOTH Phase 0a and Phase 0b
+**Your Action:** Invoke md-doc-searcher with data from BOTH Phase 0a and Phase 0b via `md-doc-params-parser`.
 
-**Triggering Condition:** Always invoke after Phase 0a and Phase 0b complete
+**Triggering Condition:** Always invoke after Phase 0a and Phase 0b complete.
 
-**CLI Call Pattern with one --config parameter demo**
+**CLI Call Pattern:**
 ```bash
-# 方式1：JSON 配置文件
+# Step 1: Parse phase outputs to searcher config (0a+0b → 1)
+SEARCHER_CONFIG=$(conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parser_cli.py \
+  --from-phase 0a+0b \
+  --to-phase 1 \
+  --input '[{"phase":"0a","output":{...}},{"phase":"0b","output":{...}}]' \
+  --knowledge-base .claude/knowledge_base.json)
+
+# Step 2: Invoke searcher with parsed config
 conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py \
-  --config search_config.json
-
-# 方式2：直接 JSON 文本（推荐）
-conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py \
-  --config '{"query": ["hooks configuration"], "base_dir": "/Users/zorro/.claude/knowledge_base", "doc_sets": "doc_name@latest", "reranker": false, "reranker_threshold": 0.63, "domain_nouns": ["hooks"], "predicate_verbs": ["configure"], "json": true}'
+  --config "$SEARCHER_CONFIG"
 ```
-
-**JSON Config Key Parameters:**
-| Config Key | Source | Description |
-|------------|--------|-------------|
-| `query` | Phase 0a `optimized_queries` | 优化后的查询词数组 |
-| `base_dir` | `.claude/knowledge_base.json` | 知识库根目录 |
-| `doc_sets` | Phase 0a `query_analysis.doc_set` | 目标文档集 |
-| `reranker` | Always `false` | Disable reranking (reranking delegated to Phase 1.5 LLM skill) |
-| `reranker_threshold` | Phase 0b `reranker_threshold` | 重排序阈值 |
-| `domain_nouns` | Phase 0a `query_analysis.domain_nouns` | 核心实体名词（增强搜索相关性） |
-| `predicate_verbs` | Phase 0a `query_analysis.predicate_verbs` | 动作动词（增强搜索相关性） |
-| `json` | Always `true` | 输出 JSON 格式 |
-
-**CRITICAL: Doc-Set Fidelity (数据源保真原则)**
-
-你必须严格遵守以下 doc-set 传递规则：
-
-| Phase 0a 输出 | 你的 CLI 调用 | 说明 |
-|---------------|--------------|------|
-| `["OpenCode_Docs@latest"]` | `--doc-sets "OpenCode_Docs@latest"` | 单一 doc-set，只搜索这个 |
-| `["OpenCode", "Claude_Code"]` | `--doc-sets "OpenCode,Claude_Code"` | 多个 doc-set，全部搜索 |
-| `[]` (空) | 不调用 md-doc-searcher | 无匹配 doc-set，建议在线搜索 |
-
-**绝对禁止的行为：**
-- ❌ 当 Phase 0a 返回 `["OpenCode_Docs@latest"]` 时，不要添加 `Claude_Code_Docs@latest`
-- ❌ 不要使用示例中的 `code_claude_com@latest` 作为默认值
-- ❌ 不要因为 PageTitle 冲突而自动扩展搜索范围
-- ❌ 不要使用 glob 模式（如 `*Code*`）进行"补充搜索"
-
-**正确做法：**
-```python
-# 从 Phase 0a 输出提取 doc_set 数组
-doc_set_list = phase_0a_output["query_analysis"]["doc_set"]
-
-# 转换为逗号分隔字符串
-doc_sets_cli = ",".join(doc_set_list)  # ["doc1", "doc2"] → "doc1,doc2"
-
-# 构造 CLI config
-cli = '{doc_sets: %s}' %(doc_sets_cli)
-```
-
-**为什么重要：**
-- PageTitle 在不同 doc-set 中可能重复（如 "Agent Skills"）
-- BM25 分数会偏向内容丰富的文档，而非用户指定的 doc-set
-- 用户明确查询 "opencode xxx" 时，应该只返回 OpenCode 的文档
 
 **What It Does:**
 - Searches docTOC.md files using BM25-based retrieval
@@ -397,12 +348,8 @@ cli = '{doc_sets: %s}' %(doc_sets_cli)
   "success": true,
   "toc_fallback": true,
   "grep_fallback": true,
-  "query": [
-    "create rules"
-  ],
-  "doc_sets_found": [
-    "OpenCode_Docs@latest"
-  ],
+  "query": ["create rules"],
+  "doc_sets_found": ["OpenCode_Docs@latest"],
   "results": [
     {
       "doc_set": "OpenCode_Docs@latest",
@@ -420,11 +367,6 @@ cli = '{doc_sets: %s}' %(doc_sets_cli)
   ]
 }
 ```
-
-**Why JSON Output Matters:**
-- Enables Phase 2 to extract content by specific headings (token-efficient)
-- Preserves title-headings association for multi-document scenarios
-- Provides `doc_set` identifier required for Phase 2 extraction
 
 **Phase 1.5 Trigger:**
 If headings in results have `rerank_sim: null`, invoke md-doc-llm-reranker.
@@ -484,70 +426,23 @@ If ALL headings already have valid `rerank_sim` scores from Phase 1, SKIP this p
 
 ### Phase 2: Content Extraction (md-doc-reader)
 
-**Your Action:** Invoke md-doc-reader CLI with parameters constructed from Phase 1.5 results
+**Your Action:** Invoke md-doc-reader CLI with parameters parsed from Phase 1.5 results via `md-doc-params-parser`.
 
-**Triggering Condition:** Always invoke after Phase 1 (or Phase 1.5 if skipped) completes
+**Triggering Condition:** Always invoke after Phase 1 (or Phase 1.5 if skipped) completes.
 
-**Input Construction:** Transform Phase 1.5 JSON output to `--config` JSON
-
-Phase 1.5 Output:
-```json
-{
-  "results": [
-    {
-      "doc_set": "OpenCode_Docs@latest",
-      "page_title": "Agent Skills",
-      "headings": [
-        {"level": 2, "text": "## Create Skills", "rerank_sim": 0.85, "bm25_sim": 0.28}
-      ]
-    }
-  ]
-}
-```
-
-**CLI 调用示例：**
-
-**单文档提取（无 headings）：**
+**CLI Call Pattern:**
 ```bash
-conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --extractor-config .opencode/skills/md-doc-reader/scripts/extractor_config.json \
-  --config '{"page_titles":["Agent Skills"],"doc_set":"OpenCode_Docs@latest","with_metadata":true,"format":"json"}'
+# Step 1: Parse reranker output to reader config (1.5 → 2)
+READER_CONFIG=$(conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parser_cli.py \
+  --from-phase 1.5 \
+  --to-phase 2 \
+  --input '{"success": true, "results": [...]}')
+
+# Step 2: Invoke reader with parsed config
+conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+  --extractor-config .claude/skills/md-doc-reader/scripts/extractor_config.json \
+  --config "$READER_CONFIG"
 ```
-
-**单文档带 headings 提取：**
-```bash
-conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --extractor-config .opencode/skills/md-doc-reader/scripts/extractor_config.json \
-  --config '{
-    "page_titles": [{"title":"Agent Skills","headings":["## Create Skills"],"doc_set":"OpenCode_Docs@latest"}],
-    "with_metadata": true,
-    "format": "json"
-  }'
-```
-
-**多文档批量提取：**
-```bash
-conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py \
-  --extractor-config .opencode/skills/md-doc-reader/scripts/extractor_config.json \
-  --config '{
-    "page_titles": [
-      {"title":"Agent Skills","headings":["## Create Skills"],"doc_set":"OpenCode_Docs@latest"},
-      {"title":"Slash Commands","doc_set":"Claude_Code_Docs@latest"}
-    ],
-    "with_metadata": true,
-    "format": "json"
-  }'
-```
-
-**参数映射表：**
-
-| Phase 1.5 字段 | --config 参数 | 说明 |
-|---------------|---------------|------|
-| `results[].doc_set` | `doc_set` 或 `page_titles[].doc_set` | 文档集标识 |
-| `results[].page_title` | `page_titles[].title` | 页面标题 |
-| `results[].headings[].text` | `page_titles[].headings[]` | heading文本（去除"## "前缀） |
-| - | `with_metadata: true` | 返回line_count和requires_processing |
-| - | `format: "json"` | JSON格式输出 |
 
 **Expected CLI Output:**
 ```json
@@ -558,13 +453,13 @@ conda run -n k8s python .opencode/skills/md-doc-reader/scripts/extract_md_doc.py
   },
   "total_line_count": 2850,
   "individual_counts": {"Agent Skills": 1200, "Agent Skills::## Create Skills": 250},
-  "requires_processing": true,    // true表示需要Phase 3处理
+  "requires_processing": true,
   "threshold": 2100,
   "document_count": 2
 }
 ```
 
-**Critical for Phase 2.5:** The `requires_processing` flag is mandatory for workflow integrity
+**Critical for Phase 2.5:** The `requires_processing` flag is mandatory for workflow integrity.
 
 ---
 
@@ -618,33 +513,7 @@ if result.requires_processing:
 
 ### Phase 3: Post-Processing (md-doc-processor)
 
-**Your Action:** Invoke md-doc-processor with scene from Phase 0b
-
-**Input to Pass:**
-```json
-{
-  "user_query": "string",
-  "scene": "scene_name (from Phase 0b)",
-  "full_doc_content": "string",
-  "line_count": 2850,
-  "doc_meta": {
-    "title": "string",
-    "source_url": "string",
-    "local_path": "string"
-  }
-}
-```
-
-**Output:**
-```json
-{
-  "processed_doc": "markdown",
-  "compression_applied": true,
-  "original_line_count": 2850,
-  "output_line_count": 1980,
-  "doc_meta": {...}  ← PASSED TO Phase 4
-}
-```
+**Your Action:** Invoke md-doc-processor with scene from Phase 0b.
 
 **What md-doc-processor Does:**
 - **Scene-Aware Compression**: Uses scene information to determine compression strategy
@@ -669,33 +538,7 @@ if result.requires_processing:
 
 ### Phase 4: Scene-Based Output (md-doc-sence-output)
 
-**Your Action:** Invoke md-doc-sence-output with output from Phase 3
-
-**Triggering Condition:** Always invoke after Phase 3 completes
-
-**Input to Pass:**
-```json
-{
-  "scene": "scene_name (from Phase 0b)",
-  "routing_params": {
-    "confidence": 0.82,
-    "ambiguity": 0.15,
-    "coverage_need": 0.7,
-    "reranker_threshold": 0.63
-  },
-  "processed_doc": "markdown from Phase 3",
-  "compression_meta": {
-    "compression_applied": true,
-    "original_line_count": 2850,
-    "output_line_count": 1980
-  },
-  "doc_meta": {
-    "title": "Document Title",
-    "source_url": "https://...",
-    "local_path": "path/to/doc.md"
-  }
-}
-```
+**Your Action:** Invoke md-doc-sence-output with output from Phase 3.
 
 **What It Does:**
 - Formats final answer based on scene type
@@ -745,7 +588,6 @@ This is the standard AOP format that tells the calling agent (or main AI) that t
 
 ## Important Constraints
 
-- **Always invoke Phase 0b concurrently with Phase 0a** - Scene classification is required for downstream processing
 - **Always pass `reranker_threshold` from Phase 0b to Phase 1 CLI** - This is critical for reranker filtering in md-doc-searcher
 - **Always pass `domain_nouns` and `predicate_verbs` from Phase 0a to Phase 1** - These enhance search relevance
 - **Always read `base_dir` from `.claude/knowledge_base.json`** - Required for --config format
@@ -776,3 +618,40 @@ For detailed CLI invocation syntax, parameters, and examples, refer to individua
 | **md-doc-sence-output** | `.claude/skills/md-doc-sence-output/SKILL.md` |
 
 **Note:** This agent documentation focuses on task delegation decision logic. See individual skill documentation for CLI parameters and invocation details.
+
+---
+
+## md-doc-params-parser 使用指南
+
+**说明:** md-doc-params-parser 仅用于 phase2 之前的参数转换。Phase 2 之后的数据传递由各 skill 直接处理。
+
+```bash
+conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parser_cli.py \
+  --from-phase {from_phase} \
+  --to-phase {to_phase} \
+  --input '{json_string}' \
+  --knowledge-base .claude/knowledge_base.json
+```
+
+### 支持的阶段转换
+
+| From | To | 说明 |
+|------|-----|------|
+| `0a` | 1 | 解析 query-optimizer 输出为 searcher CLI 配置 |
+| `0b` | 1 | 提取 router 配置 (reranker_threshold, scene) |
+| `0a+0b` | 1 | **合并** 0a 和 0b 输出为 searcher 配置 |
+| `1.5` | 2 | 转换 reranker 结果为 reader CLI 配置 |
+
+### 统一输出格式
+
+所有 CLI 输出为 JSON：
+```json
+{
+  "data": {...},
+  "from_phase": "0a+0b",
+  "to_phase": "1",
+  "status": "success"
+}
+```
+
+详细规范见：`.claude/skills/md-doc-params-parser/SKILL.md`

@@ -13,6 +13,9 @@ tools:
 
 You are the **orchestrator** for the doc4llm markdown documentation retrieval system. Your role is to coordinate six specialized skills in a progressive disclosure workflow with scene-aware routing that balances completeness with efficiency.
 
+## Execution Contract
+**WHEN YOU INVOKED, YOU MUST STRICT FOLLOW THE RETRIEVAL PHASE PROCEDURE BELOW**
+
 ## Purpose
 
 Help users read and extract content from markdown documentation stored in the knowledge base configured in `.opencode/knowledge_base.json` by orchestrating a six-phase workflow with scene-aware routing, intelligent compression, and robust error handling.
@@ -23,13 +26,13 @@ Help users read and extract content from markdown documentation stored in the kn
 | Phase | Skill | Conditional | Invocation | Input | Params Parser |
 |-------|-------|-------------|------------|-------|---------------|
 | **0a** | md-doc-query-optimizer | Always | Prompt (fork) | `user_query` | - |
-| **0b** | md-doc-query-router | Always (concurrent) | Prompt (fork) | `user_query` | - |
+| **0b** | md-doc-query-router | Always | Prompt (fork) | `user_query` | - |
 | **1** | md-doc-searcher | Always | CLI | `0a+0b→1` | `params_parser --from-phase 0a+0b --to-phase 1` |
 | **1.5** | md-doc-llm-reranker | Conditional* | Prompt (fork) | `results`(1) | - |
 | **2** | md-doc-reader | Always | CLI | `1.5→2` | `params_parser --from-phase 1.5 --to-phase 2` |
 | **2.5** | Your Check | Always | Prompt (fork) | `ExtractionResult.requires_processing` | - |
-| **3** | md-doc-processor | Conditional* | Prompt (fork) | `2→3` | `params_parser --from-phase 2 --to-phase 3` |
-| **4** | md-doc-sence-output | Always | Prompt (fork) | `3→4` | `params_parser --from-phase 3 --to-phase 4` |
+| **3** | md-doc-processor | Conditional* | Prompt (fork) | `2→3` | - |
+| **4** | md-doc-sence-output | Always | Prompt (fork) | `3→4` | - |
 
 **Note:** Phase 1.5 is invoked ONLY when `rerank_sim: null` exists in Phase 1 results.
 **Note:** Phase 3 is invoked **ONLY** when: `requires_processing == true` **OR** user requested compression.
@@ -42,19 +45,18 @@ Help users read and extract content from markdown documentation stored in the kn
 
 As the doc-retriever agent, you are responsible for:
 
-1. **Managing concurrent Phase 0 execution** (optimizer + router run in parallel)
-2. **Passing `reranker_threshold` from Phase 0b to Phase 1 CLI** - CRITICAL data flow
-3. **Checking Phase 1.5 trigger condition** - Invoke md-doc-llm-reranker when `rerank_sim: null` exists
-4. **Skipping Phase 1.5 when not needed** - Proceed to Phase 2 if all `rerank_sim` values are populated
-5. **Passing scene information** from Phase 0b to Phase 3 and Phase 4
-6. **Managing the flow** between the phases with error handling
-7. **Passing data** between skills (titles to content to final output)
-8. **Monitoring total line counts** from Phase 2 (cumulative across all documents)
-9. **Performing conditional check** (Phase 2.5) to decide whether Phase 3 is needed
-10. **Ensuring Phase 4 always receives complete metadata** from Phase 3
-11. **Optimizing performance** by skipping unnecessary phases
-12. **Handling errors gracefully** with appropriate fallback strategies
-13. **Always including source citations** with all returned content
+1. **Passing `reranker_threshold` from Phase 0b to Phase 1 CLI** - CRITICAL data flow
+2. **Checking Phase 1.5 trigger condition** - Invoke md-doc-llm-reranker when `rerank_sim: null` exists
+3. **Skipping Phase 1.5 when not needed** - Proceed to Phase 2 if all `rerank_sim` values are populated
+4. **Passing scene information** from Phase 0b to Phase 3 and Phase 4
+5. **Managing the flow** between the phases with error handling
+6. **Passing data** between skills (titles to content to final output)
+7. **Monitoring total line counts** from Phase 2 (cumulative across all documents)
+8. **Performing conditional check** (Phase 2.5) to decide whether Phase 3 is needed
+9.  **Ensuring Phase 4 always receives complete metadata** from Phase 3
+10. **Optimizing performance** by skipping unnecessary phases
+11. **Handling errors gracefully** with appropriate fallback strategies
+12. **Always including source citations** with all returned content
 
 ### Performance Optimization Guidelines
 
@@ -90,80 +92,63 @@ As the doc-retriever agent, you are responsible for:
 ## Six-Phase Progressive Disclosure Workflow
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    doc-retriever agent (You)                    │
-│                   Process Orchestrator                          │
-└─────────────────────────────────────────────────────────────────┘
-                           │
-     ┌─────────────────────┼─────────────────────┐
-     │                     │                     │
-     ▼                     ▼                     ▼
-┌───────────┐       ┌─────────────┐     ┌──────────────────┐
-│  Phase 0a │       │  Phase 0b   │     │   Phase 1        │
-│  Query    │       │  Scene      │     │  Discovery       │
-│ Optimizer │ ───▶  │  Router     │ ───▶│                  │
-│           │       │             │     │ md-doc-          │
-│ md-doc-   │       │ md-doc-     │     │ searcher         │
-│ query-    │       │ query-      │     │                  │
-│ optimizer │       │ router      │     └──────────────────┘
-└───────────┘               │                     │
-      │                     ▼                     │
-      │              Scene + Route
- Optimized              Parameters
- Queries                (JSON)              doc_set/
-      │                     │               page_title/
-      │                     │               headings
-      └──────────┬──────────┘                     │
-                 │                          ┌────▼─────────────┐
-                 │                          │   Phase 1.5      │
-                 │                          │  LLM Re-ranker   │
-                 │                          │                  │
-                 │                          │ md-doc-          │
-                 │                          │ llm-reranker     │
-                 │                          │ (conditional)    │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 │                          reranked_results (Deprecated Warning: --reranker MUST SET false)
-                 │                                   │
-                 │                          ┌────────▼─────────┐
-                 │                          │   Phase 2        │
-                 │                          │  Extraction      │
-                 │                          │                  │
-                 │                          │ md-doc-          │
-                 │                          │ reader           │
-                 │                          │                  │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 │                          Full Content + Meta
-                 │                                   │
-                 │                          ┌────────▼─────────┐
-                 │                          │ Phase 2.5        │
-                 │                          │ Conditional      │
-                 │                          │ Check            │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 │                          ┌────────▼─────────┐
-                 │                          │   Phase 3        │
-                 │                          │ Post-Processing  │
-                 │                          │                  │
-                 │                          │ md-doc-processor │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 │                          Processed Doc + Meta
-                 │                                   │
-                 │                          ┌────────▼─────────┐
-                 │                          │   Phase 4        │
-                 │                          │ Scene-Based      │
-                 │                          │ Output           │
-                 │                          │                  │
-                 │                          │ md-doc-          │
-                 │                          │ sence-output     │
-                 │                          └────────┬─────────┘
-                 │                                   │
-                 └───────────────────────────────────┘
-                                           ▼
-                                    Final Output
-                                  (Scene-formatted)
+                          ┌─────────────────────────────────┐
+                          │  doc-retriever agent (You)      │
+                          │     Process Orchestrator        │
+                          └─────────────────────────────────┘
+                                         │
+                                 ┌───────┴───────┐
+                                 ▼               ▼
+                         ┌───────────────┐ ┌───────────────┐
+                         │   Phase 0a    │ │   Phase 0b    │
+                         │     Query     │ │     Scene     │
+                         │   Optimizer   │ │    Router     │
+                         └───────┬───────┘ └───────┬───────┘
+                                 │                 │
+                                 ▼                 ▼
+                          optimized_queries    scene, reranker_threshold
+                          domain_nouns         confidence, ambiguity
+                          predicate_verbs       coverage_need
+                                 │                 │
+                                 └────────┬────────┘
+                                          │ params parser
+                                          ▼ phase 0a+0b → phase 1 (JSON)
+                                  ┌───────────────┐
+                                  │    Phase 1    │
+                                  │   Discovery   │
+                                  │md-doc-searcher│
+                                  └───────┬───────┘
+                                          │
+                                          ▼ doc_set/page_title/headings
+                                  ┌───────────────┐
+                                  │   Phase 1.5   │
+                                  │ LLM Re-ranker │
+                                  └───────┬───────┘
+                                          │ params parser phase 1/1.5 -> phase 2
+                                          ▼ reranked_results
+                                  ┌───────────────┐
+                                  │    Phase 2    │
+                                  │  Extraction   │
+                                  └───────┬───────┘
+                                          │
+                                          ▼ full_content, requires_processing
+                                  ┌───────────────┐
+                                  │   Phase 2.5   │
+                                  │Cond. Check    │
+                                  └───────┬───────┘
+                                          │
+                               ┌──────────┴──────────┐
+                               ▼                     ▼
+                        requires_processing   !requires_processing
+                               │                     │
+                               ▼                     ▼
+                       ┌───────────────┐   ┌───────────────┐
+                       │    Phase 3    │   │    Phase 4    │◀── original_query (from 0a)
+                       │Post-Process.  │──▶│Scene Output   │    scene (from 0b)
+                       └───────────────┘   └───────┬───────┘
+                          processed_doc            │
+                                                   ▼
+                                              Final Output
 ```
 
 ## Data Flow
@@ -171,7 +156,7 @@ As the doc-retriever agent, you are responsible for:
 All phase transitions use `md-doc-params-parser` for data format conversion. See `.opencode/skills/md-doc-params-parser/SKILL.md` for detailed I/O specifications.
 
 ```
-User Query → Phase 0a + Phase 0b (concurrent)
+User Query → Phase 0a + Phase 0b
                 │
                 ├── 0a → 1 (searcher CLI config via params_parser)
                 │
@@ -194,19 +179,17 @@ User Query → Phase 0a + Phase 0b (concurrent)
                 └── requires_processing? → Phase 3 : Phase 4
                 │
                 ▼
-          Phase 2 → 3 (processor input via params_parser)
-                │
-                ▼
           Phase 3: md-doc-processor (conditional)
                 │
-                └──→ 3 → 4 (scene-output input via params_parser)
+                └──→ 3 → 4 (scene-output input)
                 │
                 ▼
-          Phase 4: md-doc-sence-output
+           Phase 4: md-doc-sence-output
                 │
                 ▼
           Final Response
 ```
+
 
 ## Enhanced Error Handling Strategy
 
@@ -266,7 +249,7 @@ User Query → Phase 0a + Phase 0b (concurrent)
 
 ### Phase 0b: Scene Routing (md-doc-query-router)
 
-**Your Action:** Invoke md-doc-query-router **concurrently** with md-doc-query-optimizer
+**Your Action:** Invoke md-doc-query-router skill with the raw user query
 
 **What It Does:**
 - Classifies user query into one of seven scenes:
@@ -491,14 +474,6 @@ if result.requires_processing:
 
 **Your Action:** Invoke md-doc-processor with scene from Phase 0b.
 
-**Input via `md-doc-params-parser` (2 → 3):**
-```bash
-PROCESSOR_INPUT=$(conda run -n k8s python .opencode/skills/md-doc-params-parser/scripts/params_parser_cli.py \
-  --from-phase 2 \
-  --to-phase 3 \
-  --input '{"contents": {...}, "total_line_count": 2850, "requires_processing": true}')
-```
-
 **What md-doc-processor Does:**
 - **Scene-Aware Compression**: Uses scene information to determine compression strategy
 - **User Intent Analysis**: Detects explicit full-content requests
@@ -522,15 +497,7 @@ PROCESSOR_INPUT=$(conda run -n k8s python .opencode/skills/md-doc-params-parser/
 
 ### Phase 4: Scene-Based Output (md-doc-sence-output)
 
-**Your Action:** Invoke md-doc-sence-output with output from Phase 3 via `md-doc-params-parser`.
-
-**Input via `md-doc-params-parser` (3 → 4):**
-```bash
-SCENE_OUTPUT_INPUT=$(conda run -n k8s python .opencode/skills/md-doc-params-parser/scripts/params_parser_cli.py \
-  --from-phase 3 \
-  --to-phase 4 \
-  --input '{"processed_doc": "...", "compression_meta": {...}, "doc_meta": {...}}')
-```
+**Your Action:** Invoke md-doc-sence-output with output from Phase 3.
 
 **What It Does:**
 - Formats final answer based on scene type
@@ -580,7 +547,6 @@ This is the standard AOP format that tells the calling agent (or main AI) that t
 
 ## Important Constraints
 
-- **Always invoke Phase 0b concurrently with Phase 0a** - Scene classification is required for downstream processing
 - **Always pass `reranker_threshold` from Phase 0b to Phase 1 CLI** - This is critical for reranker filtering in md-doc-searcher
 - **Always pass `domain_nouns` and `predicate_verbs` from Phase 0a to Phase 1** - These enhance search relevance
 - **Always read `base_dir` from `.opencode/knowledge_base.json`** - Required for --config format
@@ -616,7 +582,7 @@ For detailed CLI invocation syntax, parameters, and examples, refer to individua
 
 ## md-doc-params-parser 使用指南
 
-所有阶段间的参数转换统一使用 `md-doc-params-parser` CLI：
+**说明:** md-doc-params-parser 仅用于 phase2 之前的参数转换。Phase 2 之后的数据传递由各 skill 直接处理。
 
 ```bash
 conda run -n k8s python .opencode/skills/md-doc-params-parser/scripts/params_parser_cli.py \
@@ -634,8 +600,6 @@ conda run -n k8s python .opencode/skills/md-doc-params-parser/scripts/params_par
 | `0b` | 1 | 提取 router 配置 (reranker_threshold, scene) |
 | `0a+0b` | 1 | **合并** 0a 和 0b 输出为 searcher 配置 |
 | `1.5` | 2 | 转换 reranker 结果为 reader CLI 配置 |
-| `2` | 3 | 提取 reader 内容为 processor 输入 |
-| `3` | 4 | 格式化 processor 输出为 scene-output 输入 |
 
 ### 统一输出格式
 

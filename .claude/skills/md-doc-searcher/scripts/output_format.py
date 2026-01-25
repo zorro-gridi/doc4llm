@@ -110,25 +110,36 @@ class OutputFormatter:
             "grep_fallback": result.get("grep_fallback", False),
             "query": queries or [],
             "doc_sets_found": result.get("doc_sets_found", []),
-            "results": [
-                {
-                    "doc_set": page["doc_set"],
-                    "page_title": page["page_title"],
-                    "toc_path": page["toc_path"],
-                    "headings": [
-                        {
-                            "level": h.get("level", 2),
-                            "text": h["text"],
-                            # When reranker is disabled, set rerank_sim to null
-                            "rerank_sim": _convert_to_json_serializable(h.get("score")) if reranker_enabled else None,
-                            "bm25_sim": _convert_to_json_serializable(h.get("bm25_sim")),  # BM25 similarity
-                        }
-                        for h in page.get("headings", [])
-                    ],
-                }
-                for page in result.get("results", [])
-            ],
+            "results": [],
         }
+
+        for page in result.get("results", []):
+            page_data = {
+                "doc_set": page["doc_set"],
+                "page_title": page["page_title"],
+                "toc_path": page["toc_path"],
+            }
+
+            # Add page-level scores (when headings is empty/fallback to page level)
+            if "bm25_sim" in page:
+                page_data["bm25_sim"] = _convert_to_json_serializable(page["bm25_sim"])
+            if "rerank_sim" in page:
+                page_data["rerank_sim"] = _convert_to_json_serializable(page["rerank_sim"]) if reranker_enabled else None
+
+            # Only include headings if they exist and are non-empty
+            if "headings" in page and page["headings"]:
+                page_data["headings"] = [
+                    {
+                        "level": h.get("level", 2),
+                        "text": h["text"],
+                        "rerank_sim": _convert_to_json_serializable(h.get("score")) if reranker_enabled else None,
+                        "bm25_sim": _convert_to_json_serializable(h.get("bm25_sim")),
+                    }
+                    for h in page["headings"]
+                ]
+
+            structured["results"].append(page_data)
+
         return json.dumps(structured, ensure_ascii=False, indent=2)
 
 

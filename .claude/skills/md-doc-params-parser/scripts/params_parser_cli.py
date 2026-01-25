@@ -63,7 +63,7 @@ def enhance_with_knowledge_base(
     # Phase 0a/0b/0a+0b -> Phase 1: Add base_dir from knowledge base
     if from_phase in ["0a", "0b", "0a+0b"] and to_phase == "1":
         if "base_dir" not in result:
-            result["base_dir"] = kb.get("base_dir", "")
+            result["base_dir"] = kb.get("knowledge_base", {}).get("base_dir", "")
 
         # Disable CLI reranking when using Phase 1.5 LLM reranker
         if "reranker" not in result:
@@ -98,8 +98,8 @@ def main():
     )
     parser.add_argument(
         "--knowledge-base",
-        default=".claude/knowledge_base.json",
-        help="Path to knowledge_base.json (default: .claude/knowledge_base.json)"
+        default=str(Path(__file__).resolve().parent.parent.parent.parent / "knowledge_base.json"),
+        help="Path to knowledge_base.json (default: script_dir/knowledge_base.json)"
     )
     parser.add_argument(
         "--output",

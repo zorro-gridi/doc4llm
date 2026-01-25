@@ -291,13 +291,19 @@ class MarkdownDocExtractor(DebugMixin):
                 f"Failed to read file: {e}"
             )
 
-    def extract_by_title(self, title: str | None = None) -> str | None:
+    def extract_by_title(
+        self,
+        title: str | None = None,
+        doc_set: str | None = None
+    ) -> str | None:
         """Extract content for a single document title.
 
         Args:
             title: The document title to extract. In single file mode, if None,
                    returns the file content directly. Otherwise, performs title
                    matching.
+            doc_set: Optional document set identifier (e.g., "code_claude_com@latest").
+                     If provided, only searches within this document set.
 
         Returns:
             In single file mode:
@@ -316,6 +322,9 @@ class MarkdownDocExtractor(DebugMixin):
             >>> # Directory mode
             >>> extractor = MarkdownDocExtractor()
             >>> content = extractor.extract_by_title("Agent Skills - Claude Code Docs")
+            >>> # With doc_set filter
+            >>> extractor = MarkdownDocExtractor()
+            >>> content = extractor.extract_by_title("Agent Skills", doc_set="OpenCode_Docs@latest")
         """
         self._debug_print(f"Extracting document: '{title}'")
 
@@ -359,10 +368,19 @@ class MarkdownDocExtractor(DebugMixin):
             self._debug_print(f"Error getting document structure: {e}")
             return None
 
-        # Flatten all titles from all document sets
-        all_titles = []
-        for titles_list in doc_structure.values():
-            all_titles.extend(titles_list)
+        # Filter by doc_set if specified
+        if doc_set:
+            if doc_set not in doc_structure:
+                self._debug_print(f"Doc set '{doc_set}' not found in document structure")
+                return None
+            # Use only titles from the specified doc_set
+            all_titles = doc_structure.get(doc_set, [])
+            self._debug_print(f"Filtering by doc_set '{doc_set}': {len(all_titles)} titles available")
+        else:
+            # Flatten all titles from all document sets
+            all_titles = []
+            for titles_list in doc_structure.values():
+                all_titles.extend(titles_list)
 
         # Find the matching title based on search mode
         matched_title = None
@@ -393,7 +411,7 @@ class MarkdownDocExtractor(DebugMixin):
                         continue  # Skip the mode we already tried
 
                     self._debug_print(f"Trying fallback mode: {fallback_mode}")
-                    fallback_result = self._extract_with_mode(title, fallback_mode, all_titles)
+                    fallback_result = self._extract_with_mode(title, fallback_mode, all_titles, doc_set)
                     if fallback_result:
                         self._debug_print(f"Found match using {fallback_mode} mode")
                         matched_title = fallback_result["title"]
@@ -404,22 +422,33 @@ class MarkdownDocExtractor(DebugMixin):
                 return None
 
         # Find the document set that contains this title
-        if doc_name_version is None:
-            for doc_key, titles in doc_structure.items():
-                if matched_title in titles:
-                    doc_name_version = doc_key
-                    break
-
-        if doc_name_version is None:
-            self._debug_print(f"Could not find document set for title: {matched_title}")
-            return None
-
-        # Parse doc name and version
-        if "@" in doc_name_version:
-            doc_name, doc_version = doc_name_version.split("@", 1)
+        # If doc_set was specified, use it directly
+        if doc_set:
+            doc_name_version = doc_set
+            # Parse doc name and version from the specified doc_set
+            if "@" in doc_name_version:
+                doc_name, doc_version = doc_name_version.split("@", 1)
+            else:
+                doc_name = doc_name_version
+                doc_version = "latest"
         else:
-            doc_name = doc_name_version
-            doc_version = "latest"
+            # Search through all doc_sets to find the one containing this title
+            if doc_name_version is None:
+                for doc_key, titles in doc_structure.items():
+                    if matched_title in titles:
+                        doc_name_version = doc_key
+                        break
+
+            if doc_name_version is None:
+                self._debug_print(f"Could not find document set for title: {matched_title}")
+                return None
+
+            # Parse doc name and version
+            if "@" in doc_name_version:
+                doc_name, doc_version = doc_name_version.split("@", 1)
+            else:
+                doc_name = doc_name_version
+                doc_version = "latest"
 
         # Build the path and read content
         doc_path = utils.build_doc_path(self.base_dir, doc_name, doc_version, matched_title)
@@ -431,11 +460,17 @@ class MarkdownDocExtractor(DebugMixin):
             self._debug_print(f"Error reading document: {e}")
             return None
 
-    def extract_by_titles(self, titles: List[str]) -> Dict[str, str]:
+    def extract_by_titles(
+        self,
+        titles: List[str],
+        doc_set: str | None = None
+    ) -> Dict[str, str]:
         """Extract content for multiple document titles.
 
         Args:
             titles: List of document titles to extract
+            doc_set: Optional document set identifier (e.g., "code_claude_com@latest").
+                     If provided, only searches within this document set.
 
         Returns:
             Dictionary mapping title to content. Titles that cannot be found
@@ -461,7 +496,7 @@ class MarkdownDocExtractor(DebugMixin):
         results: Dict[str, str] = {}
 
         for title in titles:
-            content = self.extract_by_title(title)
+            content = self.extract_by_title(title, doc_set=doc_set)
             # In single file mode, empty string means no match
             # In directory mode, None means not found
             if content and content != "":
@@ -476,7 +511,8 @@ class MarkdownDocExtractor(DebugMixin):
     def extract_by_titles_with_metadata(
         self,
         titles: List[str],
-        threshold: int = 2100
+        threshold: int = 2100,
+        doc_set: str | None = None
     ) -> ExtractionResult:
         """Extract multiple documents with complete metadata including line counts.
 
@@ -487,6 +523,8 @@ class MarkdownDocExtractor(DebugMixin):
         Args:
             titles: List of document titles to extract
             threshold: Line count threshold for requiring post-processing (default: 2100)
+            doc_set: Optional document set identifier (e.g., "code_claude_com@latest").
+                     If provided, only searches within this document set.
 
         Returns:
             ExtractionResult containing:
@@ -533,7 +571,7 @@ class MarkdownDocExtractor(DebugMixin):
         total_lines = 0
 
         for title in titles:
-            content = self.extract_by_title(title)
+            content = self.extract_by_title(title, doc_set=doc_set)
             # In single file mode, empty string means no match
             # In directory mode, None means not found
             if content and content != "":
@@ -926,7 +964,8 @@ class MarkdownDocExtractor(DebugMixin):
         self,
         title: str,
         mode: str,
-        all_titles: List[str] | None = None
+        all_titles: List[str] | None = None,
+        doc_set: str | None = None
     ) -> Dict[str, Any] | None:
         """Extract content using a specific search mode without modifying instance state.
 
@@ -934,6 +973,7 @@ class MarkdownDocExtractor(DebugMixin):
             title: The title to search for
             mode: The search mode to use
             all_titles: Optional list of all available titles (for efficiency)
+            doc_set: Optional document set identifier for filtering
 
         Returns:
             Dictionary with 'title' and 'doc_name_version' keys, or None if not found
@@ -942,9 +982,16 @@ class MarkdownDocExtractor(DebugMixin):
         if all_titles is None:
             try:
                 doc_structure = self._get_doc_structure()
-                all_titles = []
-                for titles_list in doc_structure.values():
-                    all_titles.extend(titles_list)
+
+                # Filter by doc_set if specified
+                if doc_set:
+                    if doc_set not in doc_structure:
+                        return None
+                    all_titles = doc_structure.get(doc_set, [])
+                else:
+                    all_titles = []
+                    for titles_list in doc_structure.values():
+                        all_titles.extend(titles_list)
             except (BaseDirectoryNotFoundError, NoDocumentsFoundError):
                 return None
 
@@ -968,6 +1015,13 @@ class MarkdownDocExtractor(DebugMixin):
 
         if matched_title is None:
             return None
+
+        # If doc_set was specified, return it directly
+        if doc_set:
+            return {
+                "title": matched_title,
+                "doc_name_version": doc_set
+            }
 
         # Find the document set that contains this title
         try:

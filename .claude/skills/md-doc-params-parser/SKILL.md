@@ -25,26 +25,20 @@ hooks:
 User Query
     │
     ├─── Phase 0a: md-doc-query-optimizer ──┐
-    │                                        │ concurrent
+    │                                       │
     └─── Phase 0b: md-doc-query-router ─────┤
-                                             │
-                                             ▼
+                                            │
+                                            ▼
                               Phase 1: md-doc-searcher ──┐
-                                                            │        │
-                                                            │        ▼
+                                                         │
+                                                         ▼
                                              Phase 1.5: md-doc-llm-reranker
                                                             │
                                                             ▼
-                                                            Phase 2: md-doc-reader
+                                                    Phase 2: md-doc-reader
                                                             │
                                                             ▼
-                                                            Phase 3: md-doc-processor
-                                                            │
-                                                            ▼
-                                                            Phase 4: md-doc-sence-output
-                                                            │
-                                                            ▼
-                                                            Final Response
+                                                   Content Output
 ```
 
 ## Supported Phase Transitions
@@ -57,8 +51,6 @@ User Query
 | 1 | 1.5 | Check if LLM reranking is needed |
 | 1 | 2 | Direct pass-through (skip reranker) |
 | 1.5 | 2 | Convert reranker output to reader config |
-| 2 | 3 | Extract reader contents for processor |
-| 3 | 4 | Format processor output for sence-output |
 
 ## Usage
 
@@ -85,12 +77,6 @@ conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parse
   --to-phase 1 \
   --input '[{"phase": "0a", "output": {"query_analysis": {"doc_set": ["OpenCode_Docs@latest"], "domain_nouns": ["hooks"], "predicate_verbs": ["create"]}, "optimized_queries": [{"rank": 1, "query": "create hooks"}]}}, {"phase": "0b", "output": {"scene": "fact_lookup", "reranker_threshold": 0.63}}]' \
   --knowledge-base .claude/knowledge_base.json
-
-# Phase 1.5 → Phase 2
-conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parser_cli.py \
-  --from-phase 1.5 \
-  --to-phase 2 \
-  --input '{"success": true, "reranked_count": 5, "results": [{"doc_set": "OpenCode_Docs@latest", "page_title": "Agent Skills", "headings": [{"level": 2, "text": "## Create Skills", "rerank_sim": 0.85}]}]}'
 
 # Read input from stdin
 echo '{"query_analysis": {...}}' | python params_parser_cli.py --from-phase 0a --to-phase 1 --input -
@@ -180,42 +166,6 @@ All CLI outputs are JSON with the following structure:
   "predicate_verbs": ["create"],
   "reranker_threshold": 0.63,
   "scene": "fact_lookup"
-}
-```
-
-### Phase 1.5 → Phase 2 (llm-reranker → reader)
-
-**Input (reranker output):**
-```json
-{
-  "success": true,
-  "reranked_count": 3,
-  "results": [
-    {
-      "doc_set": "OpenCode_Docs@latest",
-      "file_path": "docs/skills.md",
-      "page_title": "Agent Skills",
-      "headings": [
-        {"level": 2, "text": "## Create Skills", "rerank_sim": 0.92},
-        {"level": 2, "text": "## Delete Skills", "rerank_sim": 0.85}
-      ]
-    }
-  ]
-}
-```
-
-**Output (reader CLI config):**
-```json
-{
-  "page_titles": [
-    {
-      "title": "Agent Skills",
-      "headings": ["## Create Skills", "## Delete Skills"],
-      "doc_set": "OpenCode_Docs@latest"
-    }
-  ],
-  "with_metadata": true,
-  "format": "json"
 }
 ```
 

@@ -267,11 +267,13 @@ def create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def parse_doc_sets(doc_sets_str: Optional[str]) -> Optional[List[str]]:
-    """Parse comma-separated doc-sets string."""
-    if not doc_sets_str:
+def parse_doc_sets(doc_sets_input) -> Optional[List[str]]:
+    """Parse doc-sets from string (comma-separated) or list."""
+    if not doc_sets_input:
         return None
-    return [ds.strip() for ds in doc_sets_str.split(",") if ds.strip()]
+    if isinstance(doc_sets_input, list):
+        return [ds.strip() for ds in doc_sets_input if ds.strip()]
+    return [ds.strip() for ds in doc_sets_input.split(",") if ds.strip()]
 
 
 def validate_args(args: argparse.Namespace) -> bool:
@@ -474,7 +476,7 @@ def _get_default_value(args: argparse.Namespace, attr: str):
         "reranker_model_en": "BAAI/bge-large-en-v1.5",
         "reranker_threshold": 0.68,
         "reranker_top_k": None,
-        "reranker_lang_threshold": 0.6,
+        "reranker_lang_threshold": 0.9,
         "hierarchical_filter": 1,
         "domain_nouns": "",
         "predicate_verbs": "",

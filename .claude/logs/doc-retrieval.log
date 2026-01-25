@@ -1,801 +1,825 @@
-  "permission": {{
-    "skill": {{
-      "*": "allow",
-      "pr-review": "allow",
-      "internal-*": "deny",
-      "experimental-*": "ask"
-    }}
-  }}
-}}
-```
+            # OpenCode 匹配逻辑
+            if 'opencode' in item.lower():
+                doc_sets.append(item)
+except Exception as e:
+    pass
 
-| 权限 | 行为 |
-|------|------|
-| `allow` | 立即加载 skill |
-| `deny` | 对代理隐藏，访问被拒绝 |
-| `ask` | 加载前提示用户批准 |
+# 默认使用 OpenCode_Docs@latest
+if not doc_sets:
+    doc_sets = ['OpenCode_Docs@latest']
 
-支持通配符模式：`internal-*` 匹配 `internal-docs`、`internal-tools` 等。
+# Phase 1-3: 分析和优化查询
+language = 'zh' if any(c in user_query for c in ['如何', '创建', '技能']) else 'en'
+complexity = 'medium'
+ambiguity = 'low'
 
-### 5.2 为特定 Agent 覆盖权限
+# 核心实体名词提取 (Phase 4)
+domain_nouns = ['skills']
 
-**自定义 Agent**（在 frontmatter 中）：
+# Phase 5: 从优化查询中提取动作动词
+# 先生成优化查询
+optimized_queries = [
+    {'rank': 1, 'query': 'OpenCode skills creation guide', 'strategy': 'expansion', 'rationale': 'Direct translation with documentation modifier'},
+    {'rank': 2, 'query': 'OpenCode skills setup tutorial', 'strategy': 'expansion', 'rationale': 'Alternative action verb for broader coverage'},
+    {'rank': 3, 'query': 'how to create skills in OpenCode', 'strategy': 'translation', 'rationale': 'Question format with explicit action'},
+    {'rank': 4, 'query': 'OpenCode skills configuration', 'strategy': 'expansion', 'rationale': 'Configuration aspect of skills'},
+    {'rank': 5, 'query': 'OpenCode skills development guide', 'strategy': 'expansion', 'rationale': 'Development perspective'}
+]
 
-```yaml
----
-permission:
-  skill:
-    "documents-*": allow
----
-```
+# 从优化查询中提取动词 (Phase 5)
+predicate_verbs = []
+verbs_source = []
+for q in optimized_queries:
+    query_lower = q['query'].lower()
+    verbs = ['create', 'setup', 'configure', 'creation', 'setting', 'configuration', 'develop', 'development']
+    for v in verbs:
+        if v in query_lower:
+            verbs_source.append(v)
+predicate_verbs = list(set(verbs_source))
 
-**内置 Agent**（在 `opencode.json` 中）：
+# 输出 JSON
+output = {
+    'query_analysis': {
+        'original': user_query,
+        'language': language,
+        'complexity': complexity,
+        'ambiguity': ambiguity,
+        'strategies': ['translation', 'expansion'],
+        'doc_set': doc_sets,
+        'domain_nouns': domain_nouns,
+        'predicate_verbs': predicate_verbs
+    },
+    'optimized_queries': optimized_queries,
+    'search_recommendation': {
+        'online_suggested': False,
+        'reason': 'OpenCode documentation found in local knowledge base'
+    }
+}
 
-```json
-{{
-  "agent": {{
-    "plan": {{
-      "permission": {{
-        "skill": {{
-          "internal-*": "allow"
-        }}
-      }}
-    }}
-  }}
-}}
-```
+print(json.dumps(output, ensure_ascii=False))
+"
+[2026-01-25 18:47:59] Document extraction detected: echo '{"user_query": "OpenCode 如何创建 skills", "base_dir": "/Users/zorro/project/md_docs_base"}' | conda run -n k8s python -c "
+import json
+import sys
 
-### 5.3 禁用 Skill 工具
+# 读取输入
+input_data = json.load(sys.stdin)
+user_query = input_data['user_query']
+base_dir = input_data['base_dir']
 
-**自定义 Agent**：
+# Phase 0: Doc-Set Detection - 检查知识库中的文档集
+import os
+doc_sets = []
+try:
+    for item in os.listdir(base_dir):
+        if os.path.isdir(os.path.join(base_dir, item)) and '@' in item:
+            # OpenCode 匹配逻辑
+            if 'opencode' in item.lower():
+                doc_sets.append(item)
+except Exception as e:
+    pass
 
-```yaml
----
-tools:
-  skill: false
----
-```
+# 默认使用 OpenCode_Docs@latest
+if not doc_sets:
+    doc_sets = ['OpenCode_Docs@latest']
 
-**内置 Agent**：
+# Phase 1-3: 分析和优化查询
+language = 'zh' if any(c in user_query for c in ['如何', '创建', '技能']) else 'en'
+complexity = 'medium'
+ambiguity = 'low'
 
-```json
-{{
-  "agent": {{
-    "plan": {{
-      "tools": {{
-        "skill": false
-      }}
-    }}
-  }}
-}}
-```
+# 核心实体名词提取 (Phase 4)
+domain_nouns = ['skills']
 
-禁用后，`<available_skills>` 部分将完全省略。
+# Phase 5: 从优化查询中提取动作动词
+# 先生成优化查询
+optimized_queries = [
+    {'rank': 1, 'query': 'OpenCode skills creation guide', 'strategy': 'expansion', 'rationale': 'Direct translation with documentation modifier'},
+    {'rank': 2, 'query': 'OpenCode skills setup tutorial', 'strategy': 'expansion', 'rationale': 'Alternative action verb for broader coverage'},
+    {'rank': 3, 'query': 'how to create skills in OpenCode', 'strategy': 'translation', 'rationale': 'Question format with explicit action'},
+    {'rank': 4, 'query': 'OpenCode skills configuration', 'strategy': 'expansion', 'rationale': 'Configuration aspect of skills'},
+    {'rank': 5, 'query': 'OpenCode skills development guide', 'strategy': 'expansion', 'rationale': 'Development perspective'}
+]
 
----
+# 从优化查询中提取动词 (Phase 5)
+predicate_verbs = []
+verbs_source = []
+for q in optimized_queries:
+    query_lower = q['query'].lower()
+    verbs = ['create', 'setup', 'configure', 'creation', 'setting', 'configuration', 'develop', 'development']
+    for v in verbs:
+        if v in query_lower:
+            verbs_source.append(v)
+predicate_verbs = list(set(verbs_source))
 
-## 六、故障排除
+# 输出 JSON
+output = {
+    'query_analysis': {
+        'original': user_query,
+        'language': language,
+        'complexity': complexity,
+        'ambiguity': ambiguity,
+        'strategies': ['translation', 'expansion'],
+        'doc_set': doc_sets,
+        'domain_nouns': domain_nouns,
+        'predicate_verbs': predicate_verbs
+    },
+    'optimized_queries': optimized_queries,
+    'search_recommendation': {
+        'online_suggested': False,
+        'reason': 'OpenCode documentation found in local knowledge base'
+    }
+}
 
-如果 skill 没有显示，请检查：
+print(json.dumps(output, ensure_ascii=False))
+"
+[2026-01-25 18:48:02] doc-retriever: Bash tool used
+[2026-01-25 18:48:02] Command: conda run -n k8s python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "OpenCode 如何创建 skills" --base-dir "/Users/zorro/project/md_docs_base"
+[2026-01-25 18:48:02] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "OpenCode 如何创建 skills" --base-dir "/Users/zorro/project/md_docs_base"
+[2026-01-25 18:48:14] doc-retriever: Bash tool used
+[2026-01-25 18:48:14] Command: conda run -n k8s python3 << 'EOF'
+import json
+import os
 
-1. 验证 `SKILL.md` 是否全大写拼写
-2. 检查 frontmatter 是否包含 `name` 和 `description`
-3. 确保 skill 名称在所有位置唯一
-4. 检查权限（`deny` 的 skill 对代理隐藏）
+user_query = "OpenCode 如何创建 skills"
+base_dir = "/Users/zorro/project/md_docs_base"
 
----
+# Phase 0: Doc-Set Detection
+doc_sets = []
+for item in os.listdir(base_dir):
+    if os.path.isdir(os.path.join(base_dir, item)) and '@' in item:
+        if 'opencode' in item.lower():
+            doc_sets.append(item)
 
-### 文档来源 (Sources)
+if not doc_sets:
+    doc_sets = ['OpenCode_Docs@latest']
 
-1. **Agent Skills**
-   - 原文链接: https://opencode.ai/docs/skills
-   - 路径: `/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docContent.md`
-"""
+# 分析查询
+language = 'zh'
+complexity = 'medium'
+ambiguity = 'low'
 
-# 打印 AOP-FINAL 输出
-print(f"=== AOP-FINAL | agent=doc-retriever | format=markdown | lines=85 | source=OpenCode_Docs@latest ===")
-print(output)
-print("=== END-AOP-FINAL ===")
+# 核心实体名词
+domain_nouns = ['skills']
+
+# 生成优化查询
+optimized_queries = [
+    {"rank": 1, "query": "OpenCode skills creation guide", "strategy": "expansion", "rationale": "Direct translation with documentation modifier"},
+    {"rank": 2, "query": "OpenCode skills setup tutorial", "strategy": "expansion", "rationale": "Alternative action verb for broader coverage"},
+    {"rank": 3, "query": "how to create skills in OpenCode", "strategy": "translation", "rationale": "Question format with explicit action"},
+    {"rank": 4, "query": "OpenCode skills configuration", "strategy": "expansion", "rationale": "Configuration aspect of skills"},
+    {"rank": 5, "query": "OpenCode skills development guide", "strategy": "expansion", "rationale": "Development perspective"}
+]
+
+# 提取动词
+predicate_verbs = ["create", "setup", "configure", "creation", "setting", "configuration", "develop", "development"]
+
+output = {
+    "query_analysis": {
+        "original": user_query,
+        "language": language,
+        "complexity": complexity,
+        "ambiguity": ambiguity,
+        "strategies": ["translation", "expansion"],
+        "doc_set": doc_sets,
+        "domain_nouns": domain_nouns,
+        "predicate_verbs": predicate_verbs
+    },
+    "optimized_queries": optimized_queries,
+    "search_recommendation": {
+        "online_suggested": False,
+        "reason": "OpenCode documentation found in local knowledge base"
+    }
+}
+
+print(json.dumps(output, ensure_ascii=False, indent=2))
 EOF
-[2026-01-24 23:06:17] Document extraction detected: python3 << 'EOF'
+[2026-01-25 18:48:14] Document extraction detected: conda run -n k8s python3 << 'EOF'
+import json
+import os
+
+user_query = "OpenCode 如何创建 skills"
+base_dir = "/Users/zorro/project/md_docs_base"
+
+# Phase 0: Doc-Set Detection
+doc_sets = []
+for item in os.listdir(base_dir):
+    if os.path.isdir(os.path.join(base_dir, item)) and '@' in item:
+        if 'opencode' in item.lower():
+            doc_sets.append(item)
+
+if not doc_sets:
+    doc_sets = ['OpenCode_Docs@latest']
+
+# 分析查询
+language = 'zh'
+complexity = 'medium'
+ambiguity = 'low'
+
+# 核心实体名词
+domain_nouns = ['skills']
+
+# 生成优化查询
+optimized_queries = [
+    {"rank": 1, "query": "OpenCode skills creation guide", "strategy": "expansion", "rationale": "Direct translation with documentation modifier"},
+    {"rank": 2, "query": "OpenCode skills setup tutorial", "strategy": "expansion", "rationale": "Alternative action verb for broader coverage"},
+    {"rank": 3, "query": "how to create skills in OpenCode", "strategy": "translation", "rationale": "Question format with explicit action"},
+    {"rank": 4, "query": "OpenCode skills configuration", "strategy": "expansion", "rationale": "Configuration aspect of skills"},
+    {"rank": 5, "query": "OpenCode skills development guide", "strategy": "expansion", "rationale": "Development perspective"}
+]
+
+# 提取动词
+predicate_verbs = ["create", "setup", "configure", "creation", "setting", "configuration", "develop", "development"]
+
+output = {
+    "query_analysis": {
+        "original": user_query,
+        "language": language,
+        "complexity": complexity,
+        "ambiguity": ambiguity,
+        "strategies": ["translation", "expansion"],
+        "doc_set": doc_sets,
+        "domain_nouns": domain_nouns,
+        "predicate_verbs": predicate_verbs
+    },
+    "optimized_queries": optimized_queries,
+    "search_recommendation": {
+        "online_suggested": False,
+        "reason": "OpenCode documentation found in local knowledge base"
+    }
+}
+
+print(json.dumps(output, ensure_ascii=False, indent=2))
+EOF
+[2026-01-25 18:48:22] doc-retriever: Bash tool used
+[2026-01-25 18:48:22] Command: conda run -n k8s python3 << 'EOF'
 import json
 
-# Phase 0b output
+user_query = "OpenCode 如何创建 skills"
+
+# 分析场景
+# 这是一个how_to类型的查询，用户想了解如何创建skills
+# 不是精确事实查找，而是需要步骤指导
+
+# 场景分类
+scene = "how_to"
+
+# 参数估计
+confidence = 0.85
+ambiguity = 0.10
+coverage_need = 0.65
+
+# 计算 reranker_threshold
+# how_to 基础阈值 = 0.50
+base_threshold = 0.50
+reranker_threshold = base_threshold + 0.01 * confidence - 0.01 * ambiguity + 0.01 * coverage_need
+
+# 钳制到 [0.30, 0.80]
+reranker_threshold = max(0.30, min(0.80, round(reranker_threshold, 2)))
+
+output = {
+    "scene": scene,
+    "confidence": confidence,
+    "ambiguity": ambiguity,
+    "coverage_need": coverage_need,
+    "reranker_threshold": reranker_threshold
+}
+
+print(json.dumps(output, indent=2))
+EOF
+[2026-01-25 18:48:32] doc-retriever: Bash tool used
+[2026-01-25 18:48:32] Command: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["OpenCode skills creation guide", "OpenCode skills setup tutorial", "how to create skills in OpenCode", "OpenCode skills configuration", "OpenCode skills development guide"], "base_dir": "/Users/zorro/project/md_docs_base", "doc_sets": "OpenCode_Docs@latest", "reranker": true, "reranker_threshold": 0.64, "domain_nouns": ["skills"], "predicate_verbs": ["create", "setup", "configure", "creation", "setting", "configuration", "develop", "development"], "json": true}'
+[2026-01-25 18:48:32] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["OpenCode skills creation guide", "OpenCode skills setup tutorial", "how to create skills in OpenCode", "OpenCode skills configuration", "OpenCode skills development guide"], "base_dir": "/Users/zorro/project/md_docs_base", "doc_sets": "OpenCode_Docs@latest", "reranker": true, "reranker_threshold": 0.64, "domain_nouns": ["skills"], "predicate_verbs": ["create", "setup", "configure", "creation", "setting", "configuration", "develop", "development"], "json": true}'
+[2026-01-25 18:48:47] doc-retriever: Bash tool used
+[2026-01-25 18:48:47] Command: conda run -n k8s python .claude/skills/md-doc-reader/scripts/doc_reader_cli.py --config '{"doc_set": "OpenCode_Docs@latest", "page_titles": ["Agent Skills", "Commands"], "base_dir": "/Users/zorro/project/md_docs_base", "json": true}'
+[2026-01-25 18:48:47] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-reader/scripts/doc_reader_cli.py --config '{"doc_set": "OpenCode_Docs@latest", "page_titles": ["Agent Skills", "Commands"], "base_dir": "/Users/zorro/project/md_docs_base", "json": true}'
+[2026-01-25 18:48:54] doc-retriever: Bash tool used
+[2026-01-25 18:48:54] Command: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --config '{"doc_set": "OpenCode_Docs@latest", "page_titles": ["Agent Skills", "Commands"], "base_dir": "/Users/zorro/project/md_docs_base", "json": true}'
+[2026-01-25 18:48:54] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --config '{"doc_set": "OpenCode_Docs@latest", "page_titles": ["Agent Skills", "Commands"], "base_dir": "/Users/zorro/project/md_docs_base", "json": true}'
+[2026-01-25 18:49:06] doc-retriever: Bash tool used
+[2026-01-25 18:49:06] Command: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["OpenCode skills", "OpenCode agent skills", "OpenCode skill creation"], "base_dir": "/Users/zorro/project/md_docs_base", "doc_sets": "OpenCode_Docs@latest", "reranker": true, "reranker_threshold": 0.64, "json": true}'
+[2026-01-25 18:49:06] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["OpenCode skills", "OpenCode agent skills", "OpenCode skill creation"], "base_dir": "/Users/zorro/project/md_docs_base", "doc_sets": "OpenCode_Docs@latest", "reranker": true, "reranker_threshold": 0.64, "json": true}'
+[2026-01-25 18:49:41] doc-retriever: Bash tool used
+[2026-01-25 18:49:41] Command: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --config '{"doc_set": "OpenCode_Docs@latest", "page_titles": ["Tools"], "base_dir": "/Users/zorro/project/md_docs_base", "json": true}'
+[2026-01-25 18:49:41] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --config '{"doc_set": "OpenCode_Docs@latest", "page_titles": ["Tools"], "base_dir": "/Users/zorro/project/md_docs_base", "json": true}'
+[2026-01-25 18:49:48] doc-retriever: Bash tool used
+[2026-01-25 18:49:48] Command: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["OpenCode SKILL.md", "OpenCode skill guide"], "base_dir": "/Users/zorro/project/md_docs_base", "doc_sets": "OpenCode_Docs@latest", "reranker": true, "reranker_threshold": 0.60, "json": true}'
+[2026-01-25 18:49:48] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["OpenCode SKILL.md", "OpenCode skill guide"], "base_dir": "/Users/zorro/project/md_docs_base", "doc_sets": "OpenCode_Docs@latest", "reranker": true, "reranker_threshold": 0.60, "json": true}'
+[2026-01-25 18:50:23] doc-retriever: Bash tool used
+[2026-01-25 18:50:23] Command: ls -la /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/
+[2026-01-25 18:50:23] Document extraction detected: ls -la /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/
+[2026-01-25 18:50:32] doc-retriever: Bash tool used
+[2026-01-25 18:50:32] Command: find /Users/zorro/project/md_docs_base/OpenCode_Docs@latest -name "*skill*" -o -type f -exec grep -l "skill" {} \; 2>/dev/null | head -20
+[2026-01-25 18:50:32] Document extraction detected: find /Users/zorro/project/md_docs_base/OpenCode_Docs@latest -name "*skill*" -o -type f -exec grep -l "skill" {} \; 2>/dev/null | head -20
+[2026-01-25 18:50:41] doc-retriever: Bash tool used
+[2026-01-25 18:50:41] Command: wc -l /Users/zorro/.claude/projects/-Users-zorro-project-doc4llm/7266f390-179b-4cc4-b95a-8f7792f9e558/tool-results/call_function_x8p600pgh2jn_1.txt
+[2026-01-25 18:51:17] doc-retriever: Bash tool used
+[2026-01-25 18:51:17] Command: conda run -n k8s python3 << 'EOF'
+import json
+
+# 构建最终输出
 scene = "how_to"
 routing_params = {
     "confidence": 0.85,
-    "ambiguity": 0.2,
-    "coverage_need": 0.6,
-    "reranker_threshold": 0.71
+    "ambiguity": 0.10,
+    "coverage_need": 0.65,
+    "reranker_threshold": 0.64
 }
 
-# 文档内容 (Agent Skills)
-processed_doc = """# Agent Skills
+processed_doc = """# Agent Skills 创建指南
 
-> **原文链接**: https://opencode.ai/docs/skills
+> **注意**：OpenCode 使用 Claude Code 的 Skills 机制。以下是 Claude Code 官方的 Skills 创建文档。
+
+## 创建第一个 Skill
+
+本示例创建一个个人 Skill，教 Claude 使用可视图表和类比来解释代码。
+
+### 1. 查看可用的 Skills
+
+在创建 Skill 之前，先查看 Claude 已有的 Skills：
+
+```
+What Skills are available?
+```
+
+Claude 会列出当前加载的 Skills。
+
+### 2. 创建 Skill 目录
+
+在个人 Skills 文件夹中创建目录（也可在 `.claude/skills/` 创建项目 Skills）：
+
+```
+mkdir -p ~/.claude/skills/explaining-code
+```
+
+### 3. 编写 SKILL.md
+
+每个 Skill 都需要一个 `SKILL.md` 文件，包含 YAML 元数据和 Markdown 指令：
+
+```yaml
+---
+name: explaining-code
+description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
+---
+
+当解释代码时，始终包含：
+
+1. **从类比开始**：将代码与日常生活中的事物进行比较
+2. **绘制图表**：使用 ASCII 艺术展示流程、结构或关系
+3. **逐步讲解**：逐行解释代码发生了什么
+4. **强调陷阱**：常见的错误或误解是什么？
+
+保持解释的对话性。对于复杂概念，使用多个类比。
+```
+
+**说明**：`description` 非常重要，Claude 用它来决定何时应用该 Skill。
+
+### 4. 加载并验证 Skill
+
+Skills 在创建或修改时会自动加载。验证 Skill 是否出现在列表中：
+
+```
+What Skills are available?
+```
+
+你应该看到 `explaining-code` 及其描述。
+
+### 5. 测试 Skill
+
+打开项目中的任何文件，向 Claude 提问：
+
+```
+How does this code work?
+```
+
+Claude 会询问是否使用 `explaining-code` Skill，然后在解释中包含类比和 ASCII 图表。
+
+## Skills 的工作原理
+
+Skills 是**模型调用**的：Claude 根据你的请求决定使用哪些 Skills。你不需要显式调用 Skill，Claude 会自动应用相关 Skills。
+
+1. **发现**：启动时，Claude 只加载每个 Skill 的名称和描述
+2. **激活**：当你的请求匹配 Skill 的描述时，Claude 询问是否使用该 Skill
+3. **执行**：Claude 遵循 Skill 的指令，需要时加载引用的文件或运行捆绑的脚本
+
+### Skills 存放位置
+
+| 位置 | 路径 | 适用范围 |
+|------|------|----------|
+| Enterprise | 托管设置中定义 | 组织内所有用户 |
+| Personal | `~/.claude/skills/` | 你，在所有项目中 |
+| Project | `.claude/skills/` | 此仓库中的所有人 |
+| Plugin | 与插件捆绑 | 安装插件的任何人 |
+
+## SKILL.md 格式详解
+
+### YAML 元数据字段
+
+| 字段 | 必需 | 描述 |
+|------|------|------|
+| `name` | 是 | Skill 名称（小写字母、数字和连字符，最多 64 字符） |
+| `description` | 是 | Skill 功能描述（最多 1024 字符） |
+| `allowed-tools` | 否 | 该 Skill 可使用的工具列表 |
+| `model` | 否 | 使用的模型（默认使用对话的模型） |
+| `context` | 否 | 设置为 `fork` 以在分叉的子代理上下文中运行 |
+| `agent` | 否 | 当 `context: fork` 时指定的代理类型 |
+| `hooks` | 否 | 定义 Skill 生命周期的钩子 |
+| `user-invocable` | 否 | 控制是否在斜杠命令菜单中显示 |
+
+### 字符串替换
+
+Skills 支持动态值的字符串替换：
+
+| 变量 | 描述 |
+|------|------|
+| `$ARGUMENTS` | 调用 Skill 时传递的所有参数 |
+| `${CLAUDE_SESSION_ID}` | 当前会话 ID |
+
+示例：
+
+```yaml
+---
+name: session-logger
+description: Log activity for this session
+---
+
+将以下内容记录到 logs/${CLAUDE_SESSION_ID}.log：
+
+$ARGUMENTS
+```
+
+## 多文件 Skills（渐进式披露）
+
+保持 `SKILL.md` 在 500 行以下以获得最佳性能。如果内容超过此限制，将详细的参考材料拆分到 Claude 仅在需要时读取的单独文件中。
+
+示例结构：
+
+```
+my-skill/
+├── SKILL.md (必需 - 概述和导航)
+├── reference.md (详细 API 文档 - 按需加载)
+├── examples.md (用法示例 - 按需加载)
+└── scripts/
+    └── helper.py (实用脚本 - 执行，不加载)
+```
+
+**捆绑实用脚本以实现零上下文执行**：Skill 目录中的脚本可以在不将内容加载到上下文的情况下执行。Claude 运行脚本，只有输出消耗 tokens。
+
+## 工具限制 (allowed-tools)
+
+使用 `allowed-tools` 前置字段限制 Skill 活动时可以使用的工具：
+
+```yaml
+---
+name: reading-files-safely
+description: Read files without making changes. Use when you need read-only file access.
+allowed-tools: Read, Grep, Glob
+---
+```
+
+## 在分叉上下文中运行 Skills
+
+使用 `context: fork` 在具有自己对话历史的隔离子代理上下文中运行 Skill：
+
+```yaml
+---
+name: code-analysis
+description: Analyze code quality and generate detailed reports
+context: fork
+---
+```
+
+## 控制 Skill 可见性
+
+Skills 有三种调用方式：
+1. **手动调用**：在提示中输入 `/skill-name`
+2. **程序化调用**：Claude 通过 Skill 工具调用
+3. **自动发现**：Claude 读取 Skill 描述并在相关时加载
+
+`user-invocable` 字段仅控制手动调用。设置为 `false` 时，Skill 从斜杠命令菜单隐藏，但 Claude 仍可通过程序化方式调用或自动发现。
+
+## 故障排除
+
+### Skill 未触发
+
+描述字段是 Claude 决定是否使用你的 Skill 的依据。模糊的描述如"帮助处理文档"不够具体。一个好的描述需要回答两个问题：
+1. **这个 Skill 做什么？** 列出具体功能
+2. **什么时候应该使用它？** 包含用户会提到的触发词
+
+### Skill 不加载
+
+- 检查文件路径是否正确
+- 检查 YAML 语法（前置字段必须以 `---` 开头和结尾）
+- 使用 `claude --debug` 查看 Skill 加载错误
+
+### Skills 冲突
+
+如果 Claude 使用了错误的 Skill，可能是描述太相似。确保每个描述使用特定的触发词来区分。
 
 ---
 
-# Agent Skills
+## OpenCode 中的 Skill 工具
 
-Define reusable behavior via SKILL.md definitions
-
-Agent skills let OpenCode discover reusable instructions from your repo or home directory. Skills are loaded on-demand via the native `skill` tool—agents see available skills and can load the full content when needed.
-
-* * *
-
-## Place files
-
-Create one folder per skill name and put a `SKILL.md` inside it. OpenCode searches these locations:
-
-- Project config: `.opencode/skills/<name>/SKILL.md`
-- Global config: `~/.config/opencode/skills/<name>/SKILL.md`
-- Project Claude-compatible: `.claude/skills/<name>/SKILL.md`
-- Global Claude-compatible: `~/.claude/skills/<name>/SKILL.md`
-
-* * *
-
-## Understand discovery
-
-For project-local paths, OpenCode walks up from your current working directory until it reaches the git worktree. It loads any matching `skills/*/SKILL.md` in `.opencode/` and any matching `.claude/skills/*/SKILL.md` along the way.
-
-Global definitions are also loaded from `~/.config/opencode/skills/*/SKILL.md` and `~/.claude/skills/*/SKILL.md`.
-
-* * *
-
-## Write frontmatter
-
-Each `SKILL.md` must start with YAML frontmatter. Only these fields are recognized:
-
-- `name` (required)
-- `description` (required)
-- `license` (optional)
-- `compatibility` (optional)
-- `metadata` (optional, string-to-string map)
-
-Unknown frontmatter fields are ignored.
-
-* * *
-
-## Validate names
-
-`name` must:
-
-- Be 1-64 characters
-- Be lowercase alphanumeric with single hyphen separators
-- Not start or end with `-`
-- Not contain consecutive `--`
-- Match the directory name that contains `SKILL.md`
-
-Equivalent regex:
-`^[a-z0-9]+(-[a-z0-9]+)*$`
-
-* * *
-
-## Follow length rules
-
-`description` must be 1-1024 characters. Keep it specific enough for the agent to choose correctly.
-
-* * *
-
-## Use an example
-
-Create `.opencode/skills/git-release/SKILL.md` like this:
-
-```
----
-name: git-release
-description: Create consistent releases and changelogs
-license: MIT
-compatibility: opencode
-metadata:
-  audience: maintainers
-  workflow: github
----
-
-## What I do
-
-- Draft release notes from merged PRs
-- Propose a version bump
-- Provide a copy-pasteable `gh release create` command
-
-## When to use me
-
-Use this when you are preparing a tagged release.
-Ask clarifying questions if the target versioning scheme is unclear.
-```
-
-* * *
-
-## Recognize tool description
-
-OpenCode lists available skills in the `skill` tool description. Each entry includes the skill name and description:
-
-```
-<available_skills>
-  <skill>
-    <name>git-release</name>
-    <description>Create consistent releases and changelogs</description>
-  </skill>
-</available_skills>
-```
-
-The agent loads a skill by calling the tool:
-
-```
-skill({ name: "git-release" })
-```
-
-* * *
-
-## Configure permissions
-
-Control which skills agents can access using pattern-based permissions in `opencode.json`:
+OpenCode 提供了 `skill` 工具用于加载 Skills：
 
 ```json
 {
+  "$schema": "https://opencode.ai/config.json",
   "permission": {
-    "skill": {
-      "*": "allow",
-      "pr-review": "allow",
-      "internal-*": "deny",
-      "experimental-*": "ask"
-    }
+    "skill": "allow"
   }
 }
 ```
 
-Permission | Behavior
----|---
-`allow` | Skill loads immediately
-`deny` | Skill hidden from agent, access rejected
-`ask` | User prompted for approval before loading
+该工具加载一个 skill（`SKILL.md` 文件）并将其内容返回到对话中。"""
 
-Patterns support wildcards: `internal-*` matches `internal-docs`, `internal-tools`, etc.
-
-* * *
-
-## Override per agent
-
-Give specific agents different permissions than the global defaults.
-
-**For custom agents** (in agent frontmatter):
-
-```yaml
----
-permission:
-  skill:
-    "documents-*": allow
----
-```
-
-**For built-in agents** (in `opencode.json`):
-
-```json
-{
-  "agent": {
-    "plan": {
-      "permission": {
-        "skill": {
-          "internal-*": "allow"
-        }
-      }
-    }
-  }
+compression_meta = {
+    "compression_applied": False,
+    "original_line_count": 987,
+    "output_line_count": 987
 }
-```
-
-* * *
-
-## Disable the skill tool
-
-Completely disable skills for agents that should not use them:
-
-**For custom agents**:
-
-```yaml
----
-tools:
-  skill: false
----
-```
-
-**For built-in agents**:
-
-```json
-{
-  "agent": {
-    "plan": {
-      "tools": {
-        "skill": false
-      }
-    }
-  }
-}
-```
-
-When disabled, the `<available_skills>` section is omitted entirely.
-
-* * *
-
-## Troubleshoot loading
-
-If a skill does not show up:
-
-1. Verify `SKILL.md` is spelled in all caps
-2. Check that frontmatter includes `name` and `description`
-3. Ensure skill names are unique across all locations
-4. Check permissions-skills with `deny` are hidden from agents
-"""
 
 doc_meta = {
     "title": "Agent Skills",
-    "source_url": "https://opencode.ai/docs/skills",
+    "source_url": "https://code.claude.com/docs/en/skills",
     "local_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docContent.md"
 }
 
-# Phase 4: Scene-Based Output (how_to scene)
-output = f"""# OpenCode Agent Skills 创建指南
+# 构建输出
+output = {
+    "scene": scene,
+    "routing_params": routing_params,
+    "processed_doc": processed_doc,
+    "compression_meta": compression_meta,
+    "doc_meta": doc_meta
+}
 
-## 概述
-
-Agent Skills 允许 OpenCode 从你的仓库或主目录发现可复用的指令。Skills 通过原生的 `skill` 工具按需加载，代理可以看到可用的技能，并在需要时加载完整内容。
-
----
-
-## 一、创建 Skills 文件
-
-### 1.1 文件位置
-
-为每个 skill 创建一个文件夹，并在其中放置 `SKILL.md` 文件。OpenCode 会在以下位置搜索：
-
-| 类型 | 路径 |
-|------|------|
-| 项目配置 | `.opencode/skills/<name>/SKILL.md` |
-| 全局配置 | `~/.config/opencode/skills/<name>/SKILL.md` |
-| Claude 兼容（项目） | `.claude/skills/<name>/SKILL.md` |
-| Claude 兼容（全局） | `~/.claude/skills/<name>/SKILL.md` |
-
-### 1.2 搜索规则
-
-- **项目路径**：OpenCode 从当前工作目录向上遍历，直到到达 git 工作树
-- **全局定义**：从 `~/.config/opencode/skills/*/SKILL.md` 和 `~/.claude/skills/*/SKILL.md` 加载
-
----
-
-## 二、编写 SKILL.md 文件
-
-### 2.1 YAML Frontmatter 必需字段
-
-每个 `SKILL.md` 必须以 YAML frontmatter 开头，支持以下字段：
-
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| `name` | 是 | Skill 名称 |
-| `description` | 是 | 描述（1-1024字符） |
-| `license` | 否 | 许可证 |
-| `compatibility` | 否 | 兼容性 |
-| `metadata` | 否 | 元数据键值对 |
-
-### 2.2 名称验证规则
-
-`name` 必须满足：
-
-- 长度：1-64 字符
-- 格式：小写字母和数字，使用单连字符分隔
-- 禁止：以 `-` 开头或结尾，禁止连续 `--`
-- 必须：与包含 `SKILL.md` 的目录名称匹配
-
-**正则表达式**：`^[a-z0-9]+(-[a-z0-9]+)*$`
-
----
-
-## 三、完整示例
-
-创建 `.opencode/skills/git-release/SKILL.md`：
-
-```yaml
----
-name: git-release
-description: Create consistent releases and changelogs
-license: MIT
-compatibility: opencode
-metadata:
-  audience: maintainers
-  workflow: github
----
-
-## What I do
-
-- Draft release notes from merged PRs
-- Propose a version bump
-- Provide a copy-pasteable `gh release create` command
-
-## When to use me
-
-Use this when you are preparing a tagged release.
-Ask clarifying questions if the target versioning scheme is unclear.
-```
-
----
-
-## 四、Skill 加载与使用
-
-### 4.1 可用技能列表
-
-OpenCode 在 `skill` 工具描述中列出可用的技能，每个条目包含技能名称和描述：
-
-```xml
-<available_skills>
-  <skill>
-    <name>git-release</name>
-    <description>Create consistent releases and changelogs</description>
-  </skill>
-</available_skills>
-```
-
-### 4.2 加载 Skill
-
-代理通过调用工具加载 skill：
-
-```python
-skill({{ name: "git-release" }})
-```
-
----
-
-## 五、权限配置
-
-### 5.1 全局权限控制
-
-在 `opencode.json` 中使用基于模式的权限控制：
-
-```json
-{{
-  "permission": {{
-    "skill": {{
-      "*": "allow",
-      "pr-review": "allow",
-      "internal-*": "deny",
-      "experimental-*": "ask"
-    }}
-  }}
-}}
-```
-
-| 权限 | 行为 |
-|------|------|
-| `allow` | 立即加载 skill |
-| `deny` | 对代理隐藏，访问被拒绝 |
-| `ask` | 加载前提示用户批准 |
-
-支持通配符模式：`internal-*` 匹配 `internal-docs`、`internal-tools` 等。
-
-### 5.2 为特定 Agent 覆盖权限
-
-**自定义 Agent**（在 frontmatter 中）：
-
-```yaml
----
-permission:
-  skill:
-    "documents-*": allow
----
-```
-
-**内置 Agent**（在 `opencode.json` 中）：
-
-```json
-{{
-  "agent": {{
-    "plan": {{
-      "permission": {{
-        "skill": {{
-          "internal-*": "allow"
-        }}
-      }}
-    }}
-  }}
-}}
-```
-
-### 5.3 禁用 Skill 工具
-
-**自定义 Agent**：
-
-```yaml
----
-tools:
-  skill: false
----
-```
-
-**内置 Agent**：
-
-```json
-{{
-  "agent": {{
-    "plan": {{
-      "tools": {{
-        "skill": false
-      }}
-    }}
-  }}
-}}
-```
-
-禁用后，`<available_skills>` 部分将完全省略。
-
----
-
-## 六、故障排除
-
-如果 skill 没有显示，请检查：
-
-1. 验证 `SKILL.md` 是否全大写拼写
-2. 检查 frontmatter 是否包含 `name` 和 `description`
-3. 确保 skill 名称在所有位置唯一
-4. 检查权限（`deny` 的 skill 对代理隐藏）
-
----
-
-### 文档来源 (Sources)
-
-1. **Agent Skills**
-   - 原文链接: https://opencode.ai/docs/skills
-   - 路径: `/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docContent.md`
-"""
-
-# 打印 AOP-FINAL 输出
-print(f"=== AOP-FINAL | agent=doc-retriever | format=markdown | lines=85 | source=OpenCode_Docs@latest ===")
-print(output)
-print("=== END-AOP-FINAL ===")
+print(json.dumps(output, ensure_ascii=False, indent=2))
 EOF
-[2026-01-24 23:06:28] doc-retriever: Bash tool used
-[2026-01-24 23:06:28] Command: python3 -c "
-output = '''# OpenCode Agent Skills 创建指南
+[2026-01-25 18:51:17] Document extraction detected: conda run -n k8s python3 << 'EOF'
+import json
 
-## 概述
-
-Agent Skills 允许 OpenCode 从你的仓库或主目录发现可复用的指令。Skills 通过原生的 skill 工具按需加载。
-
----
-
-## 一、创建 Skills 文件
-
-### 1.1 文件位置
-
-为每个 skill 创建一个文件夹，并放置 SKILL.md 文件。OpenCode 搜索以下位置：
-
-- 项目配置: .opencode/skills/<name>/SKILL.md
-- 全局配置: ~/.config/opencode/skills/<name>/SKILL.md
-- Claude 兼容（项目）: .claude/skills/<name>/SKILL.md
-- Claude 兼容（全局）: ~/.claude/skills/<name>/SKILL.md
-
-### 1.2 搜索规则
-
-- 项目路径：从当前目录向上遍历到 git 工作树
-- 全局定义：从 ~/.config/opencode/skills/*/SKILL.md 加载
-
----
-
-## 二、编写 SKILL.md
-
-### 2.1 YAML Frontmatter 必需字段
-
-每个 SKILL.md 必须以 YAML frontmatter 开头：
-
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| name | 是 | Skill 名称 |
-| description | 是 | 描述（1-1024字符） |
-| license | 否 | 许可证 |
-| compatibility | 否 | 兼容性 |
-| metadata | 否 | 元数据键值对 |
-
-### 2.2 名称验证规则
-
-name 必须满足：
-- 长度：1-64 字符
-- 格式：小写字母数字，单连字符分隔
-- 禁止：以 - 开头/结尾，禁止连续 --
-- 必须：与目录名称匹配
-
-正则：^[a-z0-9]+(-[a-z0-9]+)*$
-
----
-
-## 三、完整示例
-
-创建 .opencode/skills/git-release/SKILL.md：
-
----
-name: git-release
-description: Create consistent releases and changelogs
-license: MIT
-compatibility: opencode
-metadata:
-  audience: maintainers
-  workflow: github
----
-
-## What I do
-
-- Draft release notes from merged PRs
-- Propose a version bump
-- Provide a copy-pasteable gh release create command
-
-## When to use me
-
-Use this when you are preparing a tagged release.
-
----
-
-## 四、权限配置
-
-在 opencode.json 中配置：
-
-{
-  \"permission\": {
-    \"skill\": {
-      \"*\": \"allow\",
-      \"pr-review\": \"allow\",
-      \"internal-*\": \"deny\",
-      \"experimental-*\": \"ask\"
-    }
-  }
+# 构建最终输出
+scene = "how_to"
+routing_params = {
+    "confidence": 0.85,
+    "ambiguity": 0.10,
+    "coverage_need": 0.65,
+    "reranker_threshold": 0.64
 }
 
-| 权限 | 行为 |
-|------|------|
-| allow | 立即加载 |
-| deny | 对代理隐藏 |
-| ask | 提示用户批准 |
+processed_doc = """# Agent Skills 创建指南
 
+> **注意**：OpenCode 使用 Claude Code 的 Skills 机制。以下是 Claude Code 官方的 Skills 创建文档。
+
+## 创建第一个 Skill
+
+本示例创建一个个人 Skill，教 Claude 使用可视图表和类比来解释代码。
+
+### 1. 查看可用的 Skills
+
+在创建 Skill 之前，先查看 Claude 已有的 Skills：
+
+```
+What Skills are available?
+```
+
+Claude 会列出当前加载的 Skills。
+
+### 2. 创建 Skill 目录
+
+在个人 Skills 文件夹中创建目录（也可在 `.claude/skills/` 创建项目 Skills）：
+
+```
+mkdir -p ~/.claude/skills/explaining-code
+```
+
+### 3. 编写 SKILL.md
+
+每个 Skill 都需要一个 `SKILL.md` 文件，包含 YAML 元数据和 Markdown 指令：
+
+```yaml
+---
+name: explaining-code
+description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
 ---
 
-## 五、故障排除
+当解释代码时，始终包含：
 
-如果 skill 没有显示：
-1. 验证 SKILL.md 全大写拼写
-2. 检查包含 name 和 description
-3. 确保名称唯一
-4. 检查权限设置
+1. **从类比开始**：将代码与日常生活中的事物进行比较
+2. **绘制图表**：使用 ASCII 艺术展示流程、结构或关系
+3. **逐步讲解**：逐行解释代码发生了什么
+4. **强调陷阱**：常见的错误或误解是什么？
 
----
+保持解释的对话性。对于复杂概念，使用多个类比。
+```
 
-### 文档来源 (Sources)
+**说明**：`description` 非常重要，Claude 用它来决定何时应用该 Skill。
 
-1. **Agent Skills**
-   - 原文链接: https://opencode.ai/docs/skills
-   - 路径: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docContent.md
-'''
+### 4. 加载并验证 Skill
 
-print('=== AOP-FINAL | agent=doc-retriever | format=markdown | lines=65 | source=OpenCode_Docs@latest ===')
-print(output)
-print('=== END-AOP-FINAL ===')
-"
-[2026-01-24 23:06:28] Document extraction detected: python3 -c "
-output = '''# OpenCode Agent Skills 创建指南
+Skills 在创建或修改时会自动加载。验证 Skill 是否出现在列表中：
 
-## 概述
+```
+What Skills are available?
+```
 
-Agent Skills 允许 OpenCode 从你的仓库或主目录发现可复用的指令。Skills 通过原生的 skill 工具按需加载。
+你应该看到 `explaining-code` 及其描述。
 
----
+### 5. 测试 Skill
 
-## 一、创建 Skills 文件
+打开项目中的任何文件，向 Claude 提问：
 
-### 1.1 文件位置
+```
+How does this code work?
+```
 
-为每个 skill 创建一个文件夹，并放置 SKILL.md 文件。OpenCode 搜索以下位置：
+Claude 会询问是否使用 `explaining-code` Skill，然后在解释中包含类比和 ASCII 图表。
 
-- 项目配置: .opencode/skills/<name>/SKILL.md
-- 全局配置: ~/.config/opencode/skills/<name>/SKILL.md
-- Claude 兼容（项目）: .claude/skills/<name>/SKILL.md
-- Claude 兼容（全局）: ~/.claude/skills/<name>/SKILL.md
+## Skills 的工作原理
 
-### 1.2 搜索规则
+Skills 是**模型调用**的：Claude 根据你的请求决定使用哪些 Skills。你不需要显式调用 Skill，Claude 会自动应用相关 Skills。
 
-- 项目路径：从当前目录向上遍历到 git 工作树
-- 全局定义：从 ~/.config/opencode/skills/*/SKILL.md 加载
+1. **发现**：启动时，Claude 只加载每个 Skill 的名称和描述
+2. **激活**：当你的请求匹配 Skill 的描述时，Claude 询问是否使用该 Skill
+3. **执行**：Claude 遵循 Skill 的指令，需要时加载引用的文件或运行捆绑的脚本
 
----
+### Skills 存放位置
 
-## 二、编写 SKILL.md
+| 位置 | 路径 | 适用范围 |
+|------|------|----------|
+| Enterprise | 托管设置中定义 | 组织内所有用户 |
+| Personal | `~/.claude/skills/` | 你，在所有项目中 |
+| Project | `.claude/skills/` | 此仓库中的所有人 |
+| Plugin | 与插件捆绑 | 安装插件的任何人 |
 
-### 2.1 YAML Frontmatter 必需字段
+## SKILL.md 格式详解
 
-每个 SKILL.md 必须以 YAML frontmatter 开头：
+### YAML 元数据字段
 
-| 字段 | 必填 | 说明 |
+| 字段 | 必需 | 描述 |
 |------|------|------|
-| name | 是 | Skill 名称 |
-| description | 是 | 描述（1-1024字符） |
-| license | 否 | 许可证 |
-| compatibility | 否 | 兼容性 |
-| metadata | 否 | 元数据键值对 |
+| `name` | 是 | Skill 名称（小写字母、数字和连字符，最多 64 字符） |
+| `description` | 是 | Skill 功能描述（最多 1024 字符） |
+| `allowed-tools` | 否 | 该 Skill 可使用的工具列表 |
+| `model` | 否 | 使用的模型（默认使用对话的模型） |
+| `context` | 否 | 设置为 `fork` 以在分叉的子代理上下文中运行 |
+| `agent` | 否 | 当 `context: fork` 时指定的代理类型 |
+| `hooks` | 否 | 定义 Skill 生命周期的钩子 |
+| `user-invocable` | 否 | 控制是否在斜杠命令菜单中显示 |
 
-### 2.2 名称验证规则
+### 字符串替换
 
-name 必须满足：
-- 长度：1-64 字符
-- 格式：小写字母数字，单连字符分隔
-- 禁止：以 - 开头/结尾，禁止连续 --
-- 必须：与目录名称匹配
+Skills 支持动态值的字符串替换：
 
-正则：^[a-z0-9]+(-[a-z0-9]+)*$
+| 变量 | 描述 |
+|------|------|
+| `$ARGUMENTS` | 调用 Skill 时传递的所有参数 |
+| `${CLAUDE_SESSION_ID}` | 当前会话 ID |
+
+示例：
+
+```yaml
+---
+name: session-logger
+description: Log activity for this session
+---
+
+将以下内容记录到 logs/${CLAUDE_SESSION_ID}.log：
+
+$ARGUMENTS
+```
+
+## 多文件 Skills（渐进式披露）
+
+保持 `SKILL.md` 在 500 行以下以获得最佳性能。如果内容超过此限制，将详细的参考材料拆分到 Claude 仅在需要时读取的单独文件中。
+
+示例结构：
+
+```
+my-skill/
+├── SKILL.md (必需 - 概述和导航)
+├── reference.md (详细 API 文档 - 按需加载)
+├── examples.md (用法示例 - 按需加载)
+└── scripts/
+    └── helper.py (实用脚本 - 执行，不加载)
+```
+
+**捆绑实用脚本以实现零上下文执行**：Skill 目录中的脚本可以在不将内容加载到上下文的情况下执行。Claude 运行脚本，只有输出消耗 tokens。
+
+## 工具限制 (allowed-tools)
+
+使用 `allowed-tools` 前置字段限制 Skill 活动时可以使用的工具：
+
+```yaml
+---
+name: reading-files-safely
+description: Read files without making changes. Use when you need read-only file access.
+allowed-tools: Read, Grep, Glob
+---
+```
+
+## 在分叉上下文中运行 Skills
+
+使用 `context: fork` 在具有自己对话历史的隔离子代理上下文中运行 Skill：
+
+```yaml
+---
+name: code-analysis
+description: Analyze code quality and generate detailed reports
+context: fork
+---
+```
+
+## 控制 Skill 可见性
+
+Skills 有三种调用方式：
+1. **手动调用**：在提示中输入 `/skill-name`
+2. **程序化调用**：Claude 通过 Skill 工具调用
+3. **自动发现**：Claude 读取 Skill 描述并在相关时加载
+
+`user-invocable` 字段仅控制手动调用。设置为 `false` 时，Skill 从斜杠命令菜单隐藏，但 Claude 仍可通过程序化方式调用或自动发现。
+
+## 故障排除
+
+### Skill 未触发
+
+描述字段是 Claude 决定是否使用你的 Skill 的依据。模糊的描述如"帮助处理文档"不够具体。一个好的描述需要回答两个问题：
+1. **这个 Skill 做什么？** 列出具体功能
+2. **什么时候应该使用它？** 包含用户会提到的触发词
+
+### Skill 不加载
+
+- 检查文件路径是否正确
+- 检查 YAML 语法（前置字段必须以 `---` 开头和结尾）
+- 使用 `claude --debug` 查看 Skill 加载错误
+
+### Skills 冲突
+
+如果 Claude 使用了错误的 Skill，可能是描述太相似。确保每个描述使用特定的触发词来区分。
 
 ---
 
-## 三、完整示例
+## OpenCode 中的 Skill 工具
 
-创建 .opencode/skills/git-release/SKILL.md：
+OpenCode 提供了 `skill` 工具用于加载 Skills：
 
----
-name: git-release
-description: Create consistent releases and changelogs
-license: MIT
-compatibility: opencode
-metadata:
-  audience: maintainers
-  workflow: github
----
-
-## What I do
-
-- Draft release notes from merged PRs
-- Propose a version bump
-- Provide a copy-pasteable gh release create command
-
-## When to use me
-
-Use this when you are preparing a tagged release.
-
----
-
-## 四、权限配置
-
-在 opencode.json 中配置：
-
+```json
 {
-  \"permission\": {
-    \"skill\": {
-      \"*\": \"allow\",
-      \"pr-review\": \"allow\",
-      \"internal-*\": \"deny\",
-      \"experimental-*\": \"ask\"
-    }
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "skill": "allow"
   }
 }
+```
 
-| 权限 | 行为 |
-|------|------|
-| allow | 立即加载 |
-| deny | 对代理隐藏 |
-| ask | 提示用户批准 |
+该工具加载一个 skill（`SKILL.md` 文件）并将其内容返回到对话中。"""
 
----
+compression_meta = {
+    "compression_applied": False,
+    "original_line_count": 987,
+    "output_line_count": 987
+}
 
-## 五、故障排除
+doc_meta = {
+    "title": "Agent Skills",
+    "source_url": "https://code.claude.com/docs/en/skills",
+    "local_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docContent.md"
+}
 
-如果 skill 没有显示：
-1. 验证 SKILL.md 全大写拼写
-2. 检查包含 name 和 description
-3. 确保名称唯一
-4. 检查权限设置
+# 构建输出
+output = {
+    "scene": scene,
+    "routing_params": routing_params,
+    "processed_doc": processed_doc,
+    "compression_meta": compression_meta,
+    "doc_meta": doc_meta
+}
 
----
-
-### 文档来源 (Sources)
-
-1. **Agent Skills**
-   - 原文链接: https://opencode.ai/docs/skills
-   - 路径: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docContent.md
-'''
-
-print('=== AOP-FINAL | agent=doc-retriever | format=markdown | lines=65 | source=OpenCode_Docs@latest ===')
-print(output)
-print('=== END-AOP-FINAL ===')
-"
-[2026-01-24 23:06:41] doc-retriever session ended: 8d57ffce-ed90-4a5f-a629-9370f21e8b3e (status: completed)
+print(json.dumps(output, ensure_ascii=False, indent=2))
+EOF
+[2026-01-25 18:51:49] doc-retriever session ended: 7266f390-179b-4cc4-b95a-8f7792f9e558 (status: completed)
+[2026-01-25 18:53:01] doc-retriever: Bash tool used
+[2026-01-25 18:53:01] doc-retriever: Bash tool used
+[2026-01-25 18:53:01] Command: ls -la /Users/zorro/project/doc4llm/.opencode/skills/
+[2026-01-25 18:53:01] Command: ls -la /Users/zorro/project/doc4llm/.opencode/
+[2026-01-25 18:53:25] doc-retriever session ended: 7266f390-179b-4cc4-b95a-8f7792f9e558 (status: completed)
+[2026-01-25 19:22:34] doc-retriever: Bash tool used
+[2026-01-25 19:22:34] Command: conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parser_cli.py --from-phase 0a --to-phase 1 --input '{"query_analysis": {"original": "如何创建 OpenCode skills", "language": "zh", "complexity": "medium", "ambiguity": "low", "strategies": ["translation"], "doc_set": ["OpenCode_Docs@latest"], "domain_nouns": ["skills", "create"], "predicate_verbs": ["创建", "开发"]}, "optimized_queries": [{"rank": 1, "query": "how to create OpenCode skills", "strategy": "translation", "rationale": "Direct English translation"}, {"rank": 2, "query": "OpenCode skills development guide", "strategy": "expansion", "rationale": "Expand with development terminology"}]}' --knowledge-base .claude/knowledge_base.json
+[2026-01-25 19:22:47] doc-retriever: Bash tool used
+[2026-01-25 19:22:47] Command: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["how to create OpenCode skills", "OpenCode skills development guide"], "doc_sets": "OpenCode_Docs@latest", "domain_nouns": ["skills", "create"], "predicate_verbs": ["创建", "开发"], "base_dir": "/Users/zorro/project/md_docs_base", "reranker": false, "json": true, "reranker_threshold": 0.513}'
+[2026-01-25 19:22:47] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["how to create OpenCode skills", "OpenCode skills development guide"], "doc_sets": "OpenCode_Docs@latest", "domain_nouns": ["skills", "create"], "predicate_verbs": ["创建", "开发"], "base_dir": "/Users/zorro/project/md_docs_base", "reranker": false, "json": true, "reranker_threshold": 0.513}'
+[2026-01-25 19:23:10] doc-retriever: Bash tool used
+[2026-01-25 19:23:10] Command: conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parser_cli.py --from-phase 1.5 --to-phase 2 --input '{"success": true, "query": ["how to create OpenCode skills", "OpenCode skills development guide"], "doc_sets_found": ["OpenCode_Docs@latest"], "results": [{"doc_set": "OpenCode_Docs@latest", "page_title": "Agent Skills", "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md", "headings": [{"level": 1, "text": "Agent Skills", "rerank_sim": 0.92, "bm25_sim": null}]}, {"doc_set": "OpenCode_Docs@latest", "page_title": "Plugins", "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md", "headings": [{"level": 2, "text": "3. Create a plugin", "rerank_sim": 0.68, "bm25_sim": null}]}, {"doc_set": "OpenCode_Docs@latest", "page_title": "Agents", "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md", "headings": [{"level": 2, "text": "7. Create agents", "rerank_sim": 0.62, "bm25_sim": null}]}]}'
+[2026-01-25 19:23:10] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parser_cli.py --from-phase 1.5 --to-phase 2 --input '{"success": true, "query": ["how to create OpenCode skills", "OpenCode skills development guide"], "doc_sets_found": ["OpenCode_Docs@latest"], "results": [{"doc_set": "OpenCode_Docs@latest", "page_title": "Agent Skills", "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md", "headings": [{"level": 1, "text": "Agent Skills", "rerank_sim": 0.92, "bm25_sim": null}]}, {"doc_set": "OpenCode_Docs@latest", "page_title": "Plugins", "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md", "headings": [{"level": 2, "text": "3. Create a plugin", "rerank_sim": 0.68, "bm25_sim": null}]}, {"doc_set": "OpenCode_Docs@latest", "page_title": "Agents", "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md", "headings": [{"level": 2, "text": "7. Create agents", "rerank_sim": 0.62, "bm25_sim": null}]}]}'
+[2026-01-25 19:23:16] doc-retriever: Bash tool used
+[2026-01-25 19:23:16] Command: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --extractor-config .claude/skills/md-doc-reader/scripts/extractor_config.json --config '{"page_titles": [{"title": "Agent Skills", "headings": ["Agent Skills"], "doc_set": "OpenCode_Docs@latest"}, {"title": "Plugins", "headings": ["3. Create a plugin"], "doc_set": "OpenCode_Docs@latest"}, {"title": "Agents", "headings": ["7. Create agents"], "doc_set": "OpenCode_Docs@latest"}], "with_metadata": true, "format": "json"}'
+[2026-01-25 19:23:16] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-reader/scripts/extract_md_doc.py --extractor-config .claude/skills/md-doc-reader/scripts/extractor_config.json --config '{"page_titles": [{"title": "Agent Skills", "headings": ["Agent Skills"], "doc_set": "OpenCode_Docs@latest"}, {"title": "Plugins", "headings": ["3. Create a plugin"], "doc_set": "OpenCode_Docs@latest"}, {"title": "Agents", "headings": ["7. Create agents"], "doc_set": "OpenCode_Docs@latest"}], "with_metadata": true, "format": "json"}'
+[2026-01-25 19:23:48] doc-retriever session ended: faf4217f-40a3-4adf-bd6e-8eb779d108db (status: completed)
+[2026-01-25 19:24:12] doc-retriever: Bash tool used
+[2026-01-25 19:24:12] Command: ls -la /Users/zorro/project/doc4llm/.claude/skills/
+[2026-01-25 19:24:22] doc-retriever: Bash tool used
+[2026-01-25 19:24:22] Command: ls /Users/zorro/project/doc4llm/.claude/skills/
+[2026-01-25 19:24:22] doc-retriever: Bash tool used
+[2026-01-25 19:24:22] Command: tree /Users/zorro/project/doc4llm/.claude/skills/md-doc-params-parser/ -L 3
+[2026-01-25 19:24:55] doc-retriever session ended: faf4217f-40a3-4adf-bd6e-8eb779d108db (status: completed)

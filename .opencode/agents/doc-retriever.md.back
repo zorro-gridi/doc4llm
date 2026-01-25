@@ -24,7 +24,7 @@ Help users read and extract content from markdown documentation stored in the kn
 | Phase   | Must Invoke Skill                  | Conditional         | Invocation                             | Input (from)                                                                                                     | Output                                                                    |
 | ------- | ---------------------- | ------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | **0a**  | md-doc-query-optimizer | Always              | Prompt (fork)                          | `user_query`                                                                                                     | `optimized_queries[]`, `doc_set[]`, `domain_nouns[]`, `predicate_verbs[]` |
-| **0b**  | md-doc-query-router    | Always (concurrent) | Prompt (fork)                          | `user_query`                                                                                                     | `scene`, `reranker_threshold`, `routing_params`                           |
+| **0b**  | md-doc-query-router    | Always | Prompt (fork)                          | `user_query`                                                                                                     | `scene`, `reranker_threshold`, `routing_params`                           |
 | **1**   | md-doc-searcher        | Always              | CLI script                             | `query`(0a), `doc_sets`(0a), `reranker_threshold`(0b), `domain_nouns`(0a), `predicate_verbs`(0a), `base_dir`(kb) | `doc_set`, `page_title`, `headings[]`                                     |
 | **2**   | md-doc-reader          | Always              | CLI script                             | `doc_set`(1), `page_title`(1), `headings[]`(1)                                                                   | `full_doc_content`, `line_count`, `doc_meta`, `requires_processing`       |
 | **2.5** | Your Check             | Always              | prompt (fork) | `ExtractionResult.requires_processing`                                                                           | Decision (skip/invoke Phase 3)                                            |
@@ -41,17 +41,16 @@ Help users read and extract content from markdown documentation stored in the kn
 
 As the doc-retriever agent, you are responsible for:
 
-1. **Managing concurrent Phase 0 execution** (optimizer + router run in parallel)
-2. **Passing `reranker_threshold` from Phase 0b to Phase 1 CLI** - CRITICAL data flow
-3. **Passing scene information** from Phase 0b to Phase 3 and Phase 4
-4. **Managing the flow** between the phases with error handling
-5. **Passing data** between skills (titles to content to final output)
-6. **Monitoring total line counts** from Phase 2 (cumulative across all documents)
-7. **Performing conditional check** (Phase 2.5) to decide whether Phase 3 is needed
-8. **Ensuring Phase 4 always receives complete metadata** from Phase 3
-9. **Optimizing performance** by skipping Phase 3 when unnecessary
-10. **Handling errors gracefully** with appropriate fallback strategies
-11. **Always including source citations** with all returned content
+1. **Passing `reranker_threshold` from Phase 0b to Phase 1 CLI** - CRITICAL data flow
+2. **Passing scene information** from Phase 0b to Phase 3 and Phase 4
+3. **Managing the flow** between the phases with error handling
+4. **Passing data** between skills (titles to content to final output)
+5. **Monitoring total line counts** from Phase 2 (cumulative across all documents)
+6. **Performing conditional check** (Phase 2.5) to decide whether Phase 3 is needed
+7. **Ensuring Phase 4 always receives complete metadata** from Phase 3
+8. **Optimizing performance** by skipping Phase 3 when unnecessary
+9.  **Handling errors gracefully** with appropriate fallback strategies
+10. **Always including source citations** with all returned content
 
 ### Performance Optimization Guidelines
 
@@ -161,7 +160,7 @@ User Query
              │
              ├───▶ return doc_set, query, reranker_threshold, domain_nouns, predicate_verbs ──▶ for md-doc-searcher
              │
-             └───────────── CONCURRENT ─────────────┐
+             └─────────────------------─────────────┐
                                                     ▼
                                         invoke md-doc-query-router skill
                                                   │
@@ -239,7 +238,7 @@ invoke md-doc-processor skill ──▶ return processed_doc, compression_meta, 
 
 ### Phase 0b: Scene Routing (md-doc-query-router)
 
-**Your Action:** Invoke md-doc-query-router **concurrently** with md-doc-query-optimizer
+**Your Action:** Invoke md-doc-query-router skill with the raw user query
 
 **What It Does:**
 - Classifies user query into one of seven scenes:
@@ -594,7 +593,6 @@ This is the standard AOP format that tells the calling agent (or main AI) that t
 
 ## Important Constraints
 
-- **Always invoke Phase 0b concurrently with Phase 0a** - Scene classification is required for downstream processing
 - **Always pass `reranker_threshold` from Phase 0b to Phase 1 CLI** - This is critical for reranker filtering in md-doc-searcher
 - **Always pass `domain_nouns` and `predicate_verbs` from Phase 0a to Phase 1** - These enhance search relevance
 - **Always read `base_dir` from `.opencode/knowledge_base.json`** - Required for --config format
