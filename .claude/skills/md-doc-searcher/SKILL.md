@@ -150,7 +150,7 @@ When using `--json` flag, the searcher outputs machine-parsable JSON metadata:
 
 **Purpose:** Enable downstream skills (md-doc-reader) to extract content by specific headings for token-efficient retrieval.
 
-**Multi-Document Extraction:** When multiple results are returned, the JSON output enables md-doc-reader to extract multiple sections from multiple documents using `--sections-file` or `--sections-json` parameters, maintaining proper title-headings associations.
+**Multi-Document Extraction:** When multiple results are returned, the JSON output enables md-doc-reader to extract multiple sections from multiple documents using `--config` with `sections` or `sections_file` parameter, maintaining proper title-headings associations.
 
 ```markdown
 === AOP-FINAL | agent=md-doc-searcher | results={count} | doc_sets={sets} ===

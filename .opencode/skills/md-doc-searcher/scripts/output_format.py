@@ -75,7 +75,8 @@ class OutputFormatter:
         return "\n".join(lines)
 
     @staticmethod
-    def format_structured(result: Dict[str, Any], queries: Optional[List[str]] = None) -> str:
+    def format_structured(result: Dict[str, Any], queries: Optional[List[str]] = None,
+                          reranker_enabled: bool = True) -> str:
         """
         Format result as structured JSON for machine parsing.
 
@@ -87,6 +88,7 @@ class OutputFormatter:
         Args:
             result: Search result from DocSearcherAPI.search()
             queries: Original query input list from --query parameter
+            reranker_enabled: Whether reranker was enabled (affects rerank_sim output)
 
         Returns:
             JSON string with structured metadata
@@ -117,7 +119,8 @@ class OutputFormatter:
                         {
                             "level": h.get("level", 2),
                             "text": h["text"],
-                            "rerank_sim": _convert_to_json_serializable(h.get("score")),  # Reranker similarity
+                            # When reranker is disabled, set rerank_sim to null
+                            "rerank_sim": _convert_to_json_serializable(h.get("score")) if reranker_enabled else None,
                             "bm25_sim": _convert_to_json_serializable(h.get("bm25_sim")),  # BM25 similarity
                         }
                         for h in page.get("headings", [])

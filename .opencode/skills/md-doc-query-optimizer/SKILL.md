@@ -1,81 +1,87 @@
 ---
 name: md-doc-query-optimizer
-description: "Optimize and rewrite user queries for better document retrieval. Supports query decomposition, expansion, synonym replacement, and multi-query generation. Returns optimized queries for document search."
+description: "Pure LLM prompt-based skill. Optimize and rewrite user queries for better document retrieval. Supports query decomposition, expansion, synonym replacement, and multi-query generation. Returns optimized queries for document search."
 ---
 
 # Markdown Document Query Optimizer
 
 Optimize user queries to improve document retrieval quality in the doc4llm system through pure prompt-based analysis and transformation.
 
-**IMPORTANT:** This is a pure prompt-based skill. DO NOT call any external tools or services. Analyze the user query using only the instructions below and return optimized queries based on linguistic analysis and transformation rules.
+---
 
 ## Purpose
 
 Improve search relevance by:
-- **Detecting** target documentation sets from local knowledge base
-- **Decomposing** complex queries into simpler sub-queries
-- **Expanding** queries with synonyms and related terms
-- **Generating** multiple query variations for broader coverage
-- **Translating** non-English queries to documentation language
+
+- Detecting target documentation sets from local knowledge base
+- Decomposing complex queries into simpler sub-queries
+- Expanding queries with synonyms and related terms
+- Generating multiple query variations for broader coverage
+- Translating non-English queries to documentation language
+
+---
 
 ## When to Use
 
 Use this skill when:
-1. User query is **complex** (multiple concepts/conjunctions)
-2. User query is **ambiguous** (could mean multiple things)
-3. Initial search results are **poor quality** (low similarity)
-4. User query uses "**use contextZ**" or "**use contextz**" keywords
+
+1. User query uses **"use contextZ"** or **"use contextz"** keywords
+2. `doc-retriever` subagent is invoked
 
 ---
 
-## Four-Phase Optimization Protocol
+## Five-Phase Optimization Protocol
+
+---
 
 ### Phase 0: Doc-Set Detection
 
-Before query analysis, identify target documentation sets:
+Before query analysis, identify target documentation sets.
 
-**Knowledge Base Configuration:**
+**Knowledge Base Configuration**
+
 - Read `.opencode/knowledge_base.json` → get `base_dir`
 - List all first-level subdirectories under `<base_dir>/`
-- Subdirectory naming pattern: `<doc_name>@<doc_version>` (e.g., `code_claude_com@latest`)
+- Subdirectory naming pattern: `<doc_name>@<doc_version>`
 
-**Matching Strategy:**
-1. **Direct Match**: Query contains doc-set identifier (e.g., "Claude Code hooks")
+Example:
+```
+
+code_claude_com@latest
+anthropic_api@v1
+
+````
+
+**Matching Strategy**
+
+1. **Direct Match**: Query contains doc-set identifier
 2. **Keyword Match**: Query keywords match doc-set naming conventions
-3. **Domain Inference**: Technical terms suggest specific documentation domain
+3. **Domain Inference**: Technical terms suggest documentation domain
 4. **No Match**: Return empty list `[]` → Suggest online search
 
-**Output:**
-- `doc_set`: List[str] - e.g., `["code_claude_com@latest"]` or `[]` (empty = suggest online search)
+**Output**
 
-### Phase 1: Intent Recognition
+```json
+"doc_set": ["code_claude_com@latest"]
+````
 
-For each user query, analyze:
+or
 
-1. **Complexity Check**: Scan for conjunctions (和、以及、与、还有 / and, as well as, along with, also) that indicate multiple distinct concepts
-2. **Ambiguity Check**: Identify generic terms (skills, hooks, features) or context-dependent terms (setup, configuration)
-3. **Language Detection**: Determine primary language - Chinese, English, or mixed (e.g., "hooks 配置")
-4. **Technical Term Extraction**: Identify domain vocabulary (product names, technical concepts, special terms)
+```json
+"doc_set": []
+```
 
-### Phase 2: Strategy Selection
+---
 
-| Analysis Result | Primary Strategy | Secondary Actions |
-|----------------|------------------|-------------------|
-| Has conjunctions | Decomposition | Expand each sub-query |
-| Generic/ambiguous term | Expansion | Generate multiple variations |
-| Chinese query | Translation | Expand translated terms |
-| Mixed language | Translation + preserve | Keep technical terms intact |
-| Well-formed specific | None | Return as-is or minor expansion |
+### Phase 1: Strategy Selection
 
-### Phase 3: Query Generation
-
-Generate 3-5 optimized queries following:
-
-1. **Prioritize direct translations** for Chinese queries (docs are often English)
-2. **Add domain-specific variations** (e.g., "configuration", "setup", "settings")
-3. **Include documentation-type modifiers** ("reference", "guide", "tutorial")
-4. **Preserve core technical terms** exactly as they appear
-5. **Rank by expected relevance** (most direct match first)
+| Analysis Result      | Primary Strategy       | Secondary Actions            |
+| -------------------- | ---------------------- | ---------------------------- |
+| Has conjunctions     | Decomposition          | Expand each sub-query        |
+| Generic / ambiguous  | Expansion              | Generate multiple variations |
+| Chinese query        | Translation            | Expand translated terms      |
+| Mixed language       | Translation + preserve | Keep technical terms         |
+| Well-formed specific | None                   | Minor expansion only         |
 
 ---
 
@@ -83,129 +89,193 @@ Generate 3-5 optimized queries following:
 
 ### Decomposition Rules
 
-When detecting conjunctions (和、以及、与、and):
-- Create a focused query for each distinct concept
-- Generate variations for each sub-query
-- Include combined queries that capture relationships
-- Rank sub-queries by specificity (technical > general)
+When detecting conjunctions:
+
+* Create a focused query for each concept
+* Generate variations for each
+* Include combined queries
+* Rank by specificity
+
+---
 
 ### Expansion Rules
 
-For Chinese terms:
-- "配置" + noun → "{noun} configuration", "setup {noun}", "{noun} settings"
-- "部署" → "deployment", "deploy", "production setup", "release"
-- "安全" → "security", "secure", "authentication", "authorization"
-- noun + "相关" → "{noun}", "{noun} guide", "{noun} reference", "using {noun}"
+**Chinese**
 
-For English terms:
-- "how to {verb}" → "{verb} guide", "{verb} tutorial", "{verb} configuration"
-- "{noun} related" → "{noun}", "{noun} reference", "{noun} guide", "using {noun}"
-- "setup/configure {noun}" → "{noun} configuration", "{noun} setup"
+* 配置 + noun → `{noun} configuration`, `{noun} setup`, `{noun} settings`
+* 部署 → deployment, deploy, production setup
+* 安全 → security, authentication, authorization
+
+**English**
+
+* how to {verb} → `{verb} guide`, `{verb} tutorial`, `{verb} configuration`
+* {noun} related → `{noun}`, `{noun} reference`, `{noun} guide`
+
+---
 
 ### Translation Rules
 
-- Translate non-technical words to target language (usually English for docs)
-- Preserve technical terms in original form (API, hooks, middleware, etc.)
-- Handle mixed language by transliterating only non-technical words
+* Translate non-technical words
+* Preserve technical terms (API, hooks, middleware)
+* Handle mixed language carefully
 
 ---
 
-## Representative Examples
+### Phase 2: Query Generation
 
-### Example 1: Complex Query Decomposition
+Generate optimized queries following:
 
-**Input:** "Claude Code 中 hooks 如何配置，以及部署时的注意事项"
+1. Prioritize **direct translations** for Chinese queries
+2. Add **domain-specific variations**
+3. Include documentation modifiers:
+   * reference, guide, tutorial, setup
+4. Preserve **core technical terms exactly**
+5. Rank by expected relevance (most direct first)
 
-**Analysis:** Contains "以及" (conjunction), Chinese, two concepts: (1) hooks configuration, (2) deployment considerations
+### Phase 3: Intent Recognition
 
-**Optimized Queries:**
+For each user query, analyze:
+
+1. **Complexity Check**
+
+   * Look for conjunctions: 和、以及、与、还有 / and, also, along with
+
+2. **Ambiguity Check**
+
+   * Detect generic terms: skills, hooks, features, setup
+
+3. **Language Detection**
+
+   * Chinese / English / Mixed
+
+4. **Technical Term Extraction**
+
+5. **Semantic Extraction**
+
+### Phase 4: Domain Nouns (实体名词 ONLY)
+
+**Core Extraction Rule**
+
+> *Return ONLY the noun that represents the true entity being **created**, **configured**, **built**, or **operated on** in the query. This is the **target object** of the action, NOT the tool/platform used to perform the action.*
+
+**Decision Tree**
+
 ```
-1. Claude Code hooks configuration
-2. deployment hooks best practices
-3. hooks setup Claude Code
-4. Claude Code deployment setup
-5. deployment hooks注意事项
+┌─────────────────────────────────────────────────────────────────┐
+│ Q1: Is this noun the TARGET of the action (created, configured, built)? ──→ YES → INCLUDE
+│ Q2: Is this noun the TOOL/PLATFORM used to perform the action?          ──→ YES → EXCLUDE
+│ Q3: Is this noun the THEME/TOPIC being discussed/analyzed?              ──→ YES → INCLUDE
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Example 2: Ambiguous Query Expansion
+Examples:
+- "opencode **如何创建 skills**" → skills is TARGET → `["skills"]`
+- "opencode **的设计理念**" → opencode is THEME → `["opencode"]`
+- "用 Python **处理** CSV 文件" → CSV is TARGET → `["CSV"]`
 
-**Input:** "skills"
+**Include:**
 
-**Analysis:** Generic term, English, likely "Agent Skills" in documentation context
+* **Target Objects**: hooks, skills, middleware, API, components being created/configured
+* **Product Names**: Claude Code, OpenCode (when they are the topic/theme)
+* **Technical Entities**: authentication, database, configuration files
 
-**Optimized Queries:**
+**Exclude:**
+
+* **Implementation Tools/Platforms**: opencode, python, docker, git (how it's done)
+* **Abstract Process Nouns**: creation, deployment, configuration (as a process)
+
+Demo Extraction
+| query input | returned entities | Rationale |
+| :--- | :--- | :--- |
+| opencode 如何创建 skills | skills | skills is the TARGET being created |
+| opencode 的设计理念 | opencode | opencode is the THEME being discussed |
+| opencode 和 Claude code 的 skills 对比分析 | skills | skills is the TARGET being compared |
+| opencode 和 claude code 对比分析 | opencode, Claude code | both are THEMEs being compared |
+
+### Phase 5: Predicate Verbs
+
+> **⚠️ CRITICAL: This phase extracts from OPTIMIZED queries, NOT original query.**
+
+| Aspect | Phase 4 (Domain Nouns) | Phase 5 (Predicate Verbs) |
+|--------|------------------------|---------------------------|
+| **Source** | Original query | Optimized queries |
+| **Extraction** | Direct extraction | Derive from query variations |
+| **Purpose** | Identify target entities | Capture action diversity |
+
+**Core Extraction Rule**
+
+> *Derive ALL action verbs from the optimized query set generated in Phase 2. Each optimized query contains a different action variant (e.g., "create", "setup", "configure"). Collect these verbs to capture the full range of possible actions.*
+
+**Common Mistakes Table**
+
+| ❌ Wrong | ✅ Correct | Reason |
+|----------|------------|--------|
+| Extract from "如何**创建**" → `["create"]` | Derive from optimized queries → `["create", "setup", "configure"]` | Phase 5 rule violation |
+| Extract single verb | Extract multiple verbs | Must capture action diversity |
+| From original query | From optimized queries | Protocol requirement |
+
+**Complete Workflow Example**
+
+**Original Query:** `"opencode 如何创建 skills"`
+
+**Phase 2 Output (Optimized Queries):**
+
+| Rank | Query | Key Verb |
+|------|-------|----------|
+| 1 | "opencode **skills creation**" | creation → create |
+| 2 | "opencode skills **setup** guide" | setup |
+| 3 | "opencode how to **create** skills tutorial" | create |
+| 4 | "opencode skills **configuration**" | configure |
+
+**Phase 5 Output:**
+```json
+"predicate_verbs": ["create", "setup", "configure", "creation", "creating", "configuration", "configuring", "setting up"]
 ```
-1. Agent Skills
-2. skills reference
-3. using skills
-4. skills guide
-5. skills
+
+> **Note:** `predicate_verbs` should include multiple forms:
+> - **Verb base forms**: `create`, `setup`, `configure`
+> - **Gerund forms**: `creating`, `setting up`, `configuring`
+> - **Noun forms**: `creation`, `configuration`, `setup`
+---
+
+### Optimized Query Count Logic
+
+The number of optimized queries returned is dynamically determined based on the number of extracted **Domain Nouns**.
+
+Use the following branching logic:
+
+```text
+IF domain_nouns_count == 1:
+    return 3–5 optimized queries
+ELSE IF domain_nouns_count == 2:
+    return 6–10 optimized queries
+ELSE IF domain_nouns_count >= 3:
+    base = 6
+    extra_nouns = domain_nouns_count - 2
+    return base + (extra_nouns * 3~5)
 ```
 
-### Example 3: Mixed Language Processing
+**Explanation**
 
-**Input:** "hooks 配置相关"
+* 1 Domain Noun → return **3–5** optimized queries
+* 2 Domain Nouns → return **6–10** optimized queries
+* Each additional Domain Noun beyond 2 increases the result count by **3–5**
 
-**Analysis:** Mixed language, technical term "hooks" to preserve, "配置相关" → configuration/setup
+This ensures:
 
-**Optimized Queries:**
-```
-1. hooks configuration
-2. setup hooks
-3. hooks settings
-4. configure hooks
-5. hooks setup guide
-```
+* Lightweight output for simple queries
+* Broad coverage for complex, multi-entity queries
+* Query volume scales with semantic complexity
 
 ---
 
-## Integration Protocol (Updated)
-
-This skill works with `md-doc-searcher` in the following workflow:
-
-**Step 1:** Receive user query
-**Step 2:** Phase 0 - Detect target doc-sets from local knowledge base
-**Step 3:** Apply optimization protocol to generate 3-5 queries
-**Step 4:** Output BOTH formats:
-   - Human-readable format (for display)
-   - JSON format (for md-doc-searcher)
-**Step 5:**
-   - If `doc_set` is empty → Suggest online search, DO NOT call doc_searcher_cli.py
-   - If `doc_set` has values → Proceed with md-doc-searcher CLI
-**Step 6:** md-doc-searcher searches specified doc-sets
-**Step 7:** Aggregate and deduplicate results
-**Step 8:** Present most relevant documents to user
+## Integration Protocol
+* If `doc_set` empty → Suggest online search
+* If not empty → Call `md-doc-searcher`
 
 ---
 
-## Output Format
-
-**Dual Output Support:**
-- **Human-readable**: For user display (default)
-- **JSON format**: For machine parsing by downstream skills
-
-### Human-Readable Format (Default)
-
-```
-## Query Analysis Summary
-- Original: "{original_query}"
-- Language: {detected_language}
-- Complexity: {low/medium/high}
-- Ambiguity: {low/medium/high}
-- Applied Strategies: {strategy_list}
-- Doc-Set: <doc_name>@<doc_version>  [can be multiple, comma-separated]
-
-## Optimized Queries (Ranked)
-1. "{primary_query}" - {strategy_applied}: {rationale}
-2. "{secondary_query}" - {strategy_applied}: {rationale}
-3. "{tertiary_query}" - {strategy_applied}: {rationale}
-...
-
-## Search Recommendation
-Perform online search - No matching documentation set found in local knowledge base.
-```
-
-### JSON Output Format (For md-doc-searcher)
+## Output Format (JSON)
 
 ```json
 {
@@ -214,93 +284,34 @@ Perform online search - No matching documentation set found in local knowledge b
     "language": "{detected_language}",
     "complexity": "{low|medium|high}",
     "ambiguity": "{low|medium|high}",
-    "strategies": ["{strategy1}", "{strategy2}"],
-    "doc_set": ["<doc_name>@<doc_version>"]
+    "strategies": ["translation","expansion"],
+    "doc_set": ["code_claude_com@latest"],
+    "domain_nouns": ["skills"],
+    "predicate_verbs": ["create", "setup", "configure", "creation", "creating", "configuration", "configuring", "setting up"]
   },
   "optimized_queries": [
     {
       "rank": 1,
-      "query": "{primary_query}",
-      "strategy": "{strategy_applied}",
-      "rationale": "{rationale}"
-    },
-    {
-      "rank": 2,
-      "query": "{secondary_query}",
-      "strategy": "{strategy_applied}",
-      "rationale": "{rationale}"
-    }
-  ],
-  "search_recommendation": {
-    "online_suggested": true,
-    "reason": "Only when after no matching documentation set found - perform online search"
-  }
-}
-```
-
-**Usage Rules:**
-- If `doc_set` is empty array → Do NOT call doc_searcher_cli.py
-- Output recommendation for online search
-- If `doc_set` has values → Proceed with md-doc-searcher CLI
-
-**Example Output (JSON):**
-
-```json
-{
-  "query_analysis": {
-    "original": "如何配置 hooks",
-    "language": "Chinese",
-    "complexity": "low",
-    "ambiguity": "medium",
-    "strategies": ["translation", "expansion"],
-    "doc_set": ["code_claude_com@latest"]
-  },
-  "optimized_queries": [
-    {
-      "rank": 1,
-      "query": "hooks configuration",
-      "strategy": "translation",
-      "rationale": "Direct English translation"
-    },
-    {
-      "rank": 2,
-      "query": "setup hooks",
+      "query": "opencode skills creation guide",
       "strategy": "expansion",
-      "rationale": "Action-oriented variation"
+      "rationale": "Direct translation with documentation modifier"
+    },
+    {
+      "rank": 2,
+      "query": "opencode skills setup tutorial",
+      "strategy": "expansion",
+      "rationale": "Alternative action verb for broader coverage"
     },
     {
       "rank": 3,
-      "query": "hooks settings",
-      "strategy": "expansion",
-      "rationale": "Synonym for configuration"
-    }
-  ]
-}
-```
-
-**Example Output (No Match with empty doc-sest - JSON):**
-
-```json
-{
-  "query_analysis": {
-    "original": "machine learning basics",
-    "language": "English",
-    "complexity": "low",
-    "ambiguity": "high",
-    "strategies": ["expansion"],
-    "doc_set": []
-  },
-  "optimized_queries": [
-    {
-      "rank": 1,
-      "query": "machine learning basics",
-      "strategy": "none",
-      "rationale": "No optimization needed"
+      "query": "how to create skills in opencode",
+      "strategy": "translation",
+      "rationale": "Question format with explicit action"
     }
   ],
   "search_recommendation": {
-    "online_suggested": true,
-    "reason": "Only when after no matching documentation set found - perform online search"
+    "online_suggested": false,
+    "reason": ""
   }
 }
 ```

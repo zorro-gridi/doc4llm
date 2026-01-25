@@ -18,10 +18,10 @@ A unified marker system for agent outputs that prevents unwanted modifications, 
 
 | File | Purpose |
 |------|---------|
-| `.claude/AGENT_OUTPUT_PROTOCOL.md` | AOP specification and implementation guide |
-| `.claude/AOP_INSTRUCTIONS.md` | Handling rules for main AI / calling agents |
-| `.claude/AOP_VALIDATION.py` | Python validation tool |
-| `.claude/AOP_TESTS.py` | Test suite (10 tests, all passing) |
+| `.opencode/AGENT_OUTPUT_PROTOCOL.md` | AOP specification and implementation guide |
+| `.opencode/AOP_INSTRUCTIONS.md` | Handling rules for main AI / calling agents |
+| `.opencode/AOP_VALIDATION.py` | Python validation tool |
+| `.opencode/AOP_TESTS.py` | Test suite (10 tests, all passing) |
 
 ---
 
@@ -29,8 +29,8 @@ A unified marker system for agent outputs that prevents unwanted modifications, 
 
 | File | Changes |
 |------|---------|
-| `.claude/agents/doc-retriever.md` | Added AOP protocol, updated all output formats |
-| `.claude/agents/doc-qa-agentic.md` | Added AOP protocol, updated all output formats |
+| `.opencode/agents/doc-retriever.md` | Added AOP protocol, updated all output formats |
+| `.opencode/agents/doc-qa-agentic.md` | Added AOP protocol, updated all output formats |
 
 ---
 
@@ -159,7 +159,7 @@ result = validate_agent_output(output)
 ### Running Tests
 
 ```bash
-python .claude/AOP_TESTS.py
+python .opencode/AOP_TESTS.py
 ```
 
 All 10 tests should pass.
@@ -179,7 +179,7 @@ All 10 tests should pass.
 [450 lines of content]
 
 ---
-**Source:** https://code.claude.com/docs/en/skills
+**Source:** https://code.opencode.com/docs/en/skills
 **Path:** md_docs/Claude_Code_Docs@latest/Agent Skills/docContent.md
 **Document Set:** Claude_Code_Docs@latest
 
@@ -263,6 +263,6 @@ Skills can also use AOP markers if they return data that should not be modified.
 ## Support
 
 For questions or issues:
-- See `.claude/AGENT_OUTPUT_PROTOCOL.md` for full specification
-- See `.claude/AOP_INSTRUCTIONS.md` for handling rules
-- Run `.claude/AOP_TESTS.py` to verify implementation
+- See `.opencode/AGENT_OUTPUT_PROTOCOL.md` for full specification
+- See `.opencode/AOP_INSTRUCTIONS.md` for handling rules
+- Run `.opencode/AOP_TESTS.py` to verify implementation

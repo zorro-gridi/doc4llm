@@ -45,12 +45,30 @@ from typing import List, Optional
 from doc_searcher_api import DocSearcherAPI
 
 
-def load_skiped_keywords() -> List[str]:
-    """Load skiped keywords from skiped_keywords.txt file."""
+def load_skiped_keywords(domain_nouns: List[str] = None) -> List[str]:
+    """Load skiped keywords from skiped_keywords.txt file, filtered by domain_nouns.
+
+    Only returns keywords that are also present in domain_nouns (protected keywords).
+
+    Args:
+        domain_nouns: List of domain nouns to filter against. Only keywords
+                      that are also in this list will be returned.
+
+    Returns:
+        List of protected keywords (skiped_keywords that are also in domain_nouns)
+    """
     keywords_file = Path(__file__).parent / "skiped_keywords.txt"
     if not keywords_file.exists():
         return []
-    return [line.strip() for line in keywords_file.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    all_keywords = [line.strip() for line in keywords_file.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    # Filter to only return keywords that are also in domain_nouns
+    if domain_nouns:
+        domain_set = set(n.lower() for n in domain_nouns)
+        return [kw for kw in all_keywords if kw.lower() in domain_set]
+
+    return all_keywords
 
 
 def filter_query_keywords(query: str, skiped_keywords: List[str]) -> str:
@@ -157,7 +175,8 @@ def create_parser() -> argparse.ArgumentParser:
     # Required doc-sets filter
     parser.add_argument(
         "--doc-sets",
-        help="Comma-separated list of doc-sets to search (required, from md-doc-query-optimizer)",
+        default=None,
+        help="Comma-separated list of doc-sets to search (required if --config not provided)",
     )
 
     # Behavior control
@@ -418,10 +437,9 @@ def apply_config_to_args(args: argparse.Namespace, config: dict) -> argparse.Nam
             current_value = getattr(args, args_attr, None)
             default_value = _get_default_value(args, args_attr)
 
-            # For booleans stored as action="store_true", check if the CLI explicitly set it
+            # For booleans stored as action="store_true", config can enable or disable them
             if config_key in ("debug", "json", "reranker", "no_fallback"):
-                # These are boolean flags; config can enable them but CLI can't "disable" them via this logic
-                if current_value == default_value and config[config_key]:
+                if current_value == default_value:
                     setattr(args, args_attr, config[config_key])
             elif current_value == default_value:
                 setattr(args, args_attr, config[config_key])
@@ -490,15 +508,34 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Parse doc-sets
     doc_sets = parse_doc_sets(args.doc_sets)
 
-    # Filter query keywords
-    skiped_keywords = load_skiped_keywords()
-    if skiped_keywords:
-        filtered_queries = [filter_query_keywords(q, skiped_keywords) for q in args.query]
-        # Remove empty queries after filtering
-        args.query = [q for q in filtered_queries if q]
-        if not args.query:
-            print("Error: All queries filtered out by skiped_keywords.txt")
-            return 1
+    # Filter query keywords - only when reranker is enabled
+    if args.reranker:
+        # Parse domain_nouns inline (parse_list_param is defined later)
+        domain_nouns_value = args.domain_nouns
+        if domain_nouns_value:
+            if isinstance(domain_nouns_value, list):
+                domain_nouns_list = [str(n).strip() for n in domain_nouns_value if str(n).strip()]
+            else:
+                domain_nouns_list = [n.strip() for n in str(domain_nouns_value).split(",") if n.strip()]
+        else:
+            domain_nouns_list = []
+
+        protected_keywords = load_skiped_keywords(domain_nouns_list if domain_nouns_list else None)
+
+        # Get all keywords from file
+        keywords_file = Path(__file__).parent / "skiped_keywords.txt"
+        if keywords_file.exists():
+            all_keywords = [line.strip() for line in keywords_file.read_text(encoding="utf-8").splitlines() if line.strip()]
+            # Keywords to filter = all_keywords - protected_keywords
+            skiped_keywords = [kw for kw in all_keywords if kw.lower() not in set(k.lower() for k in protected_keywords)]
+
+            if skiped_keywords:
+                filtered_queries = [filter_query_keywords(q, skiped_keywords) for q in args.query]
+                # Remove empty queries after filtering
+                args.query = [q for q in filtered_queries if q]
+                if not args.query:
+                    print("Error: All queries filtered out by skiped_keywords.txt")
+                    return 1
 
     # Build API kwargs - only pass base_dir if provided (None or empty means use config default)
     def parse_list_param(value):
@@ -540,7 +577,8 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     # Format output (JSON is default since --json flag is required for AOP format)
     if args.json:
-        output = api.format_structured_output(result, queries=args.query)
+        output = api.format_structured_output(result, queries=args.query,
+                                              reranker_enabled=args.reranker)
     else:
         output = api.format_aop_output(result)
 

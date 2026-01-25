@@ -9,7 +9,6 @@ context: fork
 Search and discover markdown documents headings in the local knowledge base using BM25-based retrieval via CLI interface.
 
 ## Critical Constraints
-
 - **NO docContent.md access**: Only search docTOC.md files
 - **Headings hierarchy**: Maintain page_title → headings structure in output
 - **AOP format**: Output must follow AOP specification exactly
@@ -21,31 +20,80 @@ Search and discover markdown documents headings in the local knowledge base usin
 
 ## CLI Usage
 
-### You MUST Run one of the following Basic Commands
+### JSON Configuration File
 
-```bash
-# Use json format output for better dataflow
-conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "hooks configuration" --json --reranker --doc-sets OpenCode_Docs@latest --base-dir <knowledge_base_dir>
+Use the `--config` parameter to pass configuration via a JSON file path or JSON text directly (when value starts with `{`). All configuration keys use Python naming convention (underscores).
 
-# Multiple queries (search for multiple terms)
-conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "authentication" --query "JWT" --query "OAuth" --reranker --doc-sets OpenCode_Docs@latest --base-dir <knowledge_base_dir>
+### Query in Doc-Set Use Case
 
-# Search with BM25 recalled and transformer reranker parameters
-conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cli.py --query "api reference" --bm25-k1 1.5 --bm25-b 0.8 --reranker --reranker-threshold 0.68 --doc-sets OpenCode_Docs@latest --base-dir <knowledge_base_dir>
+#### 1. Single query with Single doc-set
+
+**Example config file (`search_config.json`):**
+```json
+{
+  "query": ["hooks configuration"],  // Multi-query: ["query1", "query2", "query3"]
+  "base_dir": "/path/to/knowledge_base",
+  "doc_sets": "OpenCode_Docs@latest",  // Multi doc-set: "doc1@v1,doc2@v2,doc3@latest"
+  "bm25_k1": 1.2,
+  "bm25_b": 0.75,
+  "reranker_threshold": 0.68,
+  "domain_nouns": ["hook", "tool", "agent"],
+  "predicate_verbs": ["create", "delete"],
+  "json": true
+}
 ```
 
-### CLI Arguments
+#### 2. Multi query with Multi doc-set
 
-| Argument | Type | Default | Description |
-|----------|------|---------|-------------|
-| `--query` | string | **required** | Search query string (can be specified multiple times) |
-| `--base-dir` | string | **required** | local knowledge base root dir |
-| `--doc-sets` | string | **required** | Search query scope |
-| `--bm25-k1` | float | 1.2 | BM25 k1 parameter |
-| `--bm25-b` | float | 0.75 | BM25 b parameter |
-| `--reranker-threshold` | float | 0.68 | Similarity threshold for filtering headings (default: 0.68). Headings with score < threshold are filtered out. |
-| `--json` | flag | false | Output structured JSON metadata instead of AOP-FINAL format |
-| `--reranker` | flag | false | Must add to cli to perform a rerank operaton |
+**Multi query & multi doc-set example:**
+```json
+{
+  "query": ["authentication", "JWT", "OAuth"],
+  "base_dir": "/path/to/knowledge_base",
+  "doc_sets": "api_doc@v1,auth_service@v2",
+  "reranker_threshold": 0.68,
+  "json": true
+}
+```
+
+**Usage with config file:**
+```bash
+conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config search_config.json
+```
+
+**Usage with JSON text directly:**
+```bash
+# Pass JSON text directly (starts with '{')
+conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cli.py --config '{"query": ["hooks"], "doc_sets": "OpenCode_Docs@latest", "base_dir": "/path/to/knowledge_base", "json": true}'
+```
+
+#### Multi Query & Multi Doc-Set Support
+
+**query**: 支持多个查询词，格式为字符串数组 `["query1", "query2", "query3"]`
+
+**doc_sets**: 支持多个文档集，格式为逗号分隔的字符串 `"doc1@v1,doc2@v2,doc3@latest"`
+
+#### JSON Config Parameters
+
+When using `--config`, the following parameters are supported (Python naming convention):
+
+| Config Key | Type | Default | CLI Equivalent |
+|------------|------|---------|----------------|
+| `query` | string[] | **required** | `--query` (multiple times) |
+| `base_dir` | string | **required** | `--base-dir` |
+| `doc_sets` | string | **required** | `--doc-sets` |
+| `reranker_threshold` | float | 0.68 | `--reranker-threshold` |
+| `bm25_k1` | float | 1.2 | `--bm25-k1` |
+| `bm25_b` | float | 0.75 | `--bm25-b` |
+| `threshold_page_title` | float | 0.6 | `--threshold-page-title` |
+| `threshold_headings` | float | 0.25 | `--threshold-headings` |
+| `threshold_precision` | float | 0.7 | `--threshold-precision` |
+| `min_page_titles` | int | 3 | `--min-page-titles` |
+| `min_headings` | int | 2 | `--min-headings` |
+| `json` | boolean | true | `--json` |
+| `hierarchical_filter` | int | 1 | `--hierarchical-filter` |
+| `domain_nouns` | string[] | [] | `--domain-nouns` |
+| `predicate_verbs` | string[] | [] | `--predicate-verbs` |
 
 ### Structured JSON Output
 
@@ -54,15 +102,26 @@ When using `--json` flag, the searcher outputs machine-parsable JSON metadata:
 ```json
 {
   "success": true,
-  "doc_sets_found": ["code_claude_com@latest"],
+  "toc_fallback": true,
+  "grep_fallback": true,
+  "query": [
+    "create rules"
+  ],
+  "doc_sets_found": [
+    "OpenCode_Docs@latest"
+  ],
   "results": [
     {
-      "doc_set": "code_claude_com@latest",
-      "page_title": "Agent Skills",
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "Plugins",
       "toc_path": "/path/to/docTOC.md",
       "headings": [
-        {"level": 2, "text": "Create Skills"},
-        {"level": 3, "text": "Configure Hooks"}
+        {
+          "level": 2,
+          "text": "## 3. Create a plugin",
+          "rerank_sim": 0.7079395651817322,
+          "bm25_sim": 0.28768207245178085
+        }
       ]
     }
   ]
@@ -71,16 +130,14 @@ When using `--json` flag, the searcher outputs machine-parsable JSON metadata:
 
 **Purpose:** Enable downstream skills (md-doc-reader) to extract content by specific headings for token-efficient retrieval.
 
-**Multi-Document Extraction:** When multiple results are returned, the JSON output enables md-doc-reader to extract multiple sections from multiple documents using `--sections-file` or `--sections-json` parameters, maintaining proper title-headings associations.
-
 ```markdown
 === AOP-FINAL | agent=md-doc-searcher | results={count} | doc_sets={sets} ===
 **Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
 
 **{doc_name}:{doc_version}**
 
-**{PageTitle}
-   - TOC 路径: `{base_dir}/{doc_name}:{doc_version}/{PageTitle}/docTOC.md`
+**{PageTitle}**
+   - TOC 路径: `{base-dir}/{doc_name}:{doc_version}/{PageTitle}/docTOC.md`
    - **匹配Heading列表**:
      - ## {Heading1}
      - ### {Heading2}
@@ -100,3 +157,33 @@ No matched headings found!
 
 === END-AOP-FINAL ===
 ```
+
+## Implementation Notes
+
+**Current Search Strategy:**
+- BM25-based retrieval across docTOC.md files
+- Transformer reranker for semantic re-ranking
+- STRICT doc-set boundary enforcement
+
+**Search Scope Guarantee:**
+- Only searches the EXACT doc-sets specified via `--doc-sets` parameter
+- No glob patterns (like `*Code*`) for cross-set matching
+- No grep-based fallback searches
+- No automatic doc-set expansion
+
+**BM25 Interface:**
+```python
+# bm25_recall.py
+def recall_pages(
+    self,
+    doc_set: str,  # Comma-separated: "doc1@v1,doc2@v2"
+    query: Union[str, List[str]],
+    min_headings: int = 2
+) -> List[Dict[str, Any]]:
+    # Parses doc_set and searches ONLY specified doc-sets
+```
+
+**What We DON'T Do:**
+- No grep-based fallback searches
+- No cross-set glob pattern matching
+- No direct docContent.md access (blocked by hooks)

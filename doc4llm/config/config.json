@@ -198,6 +198,7 @@
   },
   "tool": {
     "markdown_extractor": {
+      "base_dir": null,
       "default_search_mode": "exact",
       "case_sensitive": false,
       "max_results": 10,
@@ -209,7 +210,8 @@
         "fuzzy"
       ],
       "compress_threshold": 2000,
-      "enable_compression": false
+      "enable_compression": false,
+      "debug_mode": 0
     }
   },
   "output_log_file": "results/output.out",

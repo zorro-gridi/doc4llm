@@ -13,6 +13,7 @@ Usage:
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -76,23 +77,15 @@ def main():
         help="Output in JSON format",
     )
     parser.add_argument(
-        "--config",
+        "--extractor-config",
         "-c",
-        help="Path to config.json file",
+        help="Path to config.json file for MarkdownDocExtractor initialization",
     )
     parser.add_argument(
         "--debug",
         "-d",
         action="store_true",
         help="Enable debug output",
-    )
-    parser.add_argument(
-        "--page-titles-csv",
-        help="Comma-separated page titles for multi-document extraction",
-    )
-    parser.add_argument(
-        "--page-titles-file",
-        help="File containing page titles (one per line)",
     )
     parser.add_argument(
         "--with-metadata",
@@ -142,7 +135,8 @@ def main():
     )
     parser.add_argument(
         "--headings",
-        help="Comma-separated heading names for section extraction",
+        nargs="+",
+        help="Heading names for section extraction",
     )
     parser.add_argument(
         "--doc-info",
@@ -156,15 +150,58 @@ def main():
         help="Output format (default: text)",
     )
     parser.add_argument(
-        "--sections-file",
-        help="Path to JSON file containing multi-section specifications",
-    )
-    parser.add_argument(
-        "--sections-json",
-        help="Inline JSON string with multi-section specifications",
+        "--config",
+        help="Path to JSON params file or inline JSON string (auto-detects file vs inline)",
     )
 
     args = parser.parse_args()
+
+    # Handle unified params file/json
+    params = None
+    if args.config:
+        if os.path.isfile(args.config):
+            with open(args.config, 'r', encoding='utf-8') as f:
+                params = json.load(f)
+        else:
+            try:
+                params = json.loads(args.config)
+            except json.JSONDecodeError as e:
+                print(f"Error: Invalid JSON in --config: {e}", file=sys.stderr)
+                return 1
+
+    if params:
+        args.doc_set = params.get("doc_set", args.doc_set)
+        args.with_metadata = params.get("with_metadata", args.with_metadata)
+        args.threshold = params.get("threshold", args.threshold)
+        args.format = params.get("format", args.format)
+        args.search_mode = params.get("search_mode", args.search_mode)
+        args.fuzzy_threshold = params.get("fuzzy_threshold", args.fuzzy_threshold)
+
+        page_titles = params.get("page_titles")
+        if page_titles:
+            if isinstance(page_titles, list) and page_titles:
+                first = page_titles[0]
+                if isinstance(first, dict):
+                    if any(isinstance(p, dict) and "headings" in p for p in page_titles):
+                        args.sections = page_titles
+                    else:
+                        args.page_titles = [p.get("title") if isinstance(p, dict) else p for p in page_titles]
+                else:
+                    args.page_titles = page_titles
+            else:
+                args.page_titles = [page_titles] if not isinstance(page_titles, list) else page_titles
+        else:
+            args.page_title = params.get("page_title", args.page_title)
+
+        # sections 覆盖 page_titles 的 dict 列表格式
+        sections = params.get("sections")
+        if sections:
+            args.sections = sections
+
+        # 添加 headings 支持（兼容列表和逗号分隔字符串）
+        headings = params.get("headings")
+        if headings:
+            args.headings = headings
 
     if args.base_dir:
         base_path = Path(args.base_dir).expanduser().resolve()
@@ -176,24 +213,24 @@ def main():
             return 1
 
     # Validate arguments
-    # Allow --list, --titles-csv, --titles-file, --semantic-search, --sections-file, --sections-json without --title
-    requires_title = not (
-        args.list or args.page_titles_csv or args.page_titles_file or args.semantic_search or
-        args.sections_file or args.sections_json
-    )
-    if requires_title and not args.page_title:
-        parser.error(
-            "--page-title is required unless using --list, --page-titles-csv, --page-titles-file, --semantic-search, --sections-file, or --sections-json"
-        )
+    has_page_title = hasattr(args, 'page_title') and args.page_title
+    has_page_titles = hasattr(args, 'page_titles') and args.page_titles
+    has_sections = hasattr(args, 'sections') and args.sections
 
-    # Validate mutually exclusive arguments
-    if args.sections_file and args.sections_json:
+    requires_title = not (
+        args.list or
+        args.semantic_search or
+        has_page_title or
+        has_page_titles or
+        has_sections
+    )
+    if requires_title and not has_page_title:
         parser.error(
-            "--sections-file and --sections-json are mutually exclusive"
+            "--page-title is required unless using --list, --semantic-search, or --config"
         )
 
     # Require --doc-set when using --headings (section extraction)
-    if args.headings and not args.doc_set:
+    if hasattr(args, 'headings') and args.headings and not args.doc_set:
         parser.error(
             "--doc-set is required when using --headings for section extraction to ensure the correct document set is targeted"
         )
@@ -201,8 +238,8 @@ def main():
     try:
         from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
 
-        if args.config:
-            extractor = MarkdownDocExtractor.from_config(args.config)
+        if args.extractor_config:
+            extractor = MarkdownDocExtractor.from_config(args.extractor_config)
         else:
             # Search upward from current script to find .claude directory with knowledge_base.json
             current = Path(__file__).resolve()
@@ -285,36 +322,25 @@ def main():
             return 0
 
         # Multi-document extraction
-        if args.page_titles_csv or args.page_titles_file:
-            titles = []
-            if args.page_titles_csv:
-                titles.extend([t.strip() for t in args.page_titles_csv.split(",")])
-            if args.page_titles_file:
-                with open(args.page_titles_file, "r") as f:
-                    titles.extend([line.strip() for line in f if line.strip()])
-
+        if has_page_titles:
+            titles = args.page_titles
+            doc_set = None
+            if isinstance(args.page_titles[0], dict):
+                doc_set = args.page_titles[0].get("doc_set")
             if args.with_metadata:
-                # Use extract_by_titles_with_metadata()
                 from doc4llm.tool.md_doc_retrieval import ExtractionResult
-
                 result: ExtractionResult = extractor.extract_by_titles_with_metadata(
-                    titles=titles, threshold=args.threshold
+                    titles=titles, threshold=args.threshold, doc_set=doc_set
                 )
                 output_metadata_result(result, args.format)
             else:
-                # Use extract_by_titles()
                 contents = extractor.extract_by_titles(titles)
                 output_multi_contents(contents, args.format)
             return 0
 
         # Multi-section extraction (multiple documents with their associated headings)
-        if args.sections_file or args.sections_json:
-            # Load sections specifications
-            if args.sections_file:
-                with open(args.sections_file, "r", encoding="utf-8") as f:
-                    sections = json.load(f)
-            else:  # args.sections_json
-                sections = json.loads(args.sections_json)
+        if has_sections:
+            sections = args.sections
 
             # Use extract_multi_by_headings()
             from doc4llm.tool.md_doc_retrieval import ExtractionResult
@@ -360,8 +386,8 @@ def main():
             return 0
 
         # Section extraction by headings
-        if args.headings:
-            headings = [h.strip() for h in args.headings.split(",")]
+        if hasattr(args, 'headings') and args.headings:
+            headings = args.headings
             sections = extractor.extract_by_headings(
                 page_title=args.page_title, headings=headings, doc_set=args.doc_set
             )

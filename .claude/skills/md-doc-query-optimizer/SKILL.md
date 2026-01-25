@@ -1,6 +1,6 @@
 ---
 name: md-doc-query-optimizer
-description: "Optimize and rewrite user queries for better document retrieval. Supports query decomposition, expansion, synonym replacement, and multi-query generation. Returns optimized queries for document search."
+description: "Pure LLM prompt-based skill. Optimize and rewrite user queries for better document retrieval. Supports query decomposition, expansion, synonym replacement, and multi-query generation. Returns optimized queries for document search."
 disable-model-invocation: true
 ---
 
@@ -157,38 +157,86 @@ For each user query, analyze:
 
 **Core Extraction Rule**
 
-> *Return the noun that represents the true entity being discussed, analyzed, or acted upon in the query.*
+> *Return ONLY the noun that represents the true entity being **created**, **configured**, **built**, or **operated on** in the query. This is the **target object** of the action, NOT the tool/platform used to perform the action.*
 
-Include:
+**Decision Tree**
 
-* Product names: Claude Code
-* Components: hooks, skills
-* Technical entities: middleware, authentication, API
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Q1: Is this noun the TARGET of the action (created, configured, built)? ──→ YES → INCLUDE
+│ Q2: Is this noun the TOOL/PLATFORM used to perform the action?          ──→ YES → EXCLUDE
+│ Q3: Is this noun the THEME/TOPIC being discussed/analyzed?              ──→ YES → INCLUDE
+└─────────────────────────────────────────────────────────────────┘
+```
 
-Exclude:
-* Abstract process nouns: creation, deployment, configuration (as a process)
+Examples:
+- "opencode **如何创建 skills**" → skills is TARGET → `["skills"]`
+- "opencode **的设计理念**" → opencode is THEME → `["opencode"]`
+- "用 Python **处理** CSV 文件" → CSV is TARGET → `["CSV"]`
+
+**Include:**
+
+* **Target Objects**: hooks, skills, middleware, API, components being created/configured
+* **Product Names**: Claude Code, OpenCode (when they are the topic/theme)
+* **Technical Entities**: authentication, database, configuration files
+
+**Exclude:**
+
+* **Implementation Tools/Platforms**: opencode, python, docker, git (how it's done)
+* **Abstract Process Nouns**: creation, deployment, configuration (as a process)
 
 Demo Extraction
-| query input | returned entities |
-| :--- | :--- |
-| opencode 如何创建 skills | skills |
-| opencode 的设计理念 | opencode |
-| opencode 和 Claude code 的 skills 对比分析 | skills |
-| opencode 和 claude code 对比分析 | opencode 和 Claude code |
+| query input | returned entities | Rationale |
+| :--- | :--- | :--- |
+| opencode 如何创建 skills | skills | skills is the TARGET being created |
+| opencode 的设计理念 | opencode | opencode is the THEME being discussed |
+| opencode 和 Claude code 的 skills 对比分析 | skills | skills is the TARGET being compared |
+| opencode 和 claude code 对比分析 | opencode, Claude code | both are THEMEs being compared |
 
 ### Phase 5: Predicate Verbs
 
-Extrat Rules: **You should extract all the verbs base on the optimized query sets, not the user raw query input.**
+> **⚠️ CRITICAL: This phase extracts from OPTIMIZED queries, NOT original query.**
 
-Core action verbs Examples:
+| Aspect | Phase 4 (Domain Nouns) | Phase 5 (Predicate Verbs) |
+|--------|------------------------|---------------------------|
+| **Source** | Original query | Optimized queries |
+| **Extraction** | Direct extraction | Derive from query variations |
+| **Purpose** | Identify target entities | Capture action diversity |
 
-* create
-* configure
-* setup
-* deploy
-* build
-* install
-* integrate
+**Core Extraction Rule**
+
+> *Derive ALL action verbs from the optimized query set generated in Phase 2. Each optimized query contains a different action variant (e.g., "create", "setup", "configure"). Collect these verbs to capture the full range of possible actions.*
+
+**Common Mistakes Table**
+
+| ❌ Wrong | ✅ Correct | Reason |
+|----------|------------|--------|
+| Extract from "如何**创建**" → `["create"]` | Derive from optimized queries → `["create", "setup", "configure"]` | Phase 5 rule violation |
+| Extract single verb | Extract multiple verbs | Must capture action diversity |
+| From original query | From optimized queries | Protocol requirement |
+
+**Complete Workflow Example**
+
+**Original Query:** `"opencode 如何创建 skills"`
+
+**Phase 2 Output (Optimized Queries):**
+
+| Rank | Query | Key Verb |
+|------|-------|----------|
+| 1 | "opencode **skills creation**" | creation → create |
+| 2 | "opencode skills **setup** guide" | setup |
+| 3 | "opencode how to **create** skills tutorial" | create |
+| 4 | "opencode skills **configuration**" | configure |
+
+**Phase 5 Output:**
+```json
+"predicate_verbs": ["create", "setup", "configure", "creation", "creating", "configuration", "configuring", "setting up"]
+```
+
+> **Note:** `predicate_verbs` should include multiple forms:
+> - **Verb base forms**: `create`, `setup`, `configure`
+> - **Gerund forms**: `creating`, `setting up`, `configuring`
+> - **Noun forms**: `creation`, `configuration`, `setup`
 ---
 
 ### Optimized Query Count Logic
@@ -239,15 +287,27 @@ This ensures:
     "ambiguity": "{low|medium|high}",
     "strategies": ["translation","expansion"],
     "doc_set": ["code_claude_com@latest"],
-    "domain_nouns": ["hooks","skills"],
-    "predicate_verbs": ["configure","setup"]
+    "domain_nouns": ["skills"],
+    "predicate_verbs": ["create", "setup", "configure", "creation", "creating", "configuration", "configuring", "setting up"]
   },
   "optimized_queries": [
     {
       "rank": 1,
-      "query": "hooks configuration",
+      "query": "opencode skills creation guide",
+      "strategy": "expansion",
+      "rationale": "Direct translation with documentation modifier"
+    },
+    {
+      "rank": 2,
+      "query": "opencode skills setup tutorial",
+      "strategy": "expansion",
+      "rationale": "Alternative action verb for broader coverage"
+    },
+    {
+      "rank": 3,
+      "query": "how to create skills in opencode",
       "strategy": "translation",
-      "rationale": "Direct English translation"
+      "rationale": "Question format with explicit action"
     }
   ],
   "search_recommendation": {

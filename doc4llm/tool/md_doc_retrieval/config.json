@@ -1,4 +1,5 @@
 {
+  "base_dir": null,
   "default_search_mode": "exact",
   "case_sensitive": false,
   "max_results": 10,

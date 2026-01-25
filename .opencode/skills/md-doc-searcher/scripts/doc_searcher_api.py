@@ -102,6 +102,7 @@ class DocSearcherAPI:
     fallback_mode: str = "parallel"
     domain_nouns: List[str] = field(default_factory=list)
     predicate_verbs: List[str] = field(default_factory=list)
+    skiped_keywords: List[str] = field(default_factory=list)
 
     def __post_init__(self):
         """Initialize configuration from knowledge_base.json."""
@@ -171,6 +172,14 @@ class DocSearcherAPI:
                 top_k=self.reranker_top_k,
             )
             self._reranker = HeadingReranker(reranker_config, matcher)
+
+        # Load skiped_keywords.txt for protected keywords
+        skiped_file = Path(__file__).parent / "skiped_keywords.txt"
+        if skiped_file.exists():
+            self.skiped_keywords = [
+                line.strip() for line in skiped_file.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
 
     def _debug_print(self, message: str):
         """Print debug message."""
@@ -311,9 +320,16 @@ class DocSearcherAPI:
         if not predicate_verbs:
             return text
 
+        # 获取受保护的关键词（skiped_keywords 与 domain_nouns 的交集）
+        protected_keywords = self._get_protected_keywords()
+
         # 使用正则替换，移除所有 predicate_verbs（不区分大小写）
+        # 但跳过受保护的关键词
         processed_text = text
         for verb in predicate_verbs:
+            # 跳过受保护的关键词
+            if protected_keywords and verb.lower() in {kw.lower() for kw in protected_keywords}:
+                continue
             # 检测是否为中文（包含中文字符）
             if re.search(r'[\u4e00-\u9fff]', verb):
                 # 中文：直接子串匹配（不使用 word boundary）
@@ -356,6 +372,19 @@ class DocSearcherAPI:
             processed_headings.append({**h, "text": processed_text})
 
         return processed_headings
+
+    def _get_protected_keywords(self) -> set:
+        """
+        获取受保护的关键词集合（skiped_keywords 与 domain_nouns 的交集）。
+
+        这些关键词在预处理时不会被剔除。
+
+        Returns:
+            受保护的关键词集合
+        """
+        if not self.domain_nouns or not self.skiped_keywords:
+            return set()
+        return set(self.domain_nouns) & set(self.skiped_keywords)
 
     def _extract_heading_level(self, heading_text: str) -> int:
         """Extract heading level from markdown heading text.
@@ -881,8 +910,8 @@ class DocSearcherAPI:
             )
             self._debug_print(f"  Found {len(scored_pages)} scored pages")
 
-            # Transformer re-ranking for headings
-            if self._reranker:
+            # Transformer re-ranking for headings (only if enabled)
+            if self.reranker_enabled and self._reranker:
                 self._debug_print("  Applying transformer re-ranking to headings")
                 for page in scored_pages:
                     # 预处理 page_title
@@ -924,125 +953,124 @@ class DocSearcherAPI:
 
         self._debug_print(f"Total pages in all_results: {len(all_results)}")
 
-        success = len(all_results) >= self.min_page_titles and any(
-            r["score"] >= self.threshold_precision for r in all_results
-        )
+        # Always execute fallback strategies when reranker is disabled
         fallback_used = None
+        toc_fallback = False
+        grep_fallback = False
 
-        if not success:
-            # ========== PARALLEL MODE (default) ==========
-            if self.fallback_mode == "parallel":
-                self._debug_print("Main flow failed, trying PARALLEL fallback mode")
-                toc_fallback = True
-                grep_fallback = True
+        # ========== PARALLEL MODE (default) ==========
+        if self.fallback_mode == "parallel":
+            self._debug_print("Executing PARALLEL fallback mode (always when reranker disabled)")
+            toc_fallback = True
+            grep_fallback = True
 
-                all_fallback_results = []
-                fallback_strategies = []
+            all_fallback_results = []
+            fallback_strategies = []
 
-                # Execute FALLBACK_1 (without applying reranker yet)
-                grep_results = self._fallback1_grep_search(query, search_doc_sets)
-                if grep_results:
-                    from bm25_recall import calculate_bm25_similarity, BM25Config
+            # Execute FALLBACK_1 (without applying reranker yet)
+            grep_results = self._fallback1_grep_search(query, search_doc_sets)
+            if grep_results:
+                from bm25_recall import calculate_bm25_similarity, BM25Config
 
-                    for result in grep_results:
-                        result["score"] = calculate_bm25_similarity(
-                            combined_query,
-                            result.get("heading", ""),
-                            BM25Config(k1=self.bm25_k1, b=self.bm25_b),
-                        )
-                        result["is_basic"] = result["score"] >= self.threshold_headings
-                        result["is_precision"] = result["score"] >= self.threshold_precision
+                for result in grep_results:
+                    result["score"] = calculate_bm25_similarity(
+                        combined_query,
+                        result.get("heading", ""),
+                        BM25Config(k1=self.bm25_k1, b=self.bm25_b),
+                    )
+                    result["is_basic"] = result["score"] >= self.threshold_headings
+                    result["is_precision"] = result["score"] >= self.threshold_precision
 
-                    page_map = {}
-                    for r in grep_results:
-                        key = (r["doc_set"], r["page_title"])
-                        if key not in page_map:
-                            page_map[key] = {
-                                "doc_set": r["doc_set"],
-                                "page_title": r["page_title"],
-                                "toc_path": r["toc_path"],
-                                "headings": [],
-                                "heading_count": 0,
-                                "precision_count": 0,
-                                "score": r["score"],
-                                "is_basic": r["is_basic"],
-                                "is_precision": r["is_precision"],
-                            }
-                        page_map[key]["headings"].append(
-                            {
-                                "text": r["heading"],
-                                "level": self._extract_heading_level(r["heading"]),
-                                "score": r["score"],
-                                "bm25_sim": r["score"],
-                                "is_basic": r["is_basic"],
-                                "is_precision": r["is_precision"],
-                            }
-                        )
-                        page_map[key]["heading_count"] += 1
-                        if r["is_precision"]:
-                            page_map[key]["precision_count"] += 1
+                page_map = {}
+                for r in grep_results:
+                    key = (r["doc_set"], r["page_title"])
+                    if key not in page_map:
+                        page_map[key] = {
+                            "doc_set": r["doc_set"],
+                            "page_title": r["page_title"],
+                            "toc_path": r["toc_path"],
+                            "headings": [],
+                            "heading_count": 0,
+                            "precision_count": 0,
+                            "score": r["score"],
+                            "is_basic": r["is_basic"],
+                            "is_precision": r["is_precision"],
+                        }
+                    page_map[key]["headings"].append(
+                        {
+                            "text": r["heading"],
+                            "level": self._extract_heading_level(r["heading"]),
+                            "score": r["score"],
+                            "bm25_sim": r["score"],
+                            "is_basic": r["is_basic"],
+                            "is_precision": r["is_precision"],
+                        }
+                    )
+                    page_map[key]["heading_count"] += 1
+                    if r["is_precision"]:
+                        page_map[key]["precision_count"] += 1
 
-                    all_fallback_results.extend(page_map.values())
-                    fallback_strategies.append("FALLBACK_1")
+                all_fallback_results.extend(page_map.values())
+                fallback_strategies.append("FALLBACK_1")
 
-                # Execute FALLBACK_2 (without applying reranker yet)
-                context_results = self._fallback2_grep_context_bm25(query, search_doc_sets)
-                if context_results:
-                    # Convert "heading" to "headings" list for consistency
-                    for page in context_results:
-                        page["headings"] = [
-                            {
-                                "text": page["heading"],
-                                "level": self._extract_heading_level(page["heading"]),
-                                "score": page["score"],
-                                "bm25_sim": page["score"],
-                                "is_basic": page.get("is_basic", True),
-                                "is_precision": page.get("is_precision", False),
-                            }
-                        ]
-                        page["heading_count"] = 1
-                        page["precision_count"] = 1 if page.get("is_precision", False) else 0
+            # Execute FALLBACK_2 (without applying reranker yet)
+            context_results = self._fallback2_grep_context_bm25(query, search_doc_sets)
+            if context_results:
+                # Convert "heading" to "headings" list for consistency
+                for page in context_results:
+                    page["headings"] = [
+                        {
+                            "text": page["heading"],
+                            "level": self._extract_heading_level(page["heading"]),
+                            "score": page["score"],
+                            "bm25_sim": page["score"],
+                            "is_basic": page.get("is_basic", True),
+                            "is_precision": page.get("is_precision", False),
+                        }
+                    ]
+                    page["heading_count"] = 1
+                    page["precision_count"] = 1 if page.get("is_precision", False) else 0
 
-                    all_fallback_results.extend(context_results)
-                    fallback_strategies.append("FALLBACK_2")
+                all_fallback_results.extend(context_results)
+                fallback_strategies.append("FALLBACK_2")
 
-                # Merge results from both fallback strategies
-                if all_fallback_results:
-                    all_results = self._merge_fallback_results(all_fallback_results)
+            # Merge results from both fallback strategies
+            if all_fallback_results:
+                merged_fallback = self._merge_fallback_results(all_fallback_results)
+                all_results.extend(merged_fallback)
 
-                    # Apply reranker once to merged results
-                    if self._reranker:
-                        self._debug_print("  Applying transformer re-ranking to merged PARALLEL fallback results")
-                        for page in all_results:
-                            # 预处理 page_title
-                            if self.domain_nouns:
-                                page["page_title"] = self._preprocess_for_rerank(
-                                    page.get("page_title", ""),
-                                    self.domain_nouns,
-                                    self.predicate_verbs
-                                )
+                # Apply reranker once to merged results
+                if self.reranker_enabled and self._reranker:
+                    self._debug_print("  Applying transformer re-ranking to merged PARALLEL fallback results")
+                    for page in all_results:
+                        # 预处理 page_title
+                        if self.domain_nouns:
+                            page["page_title"] = self._preprocess_for_rerank(
+                                page.get("page_title", ""),
+                                self.domain_nouns,
+                                self.predicate_verbs
+                            )
 
-                            original_headings = page["headings"]
-                            if original_headings:
-                                # 预处理 headings
-                                processed_headings = self._preprocess_headings_for_rerank(
-                                    original_headings, self.domain_nouns, self.predicate_verbs
-                                )
-                                reranked_headings = self._reranker.rerank_headings(
-                                    combined_query, processed_headings
-                                )
-                                page["headings"] = reranked_headings
-                                page["heading_count"] = len(reranked_headings)
-                                page["precision_count"] = sum(
-                                    1 for h in reranked_headings if h.get("is_precision", False)
-                                )
+                        original_headings = page["headings"]
+                        if original_headings:
+                            # 预处理 headings
+                            processed_headings = self._preprocess_headings_for_rerank(
+                                original_headings, self.domain_nouns, self.predicate_verbs
+                            )
+                            reranked_headings = self._reranker.rerank_headings(
+                                combined_query, processed_headings
+                            )
+                            page["headings"] = reranked_headings
+                            page["heading_count"] = len(reranked_headings)
+                            page["precision_count"] = sum(
+                                1 for h in reranked_headings if h.get("is_precision", False)
+                            )
 
-                    success = len(all_results) >= self.min_page_titles
-                    fallback_used = "+".join(fallback_strategies) if fallback_strategies else None
+                fallback_used = "+".join(fallback_strategies) if fallback_strategies else None
 
             # ========== SERIAL MODE (backward compatible) ==========
             else:  # self.fallback_mode == "serial"
-                self._debug_print("Main flow failed, trying SERIAL fallback mode")
+                self._debug_print("Executing SERIAL fallback mode (always when reranker disabled)")
 
                 # FALLBACK_1
                 toc_fallback = True
@@ -1090,7 +1118,7 @@ class DocSearcherAPI:
                             page_map[key]["precision_count"] += 1
 
                     # Apply reranker if enabled for FALLBACK_1 (serial mode)
-                    if self._reranker:
+                    if self.reranker_enabled and self._reranker:
                         self._debug_print("  Applying transformer re-ranking to FALLBACK_1 results")
                         for page in page_map.values():
                             # 预处理 page_title
@@ -1116,75 +1144,73 @@ class DocSearcherAPI:
                                     1 for h in reranked_headings if h.get("is_precision", False)
                                 )
 
-                    all_results = list(page_map.values())
-                    success = (
-                        len(all_results) >= self.min_page_titles and
-                        any(page.get("heading_count", 0) > 0 for page in all_results)
-                    )
+                    all_results.extend(list(page_map.values()))
                     fallback_used = "FALLBACK_1"
 
-                # FALLBACK_2 (only if FALLBACK_1 failed)
-                if not success:
-                    grep_fallback = True
-                    context_results = self._fallback2_grep_context_bm25(query, search_doc_sets)
+                # FALLBACK_2 (always execute in serial mode when reranker disabled)
+                grep_fallback = True
+                context_results = self._fallback2_grep_context_bm25(query, search_doc_sets)
 
-                    if context_results:
-                        # Apply reranker if enabled for FALLBACK_2 (serial mode)
-                        if self._reranker:
-                            self._debug_print("  Applying transformer re-ranking to FALLBACK_2 results")
-                            for page in context_results:
-                                # 预处理 page_title
-                                if self.domain_nouns:
-                                    page["page_title"] = self._preprocess_for_rerank(
-                                        page.get("page_title", ""),
-                                        self.domain_nouns,
-                                        self.predicate_verbs
-                                    )
-
-                                original_headings = [
-                                    {
-                                        "text": page["heading"],
-                                        "level": self._extract_heading_level(page["heading"]),
-                                        "score": page["score"],
-                                        "bm25_sim": page["score"],
-                                        "is_basic": page.get("is_basic", True),
-                                        "is_precision": page.get("is_precision", False),
-                                    }
-                                ]
-
-                                # 预处理 headings
-                                processed_headings = self._preprocess_headings_for_rerank(
-                                    original_headings, self.domain_nouns, self.predicate_verbs
+                if context_results:
+                    # Apply reranker if enabled for FALLBACK_2 (serial mode)
+                    if self.reranker_enabled and self._reranker:
+                        self._debug_print("  Applying transformer re-ranking to FALLBACK_2 results")
+                        for page in context_results:
+                            # 预处理 page_title
+                            if self.domain_nouns:
+                                page["page_title"] = self._preprocess_for_rerank(
+                                    page.get("page_title", ""),
+                                    self.domain_nouns,
+                                    self.predicate_verbs
                                 )
-                                reranked_headings = self._reranker.rerank_headings(
-                                    combined_query, processed_headings
-                                )
-                                if reranked_headings:
-                                    page["headings"] = reranked_headings
-                                else:
-                                    page["headings"] = original_headings
-                                page["heading_count"] = len(page.get("headings", []))
-                                page["precision_count"] = sum(
-                                    1 for h in page.get("headings", []) if h.get("is_precision", False)
-                                )
-                        else:
-                            for page in context_results:
-                                page["headings"] = [
-                                    {
-                                        "text": page["heading"],
-                                        "level": self._extract_heading_level(page["heading"]),
-                                        "score": page["score"],
-                                        "bm25_sim": page["score"],
-                                        "is_basic": page.get("is_basic", True),
-                                        "is_precision": page.get("is_precision", False),
-                                    }
-                                ]
-                                page["heading_count"] = 1
-                                page["precision_count"] = 1 if page.get("is_precision", False) else 0
 
-                        all_results = context_results
-                        success = len(all_results) >= self.min_page_titles
-                        fallback_used = "FALLBACK_2"
+                            original_headings = [
+                                {
+                                    "text": page["heading"],
+                                    "level": self._extract_heading_level(page["heading"]),
+                                    "score": page["score"],
+                                    "bm25_sim": page["score"],
+                                    "is_basic": page.get("is_basic", True),
+                                    "is_precision": page.get("is_precision", False),
+                                }
+                            ]
+
+                            # 预处理 headings
+                            processed_headings = self._preprocess_headings_for_rerank(
+                                original_headings, self.domain_nouns, self.predicate_verbs
+                            )
+                            reranked_headings = self._reranker.rerank_headings(
+                                combined_query, processed_headings
+                            )
+                            if reranked_headings:
+                                page["headings"] = reranked_headings
+                            else:
+                                page["headings"] = original_headings
+                            page["heading_count"] = len(page.get("headings", []))
+                            page["precision_count"] = sum(
+                                1 for h in page.get("headings", []) if h.get("is_precision", False)
+                            )
+                    else:
+                        for page in context_results:
+                            page["headings"] = [
+                                {
+                                    "text": page["heading"],
+                                    "level": self._extract_heading_level(page["heading"]),
+                                    "score": page["score"],
+                                    "bm25_sim": page["score"],
+                                    "is_basic": page.get("is_basic", True),
+                                    "is_precision": page.get("is_precision", False),
+                                }
+                            ]
+                            page["heading_count"] = 1
+                            page["precision_count"] = 1 if page.get("is_precision", False) else 0
+
+                    # Merge FALLBACK_2 results with existing results
+                    all_results.extend(context_results)
+                    fallback_used = "FALLBACK_1+FALLBACK_2" if fallback_used == "FALLBACK_1" else "FALLBACK_2"
+
+        # Calculate final success
+        success = len(all_results) >= self.min_page_titles
 
         results = []
         for page in all_results:
@@ -1242,7 +1268,9 @@ class DocSearcherAPI:
         """
         return OutputFormatter.format_aop(result)
 
-    def format_structured_output(self, result: Dict[str, Any], queries: Optional[List[str]] = None) -> str:
+    def format_structured_output(self, result: Dict[str, Any],
+                                  queries: Optional[List[str]] = None,
+                                  reranker_enabled: Optional[bool] = None) -> str:
         """
         Format result as structured JSON for machine parsing.
 
@@ -1253,8 +1281,12 @@ class DocSearcherAPI:
         Args:
             result: Search result from self.search()
             queries: Original query input list from --query parameter
+            reranker_enabled: Whether reranker was enabled. If None, uses self.reranker_enabled
 
         Returns:
             JSON string with structured metadata
         """
-        return OutputFormatter.format_structured(result, queries=queries)
+        if reranker_enabled is None:
+            reranker_enabled = self.reranker_enabled
+        return OutputFormatter.format_structured(result, queries=queries,
+                                                  reranker_enabled=reranker_enabled)

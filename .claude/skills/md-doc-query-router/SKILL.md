@@ -66,9 +66,9 @@ For detailed scene definitions, examples, and patterns, see [references/scenes.m
 
 ```
 reranker_threshold = base_threshold
-  + 0.10 * confidence
-  - 0.10 * ambiguity
-  + 0.10 * coverage_need
+  + 0.01 * confidence
+  - 0.01 * ambiguity
+  + 0.01 * coverage_need
 ```
 
 **Final value must be clamped to [0.30, 0.80]**
