@@ -219,7 +219,7 @@ def main():
 
         # Build final output
         output = {
-            "data": result,
+            "config": result,
             "from_phase": args.from_phase,
             "to_phase": args.to_phase,
             "status": "success"

@@ -1,5 +1,5 @@
 2026-01-22 20:09:10,295 DEBUG 配置初始化完成: 起始URL: https://opencode.ai/docs/ 基础域名: opencode.ai 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 30 调试: 1
-2026-01-22 20:09:10,296 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest
+2026-01-22 20:09:10,296 DEBUG 文档根目录: ~/project/md_docs_base/OpenCode_Docs@latest
 2026-01-22 20:09:10,299 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:10,300 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:10,301 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -535,7 +535,7 @@
 2026-01-22 20:09:18,785 DEBUG 跳过重复链接: https://opencode.ai/docs/#ask-questions
 2026-01-22 20:09:18,786 DEBUG 跳过重复链接: https://opencode.ai/docs/enterprise/#sso-integration
 2026-01-22 20:09:18,786 DEBUG 跳过重复链接: https://opencode.ai/docs/themes/#using-a-theme
-2026-01-22 20:09:18,786 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
+2026-01-22 20:09:18,786 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
 2026-01-22 20:09:18,786 DEBUG 跳过重复链接: https://opencode.ai/docs/models/#variants
 2026-01-22 20:09:18,786 DEBUG 使用白名单/黑名单策略检测 TOC
 2026-01-22 20:09:18,788 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#github
@@ -548,7 +548,7 @@
 2026-01-22 20:09:18,795 DEBUG 使用白名单/黑名单策略检测 TOC
 2026-01-22 20:09:18,796 DEBUG 使用白名单/黑名单策略检测 TOC
 2026-01-22 20:09:18,797 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#home-directory-expansion
-2026-01-22 20:09:18,797 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Ecosystem/docTOC.md
+2026-01-22 20:09:18,797 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Ecosystem/docTOC.md
 2026-01-22 20:09:18,798 DEBUG 跳过重复链接: https://opencode.ai/docs/rules/#global
 2026-01-22 20:09:18,798 DEBUG 跳过重复链接: https://opencode.ai/docs/github/#schedule-example
 2026-01-22 20:09:18,798 DEBUG 使用白名单/黑名单策略检测 TOC
@@ -581,11 +581,11 @@
 2026-01-22 20:09:18,813 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#models
 2026-01-22 20:09:18,814 DEBUG 跳过重复链接: https://opencode.ai/docs/gitlab/#examples
 2026-01-22 20:09:18,815 DEBUG 跳过重复链接: https://opencode.ai/docs/themes/#custom-themes
-2026-01-22 20:09:18,815 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
+2026-01-22 20:09:18,815 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
 2026-01-22 20:09:18,816 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#create-a-plugin
 2026-01-22 20:09:18,816 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#run-1
 2026-01-22 20:09:18,816 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#privacy
-2026-01-22 20:09:18,816 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitLab/docTOC.md
+2026-01-22 20:09:18,816 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/GitLab/docTOC.md
 2026-01-22 20:09:18,816 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools/#creating-a-tool
 2026-01-22 20:09:18,816 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools/#location
 2026-01-22 20:09:18,817 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#available-permissions
@@ -630,7 +630,7 @@
 2026-01-22 20:09:18,840 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#create-command-files
 2026-01-22 20:09:18,841 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#export
 2026-01-22 20:09:18,841 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp/#php-intelephense
-2026-01-22 20:09:18,842 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
+2026-01-22 20:09:18,842 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
 2026-01-22 20:09:18,843 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:18,845 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#grep
 2026-01-22 20:09:18,846 DEBUG 跳过重复链接: https://opencode.ai/docs/themes/#json-format
@@ -679,7 +679,7 @@
 2026-01-22 20:09:18,881 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#hostname
 2026-01-22 20:09:18,882 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#what-ask-does
 2026-01-22 20:09:18,882 DEBUG 跳过重复链接: https://opencode.ai/docs/troubleshooting/#ai_apicallerror-and-provider-package-issues
-2026-01-22 20:09:18,883 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Network/docTOC.md
+2026-01-22 20:09:18,883 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Network/docTOC.md
 2026-01-22 20:09:18,883 DEBUG 跳过重复链接: https://opencode.ai/docs/rules/#manual-instructions-in-agentsmd
 2026-01-22 20:09:18,884 DEBUG 跳过重复链接: https://opencode.ai/docs/formatters/#configure
 2026-01-22 20:09:18,884 DEBUG 跳过重复链接: https://opencode.ai/docs/themes/#terminal-defaults
@@ -688,18 +688,18 @@
 2026-01-22 20:09:18,885 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#glob
 2026-01-22 20:09:18,886 DEBUG 跳过重复链接: https://opencode.ai/docs/share/#data-retention
 2026-01-22 20:09:18,886 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#commands
-2026-01-22 20:09:18,887 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
-2026-01-22 20:09:18,887 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
+2026-01-22 20:09:18,887 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
+2026-01-22 20:09:18,887 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
 2026-01-22 20:09:18,888 DEBUG 跳过重复链接: https://opencode.ai/docs/troubleshooting/#copypaste-not-working-on-linux
 2026-01-22 20:09:18,889 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#export
 2026-01-22 20:09:18,889 DEBUG 跳过重复链接: https://opencode.ai/docs/#customize
 2026-01-22 20:09:18,890 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#agents
-2026-01-22 20:09:18,890 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
+2026-01-22 20:09:18,890 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
 2026-01-22 20:09:18,891 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#models
 2026-01-22 20:09:18,892 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:18,892 DEBUG 跳过重复链接: https://opencode.ai/docs/zen#roles
 2026-01-22 20:09:18,892 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#events
-2026-01-22 20:09:18,892 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
+2026-01-22 20:09:18,892 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
 2026-01-22 20:09:18,893 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#files
 2026-01-22 20:09:18,894 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#roles
 2026-01-22 20:09:18,894 DEBUG 跳过重复链接: https://opencode.ai/docs/1-0/#keybinds-renamed
@@ -710,16 +710,16 @@
 2026-01-22 20:09:18,900 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#list
 2026-01-22 20:09:18,900 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#home-directory-expansion
 2026-01-22 20:09:18,902 DEBUG 跳过重复链接: https://opencode.ai/docs/skills#troubleshoot-loading
-2026-01-22 20:09:18,906 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
+2026-01-22 20:09:18,906 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
 2026-01-22 20:09:18,907 DEBUG 跳过重复链接: https://opencode.ai/docs/themes/#example
 2026-01-22 20:09:18,914 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#avantenvim
 2026-01-22 20:09:18,916 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:18,919 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#codecompanionnvim
 2026-01-22 20:09:18,920 DEBUG 跳过重复链接: https://opencode.ai/docs/formatters/#custom-formatters
-2026-01-22 20:09:18,921 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
-2026-01-22 20:09:18,922 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Troubleshooting/docTOC.md
+2026-01-22 20:09:18,921 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
+2026-01-22 20:09:18,922 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Troubleshooting/docTOC.md
 2026-01-22 20:09:18,924 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:09:18,924 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
+2026-01-22 20:09:18,924 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
 2026-01-22 20:09:18,929 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#tools-experimental
 2026-01-22 20:09:18,937 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#json
 2026-01-22 20:09:18,948 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -737,19 +737,19 @@
 2026-01-22 20:09:18,972 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#web
 2026-01-22 20:09:18,973 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#model-access
 2026-01-22 20:09:18,974 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#cors
-2026-01-22 20:09:18,976 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
-2026-01-22 20:09:18,977 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/ACP Support/docTOC.md
-2026-01-22 20:09:18,977 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Intro/docTOC.md
+2026-01-22 20:09:18,976 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
+2026-01-22 20:09:18,977 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/ACP Support/docTOC.md
+2026-01-22 20:09:18,977 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Intro/docTOC.md
 2026-01-22 20:09:18,978 DEBUG 跳过重复链接: https://opencode.ai/docs/share/#for-enterprises
 2026-01-22 20:09:18,979 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#lsp-formatters--mcp
 2026-01-22 20:09:18,980 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#env-protection
-2026-01-22 20:09:18,981 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Migrating to 1.0/docTOC.md
-2026-01-22 20:09:18,986 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
+2026-01-22 20:09:18,981 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Migrating to 1.0/docTOC.md
+2026-01-22 20:09:18,986 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
 2026-01-22 20:09:18,987 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:18,988 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:09:18,989 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
+2026-01-22 20:09:18,989 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
 2026-01-22 20:09:18,990 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:09:18,990 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
+2026-01-22 20:09:18,990 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
 2026-01-22 20:09:18,992 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#bring-your-own-key
 2026-01-22 20:09:18,993 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#new
 2026-01-22 20:09:18,993 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#redo
@@ -776,14 +776,14 @@
 2026-01-22 20:09:19,012 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#tui
 2026-01-22 20:09:19,013 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#prompt-config
 2026-01-22 20:09:19,014 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#auth
-2026-01-22 20:09:19,014 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
+2026-01-22 20:09:19,014 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
 2026-01-22 20:09:19,015 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#todoread
 2026-01-22 20:09:19,016 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:19,018 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#arguments
 2026-01-22 20:09:19,019 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#events
 2026-01-22 20:09:19,019 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#webfetch
 2026-01-22 20:09:19,019 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#shell-output
-2026-01-22 20:09:19,019 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
+2026-01-22 20:09:19,019 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
 2026-01-22 20:09:19,019 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#using-the-web-interface
 2026-01-22 20:09:19,020 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#sessions
 2026-01-22 20:09:19,020 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#server-status
@@ -796,19 +796,19 @@
 2026-01-22 20:09:19,026 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#experimental
 2026-01-22 20:09:19,029 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:19,031 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#options
-2026-01-22 20:09:19,032 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
+2026-01-22 20:09:19,032 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
 2026-01-22 20:09:19,032 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:19,033 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#thinking
 2026-01-22 20:09:19,034 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#attaching-a-terminal
 2026-01-22 20:09:19,034 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#question
 2026-01-22 20:09:19,034 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#goals
-2026-01-22 20:09:19,035 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
+2026-01-22 20:09:19,035 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
 2026-01-22 20:09:19,036 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#template
 2026-01-22 20:09:19,036 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#config-file
-2026-01-22 20:09:19,037 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
+2026-01-22 20:09:19,037 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
 2026-01-22 20:09:19,037 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#description
 2026-01-22 20:09:19,038 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#custom-tools
-2026-01-22 20:09:19,039 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Web/docTOC.md
+2026-01-22 20:09:19,039 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Web/docTOC.md
 2026-01-22 20:09:19,039 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#agent
 2026-01-22 20:09:19,043 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:19,044 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#mcp-servers
@@ -821,14 +821,14 @@
 2026-01-22 20:09:19,058 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#unshare
 2026-01-22 20:09:19,060 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#internals
 2026-01-22 20:09:19,061 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#editor-setup
-2026-01-22 20:09:19,063 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
+2026-01-22 20:09:19,063 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
 2026-01-22 20:09:19,064 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#configure
 2026-01-22 20:09:19,064 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#ignore-patterns
 2026-01-22 20:09:19,068 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:09:19,069 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#options
 2026-01-22 20:09:19,069 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#customization
-2026-01-22 20:09:19,072 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
-2026-01-22 20:09:19,073 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
+2026-01-22 20:09:19,072 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
+2026-01-22 20:09:19,073 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
 2026-01-22 20:09:19,442 DEBUG https://opencode.ai:443 "GET /docs/agents/ HTTP/1.1" 200 None
 2026-01-22 20:09:19,521 DEBUG https://opencode.ai:443 "GET /docs/sdk/ HTTP/1.1" 200 None
 2026-01-22 20:09:19,548 DEBUG https://opencode.ai:443 "GET /docs/config/ HTTP/1.1" 200 None
@@ -1325,7 +1325,7 @@
 2026-01-22 20:09:28,614 DEBUG Big5 not active
 2026-01-22 20:09:28,632 DEBUG EUC-TW not active
 2026-01-22 20:09:28,639 DEBUG Johab not active
-2026-01-22 20:09:28,651 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
+2026-01-22 20:09:28,651 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
 2026-01-22 20:09:28,690 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#explore
 2026-01-22 20:09:28,777 DEBUG 跳过重复链接: https://opencode.ai/docs/config#per-project
 2026-01-22 20:09:28,778 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#load-order
@@ -1334,7 +1334,7 @@
 2026-01-22 20:09:28,781 DEBUG 跳过重复链接: https://opencode.ai/docs/models#configure-models
 2026-01-22 20:09:28,782 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#built-in
 2026-01-22 20:09:28,782 DEBUG 跳过重复链接: https://opencode.ai/docs/server#global
-2026-01-22 20:09:28,782 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
+2026-01-22 20:09:28,782 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
 2026-01-22 20:09:28,782 DEBUG 跳过重复链接: https://opencode.ai/docs/rules#global
 2026-01-22 20:09:28,783 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions#home-directory-expansion
 2026-01-22 20:09:28,783 DEBUG 跳过重复链接: https://opencode.ai/docs/themes#hierarchy
@@ -1407,9 +1407,9 @@
 2026-01-22 20:09:28,815 DEBUG 跳过重复链接: https://opencode.ai/docs/models#custom-variants
 2026-01-22 20:09:28,815 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#general
 2026-01-22 20:09:28,816 DEBUG 跳过重复链接: https://opencode.ai/docs/rules#custom-instructions
-2026-01-22 20:09:28,816 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
+2026-01-22 20:09:28,816 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
 2026-01-22 20:09:28,816 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#basic-structure
-2026-01-22 20:09:28,816 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
+2026-01-22 20:09:28,816 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
 2026-01-22 20:09:28,816 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#mcp
 2026-01-22 20:09:28,817 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools#creating-a-tool
 2026-01-22 20:09:28,817 DEBUG 跳过重复链接: https://opencode.ai/docs/github#custom-prompts
@@ -1455,7 +1455,7 @@
 2026-01-22 20:09:28,828 DEBUG 跳过重复链接: https://opencode.ai/docs/server#sessions
 2026-01-22 20:09:28,828 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#remote
 2026-01-22 20:09:28,828 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#run-1
-2026-01-22 20:09:28,828 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
+2026-01-22 20:09:28,828 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
 2026-01-22 20:09:28,828 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#server
 2026-01-22 20:09:28,829 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#todowrite
 2026-01-22 20:09:28,829 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#client-only
@@ -1479,7 +1479,7 @@
 2026-01-22 20:09:28,834 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#azure-cognitive-services
 2026-01-22 20:09:28,834 DEBUG 跳过重复链接: https://opencode.ai/docs/themes#example
 2026-01-22 20:09:28,834 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#examples
-2026-01-22 20:09:28,835 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
+2026-01-22 20:09:28,835 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
 2026-01-22 20:09:28,835 DEBUG 跳过重复链接: https://opencode.ai/docs/config#tools
 2026-01-22 20:09:28,835 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#errors
 2026-01-22 20:09:28,835 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#todoread
@@ -1488,11 +1488,11 @@
 2026-01-22 20:09:28,837 DEBUG 跳过重复链接: https://opencode.ai/docs/commands#markdown
 2026-01-22 20:09:28,837 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp#additional-information
 2026-01-22 20:09:28,837 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#temperature
-2026-01-22 20:09:28,838 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
+2026-01-22 20:09:28,838 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
 2026-01-22 20:09:28,838 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#oauth
 2026-01-22 20:09:28,838 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#sessions
 2026-01-22 20:09:28,840 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools#context
-2026-01-22 20:09:28,840 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
+2026-01-22 20:09:28,840 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
 2026-01-22 20:09:28,841 DEBUG 跳过重复链接: https://opencode.ai/docs/commands#prompt-config
 2026-01-22 20:09:28,841 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#automatic
 2026-01-22 20:09:28,841 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools#examples
@@ -1512,23 +1512,23 @@
 2026-01-22 20:09:28,850 DEBUG 跳过重复链接: https://opencode.ai/docs/formatters#custom-formatters
 2026-01-22 20:09:28,851 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#local
 2026-01-22 20:09:28,852 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#cerebras
-2026-01-22 20:09:28,852 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
+2026-01-22 20:09:28,852 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
 2026-01-22 20:09:28,853 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#pre-registered
 2026-01-22 20:09:28,853 DEBUG 跳过重复链接: https://opencode.ai/docs/config#themes
 2026-01-22 20:09:28,853 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#share
-2026-01-22 20:09:28,855 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
+2026-01-22 20:09:28,855 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
 2026-01-22 20:09:28,855 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#env-protection
 2026-01-22 20:09:28,856 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#max-steps
 2026-01-22 20:09:28,856 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#azure-cognitive-services
 2026-01-22 20:09:28,857 DEBUG 跳过重复链接: https://opencode.ai/docs/server#files
-2026-01-22 20:09:28,857 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
+2026-01-22 20:09:28,857 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
 2026-01-22 20:09:28,857 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#errors
 2026-01-22 20:09:28,859 DEBUG 跳过重复链接: https://opencode.ai/docs/commands#arguments
 2026-01-22 20:09:28,859 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#question
 2026-01-22 20:09:28,860 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#disable
 2026-01-22 20:09:28,860 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#global
 2026-01-22 20:09:28,860 DEBUG 跳过重复链接: https://opencode.ai/docs/server#tools-experimental
-2026-01-22 20:09:28,861 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
+2026-01-22 20:09:28,861 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
 2026-01-22 20:09:28,861 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#remote
 2026-01-22 20:09:28,861 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#oauth
 2026-01-22 20:09:28,861 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#automatic
@@ -1603,14 +1603,14 @@
 2026-01-22 20:09:28,885 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#mode
 2026-01-22 20:09:28,885 DEBUG 跳过重复链接: https://opencode.ai/docs/commands#template
 2026-01-22 20:09:28,885 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#acp
-2026-01-22 20:09:28,885 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
+2026-01-22 20:09:28,885 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
 2026-01-22 20:09:28,886 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#github-copilot
 2026-01-22 20:09:28,886 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#keybinds
 2026-01-22 20:09:28,887 DEBUG 跳过重复链接: https://opencode.ai/docs/server#tui
 2026-01-22 20:09:28,887 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#deepseek
 2026-01-22 20:09:28,887 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#sessions
 2026-01-22 20:09:28,887 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#per-agent
-2026-01-22 20:09:28,888 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
+2026-01-22 20:09:28,888 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
 2026-01-22 20:09:28,888 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#disable
 2026-01-22 20:09:28,889 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#path
 2026-01-22 20:09:28,889 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#editor-setup
@@ -1677,25 +1677,25 @@
 2026-01-22 20:09:28,916 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#grep-by-vercel
 2026-01-22 20:09:28,917 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#mode
 2026-01-22 20:09:28,918 DEBUG 跳过重复链接: https://opencode.ai/docs/config#mcp-servers
-2026-01-22 20:09:28,918 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
+2026-01-22 20:09:28,918 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
 2026-01-22 20:09:28,918 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#mcp-servers
 2026-01-22 20:09:28,919 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#github-copilot
-2026-01-22 20:09:28,919 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
+2026-01-22 20:09:28,919 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
 2026-01-22 20:09:28,920 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#ionet
-2026-01-22 20:09:28,921 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
-2026-01-22 20:09:28,921 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
-2026-01-22 20:09:28,921 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
+2026-01-22 20:09:28,921 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
+2026-01-22 20:09:28,921 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
+2026-01-22 20:09:28,921 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
 2026-01-22 20:09:28,921 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#examples
 2026-01-22 20:09:28,921 DEBUG 跳过重复链接: https://opencode.ai/docs/config#plugins
 2026-01-22 20:09:28,921 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#hidden
 2026-01-22 20:09:28,922 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#events
 2026-01-22 20:09:28,924 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#plugins
-2026-01-22 20:09:28,924 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
-2026-01-22 20:09:28,925 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
+2026-01-22 20:09:28,924 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
+2026-01-22 20:09:28,925 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
 2026-01-22 20:09:28,925 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#google-vertex-ai
 2026-01-22 20:09:28,925 DEBUG 跳过重复链接: https://opencode.ai/docs/config#instructions
 2026-01-22 20:09:28,926 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#instructions
-2026-01-22 20:09:28,926 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
+2026-01-22 20:09:28,926 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
 2026-01-22 20:09:28,926 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#lm-studio
 2026-01-22 20:09:28,927 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#task-permissions
 2026-01-22 20:09:28,928 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#documentation-agent
@@ -1712,7 +1712,7 @@
 2026-01-22 20:09:28,934 DEBUG 跳过重复链接: https://opencode.ai/docs/config#experimental
 2026-01-22 20:09:28,934 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#minimax
 2026-01-22 20:09:28,934 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#helicone
-2026-01-22 20:09:28,934 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
+2026-01-22 20:09:28,934 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
 2026-01-22 20:09:28,934 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#use-cases
 2026-01-22 20:09:28,934 DEBUG 跳过重复链接: https://opencode.ai/docs/config#variables
 2026-01-22 20:09:28,935 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#nebius-token-factory
@@ -1729,7 +1729,7 @@
 2026-01-22 20:09:28,939 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#lm-studio
 2026-01-22 20:09:28,940 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#env-vars
 2026-01-22 20:09:28,940 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#files
-2026-01-22 20:09:28,940 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
+2026-01-22 20:09:28,940 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
 2026-01-22 20:09:28,940 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#custom-directory
 2026-01-22 20:09:28,940 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#openai
 2026-01-22 20:09:28,940 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#moonshot-ai
@@ -1739,7 +1739,7 @@
 2026-01-22 20:09:28,943 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#nebius-token-factory
 2026-01-22 20:09:28,943 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#sap-ai-core
 2026-01-22 20:09:28,943 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#documentation-agent
-2026-01-22 20:09:28,944 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
+2026-01-22 20:09:28,944 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
 2026-01-22 20:09:28,944 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#ollama
 2026-01-22 20:09:28,944 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#ovhcloud-ai-endpoints
 2026-01-22 20:09:28,945 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#security-auditor
@@ -1748,7 +1748,7 @@
 2026-01-22 20:09:28,946 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#together-ai
 2026-01-22 20:09:28,947 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#openai
 2026-01-22 20:09:28,947 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#venice-ai
-2026-01-22 20:09:28,947 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
+2026-01-22 20:09:28,947 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
 2026-01-22 20:09:28,947 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#opencode-zen-1
 2026-01-22 20:09:28,948 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#vercel-ai-gateway
 2026-01-22 20:09:28,948 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#openrouter
@@ -1768,12 +1768,12 @@
 2026-01-22 20:09:28,952 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#zai
 2026-01-22 20:09:28,953 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#zenmux
 2026-01-22 20:09:28,953 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#custom-provider
-2026-01-22 20:09:28,953 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
+2026-01-22 20:09:28,953 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
 2026-01-22 20:09:28,953 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#troubleshooting
 2026-01-22 20:09:28,954 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#directory
-2026-01-22 20:09:28,957 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
+2026-01-22 20:09:28,957 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
 2026-01-22 20:12:18,455 DEBUG 配置初始化完成: 起始URL: https://opencode.ai/docs/ 基础域名: opencode.ai 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 30 调试: 1
-2026-01-22 20:12:18,458 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest
+2026-01-22 20:12:18,458 DEBUG 文档根目录: ~/project/md_docs_base/OpenCode_Docs@latest
 2026-01-22 20:12:18,460 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:18,461 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:18,461 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -2107,7 +2107,7 @@
 2026-01-22 20:12:25,691 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#file-references
 2026-01-22 20:12:25,691 DEBUG IBM866 Russian confidence = 0.0
 2026-01-22 20:12:25,691 DEBUG IBM866 Russian confidence = 0.0
-2026-01-22 20:12:25,691 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
+2026-01-22 20:12:25,691 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
 2026-01-22 20:12:25,691 DEBUG ISO-8859-7 Greek confidence = 0.0
 2026-01-22 20:12:25,691 DEBUG 跳过重复链接: https://opencode.ai/docs/zen#how-it-works
 2026-01-22 20:12:25,691 DEBUG windows-1253 Greek confidence = 0.01
@@ -2232,7 +2232,7 @@
 2026-01-22 20:12:25,703 DEBUG 跳过重复链接: https://opencode.ai/docs/models/#variants
 2026-01-22 20:12:25,703 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#home-directory-expansion
 2026-01-22 20:12:25,703 DEBUG 跳过重复链接: https://opencode.ai/docs/gitlab/#setup-1
-2026-01-22 20:12:25,703 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Ecosystem/docTOC.md
+2026-01-22 20:12:25,703 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Ecosystem/docTOC.md
 2026-01-22 20:12:25,704 DEBUG GB2312 not active
 2026-01-22 20:12:25,701 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#bash-commands
 2026-01-22 20:12:25,696 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#configure
@@ -2295,7 +2295,7 @@
 2026-01-22 20:12:25,734 DEBUG Johab not active
 2026-01-22 20:12:25,761 DEBUG CP949 not active
 2026-01-22 20:12:25,810 DEBUG 跳过重复链接: https://opencode.ai/docs/gitlab/#examples
-2026-01-22 20:12:25,829 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
+2026-01-22 20:12:25,829 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
 2026-01-22 20:12:25,835 DEBUG Johab not active
 2026-01-22 20:12:25,835 DEBUG Big5 not active
 2026-01-22 20:12:25,853 DEBUG EUC-TW not active
@@ -2336,7 +2336,7 @@
 2026-01-22 20:12:26,076 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools/#_top
 2026-01-22 20:12:26,076 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#commands
 2026-01-22 20:12:26,077 DEBUG 跳过重复链接: https://opencode.ai/docs/rules/#claude-code-compatibility
-2026-01-22 20:12:26,077 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitLab/docTOC.md
+2026-01-22 20:12:26,077 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/GitLab/docTOC.md
 2026-01-22 20:12:26,077 DEBUG 跳过重复链接: https://opencode.ai/docs/themes/#custom-themes
 2026-01-22 20:12:26,077 DEBUG 跳过重复链接: https://opencode.ai/docs/skills#use-an-example
 2026-01-22 20:12:26,077 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#auto-reload
@@ -2410,7 +2410,7 @@
 2026-01-22 20:12:26,106 DEBUG 跳过重复链接: https://opencode.ai/docs/github/#issues-triage-example
 2026-01-22 20:12:26,106 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#agents
 2026-01-22 20:12:26,106 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#privacy
-2026-01-22 20:12:26,106 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
+2026-01-22 20:12:26,106 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
 2026-01-22 20:12:26,106 DEBUG 跳过重复链接: https://opencode.ai/docs/network/#custom-certificates
 2026-01-22 20:12:26,107 DEBUG 跳过重复链接: https://opencode.ai/docs/skills#configure-permissions
 2026-01-22 20:12:26,107 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#zed
@@ -2435,9 +2435,9 @@
 2026-01-22 20:12:26,114 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#dependencies
 2026-01-22 20:12:26,114 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#jetbrains-ides
 2026-01-22 20:12:26,114 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#home-directory-expansion
-2026-01-22 20:12:26,115 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Network/docTOC.md
+2026-01-22 20:12:26,115 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Network/docTOC.md
 2026-01-22 20:12:26,115 DEBUG 跳过重复链接: https://opencode.ai/docs/1-0/#keybinds-renamed
-2026-01-22 20:12:26,115 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
+2026-01-22 20:12:26,115 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
 2026-01-22 20:12:26,115 DEBUG 跳过重复链接: https://opencode.ai/docs/skills#override-per-agent
 2026-01-22 20:12:26,115 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#editor
 2026-01-22 20:12:26,116 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#port
@@ -2446,12 +2446,12 @@
 2026-01-22 20:12:26,116 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#prompt-config
 2026-01-22 20:12:26,116 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#grep
 2026-01-22 20:12:26,116 DEBUG 跳过重复链接: https://opencode.ai/docs/themes/#terminal-defaults
-2026-01-22 20:12:26,117 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
+2026-01-22 20:12:26,117 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
 2026-01-22 20:12:26,117 DEBUG 跳过重复链接: https://opencode.ai/docs/zen#roles
 2026-01-22 20:12:26,117 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#run-1
-2026-01-22 20:12:26,117 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Troubleshooting/docTOC.md
+2026-01-22 20:12:26,117 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Troubleshooting/docTOC.md
 2026-01-22 20:12:26,117 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#arguments
-2026-01-22 20:12:26,117 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
+2026-01-22 20:12:26,117 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
 2026-01-22 20:12:26,117 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools/#context
 2026-01-22 20:12:26,118 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp/#custom-lsp-servers
 2026-01-22 20:12:26,118 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#basic-structure
@@ -2488,18 +2488,18 @@
 2026-01-22 20:12:26,144 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#events
 2026-01-22 20:12:26,144 DEBUG 跳过重复链接: https://opencode.ai/docs/rules/#manual-instructions-in-agentsmd
 2026-01-22 20:12:26,145 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#codecompanionnvim
-2026-01-22 20:12:26,146 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Intro/docTOC.md
+2026-01-22 20:12:26,146 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Intro/docTOC.md
 2026-01-22 20:12:26,146 DEBUG 跳过重复链接: https://opencode.ai/docs/skills#troubleshoot-loading
 2026-01-22 20:12:26,148 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#session
 2026-01-22 20:12:26,148 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#export
 2026-01-22 20:12:26,148 DEBUG 跳过重复链接: https://opencode.ai/docs/themes/#example
 2026-01-22 20:12:26,150 DEBUG 跳过重复链接: https://opencode.ai/docs/zen#goals
-2026-01-22 20:12:26,151 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
+2026-01-22 20:12:26,151 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
 2026-01-22 20:12:26,152 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#lsp-experimental
 2026-01-22 20:12:26,152 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#help
 2026-01-22 20:12:26,153 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#model-access
-2026-01-22 20:12:26,153 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Migrating to 1.0/docTOC.md
-2026-01-22 20:12:26,153 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
+2026-01-22 20:12:26,153 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Migrating to 1.0/docTOC.md
+2026-01-22 20:12:26,153 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
 2026-01-22 20:12:26,154 DEBUG 跳过重复链接: https://opencode.ai/docs/formatters/#custom-formatters
 2026-01-22 20:12:26,155 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp/#php-intelephense
 2026-01-22 20:12:26,156 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#files
@@ -2510,12 +2510,12 @@
 2026-01-22 20:12:26,161 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,161 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#bring-your-own-key
 2026-01-22 20:12:26,164 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:12:26,165 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
-2026-01-22 20:12:26,166 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
+2026-01-22 20:12:26,165 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
+2026-01-22 20:12:26,166 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
 2026-01-22 20:12:26,167 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#examples
-2026-01-22 20:12:26,178 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
+2026-01-22 20:12:26,178 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
 2026-01-22 20:12:26,179 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#goals
-2026-01-22 20:12:26,180 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
+2026-01-22 20:12:26,180 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
 2026-01-22 20:12:26,181 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#authentication
 2026-01-22 20:12:26,182 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,183 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -2528,15 +2528,15 @@
 2026-01-22 20:12:26,188 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#tools-experimental
 2026-01-22 20:12:26,189 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#send-notifications
 2026-01-22 20:12:26,192 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:12:26,192 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
-2026-01-22 20:12:26,195 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
+2026-01-22 20:12:26,192 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
+2026-01-22 20:12:26,195 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
 2026-01-22 20:12:26,196 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#import
 2026-01-22 20:12:26,197 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,197 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#sessions
 2026-01-22 20:12:26,198 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,198 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#new
 2026-01-22 20:12:26,199 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#web
-2026-01-22 20:12:26,199 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
+2026-01-22 20:12:26,199 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
 2026-01-22 20:12:26,200 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,201 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,202 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#lsp-formatters--mcp
@@ -2549,7 +2549,7 @@
 2026-01-22 20:12:26,206 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#environment-variables
 2026-01-22 20:12:26,207 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#agents
 2026-01-22 20:12:26,210 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:12:26,211 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
+2026-01-22 20:12:26,211 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
 2026-01-22 20:12:26,212 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,213 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#todoread
 2026-01-22 20:12:26,213 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#webfetch
@@ -2563,7 +2563,7 @@
 2026-01-22 20:12:26,217 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#question
 2026-01-22 20:12:26,218 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#custom-tools
 2026-01-22 20:12:26,219 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#mcp-servers
-2026-01-22 20:12:26,219 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/ACP Support/docTOC.md
+2026-01-22 20:12:26,219 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/ACP Support/docTOC.md
 2026-01-22 20:12:26,220 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#events
 2026-01-22 20:12:26,220 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#options
 2026-01-22 20:12:26,221 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#experimental
@@ -2571,18 +2571,18 @@
 2026-01-22 20:12:26,226 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#docs
 2026-01-22 20:12:26,228 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#compaction-hooks
 2026-01-22 20:12:26,229 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#internals
-2026-01-22 20:12:26,234 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
+2026-01-22 20:12:26,234 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
 2026-01-22 20:12:26,236 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#sessions
 2026-01-22 20:12:26,236 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#ignore-patterns
 2026-01-22 20:12:26,238 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,238 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#attaching-a-terminal
 2026-01-22 20:12:26,239 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#config-file
-2026-01-22 20:12:26,242 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
-2026-01-22 20:12:26,243 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
+2026-01-22 20:12:26,242 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
+2026-01-22 20:12:26,243 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
 2026-01-22 20:12:26,243 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#share
-2026-01-22 20:12:26,243 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
+2026-01-22 20:12:26,243 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
 2026-01-22 20:12:26,244 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#template
-2026-01-22 20:12:26,244 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Web/docTOC.md
+2026-01-22 20:12:26,244 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Web/docTOC.md
 2026-01-22 20:12:26,245 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,246 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,246 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#themes
@@ -2601,8 +2601,8 @@
 2026-01-22 20:12:26,252 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#built-in
 2026-01-22 20:12:26,254 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:12:26,255 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:12:26,256 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
-2026-01-22 20:12:26,257 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
+2026-01-22 20:12:26,256 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
+2026-01-22 20:12:26,257 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
 2026-01-22 20:12:26,536 DEBUG https://opencode.ai:443 "GET /docs/agents/ HTTP/1.1" 200 None
 2026-01-22 20:12:26,963 DEBUG https://opencode.ai:443 "GET /docs/sdk/ HTTP/1.1" 200 None
 2026-01-22 20:12:26,964 DEBUG https://opencode.ai:443 "GET /docs/mcp-servers/ HTTP/1.1" 200 None
@@ -3076,7 +3076,7 @@
 2026-01-22 20:12:34,568 DEBUG CP949 not active
 2026-01-22 20:12:34,568 DEBUG CP949 not active
 2026-01-22 20:12:34,611 DEBUG Johab not active
-2026-01-22 20:12:34,619 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
+2026-01-22 20:12:34,619 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
 2026-01-22 20:12:34,638 DEBUG Big5 not active
 2026-01-22 20:12:34,704 DEBUG CP949 not active
 2026-01-22 20:12:34,720 DEBUG Big5 not active
@@ -3104,7 +3104,7 @@
 2026-01-22 20:12:35,149 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#details
 2026-01-22 20:12:35,149 DEBUG 跳过重复链接: https://opencode.ai/docs/share#un-sharing
 2026-01-22 20:12:35,150 DEBUG 跳过重复链接: https://opencode.ai/docs/github#schedule-example
-2026-01-22 20:12:35,151 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
+2026-01-22 20:12:35,151 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
 2026-01-22 20:12:35,151 DEBUG 跳过重复链接: https://opencode.ai/docs/config#global
 2026-01-22 20:12:35,152 DEBUG 跳过重复链接: https://opencode.ai/docs/enterprise#central-config
 2026-01-22 20:12:35,152 DEBUG 使用白名单/黑名单策略检测 TOC
@@ -3218,7 +3218,7 @@
 2026-01-22 20:12:35,200 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp#disabling-lsp-servers
 2026-01-22 20:12:35,200 DEBUG 跳过重复链接: https://opencode.ai/docs/github#examples
 2026-01-22 20:12:35,201 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#schema
-2026-01-22 20:12:35,201 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
+2026-01-22 20:12:35,201 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
 2026-01-22 20:12:35,201 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#create-client
 2026-01-22 20:12:35,202 DEBUG 跳过重复链接: https://opencode.ai/docs/formatters#how-it-works
 2026-01-22 20:12:35,202 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#run-1
@@ -3233,12 +3233,12 @@
 2026-01-22 20:12:35,204 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#azure-cognitive-services
 2026-01-22 20:12:35,204 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp#custom-lsp-servers
 2026-01-22 20:12:35,204 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#overriding-remote-defaults
-2026-01-22 20:12:35,205 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
+2026-01-22 20:12:35,205 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
 2026-01-22 20:12:35,205 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#list
 2026-01-22 20:12:35,205 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#baseten
 2026-01-22 20:12:35,205 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#config
 2026-01-22 20:12:35,206 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp#additional-information
-2026-01-22 20:12:35,206 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
+2026-01-22 20:12:35,206 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
 2026-01-22 20:12:35,206 DEBUG 跳过重复链接: https://opencode.ai/docs/rules#manual-instructions-in-agentsmd
 2026-01-22 20:12:35,206 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#local
 2026-01-22 20:12:35,207 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools#arguments
@@ -3249,24 +3249,24 @@
 2026-01-22 20:12:35,209 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#errors
 2026-01-22 20:12:35,209 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#explore
 2026-01-22 20:12:35,209 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#lsp-experimental
-2026-01-22 20:12:35,210 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
+2026-01-22 20:12:35,210 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
 2026-01-22 20:12:35,210 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#baseten
 2026-01-22 20:12:35,210 DEBUG 跳过重复链接: https://opencode.ai/docs/formatters#disabling-formatters
-2026-01-22 20:12:35,210 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
+2026-01-22 20:12:35,210 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
 2026-01-22 20:12:35,210 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#session
 2026-01-22 20:12:35,210 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#client-only
 2026-01-22 20:12:35,211 DEBUG 跳过重复链接: https://opencode.ai/docs/config#tui
 2026-01-22 20:12:35,212 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp#php-intelephense
 2026-01-22 20:12:35,212 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#additional
 2026-01-22 20:12:35,212 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#server
-2026-01-22 20:12:35,213 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
+2026-01-22 20:12:35,213 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
 2026-01-22 20:12:35,213 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#remote
 2026-01-22 20:12:35,213 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#cerebras
 2026-01-22 20:12:35,213 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#examples
 2026-01-22 20:12:35,214 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#stats
 2026-01-22 20:12:35,214 DEBUG 跳过重复链接: https://opencode.ai/docs/formatters#custom-formatters
 2026-01-22 20:12:35,214 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#patch
-2026-01-22 20:12:35,214 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
+2026-01-22 20:12:35,214 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
 2026-01-22 20:12:35,215 DEBUG 跳过重复链接: https://opencode.ai/docs/themes#terminal-defaults
 2026-01-22 20:12:35,215 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools#context
 2026-01-22 20:12:35,215 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#local
@@ -3284,7 +3284,7 @@
 2026-01-22 20:12:35,218 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#oauth
 2026-01-22 20:12:35,218 DEBUG 跳过重复链接: https://opencode.ai/docs/config#server
 2026-01-22 20:12:35,218 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#init
-2026-01-22 20:12:35,219 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
+2026-01-22 20:12:35,219 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
 2026-01-22 20:12:35,219 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#create-agents
 2026-01-22 20:12:35,220 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#remote
 2026-01-22 20:12:35,220 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#global
@@ -3292,7 +3292,7 @@
 2026-01-22 20:12:35,220 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#tools
 2026-01-22 20:12:35,221 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#import
 2026-01-22 20:12:35,221 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#env-protection
-2026-01-22 20:12:35,221 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
+2026-01-22 20:12:35,221 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
 2026-01-22 20:12:35,221 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools#examples
 2026-01-22 20:12:35,221 DEBUG 跳过重复链接: https://opencode.ai/docs/commands#prompt-config
 2026-01-22 20:12:35,221 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#use-cases
@@ -3331,7 +3331,7 @@
 2026-01-22 20:12:35,231 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#global
 2026-01-22 20:12:35,231 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#authenticating
 2026-01-22 20:12:35,231 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#agents
-2026-01-22 20:12:35,232 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
+2026-01-22 20:12:35,232 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
 2026-01-22 20:12:35,232 DEBUG 跳过重复链接: https://opencode.ai/docs/server#commands
 2026-01-22 20:12:35,232 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#deep-infra
 2026-01-22 20:12:35,232 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#automatic
@@ -3345,7 +3345,7 @@
 2026-01-22 20:12:35,234 DEBUG 跳过重复链接: https://opencode.ai/docs/server#files
 2026-01-22 20:12:35,234 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#manage
 2026-01-22 20:12:35,234 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#documentation-agent
-2026-01-22 20:12:35,234 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
+2026-01-22 20:12:35,234 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
 2026-01-22 20:12:35,235 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#firmware
 2026-01-22 20:12:35,235 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#deep-infra
 2026-01-22 20:12:35,235 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#uninstall
@@ -3374,7 +3374,7 @@
 2026-01-22 20:12:35,242 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#fireworks-ai
 2026-01-22 20:12:35,242 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#temperature
 2026-01-22 20:12:35,242 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#gitlab-duo
-2026-01-22 20:12:35,242 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
+2026-01-22 20:12:35,242 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
 2026-01-22 20:12:35,243 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#mcp-servers
 2026-01-22 20:12:35,243 DEBUG 跳过重复链接: https://opencode.ai/docs/commands#template
 2026-01-22 20:12:35,243 DEBUG 跳过重复链接: https://opencode.ai/docs/config#commands
@@ -3420,7 +3420,7 @@
 2026-01-22 20:12:35,254 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#context7
 2026-01-22 20:12:35,254 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#thinking
 2026-01-22 20:12:35,254 DEBUG 跳过重复链接: https://opencode.ai/docs/config#formatters
-2026-01-22 20:12:35,255 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
+2026-01-22 20:12:35,255 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
 2026-01-22 20:12:35,255 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#auth
 2026-01-22 20:12:35,255 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#model
 2026-01-22 20:12:35,256 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#grep-by-vercel
@@ -3432,18 +3432,18 @@
 2026-01-22 20:12:35,260 DEBUG 跳过重复链接: https://opencode.ai/docs/server#auth
 2026-01-22 20:12:35,260 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#formatters
 2026-01-22 20:12:35,261 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#unshare
-2026-01-22 20:12:35,261 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
+2026-01-22 20:12:35,261 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
 2026-01-22 20:12:35,261 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#files
 2026-01-22 20:12:35,262 DEBUG 跳过重复链接: https://opencode.ai/docs/config#permissions
-2026-01-22 20:12:35,262 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
+2026-01-22 20:12:35,262 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
 2026-01-22 20:12:35,262 DEBUG 跳过重复链接: https://opencode.ai/docs/server#events
 2026-01-22 20:12:35,262 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#sentry
 2026-01-22 20:12:35,262 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#hugging-face
-2026-01-22 20:12:35,262 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
+2026-01-22 20:12:35,262 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
 2026-01-22 20:12:35,263 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#tools
 2026-01-22 20:12:35,263 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#groq
 2026-01-22 20:12:35,263 DEBUG 跳过重复链接: https://opencode.ai/docs/config#compaction
-2026-01-22 20:12:35,263 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
+2026-01-22 20:12:35,263 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
 2026-01-22 20:12:35,264 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#permissions
 2026-01-22 20:12:35,264 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#tui
 2026-01-22 20:12:35,264 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#editor-setup
@@ -3458,7 +3458,7 @@
 2026-01-22 20:12:35,268 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#auth
 2026-01-22 20:12:35,268 DEBUG 跳过重复链接: https://opencode.ai/docs/config#mcp-servers
 2026-01-22 20:12:35,268 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#watcher
-2026-01-22 20:12:35,268 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
+2026-01-22 20:12:35,268 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
 2026-01-22 20:12:35,268 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#mode
 2026-01-22 20:12:35,269 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#grep-by-vercel
 2026-01-22 20:12:35,269 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#llamacpp
@@ -3468,8 +3468,8 @@
 2026-01-22 20:12:35,271 DEBUG 跳过重复链接: https://opencode.ai/docs/config#plugins
 2026-01-22 20:12:35,271 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#mcp-servers
 2026-01-22 20:12:35,271 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#hidden
-2026-01-22 20:12:35,272 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
-2026-01-22 20:12:35,272 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
+2026-01-22 20:12:35,272 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
+2026-01-22 20:12:35,272 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
 2026-01-22 20:12:35,272 DEBUG 跳过重复链接: https://opencode.ai/docs/config#instructions
 2026-01-22 20:12:35,273 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#task-permissions
 2026-01-22 20:12:35,273 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#options
@@ -3490,7 +3490,7 @@
 2026-01-22 20:12:35,277 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#minimax
 2026-01-22 20:12:35,277 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#enabled-providers
 2026-01-22 20:12:35,277 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#minimax
-2026-01-22 20:12:35,277 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
+2026-01-22 20:12:35,277 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
 2026-01-22 20:12:35,278 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#use-cases
 2026-01-22 20:12:35,278 DEBUG 跳过重复链接: https://opencode.ai/docs/config#experimental
 2026-01-22 20:12:35,278 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#nebius-token-factory
@@ -3514,11 +3514,11 @@
 2026-01-22 20:12:35,284 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#openai
 2026-01-22 20:12:35,285 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#custom-directory
 2026-01-22 20:12:35,285 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#opencode-zen-1
-2026-01-22 20:12:35,287 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
+2026-01-22 20:12:35,287 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
 2026-01-22 20:12:35,287 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#openrouter
 2026-01-22 20:12:35,287 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#opencode-zen-1
-2026-01-22 20:12:35,287 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
-2026-01-22 20:12:35,287 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
+2026-01-22 20:12:35,287 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
+2026-01-22 20:12:35,287 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
 2026-01-22 20:12:35,288 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#sap-ai-core
 2026-01-22 20:12:35,288 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#openrouter
 2026-01-22 20:12:35,288 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#sap-ai-core
@@ -3544,10 +3544,10 @@
 2026-01-22 20:12:35,293 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#directory
 2026-01-22 20:12:35,296 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#troubleshooting
 2026-01-22 20:12:35,296 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#directory
-2026-01-22 20:12:35,298 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
-2026-01-22 20:12:35,301 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
+2026-01-22 20:12:35,298 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
+2026-01-22 20:12:35,301 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
 2026-01-22 20:13:53,753 DEBUG 配置初始化完成: 起始URL: https://opencode.ai/docs/ 基础域名: opencode.ai 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 30 调试: 1
-2026-01-22 20:13:53,755 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest
+2026-01-22 20:13:53,755 DEBUG 文档根目录: ~/project/md_docs_base/OpenCode_Docs@latest
 2026-01-22 20:13:53,757 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:13:53,757 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:13:53,758 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -3608,7 +3608,7 @@
 2026-01-22 20:13:55,902 DEBUG https://opencode.ai:443 "GET /docs/formatters/ HTTP/1.1" 200 None
 2026-01-22 20:13:55,934 DEBUG 跳过重复链接: https://opencode.ai/docs/ecosystem/#_top
 2026-01-22 20:16:05,108 DEBUG 配置初始化完成: 起始URL: https://opencode.ai/docs/ 基础域名: opencode.ai 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 30 调试: 1
-2026-01-22 20:16:05,110 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest
+2026-01-22 20:16:05,110 DEBUG 文档根目录: ~/project/md_docs_base/OpenCode_Docs@latest
 2026-01-22 20:16:05,112 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:05,113 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:05,113 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -4086,7 +4086,7 @@
 2026-01-22 20:16:14,033 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#configuration
 2026-01-22 20:16:14,033 DEBUG Big5 not active
 2026-01-22 20:16:14,033 DEBUG Big5 not active
-2026-01-22 20:16:14,033 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Ecosystem/docTOC.md
+2026-01-22 20:16:14,033 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Ecosystem/docTOC.md
 2026-01-22 20:16:14,033 DEBUG EUC-KR not active
 2026-01-22 20:16:14,033 DEBUG Big5 not active
 2026-01-22 20:16:14,033 DEBUG CP949 not active
@@ -4146,7 +4146,7 @@
 2026-01-22 20:16:14,393 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#how-plugins-are-installed
 2026-01-22 20:16:14,393 DEBUG 跳过重复链接: https://opencode.ai/docs/skills#use-an-example
 2026-01-22 20:16:14,393 DEBUG 使用白名单/黑名单策略检测 TOC
-2026-01-22 20:16:14,395 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
+2026-01-22 20:16:14,395 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
 2026-01-22 20:16:14,395 DEBUG 使用白名单/黑名单策略检测 TOC
 2026-01-22 20:16:14,397 DEBUG 跳过重复链接: https://opencode.ai/docs/rules/#global
 2026-01-22 20:16:14,397 DEBUG 跳过重复链接: https://opencode.ai/docs/skills/#override-per-agent
@@ -4171,7 +4171,7 @@
 2026-01-22 20:16:14,406 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#compact
 2026-01-22 20:16:14,406 DEBUG 跳过重复链接: https://opencode.ai/docs/github/#pull-request-example
 2026-01-22 20:16:14,407 DEBUG 跳过重复链接: https://opencode.ai/docs/#add-features
-2026-01-22 20:16:14,407 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
+2026-01-22 20:16:14,407 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
 2026-01-22 20:16:14,407 DEBUG 跳过重复链接: https://opencode.ai/docs/enterprise/#central-config
 2026-01-22 20:16:14,408 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#_top
 2026-01-22 20:16:14,408 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#load-order
@@ -4244,11 +4244,11 @@
 2026-01-22 20:16:14,424 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#defaults
 2026-01-22 20:16:14,424 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#exit
 2026-01-22 20:16:14,424 DEBUG 跳过重复链接: https://opencode.ai/docs/zen#privacy
-2026-01-22 20:16:14,425 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
+2026-01-22 20:16:14,425 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
 2026-01-22 20:16:14,425 DEBUG 跳过重复链接: https://opencode.ai/docs/#share
 2026-01-22 20:16:14,425 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#json
 2026-01-22 20:16:14,425 DEBUG 跳过重复链接: https://opencode.ai/docs/enterprise/#faq
-2026-01-22 20:16:14,425 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
+2026-01-22 20:16:14,425 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Share/docTOC.md
 2026-01-22 20:16:14,426 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#export
 2026-01-22 20:16:14,426 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#instance
 2026-01-22 20:16:14,426 DEBUG 跳过重复链接: https://opencode.ai/docs/rules/#referencing-external-files
@@ -4261,7 +4261,7 @@
 2026-01-22 20:16:14,429 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#basic-structure
 2026-01-22 20:16:14,429 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#zed
 2026-01-22 20:16:14,430 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#privacy
-2026-01-22 20:16:14,430 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Network/docTOC.md
+2026-01-22 20:16:14,430 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Network/docTOC.md
 2026-01-22 20:16:14,430 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#jetbrains-ides
 2026-01-22 20:16:14,430 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#markdown
 2026-01-22 20:16:14,431 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -4280,7 +4280,7 @@
 2026-01-22 20:16:14,441 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#typescript-support
 2026-01-22 20:16:14,441 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:14,442 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp/#configure
-2026-01-22 20:16:14,442 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
+2026-01-22 20:16:14,442 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
 2026-01-22 20:16:14,443 DEBUG 跳过重复链接: https://opencode.ai/docs/rules/#using-opencodejson
 2026-01-22 20:16:14,443 DEBUG 跳过重复链接: https://opencode.ai/docs/gitlab/#examples
 2026-01-22 20:16:14,445 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#agents
@@ -4288,11 +4288,11 @@
 2026-01-22 20:16:14,446 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#list
 2026-01-22 20:16:14,446 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#prompt-config
 2026-01-22 20:16:14,447 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#config
-2026-01-22 20:16:14,447 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
+2026-01-22 20:16:14,447 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
 2026-01-22 20:16:14,448 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#serve
 2026-01-22 20:16:14,448 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#for-teams
 2026-01-22 20:16:14,448 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#hostname
-2026-01-22 20:16:14,449 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Intro/docTOC.md
+2026-01-22 20:16:14,449 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Intro/docTOC.md
 2026-01-22 20:16:14,449 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp/#disabling-lsp-servers
 2026-01-22 20:16:14,449 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#avantenvim
 2026-01-22 20:16:14,449 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools/#arguments
@@ -4304,7 +4304,7 @@
 2026-01-22 20:16:14,459 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:14,463 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:14,480 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#mdns-discovery
-2026-01-22 20:16:14,491 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
+2026-01-22 20:16:14,491 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
 2026-01-22 20:16:14,500 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#events
 2026-01-22 20:16:14,508 DEBUG 跳过重复链接: https://opencode.ai/docs/acp/#codecompanionnvim
 2026-01-22 20:16:14,509 DEBUG 跳过重复链接: https://opencode.ai/docs/permissions/#home-directory-expansion
@@ -4317,7 +4317,7 @@
 2026-01-22 20:16:14,517 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp/#custom-lsp-servers
 2026-01-22 20:16:14,517 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#init
 2026-01-22 20:16:14,517 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#stats
-2026-01-22 20:16:14,518 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
+2026-01-22 20:16:14,518 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
 2026-01-22 20:16:14,518 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#lsp-experimental
 2026-01-22 20:16:14,519 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#provider
 2026-01-22 20:16:14,519 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#export
@@ -4327,23 +4327,23 @@
 2026-01-22 20:16:14,527 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools/#context
 2026-01-22 20:16:14,528 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#arguments
 2026-01-22 20:16:14,528 DEBUG 跳过重复链接: https://opencode.ai/docs/zen#bring-your-own-key
-2026-01-22 20:16:14,529 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
+2026-01-22 20:16:14,529 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
 2026-01-22 20:16:14,529 DEBUG 跳过重复链接: https://opencode.ai/docs/troubleshooting/#copypaste-not-working-on-linux
-2026-01-22 20:16:14,530 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
+2026-01-22 20:16:14,530 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
 2026-01-22 20:16:14,531 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#model-access
 2026-01-22 20:16:14,531 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp/#additional-information
-2026-01-22 20:16:14,532 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Migrating to 1.0/docTOC.md
-2026-01-22 20:16:14,532 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitLab/docTOC.md
-2026-01-22 20:16:14,533 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
+2026-01-22 20:16:14,532 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Migrating to 1.0/docTOC.md
+2026-01-22 20:16:14,532 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/GitLab/docTOC.md
+2026-01-22 20:16:14,533 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
 2026-01-22 20:16:14,533 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#models
 2026-01-22 20:16:14,534 DEBUG 跳过重复链接: https://opencode.ai/docs/custom-tools/#examples
-2026-01-22 20:16:14,535 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/ACP Support/docTOC.md
+2026-01-22 20:16:14,535 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/ACP Support/docTOC.md
 2026-01-22 20:16:14,540 DEBUG 跳过重复链接: https://opencode.ai/docs/lsp/#php-intelephense
 2026-01-22 20:16:14,541 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#patch
 2026-01-22 20:16:14,551 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#skill
 2026-01-22 20:16:14,551 DEBUG 跳过重复链接: https://opencode.ai/docs/zen#goals
-2026-01-22 20:16:14,554 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
-2026-01-22 20:16:14,554 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Troubleshooting/docTOC.md
+2026-01-22 20:16:14,554 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
+2026-01-22 20:16:14,554 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Troubleshooting/docTOC.md
 2026-01-22 20:16:14,556 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:14,567 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:14,568 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -4358,21 +4358,21 @@
 2026-01-22 20:16:14,594 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#authentication
 2026-01-22 20:16:14,595 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#shell-output
 2026-01-22 20:16:14,597 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:16:14,603 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
+2026-01-22 20:16:14,603 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
 2026-01-22 20:16:14,603 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#send-notifications
 2026-01-22 20:16:14,604 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins/#env-protection
 2026-01-22 20:16:14,606 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:14,607 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#file-references
 2026-01-22 20:16:14,607 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#new
 2026-01-22 20:16:14,607 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#using-the-web-interface
-2026-01-22 20:16:14,610 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
+2026-01-22 20:16:14,610 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
 2026-01-22 20:16:14,610 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#todowrite
 2026-01-22 20:16:14,612 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#options
 2026-01-22 20:16:14,613 DEBUG 跳过重复链接: https://opencode.ai/docs/zen/#bring-your-own-key
 2026-01-22 20:16:14,615 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:14,617 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#sessions
 2026-01-22 20:16:14,618 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:16:14,619 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
+2026-01-22 20:16:14,619 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md
 2026-01-22 20:16:14,619 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#redo
 2026-01-22 20:16:14,620 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#messages
 2026-01-22 20:16:14,620 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#web
@@ -4389,10 +4389,10 @@
 2026-01-22 20:16:14,633 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#commands
 2026-01-22 20:16:14,634 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#sessions
 2026-01-22 20:16:14,634 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#question
-2026-01-22 20:16:14,635 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
+2026-01-22 20:16:14,635 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
 2026-01-22 20:16:14,635 DEBUG 跳过重复链接: https://opencode.ai/docs/web/#server-status
 2026-01-22 20:16:14,636 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#files
-2026-01-22 20:16:14,636 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
+2026-01-22 20:16:14,636 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Zen/docTOC.md
 2026-01-22 20:16:14,637 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#description
 2026-01-22 20:16:14,637 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#tools-experimental
 2026-01-22 20:16:14,639 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -4413,7 +4413,7 @@
 2026-01-22 20:16:14,650 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#internals
 2026-01-22 20:16:14,651 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#environment-variables
 2026-01-22 20:16:14,651 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#thinking
-2026-01-22 20:16:14,652 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Web/docTOC.md
+2026-01-22 20:16:14,652 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Web/docTOC.md
 2026-01-22 20:16:14,652 DEBUG 跳过重复链接: https://opencode.ai/docs/commands/#model
 2026-01-22 20:16:14,652 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#logging
 2026-01-22 20:16:14,655 DEBUG Starting new HTTPS connection (1): opencode.ai:443
@@ -4423,21 +4423,21 @@
 2026-01-22 20:16:14,660 DEBUG 跳过重复链接: https://opencode.ai/docs/cli/#experimental
 2026-01-22 20:16:14,662 DEBUG 跳过重复链接: https://opencode.ai/docs/tools/#ignore-patterns
 2026-01-22 20:16:14,665 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#tui
-2026-01-22 20:16:14,666 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
+2026-01-22 20:16:14,666 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
 2026-01-22 20:16:14,667 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#auth
 2026-01-22 20:16:14,668 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#events
 2026-01-22 20:16:14,667 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#editor-setup
-2026-01-22 20:16:14,667 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
+2026-01-22 20:16:14,667 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
 2026-01-22 20:16:14,668 DEBUG Starting new HTTPS connection (1): opencode.ai:443
-2026-01-22 20:16:14,667 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
+2026-01-22 20:16:14,667 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
 2026-01-22 20:16:14,669 DEBUG 跳过重复链接: https://opencode.ai/docs/server/#docs
 2026-01-22 20:16:14,670 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#configure
 2026-01-22 20:16:14,674 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:14,677 DEBUG Starting new HTTPS connection (1): opencode.ai:443
 2026-01-22 20:16:14,679 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#options
-2026-01-22 20:16:14,681 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
+2026-01-22 20:16:14,681 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
 2026-01-22 20:16:14,681 DEBUG 跳过重复链接: https://opencode.ai/docs/tui/#customization
-2026-01-22 20:16:14,684 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
+2026-01-22 20:16:14,684 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
 2026-01-22 20:16:14,996 DEBUG https://opencode.ai:443 "GET /docs/agents/ HTTP/1.1" 200 None
 2026-01-22 20:16:15,053 DEBUG https://opencode.ai:443 "GET /docs/mcp-servers/ HTTP/1.1" 200 None
 2026-01-22 20:16:15,123 DEBUG https://opencode.ai:443 "GET /docs/config/ HTTP/1.1" 200 None
@@ -4906,7 +4906,7 @@
 2026-01-22 20:16:24,264 DEBUG 跳过重复链接: https://opencode.ai/docs/github#configuration
 2026-01-22 20:16:24,264 DEBUG 使用白名单/黑名单策略检测 TOC
 2026-01-22 20:16:24,266 DEBUG 使用白名单/黑名单策略检测 TOC
-2026-01-22 20:16:24,268 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
+2026-01-22 20:16:24,268 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md
 2026-01-22 20:16:24,268 DEBUG 使用白名单/黑名单策略检测 TOC
 2026-01-22 20:16:24,270 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#from-npm
 2026-01-22 20:16:24,270 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#build
@@ -4939,7 +4939,7 @@
 2026-01-22 20:16:24,289 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#enable
 2026-01-22 20:16:24,289 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#how-plugins-are-installed
 2026-01-22 20:16:24,289 DEBUG 跳过重复链接: https://opencode.ai/docs/themes#custom-themes
-2026-01-22 20:16:24,289 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
+2026-01-22 20:16:24,289 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Keybinds/docTOC.md
 2026-01-22 20:16:24,289 DEBUG 跳过重复链接: https://opencode.ai/docs/config#global
 2026-01-22 20:16:24,290 DEBUG 跳过重复链接: https://opencode.ai/docs/commands#_top
 2026-01-22 20:16:24,290 DEBUG 跳过重复链接: https://opencode.ai/docs/server#apis
@@ -5048,12 +5048,12 @@
 2026-01-22 20:16:24,314 DEBUG 跳过重复链接: https://opencode.ai/docs/config#schema
 2026-01-22 20:16:24,315 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#basic-structure
 2026-01-22 20:16:24,315 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#azure-cognitive-services
-2026-01-22 20:16:24,315 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
+2026-01-22 20:16:24,315 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md
 2026-01-22 20:16:24,315 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#azure-openai
 2026-01-22 20:16:24,315 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#list
-2026-01-22 20:16:24,315 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
+2026-01-22 20:16:24,315 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Models/docTOC.md
 2026-01-22 20:16:24,315 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#session
-2026-01-22 20:16:24,316 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
+2026-01-22 20:16:24,316 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Enterprise/docTOC.md
 2026-01-22 20:16:24,316 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#markdown
 2026-01-22 20:16:24,316 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#automatic
 2026-01-22 20:16:24,316 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#client-only
@@ -5071,9 +5071,9 @@
 2026-01-22 20:16:24,319 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#pre-registered
 2026-01-22 20:16:24,319 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#azure-cognitive-services
 2026-01-22 20:16:24,320 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#typescript-support
-2026-01-22 20:16:24,320 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
+2026-01-22 20:16:24,320 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/GitHub/docTOC.md
 2026-01-22 20:16:24,320 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#remote
-2026-01-22 20:16:24,320 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
+2026-01-22 20:16:24,320 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Permissions/docTOC.md
 2026-01-22 20:16:24,320 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#configure
 2026-01-22 20:16:24,321 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#server
 2026-01-22 20:16:24,321 DEBUG 跳过重复链接: https://opencode.ai/docs/rules#using-opencodejson
@@ -5086,7 +5086,7 @@
 2026-01-22 20:16:24,324 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#errors
 2026-01-22 20:16:24,324 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#init
 2026-01-22 20:16:24,325 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#oauth
-2026-01-22 20:16:24,325 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
+2026-01-22 20:16:24,325 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md
 2026-01-22 20:16:24,325 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#types
 2026-01-22 20:16:24,325 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#json
 2026-01-22 20:16:24,325 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#events
@@ -5104,18 +5104,18 @@
 2026-01-22 20:16:24,328 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#models
 2026-01-22 20:16:24,328 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#authenticating
 2026-01-22 20:16:24,328 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#markdown
-2026-01-22 20:16:24,328 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
+2026-01-22 20:16:24,328 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/LSP Servers/docTOC.md
 2026-01-22 20:16:24,329 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers#automatic
 2026-01-22 20:16:24,329 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#apis
 2026-01-22 20:16:24,329 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#models
 2026-01-22 20:16:24,330 DEBUG 跳过重复链接: https://opencode.ai/docs/server#provider
 2026-01-22 20:16:24,330 DEBUG 跳过重复链接: https://opencode.ai/docs/plugins#examples
 2026-01-22 20:16:24,330 DEBUG 跳过重复链接: https://opencode.ai/docs/mcp-servers/#manage
-2026-01-22 20:16:24,330 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
+2026-01-22 20:16:24,330 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Themes/docTOC.md
 2026-01-22 20:16:24,330 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#skill
 2026-01-22 20:16:24,331 DEBUG 跳过重复链接: https://opencode.ai/docs/commands#options
 2026-01-22 20:16:24,331 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#cerebras
-2026-01-22 20:16:24,331 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
+2026-01-22 20:16:24,331 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Rules/docTOC.md
 2026-01-22 20:16:24,331 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#temperature
 2026-01-22 20:16:24,331 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#new
 2026-01-22 20:16:24,331 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#options
@@ -5198,7 +5198,7 @@
 2026-01-22 20:16:24,349 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#thinking
 2026-01-22 20:16:24,349 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#tools
 2026-01-22 20:16:24,349 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#fireworks-ai
-2026-01-22 20:16:24,349 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
+2026-01-22 20:16:24,349 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md
 2026-01-22 20:16:24,350 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#project
 2026-01-22 20:16:24,350 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#firmware
 2026-01-22 20:16:24,350 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#keybinds
@@ -5226,12 +5226,12 @@
 2026-01-22 20:16:24,356 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#github-copilot
 2026-01-22 20:16:24,357 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#gitlab-duo
 2026-01-22 20:16:24,357 DEBUG 跳过重复链接: https://opencode.ai/docs/server#logging
-2026-01-22 20:16:24,357 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
-2026-01-22 20:16:24,357 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
+2026-01-22 20:16:24,357 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
+2026-01-22 20:16:24,357 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md
 2026-01-22 20:16:24,357 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#formatters
 2026-01-22 20:16:24,357 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#config-1
 2026-01-22 20:16:24,357 DEBUG 跳过重复链接: https://opencode.ai/docs/tools#internals
-2026-01-22 20:16:24,358 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
+2026-01-22 20:16:24,358 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Commands/docTOC.md
 2026-01-22 20:16:24,359 DEBUG 跳过重复链接: https://opencode.ai/docs/cli#experimental
 2026-01-22 20:16:24,360 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#google-vertex-ai
 2026-01-22 20:16:24,361 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#editor-setup
@@ -5249,7 +5249,7 @@
 2026-01-22 20:16:24,364 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#hidden
 2026-01-22 20:16:24,364 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#auth
 2026-01-22 20:16:24,365 DEBUG 跳过重复链接: https://opencode.ai/docs/config#keybinds
-2026-01-22 20:16:24,365 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
+2026-01-22 20:16:24,365 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/CLI/docTOC.md
 2026-01-22 20:16:24,365 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#files
 2026-01-22 20:16:24,365 DEBUG 跳过重复链接: https://opencode.ai/docs/server#auth
 2026-01-22 20:16:24,365 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#task-permissions
@@ -5264,7 +5264,7 @@
 2026-01-22 20:16:24,367 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#tui
 2026-01-22 20:16:24,367 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#options
 2026-01-22 20:16:24,367 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk#events
-2026-01-22 20:16:24,368 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
+2026-01-22 20:16:24,368 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md
 2026-01-22 20:16:24,368 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#watcher
 2026-01-22 20:16:24,369 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#groq
 2026-01-22 20:16:24,369 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#mode
@@ -5272,7 +5272,7 @@
 2026-01-22 20:16:24,369 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#helicone
 2026-01-22 20:16:24,370 DEBUG 跳过重复链接: https://opencode.ai/docs/sdk/#auth
 2026-01-22 20:16:24,370 DEBUG 跳过重复链接: https://opencode.ai/docs/tui#customization
-2026-01-22 20:16:24,371 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
+2026-01-22 20:16:24,371 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
 2026-01-22 20:16:24,371 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#mcp-servers
 2026-01-22 20:16:24,371 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#plugins
 2026-01-22 20:16:24,371 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#instructions
@@ -5285,14 +5285,14 @@
 2026-01-22 20:16:24,403 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#enabled-providers
 2026-01-22 20:16:24,403 DEBUG 跳过重复链接: https://opencode.ai/docs/config#permissions
 2026-01-22 20:16:24,403 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#llamacpp
-2026-01-22 20:16:24,403 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
-2026-01-22 20:16:24,404 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
+2026-01-22 20:16:24,403 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md
+2026-01-22 20:16:24,404 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/SDK/docTOC.md
 2026-01-22 20:16:24,405 DEBUG 跳过重复链接: https://opencode.ai/docs/agents/#use-cases
 2026-01-22 20:16:24,405 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#ionet
 2026-01-22 20:16:24,413 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#helicone
 2026-01-22 20:16:24,413 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#experimental
 2026-01-22 20:16:24,414 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#task-permissions
-2026-01-22 20:16:24,414 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
+2026-01-22 20:16:24,414 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Server/docTOC.md
 2026-01-22 20:16:24,414 DEBUG 跳过重复链接: https://opencode.ai/docs/config#compaction
 2026-01-22 20:16:24,415 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#llamacpp
 2026-01-22 20:16:24,415 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#lm-studio
@@ -5315,7 +5315,7 @@
 2026-01-22 20:16:24,420 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#moonshot-ai
 2026-01-22 20:16:24,420 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#ollama
 2026-01-22 20:16:24,420 DEBUG 跳过重复链接: https://opencode.ai/docs/config#plugins
-2026-01-22 20:16:24,420 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
+2026-01-22 20:16:24,420 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
 2026-01-22 20:16:24,421 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#examples
 2026-01-22 20:16:24,421 DEBUG 跳过重复链接: https://opencode.ai/docs/config/#custom-directory
 2026-01-22 20:16:24,422 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#documentation-agent
@@ -5323,8 +5323,8 @@
 2026-01-22 20:16:24,423 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#minimax
 2026-01-22 20:16:24,423 DEBUG 跳过重复链接: https://opencode.ai/docs/config#instructions
 2026-01-22 20:16:24,423 DEBUG 跳过重复链接: https://opencode.ai/docs/agents#security-auditor
-2026-01-22 20:16:24,424 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
-2026-01-22 20:16:24,424 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
+2026-01-22 20:16:24,424 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
+2026-01-22 20:16:24,424 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Agents/docTOC.md
 2026-01-22 20:16:24,425 DEBUG 跳过重复链接: https://opencode.ai/docs/config#disabled-providers
 2026-01-22 20:16:24,425 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#nebius-token-factory
 2026-01-22 20:16:24,425 DEBUG 跳过重复链接: https://opencode.ai/docs/config#enabled-providers
@@ -5349,7 +5349,7 @@
 2026-01-22 20:16:24,430 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#together-ai
 2026-01-22 20:16:24,430 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#venice-ai
 2026-01-22 20:16:24,431 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#scaleway
-2026-01-22 20:16:24,431 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
+2026-01-22 20:16:24,431 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md
 2026-01-22 20:16:24,431 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#vercel-ai-gateway
 2026-01-22 20:16:24,431 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#together-ai
 2026-01-22 20:16:24,431 DEBUG 跳过重复链接: https://opencode.ai/docs/providers/#xai
@@ -5366,5 +5366,5 @@
 2026-01-22 20:16:24,434 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#custom-provider
 2026-01-22 20:16:24,435 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#troubleshooting
 2026-01-22 20:16:24,435 DEBUG 跳过重复链接: https://opencode.ai/docs/providers#directory
-2026-01-22 20:16:24,437 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
-2026-01-22 20:16:24,437 DEBUG 保存TOC文件成功: /Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
+2026-01-22 20:16:24,437 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md
+2026-01-22 20:16:24,437 DEBUG 保存TOC文件成功: ~/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md

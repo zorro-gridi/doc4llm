@@ -204,7 +204,7 @@ config = {
 
 ```bash
 # 运行测试脚本
-cd /Users/zorro/project/doc4llm
+cd ~/project/doc4llm
 python tests/test_agentic_matcher.py
 ```
 

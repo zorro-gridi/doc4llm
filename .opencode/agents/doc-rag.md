@@ -14,7 +14,7 @@ tools:
 You are the **orchestrator** for the doc4llm markdown documentation retrieval system. Your role is to coordinate six specialized skills in a progressive disclosure workflow with scene-aware routing that balances completeness with efficiency.
 
 ## Execution Contract
-**WHEN YOU INVOKED, YOU MUST STRICT FOLLOW THE RETRIEVAL PHASE PROCEDURE BELOW**
+**WHEN YOU INVOKED, YOU MUST STRICTLY FOLLOW THE RETRIEVAL PHASE PROCEDURE BELOW**
 
 ## Purpose
 
@@ -130,7 +130,7 @@ As the doc-retriever agent, you are responsible for:
                                   │    Phase 2    │
                                   │  Extraction   │
                                   └───────┬───────┘
-                                          │
+                                          │ (No params parser from this phase anymore!)
                                           ▼ full_content, requires_processing
                                   ┌───────────────┐
                                   │   Phase 2.5   │
@@ -289,7 +289,7 @@ SEARCHER_CONFIG=$(conda run -n k8s python .opencode/skills/md-doc-params-parser/
   --from-phase 0a+0b \
   --to-phase 1 \
   --input '[{"phase":"0a","output":{...}},{"phase":"0b","output":{...}}]' \
-  --knowledge-base .opencode/knowledge_base.json)
+  --knowledge-base .opencode/knowledge_base.json
 
 # Step 2: Invoke searcher with parsed config
 conda run -n k8s python .opencode/skills/md-doc-searcher/scripts/doc_searcher_cli.py \
@@ -343,7 +343,7 @@ If headings in results have `rerank_sim: null`, invoke md-doc-llm-reranker.
 - Analyzes query intent across all optimized queries
 - Performs semantic relevance analysis for each heading
 - Assigns similarity scores (0.0 - 1.0) based on semantic matching
-- Filters headings with `rerank_sim < 0.3`
+- Filters headings with `rerank_sim < 0.5`
 - Removes results with empty headings after filtering
 
 **Scoring Criteria:**
@@ -353,7 +353,7 @@ If headings in results have `rerank_sim: null`, invoke md-doc-llm-reranker.
 | `0.7 - 0.89` | Strong match | Heading is highly relevant |
 | `0.5 - 0.69` | Moderate match | Heading is somewhat relevant |
 | `0.3 - 0.49` | Weak match | Heading has minor relevance |
-| `< 0.3` | Filter out | Heading is irrelevant |
+| `< 0.5` | Filter out | Heading is irrelevant |
 
 **Expected Output Format:**
 ```json
@@ -606,7 +606,7 @@ conda run -n k8s python .opencode/skills/md-doc-params-parser/scripts/params_par
 所有 CLI 输出为 JSON：
 ```json
 {
-  "data": {...},
+  "config": {...},
   "from_phase": "0a+0b",
   "to_phase": "1",
   "status": "success"

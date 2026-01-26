@@ -27,29 +27,38 @@ Before query analysis, identify target documentation sets.
 **Knowledge Base Configuration**
 
 - Read `.opencode/knowledge_base.json` → get `base_dir`
-- List all first-level subdirectories under `<base_dir>/`. **Use grep filter to narrow the doc-set choices is recommended!**
+- List all first-level subdirectories under `<base_dir>/`.
 - Subdirectory naming pattern: `<doc_name>@<doc_version>`
 
 Example:
 ```
-
-code_claude_com@latest
+Claude_Code_Docs@latest
 anthropic_api@v1
-
-````
+```
 
 **Matching Strategy**
 
-1. **Direct Match**: Query contains doc-set identifier
-2. **Keyword Match**: Query keywords match doc-set naming conventions
-3. **Domain Inference**: Technical terms suggest documentation domain
-4. **No Match**: Return empty list `[]` → Suggest online search
+1. 选择你认为最符合查询需求的 doc-set 文档集
+2. **No Match**: Return empty list `[]` → Suggest online search
 
-**Output**
+> **重要约束**: 返回的 `doc_set` 值必须与本地目录名**完全一致**。不得修改、转换或推断文档集名称。
+> - 禁止添加前缀/后缀或更改大小写
+> - 禁止使用部分匹配或模糊匹配
+> - 未找到精确匹配 → 返回 `[]`
+
+**示例**
+
+| 用户查询 | 推荐文档集 |
+|----------|------------|
+| opencode 如何创建 skills？ | ["OpenCode_Docs@latest"] |
+| claude code 如何创建 skills？ | ["Claude_Code_Docs@latest"] |
+| claude code 和 opencode 的对比？ | ["Claude_Code_Docs@latest", "OpenCode_Docs@latest"] |
+
+**Output Example**
 
 ```json
-"doc_set": ["code_claude_com@latest"]
-````
+"doc_set": ["Claude_Code_Docs@latest"]
+```
 
 or
 
@@ -361,9 +370,3 @@ This ensures:
     "reason": ""
   }
 }
-```
-
-## ⚠️ FINAL OUTPUT REQUIREMENT
-
-**Return ONLY the JSON object above. Do NOT include this documentation. Do NOT add explanations. Do NOT use markdown code blocks.**
-```

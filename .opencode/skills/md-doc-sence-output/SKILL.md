@@ -99,8 +99,6 @@ If `compression_meta.compression_applied == true`:
 Append:
 
 ```markdown
----
-
 **注意：源文档已被压缩输出；原文: {{original_line_count}} 行，当前输出: {{output_line_count}} 行**
 ```
 
@@ -111,8 +109,6 @@ Append:
 Always append:
 
 ```markdown
----
-
 ### 文档来源 (Sources)
 
 1. **{{doc_meta.title}}**

@@ -80,6 +80,18 @@ conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parse
 
 # Read input from stdin
 echo '{"query_analysis": {...}}' | python params_parser_cli.py --from-phase 0a --to-phase 1 --input -
+
+# Phase 1 → Phase 2 (searcher → reader, skip reranker)
+conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parser_cli.py \
+  --from-phase 1 \
+  --to-phase 2 \
+  --input '{"success": true, "results": [{"doc_set": "OpenCode_Docs@latest", "page_title": "Agent Skills", "headings": [{"text": "## Create Skills", "rerank_sim": null}]}]}'
+
+# Phase 1.5 → Phase 2 (reranker → reader)
+conda run -n k8s python .claude/skills/md-doc-params-parser/scripts/params_parser_cli.py \
+  --from-phase 1.5 \
+  --to-phase 2 \
+  --input '{"success": true, "reranked_count": 2, "results": [{"doc_set": "OpenCode_Docs@latest", "page_title": "Agent Skills", "headings": [{"text": "## Create Skills", "rerank_sim": 0.92}]}]}'
 ```
 
 ## Output Format
@@ -88,7 +100,7 @@ All CLI outputs are JSON with the following structure:
 
 ```json
 {
-  "data": {
+  "config": {
     "query": ["create hooks"],
     "doc_sets": "OpenCode_Docs@latest",
     "domain_nouns": ["hooks"],

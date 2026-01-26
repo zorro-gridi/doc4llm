@@ -216,48 +216,6 @@ class TestPhase1_5ToPhase2Parser:
         assert len(result["page_titles"]) == 2
 
 
-class TestPhase2ToPhase3Parser:
-    """Tests for Phase 2 → Phase 3 parser."""
-
-    def test_basic_conversion(self):
-        """Test basic reader to processor conversion."""
-        reader_output = {
-            "success": True,
-            "contents": {"OpenCode_Docs@latest": []},
-            "total_line_count": 100,
-            "requires_processing": True,
-            "metadata": {"source": "OpenCode_Docs@latest"}
-        }
-
-        result = ParserFactory.parse("2", "3", reader_output)
-
-        assert result["contents"] == reader_output["contents"]
-        assert result["line_count"] == 100
-        assert result["requires_processing"] is True
-
-
-class TestPhase3ToPhase4Parser:
-    """Tests for Phase 3 → Phase 4 parser."""
-
-    def test_basic_conversion(self):
-        """Test basic processor to sence-output conversion."""
-        processor_output = {
-            "success": True,
-            "processed_doc": "# Processed content",
-            "compression_applied": True,
-            "original_line_count": 100,
-            "output_line_count": 30,
-            "doc_meta": {"source": "OpenCode_Docs@latest"}
-        }
-
-        result = ParserFactory.parse("3", "4", processor_output)
-
-        assert result["processed_doc"] == "# Processed content"
-        assert result["compression_meta"]["compression_applied"] is True
-        assert result["compression_meta"]["original_line_count"] == 100
-        assert result["compression_meta"]["output_line_count"] == 30
-
-
 class TestParserFactory:
     """Tests for ParserFactory class."""
 

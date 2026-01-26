@@ -8,7 +8,7 @@
       "Read(.claude/.env)",
       "Read(**/.claude/.env)",
       "Read(**/docContent.md)",
-      "Read(/Users/zorro/project/md_docs_base/**/docContent.md)"
+      "Read(~/project/md_docs_base/**/docContent.md)"
     ]
   },
   "env": {

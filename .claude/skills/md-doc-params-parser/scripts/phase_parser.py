@@ -216,53 +216,6 @@ class Phase1_5ToPhase2Parser(PhaseParser):
         return heading.lstrip("# ").strip()
 
 
-class Phase2ToPhase3Parser(PhaseParser):
-    """Phase 2 (reader) → Phase 3 (processor)"""
-
-    def parse(self, reader_output: Dict[str, Any], target_skill: str) -> Dict[str, Any]:
-        """
-        Convert reader output to processor input.
-
-        Args:
-            reader_output: Output from md-doc-reader
-            target_skill: Target skill name
-
-        Returns:
-            Input dict for md-doc-processor
-        """
-        return {
-            "contents": reader_output.get("contents", {}),
-            "line_count": reader_output.get("total_line_count", 0),
-            "requires_processing": reader_output.get("requires_processing", False),
-            "metadata": reader_output.get("metadata", {})
-        }
-
-
-class Phase3ToPhase4Parser(PhaseParser):
-    """Phase 3 (processor) → Phase 4 (sence-output)"""
-
-    def parse(self, processor_output: Dict[str, Any], target_skill: str) -> Dict[str, Any]:
-        """
-        Convert processor output to sence-output input.
-
-        Args:
-            processor_output: Output from md-doc-processor
-            target_skill: Target skill name
-
-        Returns:
-            Input dict for md-doc-sence-output
-        """
-        return {
-            "processed_doc": processor_output.get("processed_doc", ""),
-            "compression_meta": {
-                "compression_applied": processor_output.get("compression_applied", False),
-                "original_line_count": processor_output.get("original_line_count", 0),
-                "output_line_count": processor_output.get("output_line_count", 0)
-            },
-            "doc_meta": processor_output.get("doc_meta", {})
-        }
-
-
 class Phase1ToPhase2Parser(PhaseParser):
     """Phase 1 (searcher) → Phase 2 (reader) - Direct pass-through (no reranker)"""
 
@@ -279,7 +232,6 @@ class Phase1ToPhase2Parser(PhaseParser):
         """
         results = searcher_output.get("results", [])
 
-        # Build page_titles config for reader CLI
         page_titles_config = []
         for result in results:
             headings = result.get("headings", [])

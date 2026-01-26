@@ -27,7 +27,7 @@
 [2026-01-21 12:24:45] 错误事件:        0 次
 [2026-01-21 12:24:45] 最常用命令 (Top 5):
 [2026-01-21 12:24:45]      9 python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
-[2026-01-21 12:24:45]      4 python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+[2026-01-21 12:24:45]      4 python ~/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
 [2026-01-21 12:24:45]      2 python -c "
 [2026-01-21 12:24:45]      2 ls -la ~/project/md_docs_base/
 [2026-01-21 12:24:45] === 文档集状态 ===
@@ -64,7 +64,7 @@
 [2026-01-21 12:25:04] 错误事件:        0 次
 [2026-01-21 12:25:04] 最常用命令 (Top 5):
 [2026-01-21 12:25:04]      9 python .claude/skills/md-doc-reader/scripts/extract_md_doc.py \
-[2026-01-21 12:25:04]      4 python /Users/zorro/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
+[2026-01-21 12:25:04]      4 python ~/project/doc4llm/.claude/skills/md-doc-reader/scripts/extract_md_doc.py \
 [2026-01-21 12:25:04]      2 python -c "
 [2026-01-21 12:25:04]      2 ls -la ~/project/md_docs_base/
 [2026-01-21 12:25:04] === 文档集状态 ===

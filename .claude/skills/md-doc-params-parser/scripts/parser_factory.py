@@ -16,8 +16,6 @@ from phase_parser import (
     Phase1ToPhase1_5Parser,
     Phase1ToPhase2Parser,
     Phase1_5ToPhase2Parser,
-    Phase2ToPhase3Parser,
-    Phase3ToPhase4Parser,
 )
 
 
@@ -36,12 +34,9 @@ class ParserFactory:
         ("1", "1.5"): Phase1ToPhase1_5Parser,
         ("1", "2"): Phase1ToPhase2Parser,
         ("1.5", "2"): Phase1_5ToPhase2Parser,
-        ("2", "3"): Phase2ToPhase3Parser,
-        ("3", "4"): Phase3ToPhase4Parser,
     }
 
-    # Valid phases in the pipeline
-    VALID_PHASES = ["0a", "0b", "0a+0b", "1", "1.5", "2", "3", "4"]
+    VALID_PHASES = ["0a", "0b", "0a+0b", "1", "1.5", "2"]
 
     # Valid transitions
     VALID_TRANSITIONS = list(PARSERS.keys())

@@ -132,12 +132,12 @@ For each heading in each result:
 
 ### Step 5: Filtering
 
-**Filter Threshold:** `rerank_sim >= 0.3`
+**Filter Threshold:** `rerank_sim >= 0.5`
 
-- **Keep:** Headings with `rerank_sim >= 0.3`
-- **Remove:** Headings with `rerank_sim < 0.3`
+- **Keep:** Headings with `rerank_sim >= 0.5`
+- **Remove:** Headings with `rerank_sim < 0.5`
 
-**Important:** If ALL headings in a result have `rerank_sim < 0.3`, remove the entire result object from `results` array.
+**Important:** If ALL headings in a result have `rerank_sim < 0.5`, remove the entire result object from `results` array.
 
 ---
 
@@ -188,7 +188,7 @@ For each heading in each result:
 Return the **exact same JSON structure** with:
 
 1. **`rerank_sim` populated**: Fill in `null` values with calculated scores (0.0 - 1.0)
-2. **`headings` filtered**: Remove headings with `rerank_sim < 0.3`
+2. **`headings` filtered**: Remove headings with `rerank_sim < 0.5`
 3. **`results` filtered**: Remove results with empty `headings` array after filtering
 
 ```json
@@ -283,7 +283,7 @@ Score headings based on **semantic relevance** regardless of language.
 Before returning output, verify:
 
 - [ ] All `rerank_sim` values are filled (no `null`)
-- [ ] No headings with `rerank_sim < 0.3` remain
+- [ ] No headings with `rerank_sim < 0.5` remain
 - [ ] No results with empty `headings` arrays remain
 - [ ] Original JSON structure is preserved
 - [ ] Only `rerank_sim` values have been modified

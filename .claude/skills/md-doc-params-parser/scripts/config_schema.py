@@ -217,57 +217,6 @@ SCHEMA_PHASE_2_OUTPUT: Dict[str, Any] = {
 
 
 # =============================================================================
-# Phase 3: md-doc-processor Output Schema
-# =============================================================================
-
-SCHEMA_PHASE_3_OUTPUT: Dict[str, Any] = {
-    "type": "object",
-    "properties": {
-        "success": {"type": "boolean"},
-        "processed_doc": {"type": "string"},
-        "compression_applied": {"type": "boolean"},
-        "original_line_count": {"type": "integer"},
-        "output_line_count": {"type": "integer"},
-        "compression_ratio": {"type": "number"},
-        "doc_meta": {
-            "type": "object",
-            "description": "Document metadata"
-        },
-        "processing_stats": {
-            "type": "object",
-            "properties": {
-                "processing_time_ms": {"type": "number"}
-            }
-        }
-    },
-    "required": ["success", "processed_doc"]
-}
-
-
-# =============================================================================
-# Phase 4: md-doc-sence-output Input Schema
-# =============================================================================
-
-SCHEMA_PHASE_4_INPUT: Dict[str, Any] = {
-    "type": "object",
-    "properties": {
-        "processed_doc": {"type": "string"},
-        "compression_meta": {
-            "type": "object",
-            "properties": {
-                "compression_applied": {"type": "boolean"},
-                "original_line_count": {"type": "integer"},
-                "output_line_count": {"type": "integer"}
-            }
-        },
-        "doc_meta": {"type": "object"},
-        "query_context": {"type": "object"}
-    },
-    "required": ["processed_doc"]
-}
-
-
-# =============================================================================
 # Phase 1: md-doc-searcher Input Schema (CLI config format)
 # =============================================================================
 
@@ -355,8 +304,6 @@ PHASE_SCHEMAS = {
     "1.5_output": SCHEMA_PHASE_1_5_OUTPUT,
     "2_input": SCHEMA_PHASE_2_INPUT,
     "2_output": SCHEMA_PHASE_2_OUTPUT,
-    "3_output": SCHEMA_PHASE_3_OUTPUT,
-    "4_input": SCHEMA_PHASE_4_INPUT,
 }
 
 
