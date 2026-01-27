@@ -607,6 +607,34 @@ class MarkdownDocExtractor(DebugMixin):
 
         return result
 
+    def _is_heading_matches_page_title(
+        self,
+        heading: str,
+        page_title: str,
+        content: str
+    ) -> bool:
+        """Check if heading core text matches page_title (ignoring # and numeric prefixes).
+
+        When a heading's core text matches the page_title, it indicates the user
+        wants the entire document content, not just a section.
+
+        Args:
+            heading: The heading text to check (may include # prefix)
+            page_title: The document's page title
+            content: Full document content (used for validation)
+
+        Returns:
+            True if heading matches page_title, False otherwise
+        """
+        # Extract core heading text (handles "## 3.10. skill" -> "skill")
+        heading_core = utils.extract_core_title(heading)
+
+        # Normalize page_title for comparison
+        normalized_page_title = utils.normalize_title(page_title)
+
+        # Compare core texts (case-insensitive)
+        return heading_core.lower().strip() == normalized_page_title.lower().strip()
+
     def extract_by_headings(
         self,
         page_title: str,
@@ -649,7 +677,13 @@ class MarkdownDocExtractor(DebugMixin):
         from . import utils as utils_module
         normalized_title = utils_module.normalize_title(page_title)
 
-        self._debug_print(f"Extracting {len(headings)} headings from '{normalized_title}'")
+        # Normalize headings: strip # prefix (handles "### 3.10. skill" -> "3.10. skill")
+        normalized_headings = [
+            h.lstrip("# ").strip() if isinstance(h, str) else h
+            for h in headings
+        ]
+
+        self._debug_print(f"Extracting {len(normalized_headings)} headings from '{normalized_title}'")
 
         # Get document structure
         try:
@@ -700,9 +734,16 @@ class MarkdownDocExtractor(DebugMixin):
         except DocumentNotFoundError as e:
             raise DocumentNotFoundError(normalized_title, f"Failed to read document: {e}")
 
+        # Check if any heading matches the page_title (ignoring # and numeric prefixes)
+        # If so, return the entire document content with page_title as the key
+        for heading in normalized_headings:
+            if self._is_heading_matches_page_title(heading, matched_title, content):
+                self._debug_print(f"  ✓ Heading matches page_title, returning full document")
+                return {matched_title: content}
+
         # Extract each section using existing utils function
         sections = {}
-        for heading in headings:
+        for heading in normalized_headings:
             section_content = utils_module.extract_section_by_title(content, heading)
             if section_content is not None:
                 sections[heading] = section_content
@@ -710,7 +751,7 @@ class MarkdownDocExtractor(DebugMixin):
             else:
                 self._debug_print(f"  ✗ Not found: {heading}")
 
-        self._debug_print(f"Extracted {len(sections)}/{len(headings)} sections")
+        self._debug_print(f"Extracted {len(sections)}/{len(normalized_headings)} sections")
         return sections
 
     def search_documents(self, title: str) -> List[Dict[str, Any]]:
@@ -1496,13 +1537,15 @@ class MarkdownDocExtractor(DebugMixin):
         Args:
             sections: List of section specifications. Each spec is a dict with:
                 - "title" (str): Document page title
-                - "headings" (List[str]): List of heading names to extract
+                - "headings" (List[str]): List of heading names to extract.
+                  Empty list means extract the entire document.
                 - "doc_set" (str): Document set identifier (e.g., "code_claude_com@latest")
             threshold: Line count threshold for requiring post-processing (default: 2100)
 
         Returns:
             ExtractionResult containing:
                 - contents: Dict mapping "{title}::{heading}" to section content
+                  (for empty headings: "{title}" only)
                 - total_line_count: Cumulative line count across all sections
                 - individual_counts: Dict mapping "{title}::{heading}" to line count
                 - requires_processing: Whether total_line_count exceeds threshold
@@ -1512,6 +1555,13 @@ class MarkdownDocExtractor(DebugMixin):
         Raises:
             InvalidTitleError: If a section specification is invalid
             DocumentNotFoundError: If a document doesn't exist
+
+        Extraction Rules:
+            - Empty headings list: Extracts the entire document content
+            - Non-empty headings: Extracts each heading's section content
+            - Section end condition: Stops at same level or higher heading
+              (current_level <= heading_level)
+            - If no next same-level heading found: Extracts to document end
 
         Examples:
             >>> extractor = MarkdownDocExtractor()
@@ -1523,13 +1573,15 @@ class MarkdownDocExtractor(DebugMixin):
             ...     },
             ...     {
             ...         "title": "Hooks Reference",
-            ...         "headings": ["Hook Types", "Configuration"],
+            ...         "headings": [],  # Empty = full document
             ...         "doc_set": "code_claude_com@latest"
             ...     }
             ... ]
             >>> result = extractor.extract_multi_by_headings(sections)
             >>> # Access sections by composite key
             >>> content = result.contents["Agent Skills::Create Skills"]
+            >>> # Access full document
+            >>> full_doc = result.contents["Hooks Reference"]
         """
         if not sections:
             return ExtractionResult(
@@ -1562,7 +1614,8 @@ class MarkdownDocExtractor(DebugMixin):
                 self._debug_print(f"  ✗ Missing 'title' in section spec")
                 continue
 
-            if not headings:
+            # headings 可以为 None（表示未指定）或列表（可能为空）
+            if headings is None:
                 self._debug_print(f"  ✗ Missing 'headings' in section spec for '{title}'")
                 continue
 
@@ -1572,6 +1625,23 @@ class MarkdownDocExtractor(DebugMixin):
 
             if not doc_set:
                 self._debug_print(f"  ✗ Missing 'doc_set' in section spec for '{title}'")
+                continue
+
+            # 空 headings 列表表示提取整个文档
+            if len(headings) == 0:
+                self._debug_print(f"  Extracting full document: '{title}'")
+                try:
+                    full_content = self.extract_by_title(title, doc_set=doc_set)
+                    if full_content:
+                        results[title] = full_content  # composite key 仅为 title
+                        line_count = len(full_content.split('\n'))
+                        individual_counts[title] = line_count
+                        total_lines += line_count
+                        self._debug_print(f"    ✓ Full document: {line_count} lines")
+                    else:
+                        self._debug_print(f"    ✗ Document not found: '{title}'")
+                except Exception as e:
+                    self._debug_print(f"  ✗ Failed to extract '{title}': {e}")
                 continue
 
             self._debug_print(f"  Processing: '{title}' with {len(headings)} headings")
@@ -1584,14 +1654,35 @@ class MarkdownDocExtractor(DebugMixin):
                     doc_set=doc_set
                 )
 
-                # Add each extracted section to results with composite key
-                for heading, section_content in extracted_sections.items():
-                    composite_key = f"{title}::{heading}"
-                    results[composite_key] = section_content
+                # Check if we got a full document (heading matches page_title)
+                # In this case, the key will be the title itself (not a composite key)
+                if len(extracted_sections) == 1 and title in extracted_sections:
+                    full_content = extracted_sections[title]
+                    results[title] = full_content  # Use title as key (not composite)
+                    line_count = len(full_content.split('\n'))
+                    individual_counts[title] = line_count
+                    total_lines += line_count
+                    self._debug_print(f"    ✓ Full document (heading matches title): {line_count} lines")
+                else:
+                    # Add each extracted section to results with composite key
+                    for heading, section_content in extracted_sections.items():
+                        composite_key = f"{title}::{heading}"
+                        results[composite_key] = section_content
+                        line_count = len(section_content.split('\n'))
+                        individual_counts[composite_key] = line_count
+                        total_lines += line_count
+                        self._debug_print(f"    ✓ Extracted: '{heading}' ({line_count} lines)")
                     line_count = len(section_content.split('\n'))
                     individual_counts[composite_key] = line_count
                     total_lines += line_count
-                    self._debug_print(f"    ✓ '{heading}': {line_count} lines")
+                    self._debug_print(f"    ✓ Extracted: '{heading}' ({line_count} lines)")
+
+                # Log headings that were not found
+                extracted_headings = set(extracted_sections.keys())
+                requested_headings = set(headings)
+                missing_headings = requested_headings - extracted_headings
+                for missing in missing_headings:
+                    self._debug_print(f"    ✗ Not found: '{missing}'")
 
             except Exception as e:
                 self._debug_print(f"  ✗ Failed to extract '{title}': {e}")

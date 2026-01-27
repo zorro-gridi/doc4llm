@@ -139,14 +139,23 @@ SCHEMA_PHASE_1_5_OUTPUT: Dict[str, Any] = {
     "type": "object",
     "properties": {
         "success": {"type": "boolean"},
-        "reranked_count": {"type": "integer"},
+        "toc_fallback": {"type": "boolean"},
+        "grep_fallback": {"type": "boolean"},
+        "query": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+        "doc_sets_found": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
         "results": {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
                     "doc_set": {"type": "string"},
-                    "file_path": {"type": "string"},
+                    "toc_path": {"type": "string"},
                     "page_title": {"type": "string"},
                     "headings": {
                         "type": "array",
@@ -155,23 +164,32 @@ SCHEMA_PHASE_1_5_OUTPUT: Dict[str, Any] = {
                             "properties": {
                                 "level": {"type": "integer"},
                                 "text": {"type": "string"},
-                                "score": {"type": "number"},
-                                "rerank_sim": {"type": "number"}
+                                "rerank_sim": {
+                                    "type": ["number", "null"],
+                                    "description": "LLM reranking similarity"
+                                },
+                                "bm25_sim": {
+                                    "type": ["number", "null"],
+                                    "description": "BM25 similarity score"
+                                }
                             }
                         }
+                    },
+                    "bm25_sim": {
+                        "type": ["number", "null"],
+                        "description": "BM25 similarity score"
+                    },
+                    "rerank_sim": {
+                        "type": ["number", "null"],
+                        "description": "Result-level rerank similarity"
                     }
                 }
             }
         },
-        "rerank_stats": {
-            "type": "object",
-            "properties": {
-                "rerank_time_ms": {"type": "number"},
-                "threshold": {"type": "number"}
-            }
-        }
+        "fallback_used": {"type": "string"},
+        "message": {"type": "string"}
     },
-    "required": ["success", "reranked_count", "results"]
+    "required": ["success", "results"]
 }
 
 

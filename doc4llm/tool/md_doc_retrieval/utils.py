@@ -372,12 +372,43 @@ def extract_title_from_md_file(file_path: str) -> str:
     raise InvalidTitleError(file_path, "No heading found in file")
 
 
+def extract_core_title(heading: str) -> str:
+    """Extract the core title text from a heading by removing prefixes and suffixes.
+
+    This function:
+    1. Removes numeric prefixes (e.g., "3.10. ", "1. ", "2) ")
+    2. Removes URL suffixes (e.g., ": https://...", "：https://...")
+
+    Args:
+        heading: The heading text to process
+
+    Returns:
+        The core title text without prefixes and suffixes
+
+    Examples:
+        >>> extract_core_title("3.10. skill：https://opencode.ai/docs/tools#skill")
+        'skill'
+        >>> extract_core_title("1. Overview: https://example.com")
+        'Overview'
+        >>> extract_core_title("skill")
+        'skill'
+    """
+    # Remove numeric prefixes: "3.10. skill" -> "skill"
+    core = re.sub(r'^[\d\.]+[\)\-]?\s*', '', heading.strip())
+    # Handle remaining patterns like "3.10." (no space after)
+    core = re.sub(r'^[\d\.]+\s*', '', core)
+    # Remove URL suffixes: "skill：https://..." or "skill: https://..."
+    core = re.sub(r'[\：:]\s*https?://\S*$', '', core)
+    return core.strip()
+
+
 def extract_section_by_title(content: str, title: str) -> str | None:
     """Extract a section from markdown content by its heading title.
 
     This function searches for a heading matching the given title and returns
     the complete section content until the next heading of the same or higher level.
-    Supports matching titles with or without numeric prefixes (e.g., "1. Title").
+    Supports matching titles with or without numeric prefixes (e.g., "1. Title")
+    and with or without URL suffixes (e.g., "Title: https://...").
 
     Args:
         content: Full markdown document content
@@ -393,17 +424,29 @@ def extract_section_by_title(content: str, title: str) -> str | None:
         >>> content = "## 1. Create your first Skill\\nContent"
         >>> extract_section_by_title(content, "Create your first Skill")
         "## 1. Create your first Skill\\nContent"
+        >>> content = "### skill\\nContent"
+        >>> extract_section_by_title(content, "3.10. skill：https://opencode.ai/docs/tools#skill")
+        "### skill\\nContent"
     """
     lines = content.splitlines()
     start_idx = None
     heading_level = None
 
-    # Normalize the input title by removing common numeric prefixes
-    # This handles patterns like: "1. Title", "1.1 Title", "2) Title", "1- Title"
-    normalized_title = re.sub(r'^[\d\.]+[\)\-]?\s*', '', title.strip())
+    # Extract core title by removing numeric prefixes and URL suffixes
+    # This handles patterns like: "3.10. skill：https://..." -> "skill"
+    core_title = extract_core_title(title)
 
     # Build list of title variants to try (in order of preference)
-    title_variants = [title, normalized_title]
+    # Prefer exact match first, then core title, then normalized variants
+    title_variants = [title, core_title]
+
+    # Also create normalized variants without numeric prefixes
+    for tv in [title, core_title]:
+        normalized = re.sub(r'^[\d\.]+[\)\-]?\s*', '', tv.strip())
+        normalized = re.sub(r'^[\d\.]+\s*', '', normalized)
+        if normalized and normalized not in title_variants:
+            title_variants.append(normalized)
+
     # Remove duplicates while preserving order
     seen = set()
     title_variants = [x for x in title_variants if not (x in seen or seen.add(x))]

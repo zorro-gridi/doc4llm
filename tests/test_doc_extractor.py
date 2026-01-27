@@ -323,6 +323,187 @@ class TestFromConfig(TestCase):
             os.unlink(config_path)
 
 
+class TestHeadingMatchesPageTitle(TestCase):
+    """Test cases for heading matches page_title feature."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.test_dir = tempfile.mkdtemp()
+        self.doc_set = f"{self.test_dir}/test_docs@latest"
+        os.makedirs(self.doc_set, exist_ok=True)
+
+        # Create a test document with multiple sections
+        self.full_content = """# Agent Skills
+
+This is the full document content about agent skills.
+
+## Create Skills
+
+To create a skill, follow these steps:
+
+1. Define the skill manifest
+2. Implement the skill logic
+3. Test your skill
+
+## Configure Hooks
+
+Hooks allow you to customize skill behavior.
+
+## Advanced Usage
+
+Advanced topics for power users.
+"""
+        self._create_test_document("Agent Skills", self.full_content)
+
+    def _create_test_document(self, title: str, content: str):
+        """Helper to create a test document."""
+        doc_dir = Path(self.doc_set) / title
+        doc_dir.mkdir(parents=True, exist_ok=True)
+        (doc_dir / "docContent.md").write_text(content)
+
+    def tearDown(self):
+        """Clean up test fixtures."""
+        import shutil
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
+
+    def test_heading_matches_page_title_exact(self):
+        """Test heading exactly matches page_title returns full document."""
+        extractor = MarkdownDocExtractor(base_dir=self.test_dir)
+
+        # Heading "Agent Skills" matches page_title "Agent Skills"
+        result = extractor.extract_by_headings(
+            page_title="Agent Skills",
+            headings=["Agent Skills"],
+            doc_set="test_docs@latest"
+        )
+
+        # Should return the full document with page_title as key
+        self.assertIn("Agent Skills", result)
+        self.assertEqual(result["Agent Skills"], self.full_content)
+
+    def test_heading_matches_page_title_with_number_prefix(self):
+        """Test heading with numeric prefix matches page_title."""
+        extractor = MarkdownDocExtractor(base_dir=self.test_dir)
+
+        # Heading "## 1. Agent Skills" should match page_title "Agent Skills"
+        result = extractor.extract_by_headings(
+            page_title="Agent Skills",
+            headings=["1. Agent Skills"],
+            doc_set="test_docs@latest"
+        )
+
+        # Should return the full document with page_title as key
+        self.assertIn("Agent Skills", result)
+        self.assertEqual(result["Agent Skills"], self.full_content)
+
+    def test_heading_matches_page_title_with_url_suffix(self):
+        """Test heading with URL suffix matches page_title."""
+        extractor = MarkdownDocExtractor(base_dir=self.test_dir)
+
+        # Heading "## 3.10. skill：https://opencode.ai/docs/tools#skill" should match page_title "skill"
+        # First create a document with title "skill"
+        skill_content = """# skill
+
+This is the skill document content.
+
+## Overview
+
+Skill overview content.
+"""
+        self._create_test_document("skill", skill_content)
+
+        result = extractor.extract_by_headings(
+            page_title="skill",
+            headings=["3.10. skill：https://opencode.ai/docs/tools#skill"],
+            doc_set="test_docs@latest"
+        )
+
+        # Should return the full document with page_title as key
+        self.assertIn("skill", result)
+        self.assertEqual(result["skill"], skill_content)
+
+    def test_heading_does_not_match_page_title(self):
+        """Test heading that doesn't match page_title returns section only."""
+        extractor = MarkdownDocExtractor(base_dir=self.test_dir)
+
+        # Heading "Create Skills" does not match page_title "Agent Skills"
+        result = extractor.extract_by_headings(
+            page_title="Agent Skills",
+            headings=["Create Skills"],
+            doc_set="test_docs@latest"
+        )
+
+        # Should return only the section, not the full document
+        self.assertIn("Create Skills", result)
+        self.assertNotEqual(result["Create Skills"], self.full_content)
+        # The section should contain the heading
+        self.assertIn("## Create Skills", result["Create Skills"])
+
+    def test_mixed_headings_with_match(self):
+        """Test with mixed headings where one matches page_title."""
+        extractor = MarkdownDocExtractor(base_dir=self.test_dir)
+
+        # One heading matches, one doesn't - the match takes precedence
+        result = extractor.extract_by_headings(
+            page_title="Agent Skills",
+            headings=["Agent Skills", "Create Skills"],
+            doc_set="test_docs@latest"
+        )
+
+        # When heading matches, return full document
+        self.assertIn("Agent Skills", result)
+        self.assertEqual(result["Agent Skills"], self.full_content)
+
+    def test_extract_multi_by_headings_with_page_title_match(self):
+        """Test extract_multi_by_headings with page_title match."""
+        extractor = MarkdownDocExtractor(base_dir=self.test_dir)
+
+        sections = [
+            {
+                "title": "Agent Skills",
+                "headings": ["Agent Skills"],  # Matches - should return full doc
+                "doc_set": "test_docs@latest"
+            }
+        ]
+
+        result = extractor.extract_multi_by_headings(sections)
+
+        # Should have the full document
+        self.assertIn("Agent Skills", result.contents)
+        self.assertEqual(result.contents["Agent Skills"], self.full_content)
+
+    def test_is_heading_matches_page_title_helper(self):
+        """Test the _is_heading_matches_page_title helper method."""
+        extractor = MarkdownDocExtractor(base_dir=self.test_dir)
+        content = "test content"
+
+        # Exact match
+        self.assertTrue(
+            extractor._is_heading_matches_page_title("Agent Skills", "Agent Skills", content)
+        )
+
+        # Case insensitive
+        self.assertTrue(
+            extractor._is_heading_matches_page_title("agent skills", "Agent Skills", content)
+        )
+
+        # With numeric prefix
+        self.assertTrue(
+            extractor._is_heading_matches_page_title("1. Agent Skills", "Agent Skills", content)
+        )
+
+        # With URL suffix
+        self.assertTrue(
+            extractor._is_heading_matches_page_title("skill：https://example.com", "skill", content)
+        )
+
+        # No match
+        self.assertFalse(
+            extractor._is_heading_matches_page_title("Create Skills", "Agent Skills", content)
+        )
+
+
 if __name__ == "__main__":
     import unittest
     unittest.main()

@@ -38,10 +38,10 @@ class TransformerConfig:
     model_zh: str = "BAAI/bge-large-zh-v1.5"
     model_en: str = "BAAI/bge-large-en-v1.5"
     api_key_env: str = "HF_KEY"
-    env_path: str = ".claude/.env"
+    env_path: str = "doc4llm/.env"
     device: str = "cpu"
     batch_size: int = 32
-    lang_threshold: float = 0.3  # >=30% Chinese chars -> use zh model
+    lang_threshold: float = 0.9  # >=90% Chinese chars -> use zh model
 
 
 class TransformerMatcher:

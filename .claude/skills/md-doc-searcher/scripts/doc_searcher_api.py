@@ -1380,6 +1380,7 @@ class DocSearcherAPI:
             "success": success,
             "toc_fallback": toc_fallback,
             "grep_fallback": grep_fallback,
+            "query": queries,
             "doc_sets_found": search_doc_sets,
             "results": results,
             "fallback_used": fallback_used,

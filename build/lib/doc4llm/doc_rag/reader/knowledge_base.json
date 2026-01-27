@@ -1,0 +1,7 @@
+{
+  "knowledge_base": {
+    "base_dir": "/Users/zorro/project/md_docs_base"
+  },
+  "default_search_mode": "exact",
+  "fuzzy_threshold": 0.6
+}

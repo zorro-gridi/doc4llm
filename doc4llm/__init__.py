@@ -22,6 +22,7 @@ from .scanner import (
     output_lock,
 )
 from .tool import MarkdownDocExtractor
+from .llm import invoke, LLM_Config, AnthropicClient
 
 __version__ = '2.0.0'
 __all__ = [
@@ -49,4 +50,8 @@ __all__ = [
     'LinkProcessor',
     # Tool
     'MarkdownDocExtractor',
+    # LLM
+    'invoke',
+    'LLM_Config',
+    'AnthropicClient',
 ]

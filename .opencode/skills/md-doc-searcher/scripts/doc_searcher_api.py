@@ -97,7 +97,7 @@ class DocSearcherAPI:
     reranker_enabled: bool = False
     reranker_model_zh: str = "BAAI/bge-large-zh-v1.5"
     reranker_model_en: str = "BAAI/bge-large-en-v1.5"
-    reranker_threshold: float = 0.5
+    reranker_threshold: float = 0.68
     reranker_top_k: Optional[int] = None
     reranker_lang_threshold: float = 0.9
     hierarchical_filter: bool = True
@@ -1380,6 +1380,7 @@ class DocSearcherAPI:
             "success": success,
             "toc_fallback": toc_fallback,
             "grep_fallback": grep_fallback,
+            "query": queries,
             "doc_sets_found": search_doc_sets,
             "results": results,
             "fallback_used": fallback_used,
