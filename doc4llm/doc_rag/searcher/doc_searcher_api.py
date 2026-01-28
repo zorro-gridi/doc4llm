@@ -18,6 +18,8 @@ Reranker Parameters:
     reranker_enabled: Enable transformer re-ranking (default False)
     reranker_threshold: Minimum similarity score for headings (default 0.5)
     reranker_top_k: Maximum number of headings to keep after re-ranking (default None)
+    embedding_provider: Reranker provider - "hf" (HuggingFace TransformerMatcher) or "ms" (ModelScope ModelScopeMatcher) (default "ms")
+    embedding_model_id: Custom model ID for ModelScope provider (default: Qwen/Qwen3-Embedding-8B)
 """
 
 import json
@@ -51,6 +53,10 @@ from doc4llm.tool.md_doc_retrieval.transformer_matcher import (
 )
 
 
+# Sentinel value to detect if a parameter was explicitly passed
+_NOT_SET = object()
+
+
 @dataclass
 class DocSearcherAPI:
     """
@@ -61,7 +67,8 @@ class DocSearcherAPI:
 
     Args:
         base_dir: Knowledge base root directory (loaded from knowledge_base.json)
-        knowledge_base_path: Path to knowledge_base.json file (supports file path or directory)
+        config: Configuration data (JSON dict) or path to .json config file.
+                Supports all parameters listed below via JSON keys.
         bm25_k1: BM25 k1 parameter (default 1.2)
         bm25_b: BM25 b parameter (default 0.75)
         threshold_page_title: Page title matching threshold (default 0.6)
@@ -79,79 +86,75 @@ class DocSearcherAPI:
         reranker_lang_threshold: Language detection threshold (default 0.3)
         hierarchical_filter: Enable hierarchical heading filtering (default True)
         fallback_mode: Fallback strategy execution mode, "serial" or "parallel" (default "parallel")
+        embedding_provider: Reranker provider - "hf" (HuggingFace TransformerMatcher) or "ms" (ModelScope ModelScopeMatcher) (default "ms")
+        embedding_model_id: Custom model ID for ModelScope provider (default: Qwen/Qwen3-Embedding-8B)
+        hf_inference_provider: HuggingFace inference provider for HF embedding provider (default: "auto")
+        domain_nouns: List of domain-specific nouns for text preprocessing (default [])
+        predicate_verbs: List of predicate verbs for text preprocessing (default [])
+        skiped_keywords: List of keywords to skip during search (default [])
+        skiped_keywords_path: Custom path for skiped_keywords.txt file (default None)
 
     Attributes:
         base_dir: Knowledge base root directory
         config: Configuration dictionary
     """
 
-    base_dir: Optional[str] = None
-    knowledge_base_path: Optional[str] = None
-    bm25_k1: float = 1.2
-    bm25_b: float = 0.75
-    threshold_page_title: float = 0.6
-    threshold_headings: float = 0.25
-    threshold_precision: float = 0.7
-    threshold_doc_set: float = 0.6
-    min_page_titles: int = 2
-    min_headings: int = 2
-    debug: bool = False
-    reranker_enabled: bool = False
-    reranker_model_zh: str = "BAAI/bge-large-zh-v1.5"
-    reranker_model_en: str = "BAAI/bge-large-en-v1.5"
-    reranker_threshold: float = 0.68
-    reranker_top_k: Optional[int] = None
-    reranker_lang_threshold: float = 0.9
-    hierarchical_filter: bool = True
-    fallback_mode: str = "parallel"
-    domain_nouns: List[str] = field(default_factory=list)
-    predicate_verbs: List[str] = field(default_factory=list)
-    skiped_keywords: List[str] = field(default_factory=list)
-    skiped_keywords_path: Optional[str] = None  # Custom path for skiped_keywords.txt
+    base_dir: str
+    config: Optional[Union[Dict[str, Any], str]] = None
+    bm25_k1: float = _NOT_SET
+    bm25_b: float = _NOT_SET
+    threshold_page_title: float = _NOT_SET
+    threshold_headings: float = _NOT_SET
+    threshold_precision: float = _NOT_SET
+    threshold_doc_set: float = _NOT_SET
+    min_page_titles: int = _NOT_SET
+    min_headings: int = _NOT_SET
+    debug: bool = _NOT_SET
+    reranker_enabled: bool = _NOT_SET
+    reranker_model_zh: str = _NOT_SET
+    reranker_model_en: str = _NOT_SET
+    reranker_threshold: float = _NOT_SET
+    reranker_top_k: Optional[int] = _NOT_SET
+    reranker_lang_threshold: float = _NOT_SET
+    hierarchical_filter: bool = _NOT_SET
+    fallback_mode: str = _NOT_SET
+    embedding_provider: str = _NOT_SET
+    embedding_model_id: Optional[str] = _NOT_SET
+    hf_inference_provider: str = _NOT_SET
+    domain_nouns: List[str] = _NOT_SET
+    predicate_verbs: List[str] = _NOT_SET
+    skiped_keywords: List[str] = _NOT_SET
+    skiped_keywords_path: Optional[str] = _NOT_SET
+
+    def _load_config(self) -> Dict[str, Any]:
+        """
+        Load configuration from dict or .json file.
+
+        Returns:
+            Configuration dictionary
+        """
+        if self.config is None:
+            return {}
+
+        if isinstance(self.config, dict):
+            return self.config
+
+        if isinstance(self.config, str) and self.config.endswith(".json"):
+            config_path = Path(self.config).expanduser()
+            if config_path.exists():
+                with open(config_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            else:
+                print(f"[WARNING] Config file not found: '{self.config}'. Using default config.")
+                return {}
+
+        return {}
 
     def __post_init__(self):
-        """Initialize configuration from knowledge_base_path or auto-detect."""
-        # Determine knowledge_base.json path
-        kb_config_path = None
+        # Load config from dict or file
+        loaded_config = self._load_config()
 
-        # Use user-provided knowledge_base_path if specified
-        if self.knowledge_base_path:
-            kb_path = Path(self.knowledge_base_path).expanduser().resolve()
-            if kb_path.exists():
-                if kb_path.is_file() and kb_path.name == "knowledge_base.json":
-                    kb_config_path = kb_path
-                elif kb_path.is_dir():
-                    # Treat as directory, look for knowledge_base.json inside
-                    kb_config_path = kb_path / "knowledge_base.json"
-                    if not kb_config_path.exists():
-                        kb_config_path = None
-
-        # Fallback: search parent directories from current script
-        if not kb_config_path:
-            current = Path(__file__).resolve()
-            for _ in range(6):  # Search up to 6 levels up
-                if (current / "knowledge_base.json").exists():
-                    kb_config_path = current / "knowledge_base.json"
-                    break
-                current = current.parent
-
-        if not kb_config_path:
-            raise ValueError(
-                f"knowledge_base.json not found. Please provide knowledge_base_path parameter "
-                f"or ensure knowledge_base.json exists in parent directories of {__file__}"
-            )
-        try:
-            with open(kb_config_path, "r", encoding="utf-8") as f:
-                config = json.load(f)
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON in knowledge_base.json: {e}")
-        kb_base_dir = config.get("knowledge_base", {}).get("base_dir")
-        if not kb_base_dir:
-            raise ValueError(
-                "base_dir not found in knowledge_base.json['knowledge_base']"
-            )
-
-        # Use user-provided base_dir if specified, otherwise use config value
+        # Validate base_dir before applying config
         if self.base_dir:
             path = Path(self.base_dir).expanduser()
             if not path.exists():
@@ -160,18 +163,61 @@ class DocSearcherAPI:
                 raise ValueError(f"base_dir is not a directory: '{self.base_dir}'")
             self.base_dir = str(path.resolve())
         else:
-            self.base_dir = str(Path(kb_base_dir).expanduser().resolve())
-        self.config = {
-            "bm25_k1": self.bm25_k1,
-            "bm25_b": self.bm25_b,
-            "threshold_page_title": self.threshold_page_title,
-            "threshold_headings": self.threshold_headings,
-            "threshold_precision": self.threshold_precision,
-            "threshold_doc_set": self.threshold_doc_set,
-            "min_page_titles": self.min_page_titles,
-            "min_headings": self.min_headings,
-            "debug": self.debug,
+            raise ValueError(f"base_dir must be set!")
+
+        # Define the actual default values
+        default_values = {
+            # BM25 parameters
+            "bm25_k1": 1.2,
+            "bm25_b": 0.75,
+            # Threshold parameters
+            "threshold_page_title": 0.6,
+            "threshold_headings": 0.25,
+            "threshold_precision": 0.7,
+            "threshold_doc_set": 0.6,
+            # Minimum count parameters
+            "min_page_titles": 2,
+            "min_headings": 2,
+            # Debug mode
+            "debug": False,
+            # Reranker parameters
+            "reranker_enabled": False,
+            "reranker_model_zh": "BAAI/bge-large-zh-v1.5",
+            "reranker_model_en": "BAAI/bge-large-en-v1.5",
+            "reranker_threshold": 0.68,
+            "reranker_top_k": None,
+            "reranker_lang_threshold": 0.9,
+            # Filter parameters
+            "hierarchical_filter": True,
+            "fallback_mode": "parallel",
+            # Embedding provider
+            "embedding_provider": "ms",
+            "embedding_model_id": None,
+            "hf_inference_provider": "auto",
+            # Preprocessing parameters (lists use empty list as default)
+            "domain_nouns": [],
+            "predicate_verbs": [],
+            "skiped_keywords": [],
+            "skiped_keywords_path": None,
         }
+
+        # Build config dict and set instance attributes
+        # Priority: explicit parameter > config > default
+        self.config = {}
+        for key, default_value in default_values.items():
+            current_value = getattr(self, key, _NOT_SET)
+
+            if current_value is not _NOT_SET:
+                # User explicitly passed this parameter
+                self.config[key] = current_value
+            elif key in loaded_config:
+                # Use config value
+                self.config[key] = loaded_config[key]
+                setattr(self, key, loaded_config[key])
+            else:
+                # Use default value
+                self.config[key] = default_value
+                setattr(self, key, default_value)
 
         # Validate fallback_mode parameter
         if self.fallback_mode not in ("serial", "parallel"):
@@ -179,15 +225,43 @@ class DocSearcherAPI:
                 f"fallback_mode must be 'serial' or 'parallel', got: {self.fallback_mode}"
             )
 
+        # Validate embedding_provider parameter
+        if self.embedding_provider not in ("hf", "ms"):
+            raise ValueError(
+                f"embedding_provider must be 'hf' or 'ms', got: {self.embedding_provider}"
+            )
+
         # Initialize reranker if enabled
         self._reranker: Optional[HeadingReranker] = None
         if self.reranker_enabled:
-            transformer_config = TransformerConfig(
-                model_zh=self.reranker_model_zh,
-                model_en=self.reranker_model_en,
-                lang_threshold=self.reranker_lang_threshold,
-            )
-            matcher = TransformerMatcher(transformer_config)
+            if self.embedding_provider == "hf":
+                # HuggingFace TransformerMatcher
+                from doc4llm.tool.md_doc_retrieval.transformer_matcher import (
+                    TransformerMatcher,
+                    TransformerConfig,
+                )
+                transformer_config = TransformerConfig(
+                    model_zh=self.reranker_model_zh,
+                    model_en=self.reranker_model_en,
+                    lang_threshold=self.reranker_lang_threshold,
+                    hf_inference_provider=self.hf_inference_provider,
+                )
+                matcher = TransformerMatcher(transformer_config)
+            elif self.embedding_provider == "ms":
+                # ModelScope ModelScopeMatcher
+                from doc4llm.tool.md_doc_retrieval.modelscope_matcher import (
+                    ModelScopeMatcher,
+                    ModelScopeConfig,
+                )
+                model_id = self.embedding_model_id or "Qwen/Qwen3-Embedding-8B"
+                modelscope_config = ModelScopeConfig(model_id=model_id)
+                matcher = ModelScopeMatcher(modelscope_config)
+            else:
+                raise ValueError(
+                    f"Unknown embedding_provider: {self.embedding_provider}. "
+                    f"Supported values: 'hf' (HuggingFace), 'ms' (ModelScope)"
+                )
+
             reranker_config = RerankerConfig(
                 enabled=True,
                 min_score_threshold=self.reranker_threshold,
@@ -707,12 +781,10 @@ class DocSearcherAPI:
             return ""
 
     def _fallback1_grep_search(
-        self, query: Union[str, List[str]], doc_sets: List[str]
+        self, queries: List[str], doc_sets: List[str]
     ) -> List[Dict[str, Any]]:
         """FALLBACK_1: grep TOC search. Supports single query or query list."""
         self._debug_print("Using FALLBACK_1: grep search")
-        # Normalize query to list and extract keywords from all queries
-        queries = [query] if isinstance(query, str) else query
         all_keywords = []
         for q in queries:
             all_keywords.extend(extract_keywords(q))
@@ -773,12 +845,10 @@ class DocSearcherAPI:
         return results
 
     def _fallback2_grep_context_bm25(
-        self, query: Union[str, List[str]], doc_sets: List[str]
+        self, queries: List[str], doc_sets: List[str]
     ) -> List[Dict[str, Any]]:
         """FALLBACK_2: grep context + BM25 re-scoring. Supports single query or query list."""
         self._debug_print("Using FALLBACK_2: grep context + BM25")
-        # Normalize query to list and extract keywords from all queries
-        queries = [query] if isinstance(query, str) else query
         all_keywords = []
         for q in queries:
             all_keywords.extend(extract_keywords(q))
@@ -1129,7 +1199,7 @@ class DocSearcherAPI:
             fallback_strategies = []
 
             # Execute FALLBACK_1 (without applying reranker yet)
-            grep_results = self._fallback1_grep_search(query, search_doc_sets)
+            grep_results = self._fallback1_grep_search(queries, search_doc_sets)
             if grep_results:
                 from .bm25_recall import calculate_bm25_similarity, BM25Config
 
@@ -1175,7 +1245,7 @@ class DocSearcherAPI:
                 fallback_strategies.append("FALLBACK_1")
 
                 # Execute FALLBACK_2 (without applying reranker yet)
-                context_results = self._fallback2_grep_context_bm25(query, search_doc_sets)
+                context_results = self._fallback2_grep_context_bm25(queries, search_doc_sets)
                 if context_results:
                     # Convert "heading" to "headings" list for consistency
                     for page in context_results:
@@ -1448,7 +1518,7 @@ class DocSearcherAPI:
                             {
                                 "text": h.get("full_text", h["text"]),  # 使用 full_text 保留 # 格式
                                 "level": h.get("level", 2),
-                                "rerank_sim": h.get("score", h.get("rerank_sim")),  # 语义相似度
+                                "rerank_sim": h.get("rerank_sim"),  # 语义相似度（Reranker 禁用时为 None）
                                 "bm25_sim": h.get("bm25_sim"),  # BM25 相似度
                             }
                             for h in filtered_headings
@@ -1520,3 +1590,77 @@ class DocSearcherAPI:
             reranker_enabled = self.reranker_enabled
         return OutputFormatter.format_structured(result, queries=queries,
                                                   reranker_enabled=reranker_enabled)
+
+    def rerank(
+        self,
+        pages: List[Dict[str, Any]],
+        queries: Union[str, List[str]]
+    ) -> Dict[str, Any]:
+        """
+        对页面执行独立的 transformer semantic reranking。
+
+        可被 orchestrator 的 embedding_reranker 参数调用，用于 Phase 1.5 的
+        独立重排序步骤。与 search() 内部的 reranking 逻辑独立。
+
+        Args:
+            pages: 页面列表（通常是 BM25 召回的原始结果）
+            queries: 查询字符串或查询列表
+
+        Returns:
+            与 search() 返回格式相同的字典，包含 rerank_sim 和 is_basic。
+            如果 reranker 未初始化或 pages 为空，返回原始结果。
+        """
+        if not pages:
+            return {
+                "success": False,
+                "query": queries,
+                "doc_sets_found": [],
+                "results": [],
+                "fallback_used": None,
+                "message": "No pages to rerank"
+            }
+
+        if not self._reranker:
+            self._debug_print("Reranker not initialized, skipping reranking")
+            return {
+                "success": True,
+                "query": queries,
+                "doc_sets_found": list(set(p.get("doc_set", "") for p in pages)),
+                "results": pages,
+                "fallback_used": None,
+                "message": "Reranker not enabled, returning original results"
+            }
+
+        queries = [queries] if isinstance(queries, str) else queries
+        self._debug_print(f"Executing transformer reranking on {len(pages)} pages with {len(queries)} queries")
+
+        self._batch_rerank_pages_and_headings(pages, queries)
+
+        for page in pages:
+            original_headings_len = len(page.get("headings", []))
+            filtered_headings = [h for h in page.get("headings", []) if h.get("is_basic", True)]
+
+            if self.hierarchical_filter:
+                from .heading_filter import filter_headings_hierarchically
+                filtered_headings = filter_headings_hierarchically(
+                    filtered_headings,
+                    page["page_title"]
+                )
+
+            page["headings"] = filtered_headings
+            page["heading_count"] = len(filtered_headings)
+            page["precision_count"] = sum(
+                1 for h in filtered_headings if h.get("is_precision", False)
+            )
+            self._debug_print(
+                f"  Page: {page['page_title']}, headings: {original_headings_len} -> {len(filtered_headings)}, rerank_sim: {page.get('rerank_sim')}"
+            )
+
+        return {
+            "success": True,
+            "query": queries,
+            "doc_sets_found": list(set(p.get("doc_set", "") for p in pages)),
+            "results": pages,
+            "fallback_used": None,
+            "message": "Transformer reranking completed"
+        }

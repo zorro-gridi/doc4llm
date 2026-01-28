@@ -14,7 +14,7 @@ Example:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 # Import from md_doc_retrieval package
 import sys
@@ -29,6 +29,7 @@ for _ in range(4):  # Search up to 4 levels up
     script_dir = script_dir.parent
 
 from doc4llm.tool.md_doc_retrieval.transformer_matcher import TransformerMatcher
+from doc4llm.tool.md_doc_retrieval.modelscope_matcher import ModelScopeMatcher
 
 
 @dataclass
@@ -63,13 +64,13 @@ class HeadingReranker:
     def __init__(
         self,
         config: RerankerConfig,
-        matcher: TransformerMatcher
+        matcher: Union[TransformerMatcher, ModelScopeMatcher]
     ):
         """Initialize the heading reranker.
 
         Args:
             config: Reranker configuration
-            matcher: TransformerMatcher instance for computing embeddings
+            matcher: TransformerMatcher or ModelScopeMatcher instance for computing embeddings
         """
         self.config = config
         self.matcher = matcher

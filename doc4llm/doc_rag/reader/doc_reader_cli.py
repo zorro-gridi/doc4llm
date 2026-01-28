@@ -1,14 +1,46 @@
 #!/usr/bin/env python3
 """
-Markdown Document Extractor Script for md-doc-reader skill.
+Markdown Document Extractor CLI for DocReaderAPI.
 
-This script extracts content from markdown documents by title using the
-MarkdownDocExtractor from doc4llm.tool.md_doc_retrieval.
+This script provides CLI interface for extracting content from markdown documents.
+It wraps DocReaderAPI with command-line arguments.
 
 Usage:
-    python doc_reader_cli.py --title "Agent Skills - Claude Code Docs"
-    python doc_reader_cli.py --title "Getting Started" --base-dir custom_docs
-    python doc_reader_cli.py --title "Guide" --file /path/to/file.md --search-mode fuzzy
+    python doc_reader_cli.py --list --base-dir <dir>
+    python doc_reader_cli.py --search "getting started" --base-dir <dir>
+    python doc_reader_cli.py --page-title "Getting Started" --base-dir <dir>
+    python doc_reader_cli.py --page-titles ["Guide", "API"] --base-dir <dir>
+    python doc_reader_cli.py --sections [{"title": "Guide", "headings": ["Installation"], "doc_set": "docs@latest"}]
+    python doc_reader_cli.py --headings "Installation" --page-title "Guide" --doc-set "docs@latest"
+
+DocReaderAPI Parameters Mapping:
+    --base-dir        -> base_dir
+    --config          -> config (unified config for DocReaderAPI and MarkdownDocExtractor)
+    --search-mode     -> search_mode
+    --fuzzy-threshold -> fuzzy_threshold
+    --max-results     -> max_results
+    --debug           -> debug_mode
+    --threshold       -> compress_threshold
+
+Config Format for --config:
+    Supports JSON file path or inline JSON string.
+    Can contain both DocReaderAPI and MarkdownDocExtractor parameters.
+
+    Nested structure (recommended):
+        {
+            "search_mode": "fuzzy",
+            "debug_mode": true,
+            "matcher": {
+                "case_sensitive": true,
+                "fuzzy_threshold": 0.8
+            }
+        }
+
+    Flat structure (auto-detect field ownership):
+        {
+            "search_mode": "fuzzy",
+            "case_sensitive": true
+        }
 """
 
 import argparse
@@ -16,27 +48,42 @@ import json
 import os
 import sys
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Extract markdown document content by title"
+        description="Extract markdown document content using DocReaderAPI",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+DocReaderAPI Parameters Mapping:
+    --base-dir        -> base_dir
+    --config          -> config (unified config for DocReaderAPI and MarkdownDocExtractor)
+    --search-mode     -> search_mode
+    --fuzzy-threshold -> fuzzy_threshold
+    --max-results     -> max_results
+    --debug           -> debug_mode
+    --threshold       -> compress_threshold
+
+Config Format for --config:
+    - File path: /path/to/config.json
+    - Inline JSON: '{"search_mode": "fuzzy"}'
+    - Supports nested structure: {"search_mode": "fuzzy", "matcher": {"case_sensitive": true}}
+        """,
     )
-    parser.add_argument(
-        "--page-title",
-        "-t",
-        help="Document page title to extract (required unless using --list)",
-    )
+
+    # Core arguments matching DocReaderAPI
     parser.add_argument(
         "--base-dir",
         "-b",
         default=None,
-        help="Base directory (loaded from knowledge_base.json by default)",
+        help="Base directory for documents (required)",
     )
     parser.add_argument(
-        "--file",
-        "-f",
-        help="Single .md file path for single-file mode",
+        "--config",
+        "-c",
+        default=None,
+        help="Unified config: JSON file path or inline JSON string (supports nested 'matcher' key)",
     )
     parser.add_argument(
         "--search-mode",
@@ -56,30 +103,8 @@ def main():
         "--max-results",
         "-m",
         type=int,
+        default=None,
         help="Maximum results for fuzzy/partial search",
-    )
-    parser.add_argument(
-        "--list",
-        "-l",
-        action="store_true",
-        help="List available documents instead of extracting",
-    )
-    parser.add_argument(
-        "--search",
-        "-S",
-        action="store_true",
-        help="Search for documents matching the title",
-    )
-    parser.add_argument(
-        "--json",
-        "-j",
-        action="store_true",
-        help="Output in JSON format",
-    )
-    parser.add_argument(
-        "--extractor-config",
-        "-c",
-        help="Path to config.json file for MarkdownDocExtractor initialization",
     )
     parser.add_argument(
         "--debug",
@@ -88,60 +113,55 @@ def main():
         help="Enable debug output",
     )
     parser.add_argument(
-        "--with-metadata",
-        action="store_true",
-        help="Return ExtractionResult with line counts",
-    )
-    parser.add_argument(
         "--threshold",
         type=int,
         default=2100,
         help="Threshold for requires_processing (default: 2100)",
     )
-    parser.add_argument(
-        "--compress",
+
+    # Operation mode arguments
+    operation_group = parser.add_mutually_exclusive_group(required=True)
+    operation_group.add_argument(
+        "--list",
+        "-l",
         action="store_true",
-        help="Enable compression mode",
+        help="List available documents",
     )
-    parser.add_argument(
-        "--compress-query",
-        help="Query for relevance-based compression",
-    )
-    parser.add_argument(
-        "--candidates",
+    operation_group.add_argument(
+        "--search",
+        "-S",
         action="store_true",
-        help="Extract candidate matches",
+        help="Search for documents matching the title",
     )
-    parser.add_argument(
-        "--max-candidates",
-        type=int,
-        default=5,
-        help="Max candidates (default: 5)",
+    operation_group.add_argument(
+        "--page-title",
+        "-t",
+        help="Single document page title to extract",
     )
-    parser.add_argument(
-        "--min-threshold",
-        type=float,
-        default=0.5,
-        help="Min similarity threshold (default: 0.5)",
+    operation_group.add_argument(
+        "--page-titles",
+        help="JSON array of document titles to extract",
     )
-    parser.add_argument(
-        "--semantic-search",
-        action="store_true",
-        help="Use semantic search",
+    operation_group.add_argument(
+        "--sections",
+        help='JSON array of section configs: [{"title": "...", "headings": [...], "doc_set": "..."}]',
     )
-    parser.add_argument(
-        "--doc-set",
-        help="Document set identifier (e.g., 'code_claude_com@latest') - REQUIRED for section extraction (--headings)",
-    )
-    parser.add_argument(
+    operation_group.add_argument(
         "--headings",
         nargs="+",
-        help="Heading names for section extraction",
+        help="Heading names for section extraction (requires --page-title and --doc-set)",
+    )
+
+    # Additional arguments
+    parser.add_argument(
+        "--doc-set",
+        help="Document set identifier (e.g., 'code_claude_com@latest') - REQUIRED for --headings",
     )
     parser.add_argument(
-        "--doc-info",
+        "--json",
+        "-j",
         action="store_true",
-        help="Get document metadata",
+        help="Output in JSON format",
     )
     parser.add_argument(
         "--format",
@@ -150,34 +170,39 @@ def main():
         help="Output format (default: text)",
     )
     parser.add_argument(
-        "--config",
-        help="Path to JSON params file or inline JSON string (auto-detects file vs inline)",
+        "--with-metadata",
+        action="store_true",
+        help="Return ExtractionResult with line counts (for --page-titles)",
     )
 
     args = parser.parse_args()
 
-    # Handle unified params file/json
-    params = None
+    # Handle config file/json (unified config for DocReaderAPI and MarkdownDocExtractor)
+    config = None
     if args.config:
         if os.path.isfile(args.config):
             with open(args.config, 'r', encoding='utf-8') as f:
-                params = json.load(f)
+                config = json.load(f)
         else:
             try:
-                params = json.loads(args.config)
+                config = json.loads(args.config)
             except json.JSONDecodeError as e:
                 print(f"Error: Invalid JSON in --config: {e}", file=sys.stderr)
                 return 1
 
-    if params:
-        args.doc_set = params.get("doc_set", args.doc_set)
-        args.with_metadata = params.get("with_metadata", args.with_metadata)
-        args.threshold = params.get("threshold", args.threshold)
-        args.format = params.get("format", args.format)
-        args.search_mode = params.get("search_mode", args.search_mode)
-        args.fuzzy_threshold = params.get("fuzzy_threshold", args.fuzzy_threshold)
+    # Apply config values (if provided)
+    if config:
+        args.base_dir = config.get("base_dir", args.base_dir)
+        args.doc_set = config.get("doc_set", args.doc_set)
+        args.with_metadata = config.get("with_metadata", args.with_metadata)
+        args.threshold = config.get("threshold", args.threshold)
+        args.format = config.get("format", args.format)
+        args.search_mode = config.get("search_mode", args.search_mode)
+        args.fuzzy_threshold = config.get("fuzzy_threshold", args.fuzzy_threshold)
+        args.max_results = config.get("max_results", args.max_results)
+        args.debug = config.get("debug_mode", args.debug)
 
-        page_titles = params.get("page_titles")
+        page_titles = config.get("page_titles")
         if page_titles:
             if isinstance(page_titles, list) and page_titles:
                 first = page_titles[0]
@@ -191,115 +216,64 @@ def main():
             else:
                 args.page_titles = [page_titles] if not isinstance(page_titles, list) else page_titles
         else:
-            args.page_title = params.get("page_title", args.page_title)
+            args.page_title = config.get("page_title", args.page_title)
 
-        # sections 覆盖 page_titles 的 dict 列表格式
-        sections = params.get("sections")
+        sections = config.get("sections")
         if sections:
             args.sections = sections
 
-        # 添加 headings 支持（兼容列表和逗号分隔字符串）
-        headings = params.get("headings")
+        headings = config.get("headings")
         if headings:
             args.headings = headings
 
-    if args.base_dir:
-        base_path = Path(args.base_dir).expanduser().resolve()
-        if not base_path.exists():
-            print(f"Error: base-dir path does not exist: {args.base_dir}", file=sys.stderr)
+    # Validate base_dir
+    if not args.base_dir:
+        parser.error("--base-dir is required")
+    base_path = Path(args.base_dir).expanduser().resolve()
+    if not base_path.exists():
+        print(f"Error: base-dir path does not exist: {args.base_dir}", file=sys.stderr)
+        return 1
+    if not base_path.is_dir():
+        print(f"Error: base-dir is not a directory: {args.base_dir}", file=sys.stderr)
+        return 1
+
+    # Validate --headings requires --doc-set
+    if args.headings and not args.doc_set:
+        parser.error("--doc-set is required when using --headings for section extraction")
+
+    # Validate --page-titles format
+    if args.page_titles and isinstance(args.page_titles, str):
+        try:
+            args.page_titles = json.loads(args.page_titles)
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON in --page-titles: {e}", file=sys.stderr)
             return 1
-        if not base_path.is_dir():
-            print(f"Error: base-dir is not a directory: {args.base_dir}", file=sys.stderr)
+
+    # Validate --sections format
+    if args.sections and isinstance(args.sections, str):
+        try:
+            args.sections = json.loads(args.sections)
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON in --sections: {e}", file=sys.stderr)
             return 1
-
-    # Validate arguments
-    has_page_title = hasattr(args, 'page_title') and args.page_title
-    has_page_titles = hasattr(args, 'page_titles') and args.page_titles
-    has_sections = hasattr(args, 'sections') and args.sections
-
-    requires_title = not (
-        args.list or
-        args.semantic_search or
-        has_page_title or
-        has_page_titles or
-        has_sections
-    )
-    if requires_title and not has_page_title:
-        parser.error(
-            "--page-title is required unless using --list, --semantic-search, or --config"
-        )
-
-    # Require --doc-set when using --headings (section extraction)
-    if hasattr(args, 'headings') and args.headings and not args.doc_set:
-        parser.error(
-            "--doc-set is required when using --headings for section extraction to ensure the correct document set is targeted"
-        )
 
     try:
-        from doc4llm.tool.md_doc_retrieval import MarkdownDocExtractor
+        from doc4llm.doc_rag.reader.doc_reader_api import DocReaderAPI
 
-        if args.extractor_config:
-            extractor = MarkdownDocExtractor.from_config(args.extractor_config)
-        else:
-            # Search upward from current script to find .claude directory with knowledge_base.json
-            current = Path(__file__).resolve()
-            knowledge_base_config_path = None
-            for _ in range(6):  # Search up to 6 levels up
-                if (current / "knowledge_base.json").exists():
-                    knowledge_base_config_path = current / "knowledge_base.json"
-                    break
-                current = current.parent
-            if not knowledge_base_config_path:
-                raise ValueError(
-                    f"knowledge_base.json not found in parent directories of {__file__}"
-                )
-
-            try:
-                with open(knowledge_base_config_path, "r", encoding="utf-8") as f:
-                    kb_config = json.load(f)
-            except json.JSONDecodeError as e:
-                raise ValueError(f"Invalid JSON in knowledge_base.json: {e}")
-
-            kb_base_dir = kb_config.get("knowledge_base", {}).get("base_dir")
-            if not kb_base_dir:
-                raise ValueError(
-                    "base_dir not found in knowledge_base.json['knowledge_base']"
-                )
-            # Expand ~ to user's home directory
-            kb_base_dir = str(Path(kb_base_dir).expanduser().resolve())
-
-            if args.file:
-                extractor = MarkdownDocExtractor(
-                    single_file_path=args.file,
-                    search_mode=args.search_mode
-                    or kb_config.get("default_search_mode", "exact"),
-                    fuzzy_threshold=args.fuzzy_threshold
-                    or kb_config.get("fuzzy_threshold", 0.6),
-                    max_results=args.max_results or kb_config.get("max_results", 10),
-                    debug_mode=args.debug,
-                    enable_fallback=kb_config.get("enable_fallback", False),
-                    fallback_modes=kb_config.get("fallback_modes", None),
-                    compress_threshold=kb_config.get("compress_threshold", 2000),
-                    enable_compression=kb_config.get("enable_compression", False),
-                )
-            else:
-                extractor = MarkdownDocExtractor(
-                    base_dir=str(Path(args.base_dir).expanduser().resolve()) if args.base_dir else kb_base_dir,
-                    search_mode=args.search_mode
-                    or kb_config.get("default_search_mode", "exact"),
-                    fuzzy_threshold=args.fuzzy_threshold
-                    or kb_config.get("fuzzy_threshold", 0.6),
-                    max_results=args.max_results or kb_config.get("max_results", 10),
-                    debug_mode=args.debug,
-                    enable_fallback=kb_config.get("enable_fallback", False),
-                    fallback_modes=kb_config.get("fallback_modes", None),
-                    compress_threshold=kb_config.get("compress_threshold", 2000),
-                    enable_compression=kb_config.get("enable_compression", False),
-                )
+        # Initialize DocReaderAPI
+        reader = DocReaderAPI(
+            base_dir=str(base_path),
+            config=args.config,
+            search_mode=args.search_mode,
+            fuzzy_threshold=args.fuzzy_threshold,
+            max_results=args.max_results,
+            debug_mode=args.debug,
+            compress_threshold=args.threshold,
+        )
 
         # List available documents
         if args.list:
-            docs = extractor.list_available_documents()
+            docs = reader.list_available_documents()
             if args.format == "json":
                 print(json.dumps({"documents": docs}, indent=2))
             else:
@@ -310,7 +284,7 @@ def main():
 
         # Search for documents
         if args.search:
-            results = extractor.search_documents(args.page_title)
+            results = reader.search_documents(args.page_title)
             if args.format == "json":
                 print(json.dumps({"results": results}, indent=2))
             else:
@@ -318,78 +292,40 @@ def main():
                 for result in results:
                     print(f"  - {result['title']}")
                     print(f"    Similarity: {result['similarity']:.2f}")
-                    print(f"    Source: {result['doc_name_version']}")
+                    if 'doc_name_version' in result:
+                        print(f"    Source: {result['doc_name_version']}")
             return 0
 
-        # Multi-document extraction
-        if has_page_titles:
+        # Multi-document extraction by titles
+        if args.page_titles:
             titles = args.page_titles
             doc_set = None
-            if isinstance(args.page_titles[0], dict):
-                doc_set = args.page_titles[0].get("doc_set")
+            if isinstance(titles[0], dict):
+                doc_set = titles[0].get("doc_set")
             if args.with_metadata:
                 from doc4llm.tool.md_doc_retrieval import ExtractionResult
-                result: ExtractionResult = extractor.extract_by_titles_with_metadata(
+                result: ExtractionResult = reader._extractor.extract_by_titles_with_metadata(
                     titles=titles, threshold=args.threshold, doc_set=doc_set
                 )
                 output_metadata_result(result, args.format)
             else:
-                contents = extractor.extract_by_titles(titles)
+                contents = reader.extract_by_titles(titles)
                 output_multi_contents(contents, args.format)
             return 0
 
         # Multi-section extraction (multiple documents with their associated headings)
-        if has_sections:
-            sections = args.sections
-
-            # Use extract_multi_by_headings()
+        if args.sections:
             from doc4llm.tool.md_doc_retrieval import ExtractionResult
-
-            result: ExtractionResult = extractor.extract_multi_by_headings(
-                sections=sections, threshold=args.threshold
+            result: ExtractionResult = reader.extract_multi_by_headings(
+                sections=args.sections, threshold=args.threshold
             )
             output_multi_sections_result(result, args.format)
             return 0
 
-        # Compression mode
-        if args.compress:
-            result = extractor.extract_with_compression(
-                title=args.page_title, query=args.compress_query
-            )
-            output_compression_result(result, args.format)
-            return 0
-
-        # Candidate extraction
-        if args.candidates:
-            candidates = extractor.extract_by_title_with_candidates(
-                title=args.page_title,
-                max_candidates=args.max_candidates,
-                min_threshold=args.min_threshold,
-            )
-            output_candidates(candidates, args.format)
-            return 0
-
-        # Semantic search
-        if args.semantic_search:
-            results = extractor.semantic_search_titles(
-                query=args.page_title,
-                doc_set=args.doc_set,
-                max_results=args.max_results or 10,
-            )
-            output_semantic_results(results, args.format)
-            return 0
-
-        # Document info
-        if args.doc_info:
-            info = extractor.get_document_info(args.page_title)
-            output_doc_info(info, args.format)
-            return 0
-
         # Section extraction by headings
-        if hasattr(args, 'headings') and args.headings:
-            headings = args.headings
-            sections = extractor.extract_by_headings(
-                page_title=args.page_title, headings=headings, doc_set=args.doc_set
+        if args.headings:
+            sections = reader._extractor.extract_by_headings(
+                page_title=args.page_title, headings=args.headings, doc_set=args.doc_set
             )
             if args.format == "json":
                 print(json.dumps(sections, indent=2, ensure_ascii=False))
@@ -400,15 +336,15 @@ def main():
                     print()
             return 0
 
-        # Extract content by title
-        content = extractor.extract_by_title(args.page_title)
+        # Single document extraction by title
+        content = reader.extract_by_title(args.page_title)
 
         if content is None:
             print(f"No document found with title: '{args.page_title}'", file=sys.stderr)
             return 1
         elif content == "":
             print(
-                f"Title does not match in single-file mode: '{args.page_title}'",
+                f"Title does not match: '{args.page_title}'",
                 file=sys.stderr,
             )
             return 1
@@ -429,7 +365,7 @@ def main():
             return 0
 
     except ImportError as e:
-        print(f"Error: Could not import MarkdownDocExtractor: {e}", file=sys.stderr)
+        print(f"Error: Could not import DocReaderAPI: {e}", file=sys.stderr)
         print("Make sure doc4llm is installed: pip install doc4llm", file=sys.stderr)
         return 1
     except Exception as e:
@@ -485,80 +421,6 @@ def output_multi_contents(contents: dict, format_type: str):
             print()
 
 
-def output_compression_result(result: dict, format_type: str):
-    """Output compression result."""
-    if format_type == "json":
-        print(json.dumps(result, indent=2))
-    elif format_type == "summary":
-        print(f"Title: {result['title']}")
-        print(f"Line count: {result['line_count']}")
-        print(f"Compressed: {result['compressed']}")
-        if result["compressed"]:
-            print(f"Compression ratio: {result['compression_ratio']:.0%}")
-            print(f"Method: {result['compression_method']}")
-    else:  # text
-        print(f"=== {result['title']} ===")
-        if result["compressed"]:
-            print(
-                f"[Compressed - {result['compression_ratio']:.0%} reduction via {result['compression_method']}]"
-            )
-        print(result["content"])
-
-
-def output_candidates(candidates: list, format_type: str):
-    """Output candidate extraction results."""
-    if format_type == "json":
-        print(json.dumps(candidates, indent=2))
-    elif format_type == "summary":
-        print(f"Found {len(candidates)} candidates:")
-        for c in candidates:
-            print(f"  - {c['title']} (similarity: {c['similarity']:.2f})")
-    else:  # text
-        for i, c in enumerate(candidates, 1):
-            print(f"{i}. {c['title']}")
-            print(f"   Similarity: {c['similarity']:.2f}")
-            print(f"   Source: {c['doc_name_version']}")
-            print(f"   Preview: {c['content_preview'][:100]}...")
-            print()
-
-
-def output_semantic_results(results: list, format_type: str):
-    """Output semantic search results."""
-    if format_type == "json":
-        print(json.dumps(results, indent=2))
-    elif format_type == "summary":
-        print(f"Found {len(results)} results:")
-        for r in results:
-            print(
-                f"  - {r['title']} ({r['match_type']}, similarity: {r['similarity']:.2f})"
-            )
-    else:  # text
-        for i, r in enumerate(results, 1):
-            print(f"{i}. {r['title']}")
-            print(f"   Match type: {r['match_type']}")
-            print(f"   Similarity: {r['similarity']:.2f}")
-            print(f"   Source: {r['doc_name_version']}")
-            print()
-
-
-def output_doc_info(info: dict, format_type: str):
-    """Output document info."""
-    if info is None:
-        print("No document found.", file=sys.stderr)
-        return
-    if format_type == "json":
-        print(json.dumps(info, indent=2))
-    elif format_type == "summary":
-        print(f"Title: {info.get('title', 'N/A')}")
-        print(f"File: {info.get('file_path', 'N/A')}")
-        print(f"Line count: {info.get('line_count', 'N/A')}")
-        print(f"Document set: {info.get('doc_name_version', 'N/A')}")
-    else:  # text
-        print(f"=== Document Info ===")
-        for key, value in info.items():
-            print(f"{key}: {value}")
-
-
 def output_multi_sections_result(result, format_type: str):
     """Output multi-section extraction result with composite keys.
 
@@ -582,13 +444,13 @@ def output_multi_sections_result(result, format_type: str):
     elif format_type == "summary":
         print(result.to_summary())
         # Also show section breakdown
-        print("\n📋 Section breakdown:")
+        print("\nSection breakdown:")
         current_title = None
         for key, count in result.individual_counts.items():
             if "::" in key:
                 title, heading = key.split("::", 1)
                 if title != current_title:
-                    print(f"\n  📄 {title}:")
+                    print(f"\n  {title}:")
                     current_title = title
                 print(f"     - {heading}: {count} lines")
             else:

@@ -35,7 +35,6 @@ def main():
     print("=" * 60)
 
     reader_api = DocReaderAPI(
-        knowledge_base_path="knowledge_base.json",
         base_dir=None,
     )
 

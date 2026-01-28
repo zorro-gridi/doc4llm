@@ -14,7 +14,7 @@ Example:
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from doc4llm.tool.md_doc_retrieval.doc_extractor import (
     ExtractionResult,
@@ -30,8 +30,10 @@ class DocReaderAPI:
     遵循 doc_reader_cli.py 的参数规范。
 
     Attributes:
-        knowledge_base_path: Path to knowledge_base.json (default: knowledge_base.json)
-        base_dir: Override base_dir from config (parameter > config)
+        base_dir: 知识库根目录路径 (必须显式传入)
+        config: 统一配置参数，支持 JSON 文件路径、JSON 字符串或字典。
+                可同时包含 DocReaderAPI 和 MarkdownDocExtractor 的配置。
+                MarkdownDocExtractor 配置可通过顶层字段或嵌套的 "matcher" 键指定。
         search_mode: Search mode for extraction (default: "exact")
         fuzzy_threshold: Fuzzy matching threshold 0.0-1.0 (default: 0.6)
         max_results: Maximum results for fuzzy/partial search (default: None)
@@ -41,76 +43,111 @@ class DocReaderAPI:
         compress_threshold: Compression threshold (default: 2000)
         enable_compression: Enable compression (default: False)
 
+    配置优先级（从高到低）:
+        1. 显式传入的参数值
+        2. config 顶层字段的值
+        3. config 中 "matcher" 嵌套字段的值（MarkdownDocExtractor 专用，不包含 base_dir）
+        4. 字段默认值
+
+    base_dir 优先级:
+        1. 显式传入的 base_dir
+        2. config 顶层字段的 base_dir
+        3. 抛出 ValueError（不允许从 matcher 读取 base_dir）
+
     Example:
-        >>> reader = DocReaderAPI()
+        >>> # 方式 1: 使用 config 文件
+        >>> reader = DocReaderAPI(base_dir="/docs", config="reader_config.json")
+        >>> # reader_config.json 内容:
+        >>> # {
+        >>> #   "search_mode": "fuzzy",
+        >>> #   "base_dir": "/path/to/kb",
+        >>> #   "matcher": {
+        >>> #     "case_sensitive": true
+        >>> #   }
+        >>> # }
+        >>>
+        >>> # 方式 2: 使用字典
+        >>> reader = DocReaderAPI(base_dir="/docs", config={
+        ...     "search_mode": "fuzzy",
+        ...     "base_dir": "/path/to/kb"
+        ... })
+        >>>
+        >>> # 方式 3: JSON 字符串
+        >>> reader = DocReaderAPI(base_dir="/docs", config='{"search_mode": "fuzzy"}')
+        >>>
         >>> result = reader.extract_multi_by_headings(sections=[
         ...     {"title": "Getting Started", "headings": ["Installation"], "doc_set": "example@latest"}
         ... ])
     """
-    knowledge_base_path: str = "knowledge_base.json"
-    base_dir: Optional[str] = None
-    search_mode: str = "exact"
-    fuzzy_threshold: float = 0.6
+    base_dir: str
+    config: Optional[Union[str, Path, Dict[str, Any]]] = None
+    search_mode: Optional[str] = None
+    fuzzy_threshold: Optional[float] = None
     max_results: Optional[int] = None
-    debug_mode: bool = False
-    enable_fallback: bool = False
+    debug_mode: Optional[bool] = None
+    enable_fallback: Optional[bool] = None
     fallback_modes: Optional[List[str]] = None
-    compress_threshold: int = 2000
-    enable_compression: bool = False
+    compress_threshold: Optional[int] = None
+    enable_compression: Optional[bool] = None
     _extractor: MarkdownDocExtractor = field(init=False, default=None)
 
-    def __post_init__(self):
-        """初始化 MarkdownDocExtractor，遵循 doc_reader_cli.py 规范。
+    def _load_config(self, config: Union[str, Path, Dict[str, Any]]) -> Dict[str, Any]:
+        """加载配置，支持文件路径、JSON字符串、字典。
 
-        从 knowledge_base.json 读取配置，初始化 extractor。
-        base_dir 优先级：参数 > 配置 > 默认值
+        Args:
+            config: 配置来源，支持以下格式：
+                - 文件路径: str 或 Path 对象，指向 JSON 文件
+                - JSON 字符串: 如 '{"search_mode": "fuzzy"}'
+                - 字典: Python 字典对象
+
+        Returns:
+            Dict: 解析后的配置字典
+
+        Raises:
+            json.JSONDecodeError: 当 JSON 字符串解析失败时
+            FileNotFoundError: 当文件路径不存在时
         """
-        # Determine knowledge_base.json path
-        kb_config_path = None
+        if config is None:
+            return {}
+        if isinstance(config, dict):
+            return config
+        path = Path(config)
+        if path.exists():
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        return json.loads(str(config))
 
-        # Use user-provided knowledge_base_path if specified
-        if self.knowledge_base_path:
-            kb_path = Path(self.knowledge_base_path).expanduser().resolve()
-            if kb_path.exists():
-                if kb_path.is_file() and kb_path.name == "knowledge_base.json":
-                    kb_config_path = kb_path
-                elif kb_path.is_dir():
-                    # Treat as directory, look for knowledge_base.json inside
-                    kb_config_path = kb_path / "knowledge_base.json"
-                    if not kb_config_path.exists():
-                        kb_config_path = None
+    def __post_init__(self):
+        """初始化 MarkdownDocExtractor。
 
-        # Fallback: search parent directories from current script
-        if not kb_config_path:
-            current = Path(__file__).resolve()
-            for _ in range(6):  # Search up to 6 levels up
-                if (current / "knowledge_base.json").exists():
-                    kb_config_path = current / "knowledge_base.json"
-                    break
-                current = current.parent
+        从 reader_config.json 读取配置，初始化 extractor。
+        base_dir 优先级：显式参数 > config 顶层 > 报错（不支持从 matcher 读取）
 
-        if not kb_config_path:
-            raise ValueError(
-                f"knowledge_base.json not found. Please provide knowledge_base_path parameter "
-                f"or ensure knowledge_base.json exists in parent directories of {__file__}"
-            )
+        config JSON 结构示例:
+            {
+                "search_mode": "fuzzy",
+                "base_dir": "/path/to/kb",
+                "debug_mode": true,
+                "matcher": {
+                    "case_sensitive": true,
+                    "fuzzy_threshold": 0.8
+                }
+            }
+        """
+        # Define default values
+        DEFAULTS = {
+            "search_mode": "exact",
+            "fuzzy_threshold": 0.6,
+            "max_results": None,
+            "debug_mode": False,
+            "enable_fallback": False,
+            "fallback_modes": None,
+            "compress_threshold": 2000,
+            "enable_compression": False,
+            "case_sensitive": False,
+        }
 
-        try:
-            with open(kb_config_path, "r", encoding="utf-8") as f:
-                kb_config = json.load(f)
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON in knowledge_base.json: {e}")
-
-        kb_base_dir = kb_config.get("knowledge_base", {}).get("base_dir")
-        if not kb_base_dir:
-            raise ValueError(
-                "base_dir not found in knowledge_base.json['knowledge_base']"
-            )
-
-        # Expand ~ to user's home directory
-        kb_base_dir = str(Path(kb_base_dir).expanduser().resolve())
-
-        # Determine final base_dir (parameter > config)
+        # Determine final base_dir (显式参数 > config 顶层 > 报错)
         if self.base_dir:
             base_path = Path(self.base_dir).expanduser().resolve()
             if not base_path.exists():
@@ -119,20 +156,64 @@ class DocReaderAPI:
                 raise ValueError(f"base_dir is not a directory: '{self.base_dir}'")
             final_base_dir = str(base_path)
         else:
-            final_base_dir = kb_base_dir
+            raise ValueError(f"base_dir must be set!")
 
-        # Initialize MarkdownDocExtractor (fully following doc_reader_cli.py)
+        # Load unified config
+        config = self._load_config(self.config) if self.config else {}
+
+        # Extract matcher config from nested "matcher" key
+        matcher_cfg = {}
+        if "matcher" in config and isinstance(config["matcher"], dict):
+            matcher_cfg = config.pop("matcher")
+
+        # 合并 config 顶层和 matcher 嵌套的配置（排除 base_dir）
+        # 顶层配置优先级高于 matcher 嵌套配置
+        for key, value in matcher_cfg.items():
+            if key == "base_dir":
+                continue  # 跳过 matcher 中的 base_dir
+            if key not in config:
+                config[key] = value
+
+        # config 中 base_dir 的覆盖逻辑（仅支持顶层）
+        if "base_dir" in config:
+            config_base = Path(config["base_dir"]).expanduser().resolve()
+            if config_base.exists() and config_base.is_dir():
+                final_base_dir = str(config_base)
+
+        # Determine final parameter values (priority: explicit > config > default)
+        final_search_mode = self.search_mode or config.get("search_mode") or DEFAULTS["search_mode"]
+        final_fuzzy_threshold = self.fuzzy_threshold if self.fuzzy_threshold is not None else config.get("fuzzy_threshold") or DEFAULTS["fuzzy_threshold"]
+        final_max_results = self.max_results if self.max_results is not None else config.get("max_results") or DEFAULTS["max_results"]
+        final_debug_mode = self.debug_mode if self.debug_mode is not None else config.get("debug_mode") or DEFAULTS["debug_mode"]
+        final_enable_fallback = self.enable_fallback if self.enable_fallback is not None else config.get("enable_fallback") or DEFAULTS["enable_fallback"]
+        final_fallback_modes = self.fallback_modes if self.fallback_modes is not None else config.get("fallback_modes") or DEFAULTS["fallback_modes"]
+        final_compress_threshold = self.compress_threshold if self.compress_threshold is not None else config.get("compress_threshold") or DEFAULTS["compress_threshold"]
+        final_enable_compression = self.enable_compression if self.enable_compression is not None else config.get("enable_compression") or DEFAULTS["enable_compression"]
+        final_case_sensitive = config.get("case_sensitive", DEFAULTS["case_sensitive"])
+
+        # Initialize MarkdownDocExtractor
         self._extractor = MarkdownDocExtractor(
             base_dir=final_base_dir,
-            search_mode=self.search_mode or kb_config.get("default_search_mode", "exact"),
-            fuzzy_threshold=self.fuzzy_threshold or kb_config.get("fuzzy_threshold", 0.6),
-            max_results=self.max_results or kb_config.get("max_results", 10),
-            debug_mode=self.debug_mode,
-            enable_fallback=self.enable_fallback or kb_config.get("enable_fallback", False),
-            fallback_modes=self.fallback_modes or kb_config.get("fallback_modes", None),
-            compress_threshold=self.compress_threshold or kb_config.get("compress_threshold", 2000),
-            enable_compression=self.enable_compression or kb_config.get("enable_compression", False),
+            search_mode=final_search_mode,
+            case_sensitive=final_case_sensitive,
+            max_results=final_max_results,
+            fuzzy_threshold=final_fuzzy_threshold,
+            debug_mode=final_debug_mode,
+            enable_fallback=final_enable_fallback,
+            fallback_modes=final_fallback_modes,
+            compress_threshold=final_compress_threshold,
+            enable_compression=final_enable_compression,
         )
+
+        # Update instance attributes to reflect final configuration
+        self.search_mode = final_search_mode
+        self.fuzzy_threshold = final_fuzzy_threshold
+        self.max_results = final_max_results
+        self.debug_mode = final_debug_mode
+        self.enable_fallback = final_enable_fallback
+        self.fallback_modes = final_fallback_modes
+        self.compress_threshold = final_compress_threshold
+        self.enable_compression = final_enable_compression
 
     def extract_multi_by_headings(
         self,
@@ -171,7 +252,7 @@ class DocReaderAPI:
             ValueError: sections 参数格式无效
 
         Example:
-            >>> reader = DocReaderAPI()
+            >>> reader = DocReaderAPI(base_dir="/path/to/docs")
             >>> result = reader.extract_multi_by_headings(sections=[
             ...     {
             ...         "title": "Agent Skills",

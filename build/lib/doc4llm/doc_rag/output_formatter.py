@@ -280,6 +280,28 @@ def print_phase_1_5_failed(
     print(format_phase_footer("1.5"))
 
 
+def print_phase_1_5_embedding(
+    total_before: int,
+    total_after: int,
+    pages_before: int,
+    pages_after: int,
+    quiet: bool = False
+) -> None:
+    """Phase 1.5: Transformer Embedding 重排序结果打印"""
+    if quiet:
+        return
+
+    print(format_phase_header("1.5"))
+    print(f"[Transformer Embedding Reranking]")
+    print(f"过滤统计:")
+    print(f"  Headings: {total_before} → {total_after} (移除 {total_before - total_after})")
+    print(f"  Pages: {pages_before} → {pages_after} (移除 {pages_before - pages_after})")
+
+    retention_rate = total_after / total_before * 100 if total_before > 0 else 0
+    print(f"  保留率: {retention_rate:.1f}%")
+    print(format_phase_footer("1.5"))
+
+
 def print_phase_2_metadata(
     document_count: int,
     total_line_count: int,
@@ -522,6 +544,7 @@ __all__ = [
     "print_phase_1_5_debug",
     "print_phase_1_5_skipped",
     "print_phase_1_5_failed",
+    "print_phase_1_5_embedding",
     "print_phase_1_debug",
     "print_phase_2_metadata",
     "print_phase_2_debug",

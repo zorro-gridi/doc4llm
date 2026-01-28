@@ -7,7 +7,7 @@ in the doc-rag retrieval workflow.
 Usage:
     from params_parser_api import ParamsParserAPI, PhaseTransitionRequest
 
-    api = ParamsParserAPI(knowledge_base_path="/path/to/knowledge_base.json")
+    api = ParamsParserAPI()
     response = api.parse(
         from_phase="0a",
         to_phase="1",
@@ -17,7 +17,6 @@ Usage:
 
 import json
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field, ValidationError, field_validator
@@ -110,64 +109,6 @@ class PhaseTransitionResponse(BaseModel):
 
 
 # =============================================================================
-# Knowledge Base Loader
-# =============================================================================
-
-def load_knowledge_base(kb_path: str) -> Dict[str, Any]:
-    """
-    Load knowledge_base.json to get base_dir and other settings.
-
-    Args:
-        kb_path: Path to knowledge_base.json
-
-    Returns:
-        Knowledge base dict or empty dict if not found/invalid
-    """
-    try:
-        with open(kb_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {}
-
-
-def enhance_with_knowledge_base(
-    result: Dict[str, Any],
-    from_phase: str,
-    to_phase: str,
-    kb_path: Optional[str] = None
-) -> Dict[str, Any]:
-    """
-    Enhance parser output with knowledge base settings.
-
-    Args:
-        result: Parser output dict
-        from_phase: Source phase
-        to_phase: Target phase
-        kb_path: Optional path to knowledge_base.json
-
-    Returns:
-        Enhanced result dict
-    """
-    kb = {}
-    if kb_path:
-        kb = load_knowledge_base(kb_path)
-
-    # Phase 0a/0b/0a+0b -> Phase 1: Add base_dir from knowledge base
-    if from_phase in ["0a", "0b", "0a+0b"] and to_phase == "1":
-        if "base_dir" not in result:
-            result["base_dir"] = kb.get("knowledge_base", {}).get("base_dir", "")
-
-        # Disable CLI reranking when using Phase 1.5 LLM reranker
-        if "reranker" not in result:
-            result["reranker"] = False
-
-        if "json" not in result:
-            result["json"] = True
-
-    return result
-
-
-# =============================================================================
 # ParamsParserAPI Class
 # =============================================================================
 
@@ -180,17 +121,15 @@ class ParamsParserAPI:
     between phases in the doc-rag retrieval workflow.
 
     Attributes:
-        knowledge_base_path: Path to knowledge_base.json for base_dir injection
         validate: Whether to validate schema by default (default: True)
         debug: Enable debug mode (default: False)
         output_format: Output format - "cli" or "api" (default: "api")
 
     Example:
-        >>> api = ParamsParserAPI(knowledge_base_path="/path/to/knowledge_base.json")
+        >>> api = ParamsParserAPI()
         >>> response = api.parse("0a", "1", {"query_analysis": {...}, "optimized_queries": [...]})
         >>> print(response.config)
     """
-    knowledge_base_path: Optional[str] = None
     validate: bool = True
     debug: bool = False
     output_format: str = "api"
@@ -314,20 +253,11 @@ class ParamsParserAPI:
                 )
 
         try:
-            # Parse phase output with specified output format
             result = ParserFactory.parse(
                 request.from_phase,
                 request.to_phase,
                 request.upstream_output,
                 output_format=fmt
-            )
-
-            # Enhance with knowledge base settings
-            result = enhance_with_knowledge_base(
-                result,
-                request.from_phase,
-                request.to_phase,
-                self.knowledge_base_path
             )
 
             return PhaseTransitionResponse(
@@ -479,15 +409,6 @@ class ParamsParserAPI:
         transitions = ParserFactory.get_available_transitions(from_phase)
         return [{"from": t[0], "to": t[1]} for t in transitions]
 
-    def get_default_knowledge_base_path(self) -> str:
-        """
-        Get the default knowledge base path.
-
-        Returns:
-            Path to knowledge_base.json relative to this module
-        """
-        return str(Path(__file__).resolve().parent.parent.parent / "knowledge_base.json")
-
 
 # =============================================================================
 # Convenience Functions
@@ -497,7 +418,6 @@ def parse_phase(
     from_phase: str,
     to_phase: str,
     upstream_output: Dict[str, Any],
-    knowledge_base_path: Optional[str] = None,
     validate: bool = True,
     output_format: str = "api"
 ) -> PhaseTransitionResponse:
@@ -508,7 +428,6 @@ def parse_phase(
         from_phase: Source phase identifier
         to_phase: Target phase identifier
         upstream_output: Output from the upstream phase
-        knowledge_base_path: Optional path to knowledge_base.json
         validate: Whether to validate schema (default: True)
         output_format: Output format - "cli" or "api" (default: "api")
 
@@ -520,7 +439,6 @@ def parse_phase(
         >>> print(response.config)
     """
     api = ParamsParserAPI(
-        knowledge_base_path=knowledge_base_path,
         validate=validate,
         output_format=output_format
     )

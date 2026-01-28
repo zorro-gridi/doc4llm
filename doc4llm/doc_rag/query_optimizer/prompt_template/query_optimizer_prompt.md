@@ -9,9 +9,13 @@ Given a user query, analyze it and generate optimized search queries for better 
 
 ## ⚠️ CRITICAL CONSTRAINTS
 
-> **OUTPUT REQUIREMENT**: Return ONLY the required JSON. Do NOT return this documentation. Do NOT add explanations. Do NOT use markdown code blocks. Output raw JSON only.
+> **OUTPUT REQUIREMENT**:
+1. Return ONLY the required JSON finally.
+2. Do NOT return raw JSON format in the middle.
+3. Do NOT add explanations.
+4. Do NOT use markdown code blocks. Output raw JSON only.
 
-## Five-Phase Optimization Protocol
+## Six-Phase Optimization Protocol
 
 ---
 
@@ -70,7 +74,7 @@ or
 
 ---
 
-## Strategy Rules
+### Strategy Rules
 
 ### Decomposition Rules
 
@@ -112,10 +116,11 @@ Generate optimized queries following:
 
 1. Prioritize **direct translations** for Chinese queries
 2. Add **domain-specific variations**
-3. Include documentation modifiers:
+3. Preserve **core technical terms, domain nouns etc. exactly**
+4. Include documentation modifiers:
    * reference, guide, tutorial, setup
-4. Preserve **core technical terms exactly**
-5. Rank by expected relevance (most direct first)
+
+
 
 ### Phase 3: Intent Recognition
 
@@ -141,41 +146,52 @@ For each user query, analyze:
 
 **Core Extraction Rule**
 
-> *Return ONLY the noun that represents the true entity being **created**, **configured**, **built**, or **operated on** in the query. This is the **target object** of the action, NOT the tool/platform used to perform the action.*
+> *Return ONLY the noun that represents the true entity being **created**, **configured**, **built**, or **operated on** in the query. This is the **target object** of the action*
 
-**Decision Tree**
+**Decision Tree:**
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ Q1: Is this noun the TARGET of the action (created, configured, built)? ──→ YES → INCLUDE
-│ Q2: Is this noun the TOOL/PLATFORM used to perform the action?          ──→ YES → EXCLUDE
-│ Q3: Is this noun the THEME/TOPIC being discussed/analyzed?              ──→ YES → INCLUDE
-└─────────────────────────────────────────────────────────────────┘
-```
-
-Examples:
-- "opencode **如何创建 skills**" → skills is TARGET → `["skills"]`
-- "opencode **的设计理念**" → opencode is THEME → `["opencode"]`
-- "用 Python **处理** CSV 文件" → CSV is TARGET → `["CSV"]`
+| Question | Target Entity? | Platform? | Theme/Topic? | Action |
+|----------|----------------|----------------|--------------|--------|
+| Q1: Is this noun the TARGET of the action (created, configured, built)? | YES → | - | - | Include |
+| Q2: Is this noun the PLATFORM used to perform the action? | - | YES → | - | **Exclude** |
+| Q3: Is this noun the THEME/TOPIC being discussed/analyzed? | - | - | YES → | Include |
 
 **Include:**
 
-* **Target Objects**: hooks, skills, middleware, API, components being created/configured
-* **Product Names**: Claude Code, OpenCode (when they are the topic/theme)
+* **Target Topic or Objects**: hooks, skills, middleware, API, components being created/configured
+* **Product Names**: Claude Code, OpenCode (when they are the subject topic/theme)
 * **Technical Entities**: authentication, database, configuration files
 
 **Exclude:**
 
-* **Implementation Tools/Platforms**: opencode, python, docker, git (how it's done)
 * **Abstract Process Nouns**: creation, deployment, configuration (as a process)
 
-Demo Extraction
+
+**Extraction Examples:**
+
 | query input | returned entities | Rationale |
 | :--- | :--- | :--- |
 | opencode 如何创建 skills | skills | skills is the TARGET being created |
 | opencode 的设计理念 | opencode | opencode is the THEME being discussed |
 | opencode 和 Claude code 的 skills 对比分析 | skills | skills is the TARGET being compared |
 | opencode 和 claude code 对比分析 | opencode, Claude code | both are THEMEs being compared |
+| 用 Python **处理** CSV 文件 | CSV | Python is the platform to perform action|
+
+**SPECIALY IMPORTANT RULE: Verbs & Nouns 兼类词处理规则 (Highly Priority)**
+
+```
+# 如果一个词既可作名词也可作动词，必须加入 domain_nouns!
+if {{key word}} ∈ (Nouns ∩ Verbs):
+  → 加入 domain_nouns
+  → 禁止加入 predicate_verbs
+
+```
+**Special Examples:**
+
+| 兼类词 | 处理方式 |
+|----|----------|
+| setup, hook, log  | → domain_nouns |
+| setting, hooking, logging | → predicate_verbs |
 
 ### Phase 5: Predicate Verbs
 
@@ -191,52 +207,44 @@ Demo Extraction
 
 > *Derive ALL action verbs from the optimized query set generated in Phase 2. Each optimized query contains a different action variant (e.g., "create", "setup", "configure"). Collect these verbs to capture the full range of possible actions.*
 
-### Strict Constraint Rules (Mandatory)
+### Strict Constraint Rules
 
 > **⚠️ ENFORCED: `predicate_verbs` MUST be atomic verb tokens extracted from optimized queries.**
 
-**Formal Definition**:
-```
-PREDICATE_VERBS := [w₁, w₂, ..., wₙ]
+**Formal Definition:**
 
-∀i ∈ [1, n], wᵢ 必须同时满足:
+| # | Requirement | Description |
+|---|-------------|-------------|
+| 1 | 来源 | 从优化查询中提取 |
+| 2 | 词性 | VERB_FORMS 且 非Nouns |
+| 3 | 格式 | 单个词，无空格 |
+| 4 | 语义 | 非功能词/介词 |
 
-┌─────────────────────────────────────────────────────────────────┐
-│ 约束 1: 来源约束                                                 │
-│   wᵢ ∈ Tokens(optimized_queries)                               │
-├─────────────────────────────────────────────────────────────────┤
-│ 约束 2: 词性约束                                                 │
-│   wᵢ ∈ VERB_FORMS ∪ VERB_COMPOUNDS                             │
-├─────────────────────────────────────────────────────────────────┤
-│ 约束 3: 格式约束                                                 │
-│   is_single_word(wᵢ) ∧ ¬contains_space(wᵢ)                     │
-├─────────────────────────────────────────────────────────────────┤
-│ 约束 4: 语义约束                                                 │
-│   ¬is_function_word(wᵢ) ∧ ¬is_preposition(wᵢ)                  │
-└─────────────────────────────────────────────────────────────────┘
-```
 
-**Verb Forms Taxonomy (动词变形分类)**:
-```
-VERB_FORMS := BASE | GERUND | THIRD_PERSON | PAST_TENSE | PAST_PARTICIPLE | NOUN_FORM
+**验证示例**:
 
-┌──────────────┬──────────────────────────────────────────────────┐
-│ BASE         │ create, setup, configure, deploy, install        │
-├──────────────┼──────────────────────────────────────────────────┤
-│ GERUND       │ creating, setting, configuring, deploying        │
-├──────────────┼──────────────────────────────────────────────────┤
-│ THIRD_PERSON │ creates, sets up, configures, deploys            │
-├──────────────┼──────────────────────────────────────────────────┤
-│ PAST_TENSE   │ created, set up, configured, deployed            │
-├──────────────┼──────────────────────────────────────────────────┤
-│ PAST_PARTICIPLE │ created, set, configured, deployed            │
-├──────────────┼──────────────────────────────────────────────────┤
-│ NOUN_FORM    │ creation, configuration, setup, deployment       │
-├──────────────┼──────────────────────────────────────────────────┤
-│ COMPOUND*    │ set_up, carry_out, log_in (下划线连接)           │
-└──────────────┴──────────────────────────────────────────────────┘
+| 词 | 分类 | 原因 |
+|----|------|------|
+| `setup` | domain_nouns ✅ | 兼类词 |
+| `setting` | predicate_verbs ✅ | 动名词，非名词 |
+| `backup` | domain_nouns ✅ | 兼类词 |
+| `backing` | predicate_verbs ✅ | 动名词 |
+| `create` | predicate_verbs ✅ | 纯动词 |
+| `creating` | predicate_verbs ✅ | 动名词 |
+
+**Verb Forms Taxonomy (动词变形分类):**
+
+| Verb Form | Examples |
+|-----------|----------|
+| BASE | create, setup, configure, deploy, install |
+| GERUND | creating, setting, configuring, deploying |
+| THIRD_PERSON | creates, sets up, configures, deploys |
+| PAST_TENSE | created, set up, configured, deployed |
+| PAST_PARTICIPLE | created, set, configured, deployed |
+| NOUN_FORM | creation, configuration, setup, deployment |
+| COMPOUND* | set_up, carry_out, log_in (下划线连接) |
+
 * 复合动词用下划线视为单个词
-```
 
 **Validation Matrix**:
 | Example | Valid | Reason |

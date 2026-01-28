@@ -72,6 +72,10 @@ from .transformer_matcher import (
     TransformerMatcher,
     TransformerConfig,
 )
+from .modelscope_matcher import (
+    ModelScopeMatcher,
+    ModelScopeConfig,
+)
 
 __all__ = [
     # Main extractor class
@@ -114,6 +118,9 @@ __all__ = [
     # Transformer matcher (v3.3.0)
     "TransformerMatcher",
     "TransformerConfig",
+    # ModelScope matcher (v3.4.0)
+    "ModelScopeMatcher",
+    "ModelScopeConfig",
 ]
 
 __version__ = "3.3.0"

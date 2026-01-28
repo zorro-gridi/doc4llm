@@ -19,37 +19,109 @@ Given a user query, classify it into one of seven scenes and compute routing par
 
 | Scene | Base Threshold | Description |
 |-------|----------------|-------------|
-| `fact_lookup` | 0.60 | Precise fact retrieval |
-| `faithful_reference` | 0.65 | High-fidelity original text |
-| `faithful_how_to` | 0.58 | Original text + step-by-step procedures |
-| `concept_learning` | 0.55 | Systematic concept understanding |
-| `how_to` | 0.5 | Step-by-step procedures |
-| `comparison` | 0.53 | Multi-option comparison |
-| `exploration` | 0.45 | Deep research with broad context |
+| `fact_lookup` | 0.70-0.80 | Precise fact retrieval - single specific facts (version, value, boolean) |
+| `faithful_reference` | 0.55-0.65 | High-fidelity original text - official documentation explanations of topics/concepts |
+| `faithful_how_to` | 0.40-0.55 | Original text + comprehensive procedures - project implementation with full docs reference |
+| `concept_learning` | 0.50-0.60 | Systematic concept understanding - definitions, principles, relationships |
+| `how_to` | 0.60-0.70 | Step-by-step procedures - learning task execution without project context |
+| `comparison` | 0.50-0.58 | Multi-option comparison - evaluating alternatives |
+| `exploration` | 0.40-0.52 | Deep research with broad context - multi-angle analysis |
 
 ## Classification Decision Guide
 
-### faithful_how_to vs how_to
+### Scene Definition & Boundaries
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ Q1: Source explicitly specified? ──→ YES → faithful_how_to
-│ Q2: Precision keywords present?   ──→ YES → faithful_how_to
-│ Q3: Strict dependencies?          ──→ YES → faithful_how_to
-│ All NO                             ──→ how_to
-└─────────────────────────────────────────────────────────────────┘
-```
+#### fact_lookup
 
-| Q1: Source Specified? | Q2: Precision Keywords? | Q3: Strict Dependencies? | Classification |
-|-----------------------|-------------------------|--------------------------|----------------|
-| YES | - | - | faithful_how_to |
-| - | YES | - | faithful_how_to |
-| - | - | YES | faithful_how_to |
-| NO | NO | NO | how_to |
+**Definition**: User wants to retrieve a single, specific, verifiable fact from documentation (version numbers, parameter values, boolean answers, definitions).
 
-**Q1:** Explicit source (doc name, "official", "according to docs", "官方文档")
-**Q2:** Precision keywords ("exact", "逐字", "word-for-word", "原文", "官方")
-**Q3:** Strict order/parameter dependencies (deviation causes failure)
+**Key Indicators**:
+- Question targets one specific value/answer
+- Query is narrow and focused
+- Example: "What is the version number?", "Does X support Y?", "default timeout value?"
+
+---
+
+#### faithful_reference
+
+**Definition**: User wants to view official documentation explanations about a specific topic or concept, with content faithfully reproduced from the source.
+
+**Key Indicators**:
+- Topic/concept explanation request
+- User wants to see "what docs say about X"
+- Preserves original terminology and structure
+- Example: "What does the documentation say about authentication?", "Explain X based on official docs"
+---
+
+#### faithful_how_to
+
+**Definition**: User is actively implementing a project and needs comprehensive official documentation to guide the implementation process. Requires broader documentation coverage with lower relevance threshold.
+
+**Activation Triggers**:
+- Explicit project implementation context
+- Requests official documentation as reference
+- Needs comprehensive coverage including edge cases
+- Production/deployment procedures
+- Example: "I need official docs to implement feature X for my project", "detailed steps for X implementation based on official docs"
+
+---
+
+#### how_to
+
+**Definition**: User wants to understand the steps for accomplishing a task. Focus is on learning the process, without active project implementation context.
+
+**Key Indicators**:
+- Learning-oriented task questions
+- No project implementation context
+- Focus on understanding steps
+- Example: "How do I configure X?", "What's the process for implementing Y?"
+
+---
+
+### Core Distinction Matrix
+
+| Dimension | fact_lookup | faithful_reference | how_to | faithful_how_to |
+|-----------|-------------|-------------------|--------|-----------------|
+| **Target** | Single fact | Concept explanation | Task steps | Full implementation guide |
+| **Content Length** | Short answer | Paragraph/section | Steps list | Comprehensive docs |
+| **Precision Need** | Highest | Medium | High | Medium (recall priority) |
+
+---
+
+### Decision Matrix (Priority Order)
+
+| # | Condition | YES → Scene | NO → Next Condition |
+|---|-----------|-------------|---------------------|
+| 1 | Query asks for SINGLE SPECIFIC FACT/VALUE? | fact_lookup | → Condition 2 |
+| 2 | User actively IMPLEMENTING PROJECT + requests OFFICIAL DOCS? | faithful_how_to | → Condition 3 |
+| 3 | Query asks for LEARNING TASK STEPS (no project context)? | how_to  | → Condition 4 |
+| 4 | User wants OFFICIAL DOCS for SPECIFIC TOPIC/CONCEPT explanation? | faithful_reference | → Check other scenes |
+| 5 | Check for concept_learning/comparison/exploration| Other | concept_learning / comparison / exploration |
+---
+
+### Boundary Rules
+
+**fact_lookup vs faithful_reference**:
+| Indicator | fact_lookup | faithful_reference |
+|-----------|-------------|-------------------|
+| Query form | Single fact question | Topic overview request |
+| Content size | One value/answer | Paragraph/section |
+| Example | "What's version 2.0's release date?" | "What does docs say about authentication?" |
+
+**how_to vs faithful_how_to**:
+| Indicator | how_to | faithful_how_to |
+|-----------|--------|-----------------|
+| Project context | None/learning | Active implementation |
+| Documentation scope | Focused matching | Broad coverage |
+| Threshold priority | Precision | Recall |
+| Example | "How to configure VS Code" | "I need docs to implement auth in my project" |
+
+**faithful_reference vs faithful_how_to**:
+| Indicator | faithful_reference | faithful_how_to |
+|-----------|-------------------|-----------------|
+| Goal type | Understanding concept | Executing procedures |
+| Content nature | Explanatory | Step-by-step |
+| Example | "Explain async/await in docs" | "Give me steps to deploy to production" |
 
 ## Parameter Definitions
 

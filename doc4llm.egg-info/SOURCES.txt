@@ -46,6 +46,9 @@ requirements.txt
 ./doc4llm/doc_rag/searcher/heading_filter.py
 ./doc4llm/doc_rag/searcher/output_format.py
 ./doc4llm/doc_rag/searcher/reranker.py
+./doc4llm/doc_rag/searcher/test.py
+./doc4llm/doc_rag/searcher/test_ms.py
+./doc4llm/doc_rag/searcher/test/test_doc_searcher_api.py
 ./doc4llm/doc_rag/test/__init__.py
 ./doc4llm/doc_rag/test/conftest.py
 ./doc4llm/doc_rag/test/test_orchestrator_integration.py
@@ -82,8 +85,12 @@ requirements.txt
 ./doc4llm/tool/md_doc_retrieval/bm25_matcher.py
 ./doc4llm/tool/md_doc_retrieval/doc_extractor.py
 ./doc4llm/tool/md_doc_retrieval/exceptions.py
+./doc4llm/tool/md_doc_retrieval/modelscope_matcher.py
 ./doc4llm/tool/md_doc_retrieval/transformer_matcher.py
 ./doc4llm/tool/md_doc_retrieval/utils.py
+./doc4llm/tool/md_doc_retrieval/test/test.py
+./doc4llm/tool/md_doc_retrieval/test/test_modelscope_matcher.py
+./doc4llm/tool/md_doc_retrieval/test/test_transformer_matcher.py
 doc4llm/__init__.py
 doc4llm/__main__.py
 doc4llm/cli.py
@@ -130,6 +137,9 @@ doc4llm/doc_rag/searcher/doc_searcher_cli.py
 doc4llm/doc_rag/searcher/heading_filter.py
 doc4llm/doc_rag/searcher/output_format.py
 doc4llm/doc_rag/searcher/reranker.py
+doc4llm/doc_rag/searcher/test.py
+doc4llm/doc_rag/searcher/test_ms.py
+doc4llm/doc_rag/searcher/test/test_doc_searcher_api.py
 doc4llm/doc_rag/test/__init__.py
 doc4llm/doc_rag/test/conftest.py
 doc4llm/doc_rag/test/test_orchestrator_integration.py
@@ -166,8 +176,12 @@ doc4llm/tool/md_doc_retrieval/basic_matcher.py
 doc4llm/tool/md_doc_retrieval/bm25_matcher.py
 doc4llm/tool/md_doc_retrieval/doc_extractor.py
 doc4llm/tool/md_doc_retrieval/exceptions.py
+doc4llm/tool/md_doc_retrieval/modelscope_matcher.py
 doc4llm/tool/md_doc_retrieval/transformer_matcher.py
 doc4llm/tool/md_doc_retrieval/utils.py
+doc4llm/tool/md_doc_retrieval/test/test.py
+doc4llm/tool/md_doc_retrieval/test/test_modelscope_matcher.py
+doc4llm/tool/md_doc_retrieval/test/test_transformer_matcher.py
 tests/test_agentic_matcher.py
 tests/test_bm25_matcher.py
 tests/test_doc_content_extraction.py

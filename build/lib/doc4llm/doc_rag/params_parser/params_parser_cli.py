@@ -15,7 +15,6 @@ Options:
     --from-phase:     Upstream phase (0a, 0b, 0a+0b, 1, 1.5, 2, 3)
     --to-phase:       Downstream phase (1, 1.5, 2, 3, 4)
     --input:          Upstream output as JSON string (or array for 0a+0b merge mode)
-    --knowledge-base: Path to knowledge_base.json (for base_dir)
     --output:         Output file path (optional)
     --json:           Output JSON format (default, implicit)
     --no-validate:    Skip schema validation
@@ -24,55 +23,8 @@ Options:
 import argparse
 import json
 import sys
-from pathlib import Path
 
 from parser_factory import ParserFactory
-
-
-def load_knowledge_base(kb_path: str) -> dict:
-    """Load knowledge_base.json to get base_dir and other settings."""
-    try:
-        with open(kb_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {}
-    except json.JSONDecodeError:
-        return {}
-
-
-def enhance_with_knowledge_base(
-    result: dict,
-    from_phase: str,
-    to_phase: str,
-    kb_path: str
-) -> dict:
-    """
-    Enhance parser output with knowledge base settings.
-
-    Args:
-        result: Parser output dict
-        from_phase: Source phase
-        to_phase: Target phase
-        kb_path: Path to knowledge_base.json
-
-    Returns:
-        Enhanced result dict
-    """
-    kb = load_knowledge_base(kb_path)
-
-    # Phase 0a/0b/0a+0b -> Phase 1: Add base_dir from knowledge base
-    if from_phase in ["0a", "0b", "0a+0b"] and to_phase == "1":
-        if "base_dir" not in result:
-            result["base_dir"] = kb.get("knowledge_base", {}).get("base_dir", "")
-
-        # Disable CLI reranking when using Phase 1.5 LLM reranker
-        if "reranker" not in result:
-            result["reranker"] = False
-
-        if "json" not in result:
-            result["json"] = True
-
-    return result
 
 
 def main():
@@ -95,11 +47,6 @@ def main():
         "--input",
         required=True,
         help="Upstream output as JSON string (use '-' to read from stdin)"
-    )
-    parser.add_argument(
-        "--knowledge-base",
-        default=str(Path(__file__).resolve().parent.parent.parent.parent / "knowledge_base.json"),
-        help="Path to knowledge_base.json (default: script_dir/knowledge_base.json)"
     )
     parser.add_argument(
         "--output",
@@ -209,14 +156,6 @@ def main():
             args.to_phase,
             upstream_output,
             output_format="cli"
-        )
-
-        # Enhance with knowledge base settings
-        result = enhance_with_knowledge_base(
-            result,
-            args.from_phase,
-            args.to_phase,
-            args.knowledge_base
         )
 
         # Build final output

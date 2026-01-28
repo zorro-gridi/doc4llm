@@ -39,6 +39,7 @@ The skill receives JSON data with the following structure:
     "skills plugins",
     "skills plugins setup"
   ],
+  "retrieval_scene": "how_to",  // Optional: specified retrieval scene for targeted filtering
   "doc_sets_found": [
     "OpenCode_Docs@latest"
   ],
@@ -85,9 +86,41 @@ The skill receives JSON data with the following structure:
 }}
 ```
 
+### Retrieval Scene Values (Optional)
+
+If `retrieval_scene` is provided, use its specified filtering strategy:
+
+| Scene | Threshold | Description |
+|-------|-----------|-------------|
+| `fact_lookup` | 0.60 | Precise matching, prefer accuracy over recall |
+| `faithful_reference` | 0.65 | Highest precision, requires high-fidelity原文 |
+| `faithful_how_to` | 0.58 | Original text + actionable steps |
+| `concept_learning` | 0.55 | Multiple perspectives for rich understanding |
+| `how_to` | 0.50 | Multiple valid methods, single source not required |
+| `comparison` | 0.53 | Coverage of multiple options/alternatives |
+| `exploration` | 0.45 | Lowest threshold, encourage broad associations |
+
 ---
 
 ## Processing Logic
+
+### Step 0: Retrieval Scene Recognition
+
+**If `retrieval_scene` is provided:**
+- Use the specified scene for targeted filtering strategy
+
+**If `retrieval_scene` is NOT provided:**
+- Infer the scene from query patterns:
+
+| Query Pattern | Inferred Scene | Threshold |
+|--------------|----------------|-----------|
+| Questions with "what is", "define", "explain" | `concept_learning` | 0.55 |
+| Questions with "how to", "steps", "guide" | `how_to` | 0.50 |
+| Questions with "difference", "compare", "vs" | `comparison` | 0.53 |
+| Questions asking about specific facts/numbers | `fact_lookup` | 0.60 |
+| Questions about original text/quote/reference | `faithful_reference` | 0.65 |
+| Questions about implementation with steps | `faithful_how_to` | 0.58 |
+| Open-ended questions, broad topics | `exploration` | 0.45 |
 
 ### Step 1: Query Intent Analysis
 
@@ -117,6 +150,20 @@ For each page title and heading in each result:
 | `0.1 - 0.29` | Poor match | Heading barely relates to query |
 | `0.0` | No match | Heading is completely unrelated |
 
+#### Scene-Specific Scoring Guidelines
+
+Adjust your scoring based on the retrieval scene:
+
+| Scene | Scoring Tendency | Retention Principle |
+|-------|-----------------|---------------------|
+| `fact_lookup` | Conservative, prefer lower scores | Only exact matches score high |
+| `faithful_reference` | Most conservative, near-perfect required | Only near-perfect matches retained |
+| `faithful_how_to` | Medium-high, focus on step-related content | Step-related content scores higher |
+| `concept_learning` | More generous, include explanatory content | Concept explanations score higher |
+| `how_to` | Moderate, practical focus | Actionable guides score higher |
+| `comparison` | Medium-low, include all option information | Each option's description matters |
+| `exploration` | Most generous, include tangential content | Broad associations score higher |
+
 ### Step 4: Relevance Decision Factors
 
 **High Score Indicators:**
@@ -135,56 +182,133 @@ For each page title and heading in each result:
 
 ### Step 5: Filtering
 
-**Filter Threshold:** `rerank_sim >= 0.5`
+**Filter Threshold:** `rerank_sim >= 0.5` (scene-specific, default 0.5)
 
-- **Keep:** PageTitle **or** Headings with `rerank_sim >= 0.5`
-- **Remove:** PageTitle **and** Headings with `rerank_sim < 0.5`
+**Scene-Specific Thresholds:**
 
-**Just Notice:** If ALL PageTitles & headings in a result have `rerank_sim < 0.5`, remove the entire result object from `results` array.
+| Scene | Threshold | Strategy |
+|-------|-----------|----------|
+| `fact_lookup` | 0.60 | Strict filtering, only highly relevant |
+| `faithful_reference` | 0.65 | Strictest, almost perfect matches only |
+| `faithful_how_to` | 0.58 | Strict filtering for step content |
+| `concept_learning` | 0.55 | Moderate filtering for explanations |
+| `how_to` | 0.50 | Standard filtering |
+| `comparison` | 0.53 | Moderate filtering for options |
+| `exploration` | 0.45 | Loose filtering for broad coverage |
+
+- **Keep:** PageTitle **or** Headings with `rerank_sim >= threshold`
+- **Remove:** PageTitle **and** Headings with `rerank_sim < threshold`
+
+**Just Notice:** If ALL PageTitles & headings in a result have `rerank_sim < threshold`, remove the entire result object from `results` array.
 
 **But Important Outlined Cases:** When the results is empty after removing, please keep the topic of page title or headings related with queries if exists.
+
+### Step 6: Scene-Specific Filtering Strategies
+
+#### High Precision Scenes (0.58-0.65): faithful_reference, fact_lookup, faithful_how_to
+
+- Apply stricter keyword matching requirements
+- Keep only highly relevant documents
+- Filter out weak/edge matches aggressively
+- **faithful_reference**: Keep only core original text, no peripheral content
+- **fact_lookup**: Keep only fragments containing exact answers
+- **faithful_how_to**: Keep step sections, filter pure concept explanations
+
+#### Balanced Scenes (0.50-0.55): how_to, concept_learning
+
+- Apply moderate filtering
+- Keep core relevant content
+- **how_to**: Keep step-by-step guides and prerequisite sections
+- **concept_learning**: Keep definitions, principles, relationships, and examples
+
+#### Broad Coverage Scenes (0.45-0.53): exploration, comparison
+
+- Apply relaxed filtering
+- Keep multi-perspective content
+- Allow loosely related content
+- **exploration**: Keep all related content, even tangential associations
+- **comparison**: Keep descriptions of all options/alternatives
+
+### Step 7: Document Coverage Decision
+
+Based on the retrieval scene, determine how many and which types of documents to retain:
+
+**High Precision Scenes:**
+- `faithful_reference`: Keep only 1-2 most relevant sources with exact matches
+- `fact_lookup`: Keep only fragments containing precise answers
+- `faithful_how_to`: Keep step-by-step sections, prefer single complete guide
+
+**Balanced Scenes:**
+- `how_to`: Keep 2-3 different methods if available
+- `concept_learning`: Keep 2-3 sources covering different angles
+
+**Broad Coverage Scenes:**
+- `exploration`: Keep all potentially related sources
+- `comparison`: Keep all option descriptions for comprehensive comparison
 
 ---
 
 ## Scoring Examples
 
-### Example 1: High Relevance
+### Example 1: Faithful Reference Scenario (Threshold: 0.65)
 
-**Query:** "how to create skills in opencode"
+**Query:** "What does the documentation say about authentication flow?"
 
-**Heading:** "3. Create a skill"
+**Heading:** "Authentication Overview"
 
-**Analysis:**
-- Contains action verb "Create" matching query intent
-- Contains noun "skill" exactly matching query term
-- Page context "Plugins" provides relevant framework
+**Analysis (Faithful Reference scene):**
+- Title mentions authentication but is too generic
+- Lacks specific reference to documentation's original text
+- No direct quote or specific claim from documentation
+- Faithful reference requires precise original text matching
 
-**Score:** `0.85`
+**Score:** `0.28` → Filter (below 0.65 threshold)
 
-### Example 2: Moderate Relevance
+---
 
-**Query:** "opencode skills configuration"
+### Example 2: Faithful How-To Scenario (Threshold: 0.58)
 
-**Heading:** "4. Configuration"
+**Query:** "How to configure MCP servers step by step"
 
-**Analysis:**
-- Contains "Configuration" matching query keyword
-- Heading is generic without "skills" mention
-- Page title provides some context
+**Heading:** "MCP Server Configuration"
 
-**Score:** `0.55`
+**Analysis (Faithful How-To scene):**
+- Contains configuration keywords matching query intent
+- Title implies step content but doesn't explicitly reference steps
+- Faithful how-to requires clear step structure in original text
+- Missing explicit "step", "configure", or action verb sequence
 
-### Example 3: Low Relevance
+**Score:** `0.48` → Filter (below 0.58 threshold)
 
-**Query:** "opencode skills creation guide"
+---
 
-**Heading:** "GitHub Integration"
+### Example 3: How-To Scenario (Threshold: 0.50)
 
-**Analysis:**
-- No connection to skills or creation
-- Completely different topic
+**Query:** "How to configure MCP servers step by step"
 
-**Score:** `0.15` → Filter out
+**Heading:** "MCP Server Configuration"
+
+**Analysis (How-To scene):**
+- Contains configuration keywords matching query intent
+- How-To scene allows more flexibility for practical guides
+- Actionable topic even without explicit step structure
+- Retained as practical configuration guidance
+
+**Score:** `0.65` → Keep (above 0.50 threshold)
+
+---
+
+### Scenario-Specific Edge Case Comparison
+
+The same heading receives different scores based on scene threshold:
+
+| Heading | faithful_reference (0.65) | faithful_how_to (0.58) | how_to (0.50) |
+|---------|---------------------------|------------------------|---------------|
+| "Configuration Guide" | 0.25 → Filter | 0.45 → Filter | 0.62 → Keep |
+| "Step-by-Step Setup" | 0.30 → Filter | 0.72 → Keep | 0.80 → Keep |
+| "API Overview" | 0.22 → Filter | 0.35 → Filter | 0.55 → Keep |
+
+**Key Insight:** Titles with action-oriented keywords score higher in how_to scenes, while faithful_reference requires near-perfect semantic alignment with original documentation text.
 
 ---
 
@@ -193,7 +317,7 @@ For each page title and heading in each result:
 Return the **exact same JSON structure** with:
 
 1. **`rerank_sim` populated**: Fill in `null` values with calculated scores (0.0 - 1.0)
-2. **`headings` filtered**: Remove headings with `rerank_sim < 0.5`
+2. **`headings` filtered**: Remove headings with `rerank_sim < threshold` (scene-specific)
 3. **`results` filtered**: Remove results with empty `headings` array after filtering
 
 ```json
@@ -272,12 +396,48 @@ If all headings are filtered out:
 }}
 ```
 
+### Scene Inference When Not Provided
+
+When `retrieval_scene` is missing, infer from query patterns:
+
+**Concept Learning indicators:**
+- Query contains: "what is", "define", "explain", "understand", "concept"
+- Example: "What is Model Context Protocol?"
+
+**How-To indicators:**
+- Query contains: "how to", "steps", "guide", "tutorial", "install", "configure"
+- Example: "How to install Claude Code"
+
+**Comparison indicators:**
+- Query contains: "difference", "compare", "vs", "versus", "better"
+- Example: "Claude Code vs Cursor"
+
+**Fact Lookup indicators:**
+- Query asks for: specific value, number, date, version, name
+- Example: "What version is Claude Code 3.5"
+
+**Faithful Reference indicators:**
+- Query mentions: "original text", "quote", "documentation says"
+- Example: "What does the documentation say about MCP?"
+
+**Faithful How-To indicators:**
+- Query asks for implementation with specific steps
+- Example: "How to configure MCP servers step by step"
+
+**Exploration indicators:**
+- Query is open-ended, broad topic
+- Example: "What can Claude Code do?"
+
 ### Single Query vs Multiple Queries
 
 When scoring with multiple queries:
 - Find **common intent** across all queries
 - Score based on how well heading serves the **shared intent**
 - If queries have **different intents**, score based on **best match**
+
+**Scene-aware scoring for multiple queries:**
+- If queries suggest different scenes, use the **stricter scene** (higher threshold)
+- Example: "Claude Code features" (exploration) + "Claude Code installation" (how_to) → use how_to threshold (0.50)
 
 ### Mixed Language Queries
 
@@ -290,15 +450,21 @@ Score headings based on **semantic relevance** regardless of language.
 Before returning output, verify:
 
 - [ ] All `rerank_sim` values are filled (no `null`)
-- [ ] No headings with `rerank_sim < 0.5` remain
+- [ ] No headings with `rerank_sim < threshold` remain
 - [ ] No results with empty `headings` arrays remain
 - [ ] Original JSON structure is preserved
 - [ ] Only `rerank_sim` values have been modified
+- [ ] Scene-specific threshold was applied correctly
 
 
-# Now the Raw Results Input:
+# User Input
+## Retrieval Scenario
+{RETRIEVAL_SCENE}
+
+## The Raw Results for Rerank & Filt:
 ```json
 {SEARCHER_RETRIVAL_RESULTS}
 ```
 
+# Your Task
 Please rerank and filter the results.

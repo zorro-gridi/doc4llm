@@ -15,7 +15,7 @@ from huggingface_hub import InferenceClient
 
 # ========== 初始化客户端 ==========
 client = InferenceClient(
-    provider="hf-inference",
+    provider="auto",
     api_key=os.environ["HF_KEY"],
 )
 

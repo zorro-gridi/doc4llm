@@ -231,7 +231,7 @@ class TestPhase1DocumentDiscovery:
 
     def test_search_returns_success_flag(self, env_setup, knowledge_base_path: str):
         """Verify search returns success flag."""
-        searcher = DocSearcherAPI(knowledge_base_path=knowledge_base_path)
+        searcher = DocSearcherAPI()
         result = searcher.search("how to create skills")
 
         assert "success" in result
@@ -239,7 +239,7 @@ class TestPhase1DocumentDiscovery:
 
     def test_search_returns_results_list(self, env_setup, knowledge_base_path: str):
         """Verify search returns results as a list."""
-        searcher = DocSearcherAPI(knowledge_base_path=knowledge_base_path)
+        searcher = DocSearcherAPI()
         result = searcher.search("how to create skills")
 
         assert "results" in result
@@ -247,7 +247,7 @@ class TestPhase1DocumentDiscovery:
 
     def test_search_result_structure(self, env_setup, knowledge_base_path: str):
         """Verify each result has required fields."""
-        searcher = DocSearcherAPI(knowledge_base_path=knowledge_base_path)
+        searcher = DocSearcherAPI()
         result = searcher.search("agent skills")
 
         if result.get("success") and result["results"]:
@@ -260,7 +260,7 @@ class TestPhase1DocumentDiscovery:
         self, env_setup, knowledge_base_path: str
     ):
         """Verify each heading has required fields."""
-        searcher = DocSearcherAPI(knowledge_base_path=knowledge_base_path)
+        searcher = DocSearcherAPI()
         result = searcher.search("skills configuration")
 
         if result.get("success") and result["results"]:
@@ -271,7 +271,7 @@ class TestPhase1DocumentDiscovery:
 
     def test_search_with_target_doc_sets(self, env_setup, knowledge_base_path: str):
         """Verify search works with target doc_sets."""
-        searcher = DocSearcherAPI(knowledge_base_path=knowledge_base_path)
+        searcher = DocSearcherAPI()
 
         available_doc_sets = searcher._find_doc_sets()
         if available_doc_sets:
@@ -284,7 +284,7 @@ class TestPhase1DocumentDiscovery:
 
     def test_search_returns_doc_sets_found(self, env_setup, knowledge_base_path: str):
         """Verify search returns doc_sets_found field."""
-        searcher = DocSearcherAPI(knowledge_base_path=knowledge_base_path)
+        searcher = DocSearcherAPI()
         result = searcher.search("documentation")
 
         assert "doc_sets_found" in result
@@ -292,7 +292,7 @@ class TestPhase1DocumentDiscovery:
 
     def test_search_returns_message(self, env_setup, knowledge_base_path: str):
         """Verify search returns message field."""
-        searcher = DocSearcherAPI(knowledge_base_path=knowledge_base_path)
+        searcher = DocSearcherAPI()
         result = searcher.search("test query")
 
         assert "message" in result

@@ -14,12 +14,15 @@ Example:
 
 import os
 import re
+
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List, Tuple, Optional
 
 import dotenv
+import httpx
 import numpy as np
-from huggingface_hub import InferenceClient
+from huggingface_hub import InferenceClient, set_client_factory
 
 
 @dataclass
@@ -34,6 +37,7 @@ class TransformerConfig:
         device: Device to use ("cpu" or "cuda")
         batch_size: Batch size for embedding computation
         lang_threshold: Ratio of Chinese characters to trigger Chinese model (0-1)
+        hf_inference_provider: HuggingFace inference provider (default: "auto")
     """
     model_zh: str = "BAAI/bge-large-zh-v1.5"
     model_en: str = "BAAI/bge-large-en-v1.5"
@@ -41,7 +45,8 @@ class TransformerConfig:
     env_path: str = "doc4llm/.env"
     device: str = "cpu"
     batch_size: int = 32
-    lang_threshold: float = 0.9  # >=90% Chinese chars -> use zh model
+    lang_threshold: float = 0.3
+    hf_inference_provider: str = "auto"
 
 
 class TransformerMatcher:
@@ -85,8 +90,15 @@ class TransformerMatcher:
                 f"Please set {self.config.api_key_env} in {self.config.env_path}"
             )
 
+        # Configure HTTP proxy from environment variable (before creating client)
+        proxy = os.environ.get("HF_PROXY")
+        if proxy:
+            def create_proxy_client() -> httpx.Client:
+                return httpx.Client(proxy=proxy)
+            set_client_factory(create_proxy_client)
+
         self._client = InferenceClient(
-            provider="hf-inference",
+            provider=self.config.hf_inference_provider,
             api_key=api_key,
         )
 
@@ -236,10 +248,6 @@ class TransformerMatcher:
         sim_matrix = query_embs @ candidate_embs.T  # [Q, C]
 
         return sim_matrix, candidates
-
-
-# Import Path for relative path resolution
-from pathlib import Path
 
 
 __all__ = [

@@ -71,6 +71,7 @@ Issues = "https://github.com/zorro-gridi/doc4llm/issues"
 
 [project.scripts]
 doc4llm = "doc4llm.cli:main"
+docrag = "doc4llm.doc_rag.orchestrator:_main"
 
 [tool.setuptools]
 package-dir = {"" = "."}

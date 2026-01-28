@@ -158,7 +158,11 @@ class LLMReranker:
             格式化后的 prompt 字符串
         """
         json_str = json.dumps(data, ensure_ascii=False, indent=2)
-        return self._prompt_template.format(SEARCHER_RETRIVAL_RESULTS=json_str)
+        retrieval_scene = data.get("retrieval_scene", "how_to")
+        return self._prompt_template.format(
+            SEARCHER_RETRIVAL_RESULTS=json_str,
+            RETRIEVAL_SCENE=retrieval_scene
+        )
 
     def _parse_response(self, message) -> RerankerResult:
         """
@@ -367,6 +371,7 @@ if __name__ == '__main__':
     "how to create skills in opencode",
     "opencode skills configuration reference"
   ],
+  "retrieval_scene": "how_to",
   "doc_sets_found": [
     "OpenCode_Docs@latest"
   ],

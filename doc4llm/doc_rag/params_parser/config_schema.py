@@ -246,10 +246,6 @@ SCHEMA_PHASE_1_INPUT: Dict[str, Any] = {
             "items": {"type": "string"},
             "description": "Search queries"
         },
-        "base_dir": {
-            "type": "string",
-            "description": "Base directory for documentation"
-        },
         "doc_sets": {
             "type": "string",
             "description": "Comma-separated list of doc sets"
@@ -275,7 +271,7 @@ SCHEMA_PHASE_1_INPUT: Dict[str, Any] = {
             "description": "Output JSON format"
         }
     },
-    "required": ["query", "base_dir", "doc_sets"]
+    "required": ["query", "doc_sets"]
 }
 
 
