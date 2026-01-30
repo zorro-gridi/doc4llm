@@ -1,204 +1,3 @@
-            # OpenCode 匹配逻辑
-            if 'opencode' in item.lower():
-                doc_sets.append(item)
-except Exception as e:
-    pass
-
-# 默认使用 OpenCode_Docs@latest
-if not doc_sets:
-    doc_sets = ['OpenCode_Docs@latest']
-
-# Phase 1-3: 分析和优化查询
-language = 'zh' if any(c in user_query for c in ['如何', '创建', '技能']) else 'en'
-complexity = 'medium'
-ambiguity = 'low'
-
-# 核心实体名词提取 (Phase 4)
-domain_nouns = ['skills']
-
-# Phase 5: 从优化查询中提取动作动词
-# 先生成优化查询
-optimized_queries = [
-    {'rank': 1, 'query': 'OpenCode skills creation guide', 'strategy': 'expansion', 'rationale': 'Direct translation with documentation modifier'},
-    {'rank': 2, 'query': 'OpenCode skills setup tutorial', 'strategy': 'expansion', 'rationale': 'Alternative action verb for broader coverage'},
-    {'rank': 3, 'query': 'how to create skills in OpenCode', 'strategy': 'translation', 'rationale': 'Question format with explicit action'},
-    {'rank': 4, 'query': 'OpenCode skills configuration', 'strategy': 'expansion', 'rationale': 'Configuration aspect of skills'},
-    {'rank': 5, 'query': 'OpenCode skills development guide', 'strategy': 'expansion', 'rationale': 'Development perspective'}
-]
-
-# 从优化查询中提取动词 (Phase 5)
-predicate_verbs = []
-verbs_source = []
-for q in optimized_queries:
-    query_lower = q['query'].lower()
-    verbs = ['create', 'setup', 'configure', 'creation', 'setting', 'configuration', 'develop', 'development']
-    for v in verbs:
-        if v in query_lower:
-            verbs_source.append(v)
-predicate_verbs = list(set(verbs_source))
-
-# 输出 JSON
-output = {
-    'query_analysis': {
-        'original': user_query,
-        'language': language,
-        'complexity': complexity,
-        'ambiguity': ambiguity,
-        'strategies': ['translation', 'expansion'],
-        'doc_set': doc_sets,
-        'domain_nouns': domain_nouns,
-        'predicate_verbs': predicate_verbs
-    },
-    'optimized_queries': optimized_queries,
-    'search_recommendation': {
-        'online_suggested': False,
-        'reason': 'OpenCode documentation found in local knowledge base'
-    }
-}
-
-print(json.dumps(output, ensure_ascii=False))
-"
-[2026-01-25 18:47:59] Document extraction detected: echo '{"user_query": "OpenCode 如何创建 skills", "base_dir": "~/project/md_docs_base"}' | conda run -n k8s python -c "
-import json
-import sys
-
-# 读取输入
-input_data = json.load(sys.stdin)
-user_query = input_data['user_query']
-base_dir = input_data['base_dir']
-
-# Phase 0: Doc-Set Detection - 检查知识库中的文档集
-import os
-doc_sets = []
-try:
-    for item in os.listdir(base_dir):
-        if os.path.isdir(os.path.join(base_dir, item)) and '@' in item:
-            # OpenCode 匹配逻辑
-            if 'opencode' in item.lower():
-                doc_sets.append(item)
-except Exception as e:
-    pass
-
-# 默认使用 OpenCode_Docs@latest
-if not doc_sets:
-    doc_sets = ['OpenCode_Docs@latest']
-
-# Phase 1-3: 分析和优化查询
-language = 'zh' if any(c in user_query for c in ['如何', '创建', '技能']) else 'en'
-complexity = 'medium'
-ambiguity = 'low'
-
-# 核心实体名词提取 (Phase 4)
-domain_nouns = ['skills']
-
-# Phase 5: 从优化查询中提取动作动词
-# 先生成优化查询
-optimized_queries = [
-    {'rank': 1, 'query': 'OpenCode skills creation guide', 'strategy': 'expansion', 'rationale': 'Direct translation with documentation modifier'},
-    {'rank': 2, 'query': 'OpenCode skills setup tutorial', 'strategy': 'expansion', 'rationale': 'Alternative action verb for broader coverage'},
-    {'rank': 3, 'query': 'how to create skills in OpenCode', 'strategy': 'translation', 'rationale': 'Question format with explicit action'},
-    {'rank': 4, 'query': 'OpenCode skills configuration', 'strategy': 'expansion', 'rationale': 'Configuration aspect of skills'},
-    {'rank': 5, 'query': 'OpenCode skills development guide', 'strategy': 'expansion', 'rationale': 'Development perspective'}
-]
-
-# 从优化查询中提取动词 (Phase 5)
-predicate_verbs = []
-verbs_source = []
-for q in optimized_queries:
-    query_lower = q['query'].lower()
-    verbs = ['create', 'setup', 'configure', 'creation', 'setting', 'configuration', 'develop', 'development']
-    for v in verbs:
-        if v in query_lower:
-            verbs_source.append(v)
-predicate_verbs = list(set(verbs_source))
-
-# 输出 JSON
-output = {
-    'query_analysis': {
-        'original': user_query,
-        'language': language,
-        'complexity': complexity,
-        'ambiguity': ambiguity,
-        'strategies': ['translation', 'expansion'],
-        'doc_set': doc_sets,
-        'domain_nouns': domain_nouns,
-        'predicate_verbs': predicate_verbs
-    },
-    'optimized_queries': optimized_queries,
-    'search_recommendation': {
-        'online_suggested': False,
-        'reason': 'OpenCode documentation found in local knowledge base'
-    }
-}
-
-print(json.dumps(output, ensure_ascii=False))
-"
-[2026-01-25 18:48:02] doc-retriever: Bash tool used
-[2026-01-25 18:48:02] Command: conda run -n k8s python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "OpenCode 如何创建 skills" --base-dir "~/project/md_docs_base"
-[2026-01-25 18:48:02] Document extraction detected: conda run -n k8s python .claude/skills/md-doc-query-optimizer/scripts/optimize_query.py --query "OpenCode 如何创建 skills" --base-dir "~/project/md_docs_base"
-[2026-01-25 18:48:14] doc-retriever: Bash tool used
-[2026-01-25 18:48:14] Command: conda run -n k8s python3 << 'EOF'
-import json
-import os
-
-user_query = "OpenCode 如何创建 skills"
-base_dir = "~/project/md_docs_base"
-
-# Phase 0: Doc-Set Detection
-doc_sets = []
-for item in os.listdir(base_dir):
-    if os.path.isdir(os.path.join(base_dir, item)) and '@' in item:
-        if 'opencode' in item.lower():
-            doc_sets.append(item)
-
-if not doc_sets:
-    doc_sets = ['OpenCode_Docs@latest']
-
-# 分析查询
-language = 'zh'
-complexity = 'medium'
-ambiguity = 'low'
-
-# 核心实体名词
-domain_nouns = ['skills']
-
-# 生成优化查询
-optimized_queries = [
-    {"rank": 1, "query": "OpenCode skills creation guide", "strategy": "expansion", "rationale": "Direct translation with documentation modifier"},
-    {"rank": 2, "query": "OpenCode skills setup tutorial", "strategy": "expansion", "rationale": "Alternative action verb for broader coverage"},
-    {"rank": 3, "query": "how to create skills in OpenCode", "strategy": "translation", "rationale": "Question format with explicit action"},
-    {"rank": 4, "query": "OpenCode skills configuration", "strategy": "expansion", "rationale": "Configuration aspect of skills"},
-    {"rank": 5, "query": "OpenCode skills development guide", "strategy": "expansion", "rationale": "Development perspective"}
-]
-
-# 提取动词
-predicate_verbs = ["create", "setup", "configure", "creation", "setting", "configuration", "develop", "development"]
-
-output = {
-    "query_analysis": {
-        "original": user_query,
-        "language": language,
-        "complexity": complexity,
-        "ambiguity": ambiguity,
-        "strategies": ["translation", "expansion"],
-        "doc_set": doc_sets,
-        "domain_nouns": domain_nouns,
-        "predicate_verbs": predicate_verbs
-    },
-    "optimized_queries": optimized_queries,
-    "search_recommendation": {
-        "online_suggested": False,
-        "reason": "OpenCode documentation found in local knowledge base"
-    }
-}
-
-print(json.dumps(output, ensure_ascii=False, indent=2))
-EOF
-[2026-01-25 18:48:14] Document extraction detected: conda run -n k8s python3 << 'EOF'
-import json
-import os
-
-user_query = "OpenCode 如何创建 skills"
 base_dir = "~/project/md_docs_base"
 
 # Phase 0: Doc-Set Detection
@@ -993,3 +792,104 @@ with open('~/.claude/projects/-Users-zorro-project-doc4llm/e666727e-f122-45f3-82
         for line in lines[:300]:
             print(line)
 "
+[2026-01-30 16:17:49] doc-retriever: Bash tool used
+[2026-01-30 16:17:49] Command: docrag "OpenCode skills 创建 OpenCode agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式" --kb ~/project/md_docs_base --threshold 3000 --llm-reranker --reranker-threshold 0.6 --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:17:49] Document extraction detected: docrag "OpenCode skills 创建 OpenCode agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式" --kb ~/project/md_docs_base --threshold 3000 --llm-reranker --reranker-threshold 0.6 --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:18:10] doc-retriever: Bash tool used
+[2026-01-30 16:18:10] Command: ls -la ~/project/md_docs_base 2>/dev/null | head -20 || echo "知识库路径不存在"
+[2026-01-30 16:18:10] Document extraction detected: ls -la ~/project/md_docs_base 2>/dev/null | head -20 || echo "知识库路径不存在"
+[2026-01-30 16:18:17] doc-retriever: Bash tool used
+[2026-01-30 16:18:17] Command: conda activate k8s && python -c "
+from doc4llm.doc_rag.orchestrator import retrieve
+
+result = retrieve(
+    query='OpenCode skills 创建 agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式',
+    base_dir='~/project/md_docs_base',
+    threshold=3000,
+    llm_reranker=True,
+    reranker_threshold=0.6,
+    skiped_keywords_path='/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt'
+)
+
+print(result.output)
+print('\n\n--- Sources ---')
+for source in result.sources:
+    print(f'- {source.get(\"title\", \"Unknown\")}: {source.get(\"local_path\", \"\")}')
+"
+[2026-01-30 16:18:17] Document extraction detected: conda activate k8s && python -c "
+from doc4llm.doc_rag.orchestrator import retrieve
+
+result = retrieve(
+    query='OpenCode skills 创建 agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式',
+    base_dir='~/project/md_docs_base',
+    threshold=3000,
+    llm_reranker=True,
+    reranker_threshold=0.6,
+    skiped_keywords_path='/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt'
+)
+
+print(result.output)
+print('\n\n--- Sources ---')
+for source in result.sources:
+    print(f'- {source.get(\"title\", \"Unknown\")}: {source.get(\"local_path\", \"\")}')
+"
+[2026-01-30 16:18:21] doc-retriever: Bash tool used
+[2026-01-30 16:18:21] Command: which python && python --version
+[2026-01-30 16:18:28] doc-retriever: Bash tool used
+[2026-01-30 16:18:28] Command: python3 << 'EOF'
+from doc4llm.doc_rag.orchestrator import retrieve
+
+result = retrieve(
+    query='OpenCode skills 创建 agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式',
+    base_dir='~/project/md_docs_base',
+    threshold=3000,
+    llm_reranker=True,
+    reranker_threshold=0.6,
+    skiped_keywords_path='/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt'
+)
+
+print(result.output)
+print('\n\n--- Sources ---')
+for source in result.sources:
+    print(f'- {source.get("title", "Unknown")}: {source.get("local_path", "")}')
+EOF
+[2026-01-30 16:18:28] Document extraction detected: python3 << 'EOF'
+from doc4llm.doc_rag.orchestrator import retrieve
+
+result = retrieve(
+    query='OpenCode skills 创建 agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式',
+    base_dir='~/project/md_docs_base',
+    threshold=3000,
+    llm_reranker=True,
+    reranker_threshold=0.6,
+    skiped_keywords_path='/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt'
+)
+
+print(result.output)
+print('\n\n--- Sources ---')
+for source in result.sources:
+    print(f'- {source.get("title", "Unknown")}: {source.get("local_path", "")}')
+EOF
+[2026-01-30 16:19:59] doc-retriever session ended: c7c114b2-4c8f-447f-96c2-84529237a238 (status: completed)
+[2026-01-30 16:20:41] doc-retriever: Bash tool used
+[2026-01-30 16:20:41] Command: docrag "opencode skills 创建方法 配置结构 .claude skills 目录 结构配置" --kb ~/project/md_docs_base --threshold 3000 --llm-reranker --reranker-threshold 0.6 --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:20:41] Document extraction detected: docrag "opencode skills 创建方法 配置结构 .claude skills 目录 结构配置" --kb ~/project/md_docs_base --threshold 3000 --llm-reranker --reranker-threshold 0.6 --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:20:45] doc-retriever: Bash tool used
+[2026-01-30 16:20:45] Command: ls -la /Users/zorro/project/doc4llm/.claude/
+[2026-01-30 16:22:16] doc-retriever session ended: 6654fbb5-e98f-422b-b747-cd5d1b06d0cb (status: completed)
+[2026-01-30 16:23:08] doc-retriever: Bash tool used
+[2026-01-30 16:23:08] Command: docrag \
+  "如何创建 opencode skills? 请检索 opencode skills 创建方法、目录结构、配置文件、SKILL.md 编写规范等所有相关内容" \
+  --kb ~/project/md_docs_base \
+  --threshold 3000 \
+  --llm-reranker \
+  --reranker-threshold 0.6 \
+  --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:23:08] Document extraction detected: docrag \
+  "如何创建 opencode skills? 请检索 opencode skills 创建方法、目录结构、配置文件、SKILL.md 编写规范等所有相关内容" \
+  --kb ~/project/md_docs_base \
+  --threshold 3000 \
+  --llm-reranker \
+  --reranker-threshold 0.6 \
+  --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:24:39] doc-retriever session ended: 4b4c324c-fadc-4a7b-b67e-8b96baa1dc2b (status: completed)

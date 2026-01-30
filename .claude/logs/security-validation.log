@@ -3267,3 +3267,103 @@ with open('~/.claude/projects/-Users-zorro-project-doc4llm/e666727e-f122-45f3-82
         for line in lines[:300]:
             print(line)
 "
+[2026-01-30 16:17:49] [INFO] 验证命令: docrag "OpenCode skills 创建 OpenCode agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式" --kb ~/project/md_docs_base --threshold 3000 --llm-reranker --reranker-threshold 0.6 --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:17:49] [ERROR] 不允许的操作: docrag "OpenCode skills 创建 OpenCode agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式" --kb ~/project/md_docs_base --threshold 3000 --llm-reranker --reranker-threshold 0.6 --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:18:10] [INFO] 验证命令: ls -la ~/project/md_docs_base 2>/dev/null | head -20 || echo "知识库路径不存在"
+[2026-01-30 16:18:10] [INFO] 匹配允许操作: ^ls.*md_docs
+[2026-01-30 16:18:10] [WARN] md_docs 目录不存在，操作可能失败
+[2026-01-30 16:18:10] [INFO] 安全验证通过: ls -la ~/project/md_docs_base 2>/dev/null | head -20 || echo "知识库路径不存在"
+[2026-01-30 16:18:17] [INFO] 验证命令: conda activate k8s && python -c "
+from doc4llm.doc_rag.orchestrator import retrieve
+
+result = retrieve(
+    query='OpenCode skills 创建 agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式',
+    base_dir='~/project/md_docs_base',
+    threshold=3000,
+    llm_reranker=True,
+    reranker_threshold=0.6,
+    skiped_keywords_path='/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt'
+)
+
+print(result.output)
+print('\n\n--- Sources ---')
+for source in result.sources:
+    print(f'- {source.get(\"title\", \"Unknown\")}: {source.get(\"local_path\", \"\")}')
+"
+[2026-01-30 16:18:17] [INFO] 匹配允许操作: ^conda .*
+[2026-01-30 16:18:17] [WARN] md_docs 目录不存在，操作可能失败
+[2026-01-30 16:18:17] [INFO] 安全验证通过: conda activate k8s && python -c "
+from doc4llm.doc_rag.orchestrator import retrieve
+
+result = retrieve(
+    query='OpenCode skills 创建 agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式',
+    base_dir='~/project/md_docs_base',
+    threshold=3000,
+    llm_reranker=True,
+    reranker_threshold=0.6,
+    skiped_keywords_path='/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt'
+)
+
+print(result.output)
+print('\n\n--- Sources ---')
+for source in result.sources:
+    print(f'- {source.get(\"title\", \"Unknown\")}: {source.get(\"local_path\", \"\")}')
+"
+[2026-01-30 16:18:21] [INFO] 验证命令: which python && python --version
+[2026-01-30 16:18:21] [ERROR] 不允许的操作: which python && python --version
+[2026-01-30 16:18:28] [INFO] 验证命令: python3 << 'EOF'
+from doc4llm.doc_rag.orchestrator import retrieve
+
+result = retrieve(
+    query='OpenCode skills 创建 agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式',
+    base_dir='~/project/md_docs_base',
+    threshold=3000,
+    llm_reranker=True,
+    reranker_threshold=0.6,
+    skiped_keywords_path='/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt'
+)
+
+print(result.output)
+print('\n\n--- Sources ---')
+for source in result.sources:
+    print(f'- {source.get("title", "Unknown")}: {source.get("local_path", "")}')
+EOF
+[2026-01-30 16:18:28] [INFO] 匹配允许操作: ^python3 .*
+[2026-01-30 16:18:28] [WARN] md_docs 目录不存在，操作可能失败
+[2026-01-30 16:18:28] [INFO] 安全验证通过: python3 << 'EOF'
+from doc4llm.doc_rag.orchestrator import retrieve
+
+result = retrieve(
+    query='OpenCode skills 创建 agent 配置 .claude/agents/ 目录结构 SKILL.md 文件格式',
+    base_dir='~/project/md_docs_base',
+    threshold=3000,
+    llm_reranker=True,
+    reranker_threshold=0.6,
+    skiped_keywords_path='/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt'
+)
+
+print(result.output)
+print('\n\n--- Sources ---')
+for source in result.sources:
+    print(f'- {source.get("title", "Unknown")}: {source.get("local_path", "")}')
+EOF
+[2026-01-30 16:20:41] [INFO] 验证命令: docrag "opencode skills 创建方法 配置结构 .claude skills 目录 结构配置" --kb ~/project/md_docs_base --threshold 3000 --llm-reranker --reranker-threshold 0.6 --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:20:41] [ERROR] 不允许的操作: docrag "opencode skills 创建方法 配置结构 .claude skills 目录 结构配置" --kb ~/project/md_docs_base --threshold 3000 --llm-reranker --reranker-threshold 0.6 --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:20:45] [INFO] 验证命令: ls -la /Users/zorro/project/doc4llm/.claude/
+[2026-01-30 16:20:45] [ERROR] 不允许的操作: ls -la /Users/zorro/project/doc4llm/.claude/
+[2026-01-30 16:23:08] [INFO] 验证命令: docrag \
+  "如何创建 opencode skills? 请检索 opencode skills 创建方法、目录结构、配置文件、SKILL.md 编写规范等所有相关内容" \
+  --kb ~/project/md_docs_base \
+  --threshold 3000 \
+  --llm-reranker \
+  --reranker-threshold 0.6 \
+  --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt
+[2026-01-30 16:23:08] [INFO] 匹配允许操作: ^docrag
+[2026-01-30 16:23:08] [WARN] md_docs 目录不存在，操作可能失败
+[2026-01-30 16:23:08] [INFO] 安全验证通过: docrag \
+  "如何创建 opencode skills? 请检索 opencode skills 创建方法、目录结构、配置文件、SKILL.md 编写规范等所有相关内容" \
+  --kb ~/project/md_docs_base \
+  --threshold 3000 \
+  --llm-reranker \
+  --reranker-threshold 0.6 \
+  --skip-keywords doc4llm/doc_rag/searcher/skiped_keywords.txt

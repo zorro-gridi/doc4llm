@@ -1,4 +1,5 @@
 ---
+name: doc-rag
 description: |
   使用 Doc-RAG 管道执行本地知识库文档检索任务。
   When to use:
@@ -6,14 +7,46 @@ description: |
     - 用户明确提出“查询 / 搜索 / 检索文档”的请求时。
     - 当前对话任务涉及资料查找、规范参考、API 文档、内部说明等，有明显文档检索意图时。
     - 输入中包含显式检索指令代码：use contextZ 时，必须触发。
-mode: subagent
 tools:
-  Read: true
-  Glob: true
-  Grep: true
-  Bash: true
-  Write: false
-  Edit: false
+  - Read
+  - Glob
+  - Grep
+  - Bash
+disallowedTools:
+  - Write
+  - Edit
+permissionMode: bypassPermissions
+protocol: AOP
+protocol_version: "1.0"
+# 性能优化配置
+optimization:
+  skill_loading: "progressive"    # 渐进式加载：启动时加载核心技能，运行时优化内存
+  memory_management: "smart"      # 智能内存管理
+  workflow_enforcement: "strict"  # 严格执行六阶段工作流
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/validate-doc-operation.sh"'
+        - type: command
+          command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/log-retrieval.sh"'
+    - matcher: "Read"
+      hooks:
+        - type: command
+          command: |
+            if [[ "$TOOL_FILE_PATH" == *"docContent.md" ]]; then
+            echo "DENY: Access to docContent.md is blocked"
+            exit 1
+            fi
+  Stop:
+    - hooks:
+        - type: command
+          command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/cleanup-doc-session.sh"'
+  SubagentStop:
+    - hooks:
+        - type: command
+          command: '"$CLAUDE_PROJECT_DIR/.claude/scripts/cleanup-doc-session.sh"'
 ---
 
 # doc-rag Skill

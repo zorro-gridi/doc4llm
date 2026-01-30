@@ -131,6 +131,7 @@ ALLOWED_DOC_OPERATIONS=(
     "^wc -l"
     "^echo"
     "^mkdir -p \.claude/(logs|temp)"
+    "^docrag"
 )
 
 IS_ALLOWED_OPERATION=false

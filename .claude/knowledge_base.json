@@ -1,8 +1,0 @@
-{
-  "version": "1.0",
-  "updated": "2026-01-19",
-  "knowledge_base": {
-    "base_dir": "~/project/md_docs_base"
-  },
-  "conda_env": "k8s"
-}
