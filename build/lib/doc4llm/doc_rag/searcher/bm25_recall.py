@@ -470,7 +470,7 @@ class ScoredPage:
         return {
             "doc_set": self.doc_set,
             "page_title": self.page_title,
-            "score": self.score,
+            "bm25_sim": self.score,
             "is_basic": self.is_basic,
             "is_precision": self.is_precision,
             "toc_path": self.toc_path,
@@ -508,7 +508,7 @@ class ScoredHeading:
             "text": self.text,
             "full_text": self.full_text,
             "anchor": self.anchor,
-            "score": self.score,
+            "bm25_sim": self.score,
             "is_basic": self.is_basic,
             "is_precision": self.is_precision,
         }
@@ -649,9 +649,10 @@ class BM25Recall:
                     scored_headings.append(
                         {
                             **heading,
-                            "score": h_score,
+                            "bm25_sim": h_score,
                             "is_basic": h_score >= self.threshold_headings,
                             "is_precision": h_score >= self.threshold_precision,
+                            "source": "BM25",
                         }
                     )
 
@@ -667,13 +668,14 @@ class BM25Recall:
                     {
                         "doc_set": doc_set,
                         "page_title": page_title,
-                        "score": score,
+                        "bm25_sim": score,
                         "is_basic": is_basic,
                         "is_precision": False,
                         "toc_path": toc_path,
                         "headings": valid_headings,
                         "heading_count": len(valid_headings),
                         "precision_count": precision_count,
+                        "source": "BM25",
                     }
                 )
 

@@ -5,18 +5,8 @@
   ],
   "agent": {
     "doc-rag": {
-      "description": "Local knowledge base retrieval for doc4llm. Orchestrates four-phase workflow: query optimization → document discovery → content extraction → post-processing.",
+      "description": "Execute documentation retrieval queries against local markdown docs using Doc-RAG pipeline. Use when user wants to search documentation and get relevant content from local markdown files.",
       "mode": "subagent",
-      "skills": [
-        "md-doc-query-optimizer",
-        "md-doc-query-router",
-        "md-doc-params-parser",
-        "md-doc-searcher",
-        "md-doc-llm-reranker",
-        "md-doc-reader",
-        "md-doc-processor",
-        "md-doc-sence-output"
-      ],
       "temperature": 0.1,
       "tools": {
         "Read": true,

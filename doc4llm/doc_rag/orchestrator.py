@@ -36,6 +36,7 @@ import json
 import sys
 import time
 import traceback
+from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -178,11 +179,21 @@ def _build_doc_metas(results: Dict[str, Any]) -> List[Dict[str, Any]]:
         # Extract toc_path for source tracking
         toc_path = page.get("toc_path", "")
 
-        # Build source URL if available
+        # Build local_path and source_url
+        local_path = ""
         source_url = ""
         if toc_path:
-            # Convert local path to source URL format
-            source_url = toc_path.replace("/docTOC.md", "").replace("doc4llm/md_docs/", "")
+            # local_path points to docContent.md
+            local_path = toc_path.replace("/docTOC.md", "/docContent.md")
+            # Extract original URL from docContent.md
+            try:
+                with open(local_path, 'r', encoding='utf-8') as f:
+                    for line in f:
+                        if line.startswith("原文链接:"):
+                            source_url = line.replace("原文链接:", "").strip()
+                            break
+            except Exception:
+                pass
 
         headings = page.get("headings", [])
         heading_texts = [h.get("text", "") for h in headings if h.get("text")]
@@ -191,11 +202,93 @@ def _build_doc_metas(results: Dict[str, Any]) -> List[Dict[str, Any]]:
             "title": page_title,
             "doc_set": doc_set,
             "source_url": source_url,
-            "local_path": toc_path,
+            "local_path": local_path,
             "headings": heading_texts,
         })
 
     return doc_metas
+
+
+# =============================================================================
+# Search Result Field Filtering Constants
+# =============================================================================
+
+# Search result 顶层保留字段（其他配置/元数据字段会被过滤掉）
+SEARCH_RESULT_KEEP_FIELDS = frozenset({
+    "query",          # 搜索查询（优化后的）
+    "doc_sets_found", # 找到的 doc-sets 列表
+    "results",        # 搜索结果（详细内容在下方处理）
+})
+
+# Page 级别保留字段
+PAGE_KEEP_FIELDS = frozenset({
+    "doc_set",        # 必须 - 文档集标识
+    "page_title",     # 必须 - 页面标题
+    "rerank_sim",     # 必须 - 页面级别的 rerank 结果
+    "headings",       # 必须 - heading 列表
+})
+
+# Heading 级别保留字段
+HEADING_KEEP_FIELDS = frozenset({
+    "text",           # 必须 - 核心内容
+    "rerank_sim",     # 必须 - 用于 LLM reranker 判断
+    "related_context",
+})
+
+
+def _filter_page_fields(page: Dict[str, Any]) -> Dict[str, Any]:
+    """Filter page to keep only essential fields."""
+    filtered_page = {
+        k: v for k, v in page.items() if k in PAGE_KEEP_FIELDS
+    }
+    # 过滤 headings
+    filtered_page["headings"] = [
+        {h_k: h_v for h_k, h_v in heading.items() if h_k in HEADING_KEEP_FIELDS}
+        for heading in page.get("headings", [])
+    ]
+    return filtered_page
+
+
+def _filter_search_result_fields(search_result: Dict[str, Any]) -> Dict[str, Any]:
+    """Filter search result to keep only essential fields.
+
+    Args:
+        search_result: Raw search result from DocSearcherAPI
+
+    Returns:
+        Filtered search result with only essential fields
+    """
+    # 1. 过滤 search_result 顶层字段，只保留核心字段
+    filtered = {
+        k: v for k, v in search_result.items()
+        if k in SEARCH_RESULT_KEEP_FIELDS
+    }
+    # 2. 过滤 results 中的每个 page
+    filtered["results"] = [_filter_page_fields(page) for page in search_result.get("results", [])]
+    return filtered
+
+
+def _clear_rerank_sim_fields(data: Any) -> Any:
+    """递归清除 rerank_sim 字段，返回新对象（不修改原数据）.
+
+    Args:
+        data: 任意数据（dict/list/其他）
+
+    Returns:
+        清除 rerank_sim 后的新对象
+    """
+    if isinstance(data, dict):
+        result = {}
+        for k, v in data.items():
+            if k == "rerank_sim":
+                result[k] = None  # 置为 null
+            else:
+                result[k] = _clear_rerank_sim_fields(v)
+        return result
+    elif isinstance(data, list):
+        return [_clear_rerank_sim_fields(item) for item in data]
+    else:
+        return data
 
 
 # =============================================================================
@@ -245,7 +338,6 @@ class DocRAGOrchestrator:
             DocRAGResult with formatted output and metadata
         """
         original_query = query
-        warnings: List[str] = []
         timing: Dict[str, float] = {}
 
         print_pipeline_start(query)
@@ -260,6 +352,18 @@ class DocRAGOrchestrator:
             opt_result = optimizer.optimize(query)
             timing["phase_0a"] = (time.perf_counter() - start) * 1000
             print(f"▶ [Phase 0a] Query Optimization 耗时: {timing['phase_0a']:.2f}ms")
+            if self.config.debug:
+                print(f"\n{'─' * 60}")
+                print(f"▶ Phase 0a: Query Optimization [原始输出]")
+                print(f"{'─' * 60}")
+                json_output = json.dumps({
+                    "phase": "0a",
+                    "query_analysis": opt_result.query_analysis,
+                    "optimized_queries": opt_result.optimized_queries,
+                    "search_recommendation": opt_result.search_recommendation,
+                }, ensure_ascii=False, indent=2)
+                print(json_output)
+                print(f"{'─' * 60}\n")
             return DocRAGResult(
                 success=True,
                 output=json.dumps({
@@ -283,6 +387,20 @@ class DocRAGOrchestrator:
             router_result = router.route(query)
             timing["phase_0b"] = (time.perf_counter() - start) * 1000
             print(f"▶ [Phase 0b] Scene Routing 耗时: {timing['phase_0b']:.2f}ms")
+            if self.config.debug:
+                print(f"\n{'─' * 60}")
+                print(f"▶ Phase 0b: Scene Routing [原始输出]")
+                print(f"{'─' * 60}")
+                json_output = json.dumps({
+                    "phase": "0b",
+                    "scene": router_result.scene,
+                    "confidence": router_result.confidence,
+                    "ambiguity": router_result.ambiguity,
+                    "coverage_need": router_result.coverage_need,
+                    "reranker_threshold": router_result.reranker_threshold,
+                }, ensure_ascii=False, indent=2)
+                print(json_output)
+                print(f"{'─' * 60}\n")
             return DocRAGResult(
                 success=True,
                 output=json.dumps({
@@ -316,13 +434,17 @@ class DocRAGOrchestrator:
             future_0a = executor.submit(_run_phase_0a, query)
             future_0b = executor.submit(_run_phase_0b, query)
 
-            start_0a = time.perf_counter()
-            opt_result = future_0a.result()
-            timing["phase_0a"] = (time.perf_counter() - start_0a) * 1000
+            try:
+                start_0a = time.perf_counter()
+                opt_result = future_0a.result()
+                timing["phase_0a"] = (time.perf_counter() - start_0a) * 1000
 
-            start_0b = time.perf_counter()
-            router_result = future_0b.result()
-            timing["phase_0b"] = (time.perf_counter() - start_0b) * 1000
+                start_0b = time.perf_counter()
+                router_result = future_0b.result()
+                timing["phase_0b"] = (time.perf_counter() - start_0b) * 1000
+            except Exception as e:
+                traceback.print_exc()
+                raise Exception(f"▶ [Phase 0a/0b] Query Optimization/Routing 流程出现异常: {e}，请重试或改为在线搜索")
 
         print(f"▶ [Phase 0a] Query Optimization 耗时: {timing['phase_0a']:.2f}ms")
         print(f"▶ [Phase 0b] Scene Routing 耗时: {timing['phase_0b']:.2f}ms")
@@ -402,14 +524,14 @@ class DocRAGOrchestrator:
         start_parser_0a_0b_to_1 = time.perf_counter()
         searcher_config_response = parser.parse_multi_phase(
             to_phase="1",
-            phases=phases_output
+            phases=phases_output,
         )
         timing["phase_0a_0b_to_1"] = (time.perf_counter() - start_parser_0a_0b_to_1) * 1000
         print(f"▶ [Phase 0a+0b -> Phase 1] 参数解析 耗时: {timing['phase_0a_0b_to_1']:.2f}ms")
 
         if searcher_config_response.status != "success":
             traceback.print_exc()
-            raise Exception("当前本地文档检索流程出现错误，建议根据查询需求联网搜索相关线上文档")
+            raise Exception(f"▶ [Phase 0a+0b -> Phase 1] Params Parser 流程出现异常: 参数解析失败，请重试或改为在线搜索")
 
         searcher_config = searcher_config_response.config or {}
 
@@ -424,9 +546,9 @@ class DocRAGOrchestrator:
                 errors=searcher_config_response.errors
             )
 
-        search_query = searcher_config.get("query", query)
+        search_query = searcher_config_response.config.get("query", query) if searcher_config_response.config else query
         # API format: target_doc_sets is already a List[str]
-        target_doc_sets = searcher_config.get("target_doc_sets", [])
+        target_doc_sets = searcher_config_response.config.get("target_doc_sets", []) if searcher_config_response.config else []
 
         # Use doc_sets from optimizer if not in config
         if not target_doc_sets and doc_sets:
@@ -445,13 +567,15 @@ class DocRAGOrchestrator:
         # -------------------------------------------------------------------------
         # Phase 1: Document Discovery
         # -------------------------------------------------------------------------
+        # Merge searcher_config from ParamsParserAPI with user-provided config
+        # Priority: user config > parsed config (user can override specific settings)
+        merged_searcher_config = {**(searcher_config_response.config or {}), **(self.config.searcher_config or {})}
+
         try:
             searcher = DocSearcherAPI(
                 base_dir=base_dir,
-                config=self.config.searcher_config,
+                config=merged_searcher_config,
                 debug=False,
-                domain_nouns=searcher_config.get("domain_nouns", []),
-                predicate_verbs=searcher_config.get("predicate_verbs", []),
                 reranker_enabled=self.config.searcher_reranker,
                 reranker_threshold=self.config.reranker_threshold,
                 skiped_keywords_path=self.config.skiped_keywords_path,
@@ -462,10 +586,11 @@ class DocRAGOrchestrator:
                 target_doc_sets=target_doc_sets if target_doc_sets else None
             )
             timing["phase_1"] = (time.perf_counter() - start_phase_1) * 1000
-            print(f"▶ [Phase 1] Document Discovery 耗时: {timing['phase_1']:.2f}ms")
         except Exception as e:
             traceback.print_exc()
-            raise Exception("当前本地文档检索流程出现错误，建议根据查询需求联网搜索相关线上文档")
+            raise Exception(f"▶ [Phase 1] DocSearcher 流程出现异常: {e}，请重试或改为在线搜索")
+
+        print(f"▶ [Phase 1] Document Discovery 耗时: {timing['phase_1']:.2f}ms")
 
         if not search_result.get("success", False):
             return DocRAGResult(
@@ -482,11 +607,19 @@ class DocRAGOrchestrator:
         # Check if should stop at Phase 1
         if self.config.stop_at_phase == "1":
             doc_metas = _build_doc_metas(search_result)
+            print(f"▶ [Phase 1] Document Search 耗时: {timing['phase_1']:.2f}ms")
+            if self.config.debug:
+                print(f"\n{'─' * 60}")
+                print(f"▶ Phase 1: 文档检索 (Document Search) [原始输出]")
+                print(f"{'─' * 60}")
+                json_output = json.dumps(search_result, ensure_ascii=False, indent=2)
+                print(json_output)
+                print(f"{'─' * 60}\n")
             return DocRAGResult(
                 success=True,
                 output=json.dumps({
                     "phase": "1",
-                    "query": search_query,
+                    "query": search_result.get("query", search_query),  # 使用过滤后的 query
                     "target_doc_sets": target_doc_sets,
                     "results": search_result.get("results", []),
                 }, ensure_ascii=False, indent=2),
@@ -516,6 +649,12 @@ class DocRAGOrchestrator:
         # Phase 1.5: Re-ranking (LLM + Embedding, Optional Concurrent)
         # -------------------------------------------------------------------------
         start_phase_1_5 = time.perf_counter()
+
+        # 清理 search_result，移除多余字段，只保留核心字段
+        search_result_cleaned = _filter_search_result_fields(search_result)
+        # 创建清除 rerank_sim 的副本（不修改原始数据）
+        search_result_for_rerank = _clear_rerank_sim_fields(search_result_cleaned)
+
         current_results = search_result
         rerank_executed = False
         embedding_rerank_executed = False
@@ -543,20 +682,25 @@ class DocRAGOrchestrator:
             with ThreadPoolExecutor(max_workers=2) as executor:
                 def run_llm_rerank():
                     search_result_with_scene = {
-                        **search_result,
-                        "retrieval_scene": scene
+                        **search_result_for_rerank,
+                        "retrieval_scene": scene,
+                        "reranker_threshold": reranker_threshold
                     }
                     reranker = LLMReranker()
                     return reranker.rerank(search_result_with_scene)
 
                 def run_embedding_rerank():
-                    return searcher.rerank(search_result.get("results", []), optimized_queries)
+                    return searcher.rerank(search_result_for_rerank.get("results", []), optimized_queries)
 
                 future_llm = executor.submit(run_llm_rerank)
                 future_embedding = executor.submit(run_embedding_rerank)
 
-                llm_result = future_llm.result()
-                embedding_result = future_embedding.result()
+                try:
+                    llm_result = future_llm.result()
+                    embedding_result = future_embedding.result()
+                except Exception as e:
+                    traceback.print_exc()
+                    raise Exception(f"▶ [Phase 1.5] Reranker (LLM + Embedding 并发) 流程出现异常: {e}，请重试或改为在线搜索")
 
             if llm_result.success and llm_result.data.get("results"):
                 current_results = llm_result.data
@@ -573,10 +717,23 @@ class DocRAGOrchestrator:
                 total_headings_after = sum(len(p.get("headings", [])) for p in embedding_pages)
                 pages_after = len(embedding_pages)
             else:
-                warnings.append("Both rerankers returned empty results, using BM25 original results")
+                traceback.print_exc()
+                llm_empty = not (llm_result and llm_result.data.get("results"))
+                embedding_empty = not (embedding_result and embedding_result.get("results"))
+                if llm_empty and embedding_empty:
+                    raise Exception(f"▶ [Phase 1.5] LLM Reranker 和 Embedding Reranker 均返回空结果，请重试或改为在线搜索")
+                elif llm_empty:
+                    raise Exception(f"▶ [Phase 1.5] LLM Reranker 返回空结果，Embedding Reranker 也无可用结果，请重试或改为在线搜索")
+                else:
+                    raise Exception(f"▶ [Phase 1.5] Embedding Reranker 返回空结果，请重试或改为在线搜索")
 
         elif self.config.embedding_reranker:
-            embedding_result = searcher.rerank(search_result.get("results", []), optimized_queries)
+            try:
+                embedding_result = searcher.rerank(search_result_for_rerank.get("results", []), optimized_queries)
+            except Exception as e:
+                traceback.print_exc()
+                raise Exception(f"▶ [Phase 1.5] Embedding Reranker 流程出现异常: {e}，请重试或改为在线搜索")
+
             if embedding_result and embedding_result.get("results"):
                 current_results = embedding_result
                 embedding_rerank_executed = True
@@ -585,13 +742,15 @@ class DocRAGOrchestrator:
                 total_headings_after = sum(len(p.get("headings", [])) for p in embedding_pages)
                 pages_after = len(embedding_pages)
             else:
-                warnings.append("Embedding reranker returned empty results, using BM25 original results")
+                traceback.print_exc()
+                raise Exception(f"▶ [Phase 1.5] Embedding Reranker 返回空结果，请重试或改为在线搜索")
 
         elif self.config.llm_reranker or needs_rerank:
             try:
                 search_result_with_scene = {
-                    **search_result,
-                    "retrieval_scene": scene
+                    **search_result_for_rerank,
+                    "retrieval_scene": scene,
+                    "reranker_threshold": reranker_threshold
                 }
                 reranker = LLMReranker()
                 rerank_result = reranker.rerank(search_result_with_scene)
@@ -604,12 +763,11 @@ class DocRAGOrchestrator:
                     total_headings_after = rerank_result.total_headings_after
                     pages_after = len(rerank_result.data.get("results", []))
                 else:
-                    warnings.append(f"Phase 1.5 (reranking) failed: {rerank_result.reason}, using BM25 results")
-                    current_results = search_result
+                    traceback.print_exc()
+                    raise Exception(f"▶ [Phase 1.5] LLM Reranker 流程失败: {rerank_result.reason}，请重试或改为在线搜索")
             except Exception as e:
-                warnings.append(f"Phase 1.5 (reranking) error: {e}, using BM25 results")
-                current_results = search_result
-                rerank_thinking = None
+                traceback.print_exc()
+                raise Exception(f"▶ [Phase 1.5] LLM Reranker 流程出现异常: {e}，请重试或改为在线搜索")
 
         if not self.config.embedding_reranker and not self.config.llm_reranker and not needs_rerank:
             print_phase_1_5_skipped(
@@ -643,7 +801,7 @@ class DocRAGOrchestrator:
                 quiet=False
             )
         elif not current_results.get("success", True) or not current_results.get("results"):
-            fail_reason = warnings[-1] if warnings else "Reranker returned empty results"
+            fail_reason = "Reranker 返回空结果"
             print_phase_1_5_failed(
                 reason=fail_reason,
                 total_headings=total_headings_count,
@@ -667,6 +825,20 @@ class DocRAGOrchestrator:
         # Check if should stop at Phase 1.5
         if self.config.stop_at_phase == "1.5":
             doc_metas = _build_doc_metas(current_results)
+            print(f"▶ [Phase 1.5] Re-ranking ({rerank_type}) 耗时: {timing['phase_1_5']:.2f}ms")
+            if self.config.debug:
+                print(f"\n{'─' * 60}")
+                print(f"▶ Phase 1.5: LLM Re-ranking [原始输出]")
+                print(f"{'─' * 60}")
+                json_output = json.dumps({
+                    "phase": "1.5",
+                    "rerank_type": rerank_type,
+                    "rerank_executed": rerank_executed,
+                    "embedding_rerank_executed": embedding_rerank_executed,
+                    "results": current_results.get("results", []),
+                }, ensure_ascii=False, indent=2)
+                print(json_output)
+                print(f"{'─' * 60}\n")
             return DocRAGResult(
                 success=True,
                 output=json.dumps({
@@ -700,7 +872,7 @@ class DocRAGOrchestrator:
 
         if reader_config_response.status != "success":
             traceback.print_exc()
-            raise Exception("当前本地文档检索流程出现错误，建议根据查询需求联网搜索相关线上文档")
+            raise Exception(f"▶ [Phase 1.5 -> Phase 2] Params Parser 流程出现异常: 参数解析失败，请重试或改为在线搜索")
 
         reader_config = reader_config_response.config or {}
 
@@ -734,7 +906,7 @@ class DocRAGOrchestrator:
             print(f"▶ [Phase 2] Content Extraction 耗时: {timing['phase_2']:.2f}ms")
         except Exception as e:
             traceback.print_exc()
-            raise Exception("当前本地文档检索流程出现错误，建议根据查询需求联网搜索相关线上文档")
+            raise Exception(f"▶ [Phase 2] DocReader 流程出现异常: {e}，请重试或改为在线搜索")
 
         print_phase_2_metadata(
             document_count=extraction_result.document_count,
@@ -749,6 +921,20 @@ class DocRAGOrchestrator:
         if self.config.stop_at_phase == "2" or scene == "faithful_how_to":
             doc_metas = _build_doc_metas(current_results)
             raw_output = "\n\n".join(extraction_result.contents.values()) if extraction_result.contents else ""
+            print(f"▶ [Phase 2] Content Extraction 耗时: {timing['phase_2']:.2f}ms")
+            if self.config.debug:
+                print(f"\n{'─' * 60}")
+                print(f"▶ Phase 2: Content Extraction [原始输出]")
+                print(f"{'─' * 60}")
+                json_output = json.dumps({
+                    "phase": "2",
+                    "document_count": extraction_result.document_count,
+                    "total_line_count": extraction_result.total_line_count,
+                    "requires_processing": extraction_result.requires_processing,
+                    "contents": extraction_result.contents,
+                }, ensure_ascii=False, indent=2)
+                print(json_output)
+                print(f"{'─' * 60}\n")
             return DocRAGResult(
                 success=True,
                 output=raw_output,
@@ -800,27 +986,8 @@ class DocRAGOrchestrator:
             timing["phase_4"] = (time.perf_counter() - start_phase_4) * 1000
             print(f"▶ [Phase 4] Scene-Based Output 耗时: {timing['phase_4']:.2f}ms")
         except Exception as e:
-            # Return raw content if SceneOutput fails
-            raw_output = "\n\n".join(extraction_result.contents.values()) if extraction_result.contents else ""
-            result = DocRAGResult(
-                success=True,
-                output=raw_output or f"Error in Phase 4 (output): {e}",
-                scene=scene,
-                documents_extracted=extraction_result.document_count,
-                total_lines=extraction_result.total_line_count,
-                requires_processing=extraction_result.requires_processing,
-                sources=doc_metas,
-                raw_response=None,
-                thinking=None,
-                timing=timing,
-            )
-            print_pipeline_end(
-                success=True,
-                documents_extracted=result.documents_extracted,
-                total_lines=result.total_lines
-            )
-            self.last_result = result
-            return result
+            traceback.print_exc()
+            raise Exception(f"▶ [Phase 4] Scene Output 流程出现异常: {e}，请重试或改为在线搜索")
 
         # -------------------------------------------------------------------------
         # Build Final Result

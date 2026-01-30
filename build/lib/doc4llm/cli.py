@@ -188,17 +188,18 @@ class ArgumentValidator:
         """验证命令行参数
 
         验证逻辑：
-        - mode 0 或 force_scan=1：需要指定扫描目标（-u 或 -f）
+        - 优先级：命令行 -u > 配置文件 start_url > -f url_file
+        - mode 0 或 force_scan=1：需要指定扫描目标（-u 或 config.start_url 或 -f）
         - mode 1/2/3 且 force_scan=0：
-          - 如果 CSV 文件存在且有内容：不需要 -u 或 -f
-          - 如果 CSV 文件不存在或为空：需要 -u 或 -f
+          - 如果 CSV 文件存在且有内容：不需要扫描目标
+          - 如果 CSV 文件不存在或为空：需要扫描目标
         """
-        # 修复：使用正确的优先级：命令行参数 > 配置文件
         args_mode = getattr(args, 'mode', None)
         args_force_scan = getattr(args, 'force_scan', None)
         mode = args_mode if args_mode is not None else config_data.get('mode', 0)
         force_scan = args_force_scan if args_force_scan is not None else config_data.get('force_scan', 0)
         output_file = config_data.get('output_file', 'results/实时输出文件.csv')
+        config_start_url = config_data.get('start_url')
 
         needs_scan_target = True
 
@@ -211,8 +212,10 @@ class ArgumentValidator:
                 except Exception:
                     pass
 
-        if needs_scan_target and not args.start_url and not args.url_file:
+        if needs_scan_target and not args.start_url and not args.url_file and not config_start_url:
             print(f"{Fore.RED}错误：必须通过 -u 或 -f 至少指定一个扫描目标！{Style.RESET_ALL}")
+            if config_start_url:
+                print(f"{Fore.YELLOW}提示：config.json 中已配置 start_url: {config_start_url}{Style.RESET_ALL}")
             if mode in [1, 2, 3] and force_scan == 0:
                 print(f"{Fore.YELLOW}提示：mode {mode} 且不使用 -force-scan 时，如果CSV文件已存在且有内容，可以不指定 -u 或 -f{Style.RESET_ALL}")
             print(f"{Fore.YELLOW}提示：使用 -u <URL> 或 -f <文件> 指定扫描目标{Style.RESET_ALL}")
@@ -503,6 +506,8 @@ class ModeExecutor:
         """Mode 0: 仅爬取CSV URL文件"""
         if self.args.start_url:
             ScannerRunner.scan_single(self.config, self.args.start_url)
+        elif self.config.start_url:
+            ScannerRunner.scan_single(self.config, self.config.start_url)
         elif self.args.url_file:
             ScannerRunner.scan_multiple(self.config, self.args.url_file, lambda k: getattr(self.args, k, None))
 
@@ -589,12 +594,14 @@ class ModeExecutor:
     def _execute_url_scan(self):
         """执行URL扫描"""
         print(f"{Fore.CYAN}=== 第一步：执行URL扫描 ==={Style.RESET_ALL}")
-        if not self.args.start_url and not self.args.url_file:
+        if not self.args.start_url and not self.args.url_file and not self.config.start_url:
             print(f"{Fore.RED}错误：CSV文件不存在或为空，需要指定 -u 或 -f 进行URL扫描{Style.RESET_ALL}")
             print(f"{Fore.YELLOW}提示：使用 -force-scan 1 可强制刷新CSV文件{Style.RESET_ALL}")
             sys.exit(1)
         if self.args.start_url:
             ScannerRunner.scan_single(self.config, self.args.start_url)
+        elif self.config.start_url:
+            ScannerRunner.scan_single(self.config, self.config.start_url)
         elif self.args.url_file:
             ScannerRunner.scan_multiple(self.config, self.args.url_file, lambda k: getattr(self.args, k, None))
 

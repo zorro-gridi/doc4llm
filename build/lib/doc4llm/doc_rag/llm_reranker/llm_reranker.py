@@ -159,12 +159,14 @@ class LLMReranker:
         """
         json_str = json.dumps(data, ensure_ascii=False, indent=2)
         retrieval_scene = data.get("retrieval_scene", "how_to")
+        reranker_threshold = data.get("reranker_threshold", self.config.filter_threshold)
         return self._prompt_template.format(
             SEARCHER_RETRIVAL_RESULTS=json_str,
-            RETRIEVAL_SCENE=retrieval_scene
+            RETRIEVAL_SCENE=retrieval_scene,
+            LLM_RERANKER_THRESHOLD=reranker_threshold
         )
 
-    def _parse_response(self, message) -> RerankerResult:
+    def _parse_response(self, message, reranker_threshold: float = None) -> RerankerResult:
         """
         解析 LLM 响应
 
@@ -186,9 +188,8 @@ class LLMReranker:
         if raw_response:
             parsed_data = extract_json_from_codeblock(raw_response)
             if parsed_data:
-                # 过滤结果
-                filtered_data = self._filter_results(parsed_data)
-                # 统计 heading 数量
+                threshold = reranker_threshold if reranker_threshold is not None else self.config.filter_threshold
+                filtered_data = self._filter_results(parsed_data, threshold)
                 total_before = self._count_headings(parsed_data)
                 total_after = self._count_headings(filtered_data)
 
@@ -237,36 +238,40 @@ class LLMReranker:
             count += len(result.get("headings", []))
         return count
 
-    def _filter_results(self, data: dict) -> dict:
+    def _filter_results(self, data: dict, threshold: float) -> dict:
         """
         过滤低评分结果
 
-        移除 rerank_sim < threshold 的 heading，移除 headings 为空数组的 result。
+        规则：
+        1. 如果 page_title.rerank_sim >= threshold，保留整个 result（包括所有 headings）
+        2. 如果 page_title.rerank_sim < threshold，只保留 rerank_sim >= threshold 的 headings
+        3. 如果 result 的 headings 列表为空，过滤这条 result
 
         Args:
             data: 原始数据字典
+            threshold: 过滤阈值（优先使用传入值，否则使用 config 默认值）
 
         Returns:
             过滤后的数据字典
         """
-        threshold = self.config.filter_threshold
         filtered_results = []
 
         for result in data.get("results", []):
+            page_rerank_sim = result.get("rerank_sim")
             headings = result.get("headings", [])
-            filtered_headings = []
 
-            for heading in headings:
-                rerank_sim = heading.get("rerank_sim")
-                # 保留非 None 且 >= threshold 的 heading
-                if rerank_sim is not None and rerank_sim >= threshold:
-                    filtered_headings.append(heading)
+            if page_rerank_sim is not None and page_rerank_sim >= threshold:
+                filtered_results.append(result)
+            else:
+                filtered_headings = [
+                    h for h in headings
+                    if h.get("rerank_sim") is not None and h.get("rerank_sim") >= threshold
+                ]
 
-            # 只保留有 heading 的 result
-            if filtered_headings:
-                filtered_result = result.copy()
-                filtered_result["headings"] = filtered_headings
-                filtered_results.append(filtered_result)
+                if filtered_headings:
+                    result_copy = result.copy()
+                    result_copy["headings"] = filtered_headings
+                    filtered_results.append(result_copy)
 
         # 判断是否所有结果都被过滤掉了
         if not filtered_results:
@@ -277,6 +282,11 @@ class LLMReranker:
                 "doc_sets_found": data.get("doc_sets_found", []),
                 "results": []
             }
+
+        return {
+            **data,
+            "results": filtered_results
+        }
 
         return {
             **data,
@@ -311,6 +321,7 @@ class LLMReranker:
             self._load_prompt_template()
 
         prompt = self._build_prompt(data)
+        reranker_threshold = data.get("reranker_threshold", self.config.filter_threshold)
         message = invoke(
             model=self.config.model,
             max_tokens=self.config.max_tokens,
@@ -319,7 +330,7 @@ class LLMReranker:
             messages=[{"role": "user", "content": prompt}],
         )
 
-        self.last_result = self._parse_response(message)
+        self.last_result = self._parse_response(message, reranker_threshold)
         return self.last_result
 
     async def rerank_async(self, data: dict) -> RerankerResult:
@@ -379,7 +390,6 @@ if __name__ == '__main__':
     {
       "doc_set": "OpenCode_Docs@latest",
       "page_title": "Agent Skills",
-      "toc_path": "md_docs_base/OpenCode_Docs@latest/Agent Skills/docTOC.md",
       "headings": [
         {
           "text": "Agent Skills",
@@ -394,7 +404,6 @@ if __name__ == '__main__':
     {
       "doc_set": "OpenCode_Docs@latest",
       "page_title": "Plugins",
-      "toc_path": "md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md",
       "headings": [
         {
           "text": "3. Create a plugin",
@@ -409,7 +418,6 @@ if __name__ == '__main__':
     {
       "doc_set": "OpenCode_Docs@latest",
       "page_title": "Web",
-      "toc_path": "md_docs_base/OpenCode_Docs@latest/Web/docTOC.md",
       "headings": [
         {
           "text": "3. Configuration",
@@ -424,7 +432,6 @@ if __name__ == '__main__':
     {
       "doc_set": "OpenCode_Docs@latest",
       "page_title": "Formatters",
-      "toc_path": "md_docs_base/OpenCode_Docs@latest/Formatters/docTOC.md",
       "headings": [
         {
           "text": "3. How it works",
@@ -438,6 +445,7 @@ if __name__ == '__main__':
     }
   ],
   "fallback_used": "FALLBACK_1",
+  "reranker_threshold": 0.6,
   "message": "Search completed"
 }
 
@@ -446,5 +454,5 @@ if __name__ == '__main__':
     print(f"Headings before: {result.total_headings_before}")
     print(f"Headings after: {result.total_headings_after}")
     if result.thinking:
-        print(f"Thinking: {result.thinking[:2000]}...")
+        print(f"Thinking: {result.thinking}")
     pprint(result.data)

@@ -142,9 +142,34 @@ For each user query, analyze:
 
 5. **Semantic Extraction**
 
-### Phase 4: Domain Nouns (实体名词 ONLY)
+6. **Query Form Detection**
 
-**Core Extraction Rule**
+```markdown
+Detect if the user query is:
+- Enumerative / Listing: 哪些 / 有哪些 / 包含什么 / what are / what kinds of
+- Procedural: 如何 / how to / how do I
+
+If Enumerative:
+→ Treat the queried term as a TOPIC/ENTITY, not an action.
+```
+
+### Phase 4: Domain Nouns
+
+**HIGH PRIORITY RULE: Query Focus Override**
+
+If the user's original query is asking:
+- "what is / what are / 哪些 / 有什么 / 包含什么"
+
+about a term that is a verb-noun hybrid (N ∩ V),
+THEN that term MUST be treated as a DOMAIN_NOUN (TARGET/TOPIC) AND its DERIVES should be also included,
+even if it also appears as an action in optimized queries.
+
+**Examples:**
+- "claude code 有哪些配置？" → domain_nouns: ["configuration", "setup", "setting", ...]
+- "系统支持哪些 setup？" → domain_nouns: ["configuration", "setup", "setting", ...]
+- "有哪些 hook 可以用？" → domain_nouns: ["hook", "hooks", ...]
+
+**Otherwise: The Core Extraction Rule (实体名词 Only)**
 
 > *Return ONLY the noun that represents the true entity being **created**, **configured**, **built**, or **operated on** in the query. This is the **target object** of the action*
 
@@ -195,6 +220,16 @@ if {{key word}} ∈ (Nouns ∩ Verbs):
 
 ### Phase 5: Predicate Verbs
 
+**HIGH PRIORITY: FOCUS EXCLUSION RULE:**
+
+> When Phase 4 **Query Focus Override Rule** Happens,
+THEN that term and its derives MUST NOT be included in predicate_verbs,
+even if it appears in verb form in optimized queries.
+
+Rationale:
+- Focus terms represent the target entity/topic, not the user's action intent.
+
+**Otherwise:**
 > **⚠️ CRITICAL: This phase extracts from OPTIMIZED queries, NOT original query.**
 
 | Aspect | Phase 4 (Domain Nouns) | Phase 5 (Predicate Verbs) |

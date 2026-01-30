@@ -36,12 +36,16 @@ class QueryOptimizerConfig:
         temperature: 生成温度 0.0-1.0 (default: 0.1)
         prompt_template_path: prompt 模板文件路径
         doc_sets_base_path: 文档集基础路径
+        max_retries: 最大重试次数（不包含首次调用）(default: 2)
+        retry_on_empty_fields: 是否启用重试机制 (default: True)
     """
     model: str = "MiniMax-M2.1"
     max_tokens: int = 20000
     temperature: float = 0.1
     prompt_template_path: str = "doc4llm/doc_rag/query_optimizer/prompt_template/query_optimizer_prompt.md"
     doc_sets_base_path: str = "doc4llm/md_docs_base"
+    max_retries: int = 2
+    retry_on_empty_fields: bool = True
 
 
 @dataclass
@@ -126,6 +130,67 @@ class QueryOptimizer:
             self._doc_sets_list = sorted(base_path.iterdir())
             self._doc_sets_list = [d.name for d in self._doc_sets_list if d.is_dir()]
 
+    def _validate_response_data(self, data: dict) -> tuple[bool, list[str]]:
+        """
+        验证响应数据的关键字段是否非空
+
+        Returns:
+            tuple: (是否有效, 空字段列表)
+        """
+        empty_fields = []
+        query_analysis = data.get("query_analysis", {})
+
+        # 必填字段检查（predicate_verbs 允许为空）
+        if not query_analysis.get("original"):
+            empty_fields.append("query_analysis.original")
+        if query_analysis.get("domain_nouns") is None or len(query_analysis.get("domain_nouns", [])) == 0:
+            empty_fields.append("query_analysis.domain_nouns")
+        # predicate_verbs 可为空，不检查
+        if data.get("optimized_queries") is None or len(data.get("optimized_queries", [])) == 0:
+            empty_fields.append("optimized_queries")
+
+        return len(empty_fields) == 0, empty_fields
+
+    def _create_retry_prompt(
+        self,
+        original_query: str,
+        raw_response: str,
+        empty_fields: list[str]
+    ) -> str:
+        """
+        构建重试 prompt
+        """
+        empty_fields_str = ", ".join(empty_fields)
+        return f"""
+## 重试指令
+
+你上一次返回的结果中以下关键字段为空: [{empty_fields_str}]
+
+请重新分析用户查询并确保输出完整的数据结构:
+- `original` 必须是原始查询文本
+- `domain_nouns` （不能为空）
+- `predicate_verbs` 可为空
+- `optimized_queries` （不能为空）
+
+用户查询: {original_query}
+
+上一次返回的数据:
+```json
+{raw_response}
+```
+
+请严格按照原 system prompt 的要求，重新生成完整的 JSON 数据。
+"""
+
+    def _extract_data_from_result(self, result: OptimizationResult) -> dict:
+        """
+        从 OptimizationResult 提取用于验证的数据字典
+        """
+        return {
+            "query_analysis": result.query_analysis or {},
+            "optimized_queries": result.optimized_queries or [],
+        }
+
     def set_prompt_template(self, path: Union[str, Path]) -> None:
         """
         设置自定义 prompt 模板
@@ -209,6 +274,7 @@ class QueryOptimizer:
         执行查询优化（同步）
 
         将用户查询发送到 LLM 进行五阶段优化处理。
+        支持重试机制，当关键字段为空时自动重新调用 LLM。
 
         Args:
             query: 用户查询文本
@@ -228,6 +294,7 @@ class QueryOptimizer:
             LOCAL_DOC_SETS_LIST=self._doc_sets_list
         )
 
+        # 首次调用
         message = invoke(
             model=self.config.model,
             max_tokens=self.config.max_tokens,
@@ -236,7 +303,52 @@ class QueryOptimizer:
             messages=[{"role": "user", "content": query}],
         )
 
-        self.last_result = self._parse_response(message)
+        result = self._parse_response(message)
+        raw_response = result.raw_response or ""
+
+        # 重试循环
+        retry_count = 0
+        max_retries = self.config.max_retries if self.config.retry_on_empty_fields else 0
+        combined_thinking = result.thinking or ""
+
+        while retry_count < max_retries:
+            data = self._extract_data_from_result(result)
+            is_valid, empty_fields = self._validate_response_data(data)
+
+            if is_valid:
+                break
+
+            retry_count += 1
+
+            # 构建重试 prompt
+            retry_content = self._create_retry_prompt(query, raw_response, empty_fields)
+
+            # 重新调用 LLM（略微提高 temperature）
+            retry_temp = min(self.config.temperature + 0.1, 0.2)
+            retry_message = invoke(
+                model=self.config.model,
+                max_tokens=self.config.max_tokens,
+                temperature=retry_temp,
+                system=system_prompt,
+                messages=[{"role": "user", "content": retry_content}],
+            )
+
+            result = self._parse_response(retry_message)
+            raw_response = result.raw_response or ""
+
+            # 合并 thinking
+            if result.thinking:
+                combined_thinking += f"\n\n=== Retry {retry_count} ===\n{result.thinking}"
+
+        # 记录重试信息
+        if retry_count > 0:
+            result.search_recommendation["retry_count"] = retry_count
+            result.search_recommendation["retry_reason"] = f"Empty fields: {empty_fields}"
+
+        # 更新 thinking（合并后的）
+        result.thinking = combined_thinking if combined_thinking else None
+
+        self.last_result = result
         return self.last_result
 
     async def optimize_async(self, query: str) -> OptimizationResult:

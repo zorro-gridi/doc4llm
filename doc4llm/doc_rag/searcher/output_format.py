@@ -146,7 +146,7 @@ class OutputFormatter:
                     {
                         "level": h.get("level", 1),
                         "text": h["text"],
-                        "rerank_sim": _convert_to_json_serializable(h.get("score")) if reranker_enabled else None,
+                        "rerank_sim": _convert_to_json_serializable(h.get("rerank_sim")) if reranker_enabled else None,
                         "bm25_sim": _convert_to_json_serializable(h.get("bm25_sim")),
                     }
                     for h in page["headings"]

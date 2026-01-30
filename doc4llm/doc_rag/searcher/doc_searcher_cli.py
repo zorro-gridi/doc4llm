@@ -263,6 +263,15 @@ def create_parser() -> argparse.ArgumentParser:
         default="",
         help="Comma-separated list of predicate verbs to filter during rerank preprocessing (e.g., 'create,delete,update')",
     )
+    parser.add_argument(
+        "--rerank-scopes",
+        type=str,
+        default="page_title",
+        help="Rerank scope: 'page_title' (default), 'headings', or 'page_title,headings'. "
+             "page_title: Only rerank page_title, clear headings if threshold met. "
+             "headings: Only rerank headings. "
+             "page_title,headings: Rerank both.",
+    )
 
     return parser
 
@@ -364,6 +373,19 @@ def validate_args(args: argparse.Namespace) -> bool:
             print("Error: predicate-verbs cannot be empty when specified")
             return False
 
+    # Validate rerank_scopes
+    if args.rerank_scopes:
+        # Parse both list and string formats
+        if isinstance(args.rerank_scopes, list):
+            scopes = [str(s).strip() for s in args.rerank_scopes if str(s).strip()]
+        else:
+            scopes = [s.strip() for s in args.rerank_scopes.split(",") if s.strip()]
+        valid_scopes = {"page_title", "headings"}
+        invalid_scopes = set(scopes) - valid_scopes
+        if invalid_scopes:
+            print(f"Error: Invalid rerank-scopes: {invalid_scopes}. Valid options: page_title, headings")
+            return False
+
     return True
 
 
@@ -431,6 +453,7 @@ def apply_config_to_args(args: argparse.Namespace, config: dict) -> argparse.Nam
         "hierarchical_filter": "hierarchical_filter",
         "domain_nouns": "domain_nouns",
         "predicate_verbs": "predicate_verbs",
+        "rerank_scopes": "rerank_scopes",
     }
 
     for config_key, args_attr in config_mapping.items():
@@ -480,6 +503,7 @@ def _get_default_value(args: argparse.Namespace, attr: str):
         "hierarchical_filter": 1,
         "domain_nouns": "",
         "predicate_verbs": "",
+        "rerank_scopes": "page_title",
     }
     return defaults.get(attr)
 
@@ -567,6 +591,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         fallback_mode=args.fallback_mode,
         domain_nouns=parse_list_param(args.domain_nouns),
         predicate_verbs=parse_list_param(args.predicate_verbs),
+        rerank_scopes=parse_list_param(args.rerank_scopes),
     )
     if args.base_dir:
         api_kwargs["base_dir"] = args.base_dir

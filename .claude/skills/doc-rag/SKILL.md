@@ -1,16 +1,10 @@
 ---
-description: Execute documentation retrieval queries against local markdown docs using Doc-RAG pipeline. Use when user wants to search documentation and get relevant content from local markdown files.
-mode: subagent
-tools:
-  Read: true
-  Glob: true
-  Grep: true
-  Bash: true
-  Write: false
-  Edit: false
+name: doc-rag
+description: Execute documentation retrieval queries against local knowledge base docs using Doc-RAG pipeline. Use when user wants to search documentation and get relevant content from local files.
+context: fork
 ---
 
-# md-doc-rag Skill
+# doc-rag Skill
 
 Execute documentation retrieval queries against local markdown documentation using the Doc-RAG (Retrieval-Augmented Generation) pipeline.
 
@@ -26,7 +20,7 @@ You should run exactly the following CLI Command and rules to start the Doc-RAG 
 ## You Must Run The CLI Command blow to Get Start
 
 ```bash
-conda init & conda run -n k8s docrag \
+docrag \
   "<Your Query>" \
   --kb ~/project/md_docs_base \
   --threshold 3000 \

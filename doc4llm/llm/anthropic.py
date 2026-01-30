@@ -96,6 +96,11 @@ class AnthropicClient:
             request_kwargs["tools"] = tools
         if tool_choice:
             request_kwargs["tool_choice"] = tool_choice
+
+        # 根据 show_thinking 配置启用 thinking 模式
+        if self.config.show_thinking:
+            request_kwargs["thinking"] = {"type": "enabled"}
+
         request_kwargs.update(kwargs)
 
         response = self._client.messages.create(**request_kwargs)
@@ -136,7 +141,7 @@ def invoke(
         stream: 是否使用流式输出
         tools: 工具定义列表
         tool_choice: 工具选择策略
-        config: LLM_Config 配置对象
+        config: LLM_Config 配置对象（show_thinking 控制是否启用 thinking）
         **kwargs: 其他透传参数
 
     Returns:

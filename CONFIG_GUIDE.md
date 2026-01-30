@@ -112,10 +112,39 @@
 "max_depth": 3
 ```
 
+**递归深度行为说明**：
+
+| max_depth 值 | 行为 | 说明 |
+|--------------|------|------|
+| `0` | **仅爬取 start_url** | 不提取页面中的任何链接 |
+| `1` | start_url + 提取链接 | 爬取起始页并发现链接，但不对链接继续递归 |
+| `2` | 2层递归 | start_url → 页面链接（递归1层）→ 链接的链接（递归2层） |
+| `n` | n层递归 | 以此类推，最大 `n` 层链接深度 |
+
+**深度计数示例**：
+
+```
+max_depth = 0:
+  └─ https://example.com/docs/intro       ✅ 爬取
+     └─ https://example.com/docs/guide    ❌ 不爬取
+
+max_depth = 1:
+  └─ https://example.com/docs/intro       ✅ 爬取
+     └─ https://example.com/docs/guide    🔗 发现但跳过（仅提取到CSV）
+        └─ https://example.com/docs/api   ❌ 不爬取
+
+max_depth = 2:
+  └─ https://example.com/docs/intro       ✅ 爬取
+     └─ https://example.com/docs/guide    ✅ 爬取
+        └─ https://example.com/docs/api   🔗 发现但跳过（递归已达上限）
+           └─ ...                         ❌ 不爬取
+```
+
 **应用场景**：
-- 浅层扫描：设置为 2-3
-- 深度扫描：设置为 5-10
-- 全站扫描：设置为 10+
+- 单页面扫描：`max_depth: 0`
+- 浅层扫描：`max_depth: 2-3`
+- 深度扫描：`max_depth: 5-10`
+- 全站扫描：`max_depth: 10+`
 
 ---
 
@@ -2086,11 +2115,15 @@ python -m doc4llm -u https://example.com -scope 3
 
 ---
 
-**文档版本**: v1.5
-**更新日期**: 2026-01-23
+**文档版本**: v1.6
+**更新日期**: 2026-01-30
 **项目**: doc4llm
 
 ## 更新日志
+
+### v1.6 (2026-01-30)
+- 完善 `max_depth` 参数说明，新增递归深度行为表和深度计数示例
+- 补充 `max_depth=0`（单页面）和 `max_depth=1`（仅提取链接）的行为说明
 
 ### v1.5 (2026-01-23)
 - 新增 `smart_concatenation` 配置参数（智能URL拼接功能）

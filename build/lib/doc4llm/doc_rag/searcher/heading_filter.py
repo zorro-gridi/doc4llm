@@ -19,7 +19,7 @@ def filter_headings_hierarchically(
     sub-headings (level > 1) under the same page_title are filtered out.
 
     Args:
-        headings: List of heading dicts with keys: text, level, score, bm25_sim
+        headings: List of heading dicts with keys: text, level, bm25_sim, rerank_sim
         page_title: Page title for logging/debugging purposes
 
     Returns:
@@ -27,12 +27,12 @@ def filter_headings_hierarchically(
 
     Examples:
         >>> headings = [
-        ...     {"level": 1, "text": "# Agent Skills", "score": 0.72},
-        ...     {"level": 2, "text": "## Disable", "score": 0.64},
-        ...     {"level": 2, "text": "## Recognize", "score": 0.62}
+        ...     {"level": 1, "text": "# Agent Skills", "bm25_sim": 0.72},
+        ...     {"level": 2, "text": "## Disable", "bm25_sim": 0.64},
+        ...     {"level": 2, "text": "## Recognize", "bm25_sim": 0.62}
         ... ]
         >>> filter_headings_hierarchically(headings, "Test")
-        [{'level': 1, 'text': '# Agent Skills', 'score': 0.72}]
+        [{'level': 1, 'text': '# Agent Skills', 'bm25_sim': 0.72}]
     """
     # Edge cases: empty or single heading
     if not headings or len(headings) <= 1:
