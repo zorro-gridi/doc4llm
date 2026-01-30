@@ -10,7 +10,7 @@ tools:
   Edit: false
 ---
 
-# md-doc-rag Skill
+# doc-rag Skill
 
 Execute documentation retrieval queries against local markdown documentation using the Doc-RAG (Retrieval-Augmented Generation) pipeline.
 
@@ -26,7 +26,7 @@ You should run exactly the following CLI Command and rules to start the Doc-RAG 
 ## You Must Run The CLI Command blow to Get Start
 
 ```bash
-conda init & conda run -n k8s docrag \
+docrag \
   "<Your Query>" \
   --kb ~/project/md_docs_base \
   --threshold 3000 \
