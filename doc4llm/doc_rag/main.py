@@ -1,14 +1,14 @@
 from doc4llm.doc_rag.orchestrator import retrieve
 
 result = retrieve(
-    query="claude code 如何实现 hook 上下文注入？",
+    query="claude code 的 transcript 的概念与作用机制",
     base_dir="~/project/md_docs_base",
     skiped_keywords_path="/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt",
     threshold=3000,
     embedding_reranker=False,
     searcher_reranker=True,
     llm_reranker=True,
-    # stop_at_phase='2',  # 停在 Phase 1 查看 search_result
+    # stop_at_phase='1',  # 停在 Phase 1 查看 search_result
     debug=True,
     searcher_config={
         'embedding_provider': 'ms',

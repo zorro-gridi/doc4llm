@@ -1,8 +1,11 @@
 {
-  "active_plan": "/Users/zorro/project/doc4llm/.sisyphus/plans/doc-rag-update.md",
-  "started_at": "2026-01-30T07:54:56.389Z",
+  "active_plan": "/Users/zorro/project/doc4llm/.sisyphus/plans/debug-printing-fixes.md",
+  "started_at": "2026-01-30T21:56:12.389Z",
+  "completed_at": "2026-01-31T04:01:00.000Z",
   "session_ids": [
-    "ses_3f21fdd23ffejLCnVrF35yYT4R"
+    "$SESSION_ID",
+    "ses_3edcddf05ffeIi8q0jLTDGYmrf"
   ],
-  "plan_name": "doc-rag-update"
+  "plan_name": "debug-printing-fixes",
+  "status": "completed"
 }

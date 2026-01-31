@@ -25,7 +25,7 @@ PHASE_TITLES = {
     "1": "文档检索 (Document Search)",
     "1.5": "LLM 重排序 (LLM Re-ranking)",
     "2": "内容提取 (Content Extraction)",
-    "4": "场景化输出 (Scene Output)"
+    "4": "场景化输出 (Scene Output)",
 }
 
 PHASE_SEPARATOR = "─" * 60
@@ -49,7 +49,7 @@ def print_phase_0a(
     doc_sets: List[str],
     domain_nouns: List[str],
     predicate_verbs: List[str],
-    quiet: bool = False
+    quiet: bool = False,
 ) -> None:
     """Phase 0a: 查询优化结果打印"""
     if quiet:
@@ -73,9 +73,9 @@ def print_phase_0a(
     if optimized_queries:
         print(f"\n优化后的查询 ({len(optimized_queries)} 个):")
         for q in optimized_queries[:5]:
-            rank = q.get('rank', '?')
-            query_text = q.get('query', '')
-            strategy = q.get('strategy', '')
+            rank = q.get("rank", "?")
+            query_text = q.get("query", "")
+            strategy = q.get("strategy", "")
             print(f"  [{rank}] {query_text} ({strategy})")
 
         if len(optimized_queries) > 5:
@@ -91,10 +91,17 @@ def print_phase_0a_debug(
     domain_nouns: List[str],
     predicate_verbs: List[str],
     raw_response: Optional[str] = None,
-    thinking: Optional[str] = None
+    thinking: Optional[str] = None,
 ) -> None:
     """Phase 0a: 查询优化结果打印（debug 版本，包含原始输出）"""
-    print_phase_0a(query_analysis, optimized_queries, doc_sets, domain_nouns, predicate_verbs, quiet=False)
+    print_phase_0a(
+        query_analysis,
+        optimized_queries,
+        doc_sets,
+        domain_nouns,
+        predicate_verbs,
+        quiet=False,
+    )
 
     # 打印原始输出
     if thinking:
@@ -112,7 +119,7 @@ def print_phase_0b(
     ambiguity: float,
     coverage_need: float,
     reranker_threshold: float,
-    quiet: bool = False
+    quiet: bool = False,
 ) -> None:
     """Phase 0b: 场景路由结果打印"""
     if quiet:
@@ -134,10 +141,12 @@ def print_phase_0b_debug(
     coverage_need: float,
     reranker_threshold: float,
     raw_response: Optional[str] = None,
-    thinking: Optional[str] = None
+    thinking: Optional[str] = None,
 ) -> None:
     """Phase 0b: 场景路由结果打印（debug 版本，包含原始输出）"""
-    print_phase_0b(scene, confidence, ambiguity, coverage_need, reranker_threshold, quiet=False)
+    print_phase_0b(
+        scene, confidence, ambiguity, coverage_need, reranker_threshold, quiet=False
+    )
 
     # 打印原始输出
     if thinking:
@@ -152,35 +161,62 @@ def print_phase_0b_debug(
 def print_phase_1(
     results: Dict[str, Any],
     query: str,
-    quiet: bool = False
+    optimized_queries: Optional[List[Dict[str, Any]]] = None,
+    quiet: bool = False,
 ) -> None:
-    """Phase 1: 文档检索结果打印"""
+    """Phase 1: 文档检索结果打印
+
+    Args:
+        results: 搜索结果
+        query: 原始查询
+        optimized_queries: 预处理后的查询列表（可选）
+        quiet: 静默模式
+    """
     if quiet:
         return
 
     print(format_phase_header("1"))
-    print(f"检索查询: {query}")
 
-    doc_sets_found = results.get('doc_sets_found', [])
+    # 使用 search_result 中的 query 字段（经过搜索器预处理后的查询）
+    search_queries = results.get("query", [])
+    if search_queries:
+        print("检索查询:")
+        for i, q in enumerate(search_queries[:5], 1):
+            print(f"  [{i}] {q}")
+        if len(search_queries) > 5:
+            print(f"  ... 还有 {len(search_queries) - 5} 个查询")
+    else:
+        print(f"检索查询: {query}")
+
+    doc_sets_found = results.get("doc_sets_found", [])
     print(f"文档集: {', '.join(doc_sets_found) if doc_sets_found else 'N/A'}")
 
-    pages = results.get('results', [])
+    pages = results.get("results", [])
     print(f"检索到 {len(pages)} 个页面:")
 
     for i, page in enumerate(pages[:10], 1):
-        page_title = page.get('page_title', 'N/A')
-        doc_set = page.get('doc_set', 'N/A')
-        heading_count = page.get('heading_count', 0)
-        precision_count = page.get('precision_count', 0)
+        page_title = page.get("page_title", "N/A")
+        doc_set = page.get("doc_set", "N/A")
+        headings_list = page.get("headings", [])
+        heading_count = (
+            len(headings_list) if headings_list else page.get("heading_count", 0)
+        )
+        precision_count = page.get("precision_count", 0)
         # Use bm25_sim for page-level BM25 score, fallback to score for backward compatibility
-        score = page.get('bm25_sim', page.get('score', 0))
+        score = page.get("bm25_sim", page.get("score", 0))
 
         print(f"  {i}. {page_title}")
         print(f"     📁 {doc_set}")
-        print(f"     📊 标题: {heading_count} 个heading, {precision_count} 个精确匹配")
+        # 如果 headings 列表为空，表示整页匹配（所有 heading 都会被提取）
+        if not headings_list:
+            print(f"     📊 整页匹配 (全部 heading)")
+        else:
+            print(
+                f"     📊 标题: {heading_count} 个heading, {precision_count} 个精确匹配"
+            )
         print(f"     📈 得分: {score:.4f}")
         # 显示来源
-        source = page.get('source', 'unknown')
+        source = page.get("source", "unknown")
         print(f"     📌 来源: {source}")
 
     if len(pages) > 10:
@@ -194,7 +230,7 @@ def print_phase_1_5(
     total_after: int,
     pages_before: int,
     pages_after: int,
-    quiet: bool = False
+    quiet: bool = False,
 ) -> None:
     """Phase 1.5: LLM 重排序结果打印"""
     if quiet:
@@ -202,8 +238,12 @@ def print_phase_1_5(
 
     print(format_phase_header("1.5"))
     print(f"过滤统计:")
-    print(f"  Headings: {total_before} → {total_after} (移除 {total_before - total_after})")
-    print(f"  Pages: {pages_before} → {pages_after} (移除 {pages_before - pages_after})")
+    print(
+        f"  Headings: {total_before} → {total_after} (移除 {total_before - total_after})"
+    )
+    print(
+        f"  Pages: {pages_before} → {pages_after} (移除 {pages_before - pages_after})"
+    )
 
     retention_rate = total_after / total_before * 100 if total_before > 0 else 0
     print(f"  保留率: {retention_rate:.1f}%")
@@ -216,9 +256,11 @@ def print_phase_1_5_debug(
     pages_before: int,
     pages_after: int,
     raw_response: Optional[str] = None,
-    thinking: Optional[str] = None
+    thinking: Optional[str] = None,
 ) -> None:
     """Phase 1.5: LLM 重排序结果打印（debug 版本，包含原始输出）"""
+    print_phase_1_5(total_before, total_after, pages_before, pages_after, quiet=False)
+
     if thinking:
         print("\n[Thinking Process]")
         print(thinking)
@@ -232,10 +274,16 @@ def print_phase_1_debug(
     results: Dict[str, Any],
     query: str,
     raw_response: Optional[str] = None,
-    thinking: Optional[str] = None
+    thinking: Optional[str] = None,
 ) -> None:
-    """Phase 1: 文档检索结果打印（debug 版本，包含原始输出）"""
-    print_phase_1(results, query, quiet=False)
+    """Phase 1: 文档检索结果打印（debug 版本，仅原始输出）"""
+    # debug 模式只打印原始 JSON 输出，不打印格式化结果（避免重复）
+    print(f"\n{'─' * 60}")
+    print(f"▶ Phase 1: 文档检索 (Document Search) [原始输出]")
+    print(f"{'─' * 60}")
+    json_output = json.dumps(results, ensure_ascii=False, indent=2)
+    print(json_output)
+    print(f"{'─' * 60}\n")
 
     if thinking:
         print("\n[Thinking Process]")
@@ -247,9 +295,7 @@ def print_phase_1_debug(
 
 
 def print_phase_1_5_skipped(
-    reason: str,
-    total_headings: int = 0,
-    pages_count: int = 0
+    reason: str, total_headings: int = 0, pages_count: int = 0
 ) -> None:
     """Phase 1.5: 跳过重排序（所有 heading 已有 rerank_sim 或未启用）"""
     print(format_phase_header("1.5"))
@@ -265,14 +311,16 @@ def print_phase_1_5_failed(
     reason: str,
     total_headings: int = 0,
     pages_count: int = 0,
-    thinking: Optional[str] = None
+    thinking: Optional[str] = None,
 ) -> None:
     """Phase 1.5: 重排序失败"""
     print(format_phase_header("1.5"))
     print(f"状态: 失败")
     print(f"原因: {reason}")
     if thinking:
-        print(f"\n=== LLM Think ===\n{thinking[:2000]}{'...' if len(thinking) > 2000 else ''}\n")
+        print(
+            f"\n=== LLM Think ===\n{thinking[:2000]}{'...' if len(thinking) > 2000 else ''}\n"
+        )
     if total_headings > 0:
         print(f"保留原始结果")
         print(f"Headings: {total_headings}")
@@ -285,7 +333,7 @@ def print_phase_1_5_embedding(
     total_after: int,
     pages_before: int,
     pages_after: int,
-    quiet: bool = False
+    quiet: bool = False,
 ) -> None:
     """Phase 1.5: Transformer Embedding 重排序结果打印"""
     if quiet:
@@ -294,8 +342,12 @@ def print_phase_1_5_embedding(
     print(format_phase_header("1.5"))
     print(f"[Transformer Embedding Reranking]")
     print(f"过滤统计:")
-    print(f"  Headings: {total_before} → {total_after} (移除 {total_before - total_after})")
-    print(f"  Pages: {pages_before} → {pages_after} (移除 {pages_before - pages_after})")
+    print(
+        f"  Headings: {total_before} → {total_after} (移除 {total_before - total_after})"
+    )
+    print(
+        f"  Pages: {pages_before} → {pages_after} (移除 {pages_before - pages_after})"
+    )
 
     retention_rate = total_after / total_before * 100 if total_before > 0 else 0
     print(f"  保留率: {retention_rate:.1f}%")
@@ -308,7 +360,7 @@ def print_phase_2_metadata(
     threshold: int,
     individual_counts: Dict[str, int],
     requires_processing: bool,
-    quiet: bool = False
+    quiet: bool = False,
 ) -> None:
     """Phase 2: 仅打印 metadata，不打印 content
 
@@ -353,12 +405,16 @@ def print_phase_2_debug(
     contents: Dict[str, str],
     limit: int = 500,
     raw_response: Optional[str] = None,
-    thinking: Optional[str] = None
+    thinking: Optional[str] = None,
 ) -> None:
     """Phase 2: 内容提取结果打印（debug 版本，包含原始输出）"""
     print_phase_2_metadata(
-        document_count, total_line_count, threshold,
-        individual_counts, requires_processing, quiet=False
+        document_count,
+        total_line_count,
+        threshold,
+        individual_counts,
+        requires_processing,
+        quiet=False,
     )
 
     if contents:
@@ -366,9 +422,9 @@ def print_phase_2_debug(
         print("=" * 60)
         for title, content in contents.items():
             print(f"\n▶ {title}")
-            lines = content.split('\n')
+            lines = content.split("\n")
             if len(lines) > limit:
-                print('\n'.join(lines[:limit]))
+                print("\n".join(lines[:limit]))
                 print(f"... ({len(lines) - limit} more lines truncated)")
             else:
                 print(content)
@@ -384,10 +440,7 @@ def print_phase_2_debug(
 
 
 def print_phase_4(
-    output_length: int,
-    documents_used: int,
-    scene: str,
-    quiet: bool = False
+    output_length: int, documents_used: int, scene: str, quiet: bool = False
 ) -> None:
     """Phase 4: 场景化输出结果打印"""
     if quiet:
@@ -405,7 +458,7 @@ def print_phase_4_debug(
     documents_used: int,
     scene: str,
     raw_response: Optional[str] = None,
-    thinking: Optional[str] = None
+    thinking: Optional[str] = None,
 ) -> None:
     """Phase 4: 场景化输出结果打印（debug 版本，包含原始输出）"""
     print_phase_4(output_length, documents_used, scene, quiet=False)
@@ -426,7 +479,7 @@ def print_phase_0a_0b_to_1_debug(
     from_phase: str = "0a+0b",
     to_phase: str = "1",
     status: str = "success",
-    errors: Optional[List[str]] = None
+    errors: Optional[List[str]] = None,
 ) -> None:
     """Phase 0a+0b -> 1: 参数解析结果打印（debug 版本）
 
@@ -444,10 +497,7 @@ def print_phase_0a_0b_to_1_debug(
 
     # 打印输入数据
     print("[输入数据 (Input)]")
-    input_data = {
-        "phases": phases,
-        "to_phase": to_phase
-    }
+    input_data = {"phases": phases, "to_phase": to_phase}
     print(json.dumps(input_data, ensure_ascii=False, indent=2))
 
     # 打印输出配置
@@ -469,7 +519,7 @@ def print_phase_1_to_2_debug(
     from_phase: str,
     to_phase: str = "2",
     status: str = "success",
-    errors: Optional[List[str]] = None
+    errors: Optional[List[str]] = None,
 ) -> None:
     """Phase 1/1.5 -> 2: 参数解析结果打印（debug 版本）
 
@@ -490,7 +540,7 @@ def print_phase_1_to_2_debug(
     input_data = {
         "from_phase": from_phase,
         "to_phase": to_phase,
-        "upstream_output": upstream_output
+        "upstream_output": upstream_output,
     }
     print(json.dumps(input_data, ensure_ascii=False, indent=2))
 
@@ -519,7 +569,7 @@ def print_pipeline_end(
     success: bool,
     documents_extracted: int,
     total_lines: int,
-    duration: Optional[float] = None
+    duration: Optional[float] = None,
 ) -> None:
     """打印流水线结束信息"""
     status = "✓ 成功" if success else "✗ 失败"

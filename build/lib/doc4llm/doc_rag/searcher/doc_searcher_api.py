@@ -28,6 +28,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+from .fallback_searcher import FallbackSearcher
+
 import numpy as np
 
 # Import local modules
@@ -57,6 +59,7 @@ from doc4llm.tool.md_doc_retrieval.transformer_matcher import (
 
 # Sentinel value to detect if a parameter was explicitly passed
 _NOT_SET = object()
+
 
 
 @dataclass
@@ -887,102 +890,37 @@ class DocSearcherAPI:
     def _fallback2_grep_context_bm25(
         self, queries: List[str], doc_sets: List[str]
     ) -> List[Dict[str, Any]]:
-        """FALLBACK_2: grep context + BM25 re-scoring. Supports single query or query list.
+        """FALLBACK_2: Pythonic context search + BM25 re-scoring. Supports single query or query list.
 
-        Features:
-        - Keyword priority: domain_nouns -> predicate_verbs -> query keywords (fallback)
-        - Separate heading search and related_context extraction:
-          * Heading search: Progressive grep with -B 15 -> 30 -> 50... on docTOC.md
-          * Related_context: Fixed -B 1 -A 1 on docContent.md (match line + 1 before + 1 after)
-        - Multiple results returned (all with score >= threshold_headings)
-        - Filter URL-only matches
-        - Extract context with URL info removed
+        Uses FallbackSearcher for pure Python implementation with:
+        - Heading-level deduplication: (doc_set, page_title, heading)
+        - Global result limit: max 20 results (no per-doc_set limit)
+        - Context-based heading backtrack: up to 100 lines
+        - Keyword priority: domain_nouns only (for precise matching)
         """
-        self._debug_print("Using FALLBACK_2: grep context + BM25")
+        self._debug_print("Using FALLBACK_2: Pythonic context search")
 
-        # Step 1: Determine keywords with priority
-        if self.domain_nouns:
-            keywords = self.domain_nouns
-        elif self.predicate_verbs:
-            keywords = self.predicate_verbs
-        else:
-            # Both domain_nouns and predicate_verbs are empty, extract from queries
-            self._debug_print(
-                "No domain_nouns or predicate_verbs, extracting from queries"
-            )
-            all_keywords = []
-            for q in queries:
-                all_keywords.extend(extract_keywords(q))
-            # Remove duplicates while preserving order
-            keywords = list(dict.fromkeys(all_keywords))
-
-        if not keywords:
-            self._debug_print("No keywords available, skipping FALLBACK_2")
+        # Step 1: Determine keywords - ONLY use domain_nouns for precise matching
+        if not self.domain_nouns:
+            self._debug_print("No domain_nouns, skipping FALLBACK_2")
             return []
 
-        pattern = "|".join(keywords)
-        combined_query = " ".join(queries)
+        # Step 2: Use Pythonic FallbackSearcher
+        searcher = FallbackSearcher(
+            base_dir=self.base_dir,
+            domain_nouns=self.domain_nouns,
+            max_results=20,
+            context_lines=100,
+            debug=self.debug,
+        )
 
-        results = []
-        for doc_set in doc_sets:
-            doc_set_path = f"{self.base_dir}/{doc_set}"
+        results = searcher.search(queries, doc_sets)
 
-            # === 正确的流程: 在 docContent.md 中搜索关键词，然后回溯 heading ===
-            # Step 1: 在 docContent.md 中搜索 (包含足够的上文回溯 heading)
-            heading_context_sizes = ["15", "30", "50"]  # Progressive -B sizes
-            matched_files = set()  # Avoid duplicate processing of same file
-
-            for before_ctx in heading_context_sizes:
-                cmd = [
-                    "grep",
-                    "-r",
-                    "-i",
-                    "-B",
-                    before_ctx,  # 足够的上文用于回溯 heading
-                    "-A",
-                    "1",  # 匹配行本身
-                    "-E",
-                    pattern,
-                    doc_set_path,
-                    "--include=docContent.md",  # 直接搜索 docContent.md
-                ]
-
-                output = self._run_grep(cmd)
-                if not output:
-                    continue  # No results, try larger context
-
-                # 处理 grep 输出：提取 heading 和 context
-                for result in self._process_content_grep_output(
-                    output, keywords, combined_query, doc_set, pattern
-                ):
-                    # 使用 file_path 作为去重键（避免同一文件的重复结果）
-                    if result["source_file"] not in matched_files:
-                        matched_files.add(result["source_file"])
-
-                        related_context = result.get("related_context", "")
-                        if related_context:
-                            # Calculate BM25 score
-                            score = calculate_bm25_similarity(
-                                combined_query,
-                                related_context,
-                                BM25Config(k1=self.bm25_k1, b=self.bm25_b),
-                            )
-
-                            # Check threshold
-                            if score < self.threshold_headings:
-                                self._debug_print(
-                                    f"  Score below threshold: {score:.4f} < {self.threshold_headings}"
-                                )
-                                continue
-
-                            result["bm25_sim"] = score
-                            result["is_basic"] = score >= self.threshold_headings
-                            result["is_precision"] = score >= self.threshold_precision
-                            results.append(result)
-
-                # If enough results found, break early
-                if len(results) >= 10:
-                    break
+        # Ensure results have required fields for compatibility
+        for result in results:
+            result["bm25_sim"] = 0.0
+            result["is_basic"] = True
+            result["is_precision"] = False
 
         return results
 
@@ -998,7 +936,7 @@ class DocSearcherAPI:
 
         This method implements the correct logic:
         1. Find keyword matches in docContent.md
-        2. Backtrack to find the nearest heading in the grep context
+        2. For each match line, independently backtrack to find the nearest heading
         3. Extract the match line as related_context
 
         Returns list of match results with heading and context.
@@ -1008,6 +946,9 @@ class DocSearcherAPI:
         if not output:
             return results
 
+        # Compile keyword pattern for matching
+        keyword_pattern = re.compile(pattern, re.IGNORECASE)
+
         # Split grep output by file (grep -A/-B outputs -- separator)
         file_blocks = output.split("\n--\n")
 
@@ -1015,50 +956,223 @@ class DocSearcherAPI:
             if not block.strip():
                 continue
 
-            # Parse block to get: file path, line number, heading content
-            file_path, line_num, match_content = self._parse_grep_block(block, pattern)
-
+            # Parse block to get file path
+            file_path = self._extract_file_path_from_block(block)
             if not file_path:
                 continue
 
-            # 在 grep 输出块中回溯找到最近的 heading
-            nearest_heading = self._find_nearest_heading_in_block(block)
+            # Get all lines in the block for processing
+            block_lines = block.split("\n")
 
-            if (
-                not nearest_heading["text"]
-                or nearest_heading["text"] == "Unknown Section"
-            ):
-                continue
+            # Track which lines we've already processed to avoid duplicates
+            processed_lines = set()
 
-            # 提取 page title
-            page_title = self._extract_page_title_from_path(file_path)
+            for line_idx, line in enumerate(block_lines):
+                # Skip grep separator
+                if line.strip() == "--":
+                    continue
 
-            # 构建 related_context: 使用匹配行的内容
-            # 清理 URL 信息
-            context_cleaned = self._clean_context_from_urls(match_content)
+                # Skip if this line was already processed
+                if line_idx in processed_lines:
+                    continue
 
-            if not context_cleaned.strip():
-                continue
+                # Extract content from line (remove path and line number prefix)
+                content = self._extract_content_from_line(line)
+                if not content:
+                    continue
 
-            results.append(
-                {
-                    "doc_set": doc_set,
-                    "page_title": page_title,
-                    "heading": nearest_heading[
-                        "text"
-                    ],  # _find_nearest_heading_in_block 已经返回带 # 的文本
-                    "toc_path": "",
-                    "bm25_sim": 0.0,
-                    "is_basic": True,
-                    "is_precision": False,
-                    "related_context": context_cleaned.strip(),
-                    "source_file": file_path,
-                    "match_line_num": line_num,
-                    "source": "FALLBACK_2",
-                }
-            )
+                # Check if this line contains a keyword match
+                if not keyword_pattern.search(content):
+                    continue
+
+                # Mark this line as processed
+                processed_lines.add(line_idx)
+
+                # Find nearest heading for this specific line
+                nearest_heading = self._find_nearest_heading_for_line(
+                    block_lines, line_idx
+                )
+
+                if (
+                    not nearest_heading["text"]
+                    or nearest_heading["text"] == "Unknown Section"
+                ):
+                    continue
+
+                # Extract context around this line
+                context = self._extract_context_around_line(block_lines, line_idx)
+
+                # Clean URL info from context
+                context_cleaned = self._clean_context_from_urls(context)
+
+                if not context_cleaned.strip():
+                    continue
+
+                # Extract page title
+                page_title = self._extract_page_title_from_path(file_path)
+
+                results.append(
+                    {
+                        "doc_set": doc_set,
+                        "page_title": page_title,
+                        "heading": nearest_heading["text"],
+                        "toc_path": "",
+                        "bm25_sim": 0.0,
+                        "is_basic": True,
+                        "is_precision": False,
+                        "related_context": context_cleaned.strip(),
+                        "source_file": file_path,
+                        "match_line_num": line_idx,
+                        "source": "FALLBACK_2",
+                    }
+                )
 
         return results
+
+    def _extract_file_path_from_block(self, block: str) -> Optional[str]:
+        """Extract file path from grep block (first line).
+
+        Handles multiple grep output formats:
+        1. Standard: /path/to/file.md:123:line content
+        2. Space-separated: /path/to/file.md- line content
+        3. Relative path: dir/file.md:content (no line number)
+        """
+        lines = block.split("\n")
+        if not lines:
+            return None
+
+        first_line = lines[0]
+
+        # Try space-separated format first: /path/to/file.md- content (most common)
+        match = re.match(r"^(.+(?:\.md[a-zA-Z0-9_-]*))\s*-\s*.+$", first_line)
+        if match:
+            return match.group(1)
+
+        # Try standard format with line number: /path/to/file.md:123:content
+        match = re.match(r"^(.+?):\d+:", first_line)
+        if match:
+            return match.group(1)
+
+        # Try relative path format: dir/file.md:content (no line number)
+        # This handles paths like "Create custom subagents/docContent.md:matched content"
+        match = re.match(r"^(.+?\.md[a-zA-Z0-9_-]*):", first_line)
+        if match:
+            return match.group(1)
+
+        # Try standard format without line number: /path/to/file.md:content
+        match = re.match(r"^(.+?):.+", first_line)
+        if match:
+            file_path = match.group(1)
+            if re.search(r"\.md[a-zA-Z0-9_-]*$", file_path):
+                return file_path
+
+        return None
+
+    def _extract_content_from_line(self, line: str) -> str:
+        """Extract content from grep line (remove path and line number prefix).
+
+        Handles multiple grep output formats:
+        1. Standard with line number: /path/to/file.md:123:content
+        2. Standard without line number: /path/to/file.md:content (grep -A match line uses ':')
+        3. Space-separated with line number: /path/to/file.md-123-content
+        4. Space-separated without line number: /path/to/file.md- content
+        """
+        # Skip empty lines and separators
+        if not line.strip() or line.strip() == "--":
+            return ""
+
+        # Try space-separated format with '-' separator: /path/to/file.md- content
+        # This is the common format in grep -B/-A output for non-match lines
+        match = re.match(r"^(.+(?:\.md[a-zA-Z0-9_-]*))-\s*(.*)$", line)
+        if match:
+            content = match.group(2)
+            # Check if content starts with a line number (format: 123-content)
+            line_match = re.match(r"^\d+-(.+)$", content)
+            if line_match:
+                return line_match.group(1)
+            return content
+
+        # Try format with ':' separator (used by grep for match lines): /path/to/file.md: content
+        match = re.match(r"^(.+(?:\.md[a-zA-Z0-9_-]*)):\s*(.*)$", line)
+        if match:
+            content = match.group(2)
+            # Check if content starts with a line number (format: 123:content)
+            line_match = re.match(r"^\d+:(.+)$", content)
+            if line_match:
+                return line_match.group(1)
+            return content
+
+        # Try standard format with line number: /path/to/file.md:123:content
+        match = re.match(r"^(.+?):(\d+):(.+)$", line)
+        if match:
+            return match.group(3)
+
+        # Line doesn't have a recognized prefix, return as-is (already clean content)
+        return line
+
+    def _find_nearest_heading_for_line(
+        self, lines: List[str], target_line_idx: int
+    ) -> Dict[str, Any]:
+        """Find the nearest chapter heading for a specific line index.
+
+        Searches backward from the target line to find the first heading (# or ##开头).
+
+        Args:
+            lines: List of all lines in the block
+            target_line_idx: Index of the target line
+
+        Returns:
+            Dict with 'text' (heading text) and 'level' (heading level)
+        """
+        for i in range(target_line_idx, -1, -1):
+            line = lines[i]
+
+            # Skip grep separator
+            if line.strip() == "--":
+                continue
+
+            # Extract content from line
+            content = self._extract_content_from_line(line)
+            if not content:
+                continue
+
+            # Detect heading (#开头)
+            match = re.match(r"^(#{1,6})\s+(.+)$", content.strip())
+            if match:
+                heading_text = self._remove_url_from_heading(content.strip())
+                return {
+                    "text": heading_text,
+                    "level": len(match.group(1)),
+                }
+
+        return {"text": "", "level": 0}
+
+    def _extract_context_around_line(
+        self, lines: List[str], match_line_idx: int
+    ) -> str:
+        """Extract context around the match line (2 lines before + 2 lines after).
+
+        Features:
+        - Extract 2 lines before and 2 lines after the match line
+        - Filter out blank/whitespace-only lines
+        - If match line is in a list, include heading context
+        """
+        if match_line_idx < 0 or match_line_idx >= len(lines):
+            return ""
+
+        # Extract context lines (2 before + match + 2 after)
+        context_lines = []
+        for i in range(match_line_idx - 2, match_line_idx + 3):  # -2 to +2 (5 lines total)
+            if i < 0 or i >= len(lines):
+                continue
+            content = self._extract_content_from_line(lines[i])
+            if content and content.strip():  # Skip empty lines
+                context_lines.append(content.strip())
+
+        if not context_lines:
+            return ""
+
+        return "\n".join(context_lines)
 
     def _process_heading_grep_output(
         self,
@@ -1821,78 +1935,114 @@ class DocSearcherAPI:
                 all_fallback_results.extend(page_map.values())
                 fallback_strategies.append("FALLBACK_1")
 
-                # Execute FALLBACK_2 (without applying reranker yet)
-                context_results = self._fallback2_grep_context_bm25(
-                    queries, search_doc_sets
-                )
-                if context_results:
-                    # Convert "heading" to "headings" list for consistency
-                    for page in context_results:
-                        page["headings"] = [
-                            {
-                                "text": page["heading"],
-                                "level": self._extract_heading_level(page["heading"]),
-                                "bm25_sim": page["bm25_sim"],
-                                "is_basic": page.get("is_basic", True),
-                                "is_precision": page.get("is_precision", False),
-                                "related_context": page.get("related_context", ""),
-                                "source": page.get("source", "FALLBACK_2"),
-                            }
-                        ]
-                        page["heading_count"] = 1
-                        page["precision_count"] = (
-                            1 if page.get("is_precision", False) else 0
+            # Execute FALLBACK_2 (without applying reranker yet)
+            # Note: FALLBACK_2 runs independently of FALLBACK_1 results
+            context_results = self._fallback2_grep_context_bm25(
+                queries, search_doc_sets
+            )
+            self._debug_print(f"DEBUG: context_results count = {len(context_results)}")
+            if context_results:
+                # Convert "heading" to "headings" list for consistency
+                for page in context_results:
+                    page["headings"] = [
+                        {
+                            "text": page["heading"],
+                            "level": self._extract_heading_level(page["heading"]),
+                            "bm25_sim": page["bm25_sim"],
+                            "is_basic": page.get("is_basic", True),
+                            "is_precision": page.get("is_precision", False),
+                            "related_context": page.get("related_context", ""),
+                            "source": page.get("source", "FALLBACK_2"),
+                        }
+                    ]
+                    page["heading_count"] = 1
+                    page["precision_count"] = (
+                        1 if page.get("is_precision", False) else 0
+                    )
+
+                all_fallback_results.extend(context_results)
+                fallback_strategies.append("FALLBACK_2")
+                self._debug_print(f"DEBUG: after extend, all_fallback_results count = {len(all_fallback_results)}")
+                self._debug_print(f"DEBUG: fallback_strategies = {fallback_strategies}")
+
+            # Merge results from both fallback strategies
+            if all_fallback_results:
+                merged_fallback = self._merge_fallback_results(all_fallback_results)
+                self._debug_print(f"DEBUG: merged_fallback count = {len(merged_fallback)}")
+
+                # 去重：BM25 召回结果与 fallback 结果合并
+                # 策略：FALLBACK 结果增强 BM25 结果（添加 related_context）
+                seen_pages = {}
+                deduped_results = []
+                for page in scored_pages + merged_fallback:
+                    key = (page["doc_set"], page["page_title"])
+                    if key not in seen_pages:
+                        seen_pages[key] = page
+                        deduped_results.append(page)
+                    else:
+                        existing = seen_pages[key]
+                        # 增强模式：FALLBACK 结果更新 BM25 结果的 headings
+                        fallback_headings = page.get("headings", [])
+                        bm25_headings = existing.get("headings", [])
+
+                        # 遍历 fallback headings，更新或添加到 existing headings
+                        for fb_heading in fallback_headings:
+                            fb_text = fb_heading.get("text", "")
+                            fb_related_ctx = fb_heading.get("related_context", "")
+                            fb_source = fb_heading.get("source", "")
+
+                            # 查找是否已存在相同 heading
+                            existing_heading = None
+                            for eh in bm25_headings:
+                                if eh.get("text") == fb_text:
+                                    existing_heading = eh
+                                    break
+
+                            if existing_heading:
+                                # 如果已存在 heading，更新 related_context 和 source
+                                if fb_related_ctx and not existing_heading.get("related_context"):
+                                    existing_heading["related_context"] = fb_related_ctx
+                                if fb_source and fb_source == "FALLBACK_2":
+                                    existing_heading["source"] = fb_source
+                            else:
+                                # 如果不存在，添加到 headings 列表
+                                bm25_headings.append(fb_heading)
+
+                        # 保留 BM25 结果的基本属性，只更新 headings
+                        existing["headings"] = bm25_headings
+                        existing["heading_count"] = len(bm25_headings)
+                        existing["precision_count"] = sum(
+                            1 for h in bm25_headings if h.get("is_precision", False)
                         )
 
-                    all_fallback_results.extend(context_results)
-                    fallback_strategies.append("FALLBACK_2")
+                all_results = deduped_results
+                self._debug_print(f"DEBUG: all_results set to deduped_results, count = {len(all_results)}")
 
-                # Merge results from both fallback strategies
-                if all_fallback_results:
-                    merged_fallback = self._merge_fallback_results(all_fallback_results)
+                # Apply reranker once to merged results
+                if self.reranker_enabled and self._reranker:
+                    self._debug_print(
+                        "  Applying transformer re-ranking to merged PARALLEL fallback results"
+                    )
+                    # 使用批量 reranking
+                    self._batch_rerank_pages_and_headings(
+                        all_results, queries, self.rerank_scopes
+                    )
 
-                    # 去重：BM25 召回结果与 fallback 结果合并
-                    seen_pages = {}
-                    deduped_results = []
-                    for page in scored_pages + merged_fallback:
-                        key = (page["doc_set"], page["page_title"])
-                        if key not in seen_pages:
-                            seen_pages[key] = page
-                            deduped_results.append(page)
-                        else:
-                            existing = seen_pages[key]
-                            if (page.get("bm25_sim") or 0) > (
-                                existing.get("bm25_sim") or 0
+                    for page in all_results:
+                        # 当 rerank_scopes 不包含 "headings" 时，跳过 heading rerank 处理
+                        if "headings" not in self.rerank_scopes:
+                            continue
+                        if not page.get("headings"):
+                            continue
+
+                        reranked_headings = []
+                        for heading in page["headings"]:
+                            semantic_score = heading.get("rerank_sim") or 0.0
+                            if (
+                                semantic_score
+                                < self._reranker.config.min_score_threshold
                             ):
-                                seen_pages[key] = page
-
-                    all_results = deduped_results
-
-                    # Apply reranker once to merged results
-                    if self.reranker_enabled and self._reranker:
-                        self._debug_print(
-                            "  Applying transformer re-ranking to merged PARALLEL fallback results"
-                        )
-                        # 使用批量 reranking
-                        self._batch_rerank_pages_and_headings(
-                            all_results, queries, self.rerank_scopes
-                        )
-
-                        for page in all_results:
-                            # 当 rerank_scopes 不包含 "headings" 时，跳过 heading rerank 处理
-                            if "headings" not in self.rerank_scopes:
                                 continue
-                            if not page.get("headings"):
-                                continue
-
-                            reranked_headings = []
-                            for heading in page["headings"]:
-                                semantic_score = heading.get("rerank_sim") or 0.0
-                                if (
-                                    semantic_score
-                                    < self._reranker.config.min_score_threshold
-                                ):
-                                    continue
                                 original_bm25_score = heading.get("bm25_sim") or 0.0
                                 updated_heading = dict(heading)
                                 updated_heading["bm25_sim"] = original_bm25_score
@@ -1923,11 +2073,12 @@ class DocSearcherAPI:
                                 if h.get("is_precision", False)
                             )
 
+                # Set fallback_used outside reranker condition block (for reranker_enabled=False)
+                if all_fallback_results:
                     fallback_used = (
                         "+".join(fallback_strategies) if fallback_strategies else None
                     )
-                else:
-                    all_results = scored_pages
+                    self._debug_print(f"DEBUG: fallback_used set to {fallback_used}")
 
             # ========== SERIAL MODE (backward compatible) ==========
             if self.fallback_mode == "serial":
@@ -2145,16 +2296,24 @@ class DocSearcherAPI:
                     )
 
         # Calculate final success
+        self._debug_print(f"DEBUG2: all_results count before loop = {len(all_results)}")
         success = len(all_results) >= self.min_page_titles
 
         results = []
         for page in all_results:
+            self._debug_print(f"DEBUG2: processing page {page.get('page_title')}, bm25_sim={page.get('bm25_sim')}, headings={len(page.get('headings', []))}")
             filtered_headings = [
                 h for h in page.get("headings", []) if h.get("is_basic", True)
             ]
 
-            # Apply hierarchical filter if enabled
-            if self.hierarchical_filter:
+            # Check if this is a FALLBACK_2 page (FALLBACK_2 results should skip hierarchical filter)
+            page_source = page.get("source", "")
+            is_fallback2_page = page_source == "FALLBACK_2" or any(
+                h.get("source") == "FALLBACK_2" for h in page.get("headings", [])
+            )
+
+            # Apply hierarchical filter only for non-FALLBACK_2 pages
+            if self.hierarchical_filter and not is_fallback2_page:
                 from .heading_filter import filter_headings_hierarchically
 
                 filtered_headings = filter_headings_hierarchically(
@@ -2164,7 +2323,9 @@ class DocSearcherAPI:
             if filtered_headings:
                 # Check page-level BM25 threshold
                 page_bm25_sim = page.get("bm25_sim") or 0
-                if page_bm25_sim >= self.threshold_page_title:
+                # FALLBACK_2 精确匹配结果不经过 BM25 阈值检查
+                self._debug_print(f"DEBUG2: page_bm25_sim={page_bm25_sim}, threshold={self.threshold_page_title}, is_fallback2={is_fallback2_page}")
+                if is_fallback2_page or page_bm25_sim >= self.threshold_page_title:
                     results.append(
                         {
                             "doc_set": page["doc_set"],

@@ -148,6 +148,7 @@ class OutputFormatter:
                         "text": h["text"],
                         "rerank_sim": _convert_to_json_serializable(h.get("rerank_sim")) if reranker_enabled else None,
                         "bm25_sim": _convert_to_json_serializable(h.get("bm25_sim")),
+                        "related_context": h.get("related_context", ""),
                     }
                     for h in page["headings"]
                 ]
