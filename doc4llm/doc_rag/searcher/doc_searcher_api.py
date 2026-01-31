@@ -149,7 +149,9 @@ class DocSearcherAPI:
                 with open(config_path, "r", encoding="utf-8") as f:
                     return json.load(f)
             else:
-                print(f"[WARNING] Config file not found: '{self.config}'. Using default config.")
+                print(
+                    f"[WARNING] Config file not found: '{self.config}'. Using default config."
+                )
                 return {}
 
         return {}
@@ -255,6 +257,7 @@ class DocSearcherAPI:
                     TransformerMatcher,
                     TransformerConfig,
                 )
+
                 transformer_config = TransformerConfig(
                     model_zh=self.reranker_model_zh,
                     model_en=self.reranker_model_en,
@@ -268,6 +271,7 @@ class DocSearcherAPI:
                     ModelScopeMatcher,
                     ModelScopeConfig,
                 )
+
                 model_id = self.embedding_model_id or "Qwen/Qwen3-Embedding-8B"
                 modelscope_config = ModelScopeConfig(model_id=model_id)
                 matcher = ModelScopeMatcher(modelscope_config)
@@ -291,7 +295,8 @@ class DocSearcherAPI:
             skiped_file = Path(__file__).parent / "skiped_keywords.txt"
         if skiped_file.exists():
             self.skiped_keywords = [
-                line.strip() for line in skiped_file.read_text(encoding="utf-8").splitlines()
+                line.strip()
+                for line in skiped_file.read_text(encoding="utf-8").splitlines()
                 if line.strip()
             ]
 
@@ -365,25 +370,29 @@ class DocSearcherAPI:
     def _get_english_stem(self, word: str) -> str:
         """获取英文单词的词干（简单实现，处理常见复数形式）。"""
         # 常见的英文复数后缀
-        suffixes = ['s', 'es', 'ied', 'ies', 'ves']
+        suffixes = ["s", "es", "ied", "ies", "ves"]
         for suffix in suffixes:
             if word.endswith(suffix) and len(word) > len(suffix) + 2:
                 # 处理特殊情况：ies -> y, ves -> f
-                if suffix == 'ies' and not word.endswith('aies') and not word.endswith('eies'):
-                    return word[:-3] + 'y'
-                elif suffix == 'ves':
-                    return word[:-3] + 'f'
-                elif suffix == 'ied' and not word.endswith('aied') and not word.endswith('eied'):
-                    return word[:-3] + 'y'
+                if (
+                    suffix == "ies"
+                    and not word.endswith("aies")
+                    and not word.endswith("eies")
+                ):
+                    return word[:-3] + "y"
+                elif suffix == "ves":
+                    return word[:-3] + "f"
+                elif (
+                    suffix == "ied"
+                    and not word.endswith("aied")
+                    and not word.endswith("eied")
+                ):
+                    return word[:-3] + "y"
                 else:
-                    return word[:-len(suffix)]
+                    return word[: -len(suffix)]
         return word
 
-    def _contains_domain_noun(
-        self,
-        text: str,
-        domain_nouns: List[str]
-    ) -> bool:
+    def _contains_domain_noun(self, text: str, domain_nouns: List[str]) -> bool:
         """
         检查 text 是否包含 domain_nouns 中至少一个名词（支持中英文和词干匹配）。
 
@@ -407,7 +416,7 @@ class DocSearcherAPI:
             noun_lower = noun.lower()
 
             # 检测是否为中文（包含中文字符）
-            if re.search(r'[\u4e00-\u9fff]', noun_lower):
+            if re.search(r"[\u4e00-\u9fff]", noun_lower):
                 # 中文：直接子串匹配
                 if noun_lower in text_lower:
                     return True
@@ -421,10 +430,7 @@ class DocSearcherAPI:
         return False
 
     def _preprocess_for_rerank(
-        self,
-        text: str,
-        domain_nouns: List[str],
-        predicate_verbs: List[str]
+        self, text: str, domain_nouns: List[str], predicate_verbs: List[str]
     ) -> str:
         """
         预处理文本用于 rerank 计算。
@@ -465,20 +471,22 @@ class DocSearcherAPI:
         processed_text = text
         for verb in predicate_verbs:
             # 跳过受保护的关键词
-            if protected_keywords and verb.lower() in {kw.lower() for kw in protected_keywords}:
+            if protected_keywords and verb.lower() in {
+                kw.lower() for kw in protected_keywords
+            }:
                 continue
             # 检测是否为中文（包含中文字符）
-            if re.search(r'[\u4e00-\u9fff]', verb):
+            if re.search(r"[\u4e00-\u9fff]", verb):
                 # 中文：直接子串匹配（不使用 word boundary）
                 pattern = re.compile(re.escape(verb), re.IGNORECASE)
-                processed_text = pattern.sub('', processed_text)
+                processed_text = pattern.sub("", processed_text)
             else:
                 # 英文：使用 word boundary 确保完整匹配
-                pattern = re.compile(r'\b' + re.escape(verb) + r'\b', re.IGNORECASE)
-                processed_text = pattern.sub('', processed_text)
+                pattern = re.compile(r"\b" + re.escape(verb) + r"\b", re.IGNORECASE)
+                processed_text = pattern.sub("", processed_text)
 
         # 清理多余空格并 strip
-        processed_text = re.sub(r'\s+', ' ', processed_text).strip()
+        processed_text = re.sub(r"\s+", " ", processed_text).strip()
 
         return processed_text
 
@@ -486,7 +494,7 @@ class DocSearcherAPI:
         self,
         headings: List[Dict[str, Any]],
         domain_nouns: List[str],
-        predicate_verbs: List[str]
+        predicate_verbs: List[str],
     ) -> List[Dict[str, Any]]:
         """
         预处理 headings 列表用于 rerank 计算。
@@ -505,7 +513,9 @@ class DocSearcherAPI:
         processed_headings = []
         for h in headings:
             text = h.get("text", "")
-            processed_text = self._preprocess_for_rerank(text, domain_nouns, predicate_verbs)
+            processed_text = self._preprocess_for_rerank(
+                text, domain_nouns, predicate_verbs
+            )
             processed_headings.append({**h, "text": processed_text})
 
         return processed_headings
@@ -533,16 +543,13 @@ class DocSearcherAPI:
             if not keyword_lower:
                 continue
             pattern = keyword_lower
-            result = re.sub(re.escape(pattern), '', result, flags=re.IGNORECASE)
+            result = re.sub(re.escape(pattern), "", result, flags=re.IGNORECASE)
 
-        result = re.sub(r'\s+', ' ', result).strip()
+        result = re.sub(r"\s+", " ", result).strip()
         return result
 
     def _batch_rerank_pages_and_headings(
-        self,
-        pages: List[Dict[str, Any]],
-        queries: List[str],
-        scopes: List[str]
+        self, pages: List[Dict[str, Any]], queries: List[str], scopes: List[str]
     ) -> None:
         """
         批量计算多个 page 和 heading 与多个 query 的语义相似度。
@@ -577,7 +584,9 @@ class DocSearcherAPI:
             for page_idx, _ in enumerate(page_titles):
                 max_score = float(np.max(sim_matrix[:, page_idx]))
                 pages[page_idx]["rerank_sim"] = max_score
-                pages[page_idx]["source"] = "RERANKER"  # 实际执行了 page_title rerank 才添加
+                pages[page_idx]["source"] = (
+                    "RERANKER"  # 实际执行了 page_title rerank 才添加
+                )
                 # 如果只匹配 page_title，检查阈值并清空 headings
                 if scopes == ["page_title"]:
                     # 需要同时满足 reranker_threshold (默认 0.68) 和 threshold_precision (默认 0.7)
@@ -605,7 +614,9 @@ class DocSearcherAPI:
             # 批量计算 headings 相似度
             if headings:
                 heading_texts = [h[2] for h in headings]
-                sim_matrix, _ = self._reranker.matcher.rerank_batch(queries, heading_texts)
+                sim_matrix, _ = self._reranker.matcher.rerank_batch(
+                    queries, heading_texts
+                )
                 # 对于每个 heading，取所有 query 中的最大相似度
                 for heading_idx, (page_idx, h_idx, _) in enumerate(headings):
                     max_score = float(np.max(sim_matrix[:, heading_idx]))
@@ -615,7 +626,9 @@ class DocSearcherAPI:
                         pages[page_idx]["headings"][h_idx]["is_basic"] = (
                             max_score >= self.reranker_threshold
                         )
-                        pages[page_idx]["headings"][h_idx]["source"] = "RERANKER"  # 实际执行了 heading rerank 才添加
+                        pages[page_idx]["headings"][h_idx]["source"] = (
+                            "RERANKER"  # 实际执行了 heading rerank 才添加
+                        )
 
     def _extract_heading_level(self, heading_text: str) -> int:
         """Extract heading level from markdown heading text.
@@ -894,7 +907,9 @@ class DocSearcherAPI:
             keywords = self.predicate_verbs
         else:
             # Both domain_nouns and predicate_verbs are empty, extract from queries
-            self._debug_print("No domain_nouns or predicate_verbs, extracting from queries")
+            self._debug_print(
+                "No domain_nouns or predicate_verbs, extracting from queries"
+            )
             all_keywords = []
             for q in queries:
                 all_keywords.extend(extract_keywords(q))
@@ -912,41 +927,41 @@ class DocSearcherAPI:
         for doc_set in doc_sets:
             doc_set_path = f"{self.base_dir}/{doc_set}"
 
-            # === Step A: Progressive grep search for heading in docTOC.md ===
+            # === 正确的流程: 在 docContent.md 中搜索关键词，然后回溯 heading ===
+            # Step 1: 在 docContent.md 中搜索 (包含足够的上文回溯 heading)
             heading_context_sizes = ["15", "30", "50"]  # Progressive -B sizes
             matched_files = set()  # Avoid duplicate processing of same file
 
             for before_ctx in heading_context_sizes:
-                cmd_heading = [
+                cmd = [
                     "grep",
-                    "-r", "-i",
-                    "-B", before_ctx,  # Progressive context increase for heading search
-                    "-A", "1",         # Only take heading line itself
-                    "-E", pattern,
+                    "-r",
+                    "-i",
+                    "-B",
+                    before_ctx,  # 足够的上文用于回溯 heading
+                    "-A",
+                    "1",  # 匹配行本身
+                    "-E",
+                    pattern,
                     doc_set_path,
-                    "--include=docTOC.md",  # Search in TOC files for heading
+                    "--include=docContent.md",  # 直接搜索 docContent.md
                 ]
 
-                output_heading = self._run_grep(cmd_heading)
-                if not output_heading:
+                output = self._run_grep(cmd)
+                if not output:
                     continue  # No results, try larger context
 
-                # Process heading search results
-                for match_result in self._process_heading_grep_output(
-                    output_heading, keywords, combined_query, doc_set, pattern
+                # 处理 grep 输出：提取 heading 和 context
+                for result in self._process_content_grep_output(
+                    output, keywords, combined_query, doc_set, pattern
                 ):
-                    if match_result["source_file"] not in matched_files:
-                        matched_files.add(match_result["source_file"])
+                    # 使用 file_path 作为去重键（避免同一文件的重复结果）
+                    if result["source_file"] not in matched_files:
+                        matched_files.add(result["source_file"])
 
-                        # === Step B: Fixed related_context extraction from docContent.md ===
-                        related_context = self._extract_fixed_context(
-                            doc_set_path, match_result["source_file"], pattern
-                        )
-
+                        related_context = result.get("related_context", "")
                         if related_context:
-                            match_result["related_context"] = related_context
-
-                            # Calculate BM25 score based on related_context
+                            # Calculate BM25 score
                             score = calculate_bm25_similarity(
                                 combined_query,
                                 related_context,
@@ -955,13 +970,15 @@ class DocSearcherAPI:
 
                             # Check threshold
                             if score < self.threshold_headings:
-                                self._debug_print(f"  Score below threshold: {score:.4f} < {self.threshold_headings}")
+                                self._debug_print(
+                                    f"  Score below threshold: {score:.4f} < {self.threshold_headings}"
+                                )
                                 continue
 
-                            match_result["bm25_sim"] = score
-                            match_result["is_basic"] = score >= self.threshold_headings
-                            match_result["is_precision"] = score >= self.threshold_precision
-                            results.append(match_result)
+                            result["bm25_sim"] = score
+                            result["is_basic"] = score >= self.threshold_headings
+                            result["is_precision"] = score >= self.threshold_precision
+                            results.append(result)
 
                 # If enough results found, break early
                 if len(results) >= 10:
@@ -969,8 +986,87 @@ class DocSearcherAPI:
 
         return results
 
+    def _process_content_grep_output(
+        self,
+        output: str,
+        keywords: List[str],
+        combined_query: str,
+        doc_set: str,
+        pattern: str,
+    ) -> List[Dict[str, Any]]:
+        """Process grep output from docContent.md, extract heading and context.
+
+        This method implements the correct logic:
+        1. Find keyword matches in docContent.md
+        2. Backtrack to find the nearest heading in the grep context
+        3. Extract the match line as related_context
+
+        Returns list of match results with heading and context.
+        """
+        results = []
+
+        if not output:
+            return results
+
+        # Split grep output by file (grep -A/-B outputs -- separator)
+        file_blocks = output.split("\n--\n")
+
+        for block in file_blocks:
+            if not block.strip():
+                continue
+
+            # Parse block to get: file path, line number, heading content
+            file_path, line_num, match_content = self._parse_grep_block(block, pattern)
+
+            if not file_path:
+                continue
+
+            # 在 grep 输出块中回溯找到最近的 heading
+            nearest_heading = self._find_nearest_heading_in_block(block)
+
+            if (
+                not nearest_heading["text"]
+                or nearest_heading["text"] == "Unknown Section"
+            ):
+                continue
+
+            # 提取 page title
+            page_title = self._extract_page_title_from_path(file_path)
+
+            # 构建 related_context: 使用匹配行的内容
+            # 清理 URL 信息
+            context_cleaned = self._clean_context_from_urls(match_content)
+
+            if not context_cleaned.strip():
+                continue
+
+            results.append(
+                {
+                    "doc_set": doc_set,
+                    "page_title": page_title,
+                    "heading": nearest_heading[
+                        "text"
+                    ],  # _find_nearest_heading_in_block 已经返回带 # 的文本
+                    "toc_path": "",
+                    "bm25_sim": 0.0,
+                    "is_basic": True,
+                    "is_precision": False,
+                    "related_context": context_cleaned.strip(),
+                    "source_file": file_path,
+                    "match_line_num": line_num,
+                    "source": "FALLBACK_2",
+                }
+            )
+
+        return results
+
     def _process_heading_grep_output(
-        self, output: str, keywords: List[str], combined_query: str, doc_set: str, pattern: str
+        self,
+        output: str,
+        keywords: List[str],
+        combined_query: str,
+        doc_set: str,
+        pattern: str,
     ) -> List[Dict[str, Any]]:
         """Process grep output from docTOC.md, extract heading information.
 
@@ -989,7 +1085,9 @@ class DocSearcherAPI:
                 continue
 
             # Parse block to get: file path, line number, heading content
-            file_path, line_num, heading_content = self._parse_grep_block(block, pattern)
+            file_path, line_num, heading_content = self._parse_grep_block(
+                block, pattern
+            )
 
             if not file_path:
                 continue
@@ -1012,49 +1110,110 @@ class DocSearcherAPI:
             # Construct docContent.md path from docTOC.md path
             doc_content_path = file_path.replace("docTOC.md", "docContent.md")
 
-            results.append({
-                "doc_set": doc_set,
-                "page_title": page_title,
-                "heading": f"# {heading_text}",
-                "toc_path": file_path,
-                "bm25_sim": 0.0,
-                "is_basic": True,
-                "is_precision": False,
-                "related_context": "",
-                "source_file": doc_content_path,
-                "match_line_num": line_num,
-                "source": "FALLBACK_2",
-            })
+            results.append(
+                {
+                    "doc_set": doc_set,
+                    "page_title": page_title,
+                    "heading": f"# {heading_text}",
+                    "toc_path": file_path,
+                    "bm25_sim": 0.0,
+                    "is_basic": True,
+                    "is_precision": False,
+                    "related_context": "",
+                    "source_file": doc_content_path,
+                    "match_line_num": line_num,
+                    "source": "FALLBACK_2",
+                }
+            )
 
         return results
 
     def _extract_fixed_context(
-        self, doc_set_path: str, source_file: str, pattern: str
+        self,
+        doc_set_path: str,
+        source_file: str,
+        pattern: str,
+        heading_text: Optional[str] = None,
     ) -> str:
-        """Extract fixed context from docContent.md using -B 1 -A 1.
+        """Extract fixed context from docContent.md using heading text matching.
 
-        This extracts: match line + 1 line before + 1 line after
+        This extracts: match line + 1 line before + 1 line after the heading match.
+        Uses heading text matching to locate the relevant section in docContent.md,
+        avoiding the accumulation of context from all pattern matches.
 
         Args:
             doc_set_path: Base path to doc-set
             source_file: Full path to the source file (docContent.md)
-            pattern: Search pattern for grep
+            pattern: Search pattern for grep (used for fallback if heading_text fails)
+            heading_text: Heading text to match for precise context extraction
 
         Returns:
             Extracted context text with URL info removed, or empty string if no match
         """
-        cmd_context = [
-            "grep",
-            "-i",
-            "-B", "1",
-            "-A", "1",
-            "-E", pattern,
-            source_file
-        ]
+        if heading_text and Path(source_file).exists():
+            # 方案 B: 使用 heading 文本精确匹配定位上下文
+            # 1. 使用 grep -F 找到 heading 文本的行号
+            cmd_find = [
+                "grep",
+                "-i",
+                "-n",
+                "-F",
+                "-m",
+                "1",  # 只取第一个匹配
+                heading_text,
+                source_file,
+            ]
 
-        output = self._run_grep(cmd_context)
-        if not output:
-            return ""
+            output_find = self._run_grep(cmd_find)
+            if not output_find:
+                # Fallback: 如果 heading 匹配失败，使用 pattern 搜索第一个匹配
+                self._debug_print(
+                    f"Heading '{heading_text}' not found, falling back to first pattern match"
+                )
+                # 使用 grep -n -m 1 找到 pattern 的第一个匹配行号
+                cmd_find_fallback = [
+                    "grep",
+                    "-i",
+                    "-n",
+                    "-m",
+                    "1",
+                    "-E",
+                    pattern,
+                    source_file,
+                ]
+                output_find = self._run_grep(cmd_find_fallback)
+                if not output_find:
+                    return ""
+
+            # 解析行号
+            match = re.match(r"^(\d+):(.+)$", output_find.strip())
+            if not match:
+                return ""
+
+            line_num = int(match.group(1))
+            # 2. 使用 sed 提取该行附近的上下文 (-1 到 +1 行)
+            start = max(1, line_num - 1)
+            end = line_num + 1
+            cmd_sed = ["sed", "-n", f"{start},{end}p", source_file]
+            output = self._run_grep(cmd_sed)
+            if not output:
+                return ""
+        else:
+            # Fallback: 原始实现 (向后兼容)
+            cmd_context = [
+                "grep",
+                "-i",
+                "-B",
+                "1",
+                "-A",
+                "1",
+                "-E",
+                pattern,
+                source_file,
+            ]
+            output = self._run_grep(cmd_context)
+            if not output:
+                return ""
 
         # Process the grep output to extract context
         context_lines = []
@@ -1065,11 +1224,11 @@ class DocSearcherAPI:
             # Remove line number and file path prefix
             content = line
             # Standard format: /path/to/file.md:123:content
-            if re.match(r'^(.+?):\d+:', line):
-                content = re.sub(r'^(.+?):\d+:', '', line)
+            if re.match(r"^(.+?):\d+:", line):
+                content = re.sub(r"^(.+?):\d+:", "", line)
             # Space-separated format: /path/to/file.md- content
-            elif re.match(r'^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*(.+)$', line):
-                content = re.sub(r'^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*', '', line)
+            elif re.match(r"^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*(.+)$", line):
+                content = re.sub(r"^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*", "", line)
 
             # Remove URL info from context
             content = self._clean_context_from_urls(content)
@@ -1080,7 +1239,12 @@ class DocSearcherAPI:
         return "\n".join(context_lines)
 
     def _process_grep_output_with_context(
-        self, output: str, keywords: List[str], combined_query: str, doc_set: str, pattern: str
+        self,
+        output: str,
+        keywords: List[str],
+        combined_query: str,
+        doc_set: str,
+        pattern: str,
     ) -> List[Dict[str, Any]]:
         """Process grep output, return list of match results with URL filtering and BM25 scoring."""
         results = []
@@ -1122,24 +1286,30 @@ class DocSearcherAPI:
 
             # === Threshold check ===
             if score < self.threshold_headings:
-                self._debug_print(f"  Score below threshold: {score:.4f} < {self.threshold_headings}")
+                self._debug_print(
+                    f"  Score below threshold: {score:.4f} < {self.threshold_headings}"
+                )
                 continue
 
             # === Find nearest chapter heading from block ===
             nearest_heading = self._find_nearest_heading_in_block(block)
 
-            results.append({
-                "doc_set": doc_set,
-                "page_title": self._extract_page_title_from_path(file_path),
-                "heading": f"# {nearest_heading['text']}",
-                "toc_path": "",
-                "bm25_sim": score,
-                "is_basic": score >= self.threshold_headings,
-                "is_precision": score >= self.threshold_precision,
-                "related_context": context_text,
-                "source_file": file_path,
-                "match_line_num": line_num,
-            })
+            results.append(
+                {
+                    "doc_set": doc_set,
+                    "page_title": self._extract_page_title_from_path(file_path),
+                    "heading": nearest_heading[
+                        "text"
+                    ],  # _find_nearest_heading_in_block 已经返回带 # 的文本
+                    "toc_path": "",
+                    "bm25_sim": score,
+                    "is_basic": score >= self.threshold_headings,
+                    "is_precision": score >= self.threshold_precision,
+                    "related_context": context_text,
+                    "source_file": file_path,
+                    "match_line_num": line_num,
+                }
+            )
 
         return results
 
@@ -1158,7 +1328,7 @@ class DocSearcherAPI:
         first_line = lines[0]
 
         # Try standard format: /path/to/file.md:123:content
-        match = re.match(r'^(.+?):(\d+):(.+)$', first_line)
+        match = re.match(r"^(.+?):(\d+):(.+)$", first_line)
         if match:
             file_path = match.group(1)
             line_num = int(match.group(2))
@@ -1167,12 +1337,12 @@ class DocSearcherAPI:
 
         # Try space-separated format: /path/to/file.md- content
         # Look for the pattern where path ends with .md or .md-XXX and is followed by -
-        match = re.match(r'^(.+(?:\.md[a-zA-Z0-9_-]*))\s*-\s*(.+)$', first_line)
+        match = re.match(r"^(.+(?:\.md[a-zA-Z0-9_-]*))\s*-\s*(.+)$", first_line)
         if match:
             file_path = match.group(1)
             match_content = match.group(2)
             # Try to extract line number from content (may not always be present)
-            line_match = re.match(r'^(\d+)-(.+)$', match_content)
+            line_match = re.match(r"^(\d+)-(.+)$", match_content)
             if line_match:
                 line_num = int(line_match.group(1))
                 match_content = line_match.group(2)
@@ -1193,9 +1363,9 @@ class DocSearcherAPI:
             return False
 
         # Extract plain text part (remove URLs)
-        text_only = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', content)
-        text_only = re.sub(r'https?://[^\s]+', '', text_only)
-        text_only = re.sub(r'www\.[^\s]+', '', text_only)
+        text_only = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", content)
+        text_only = re.sub(r"https?://[^\s]+", "", text_only)
+        text_only = re.sub(r"www\.[^\s]+", "", text_only)
 
         # Check if keywords appear in plain text
         for keyword in keywords:
@@ -1221,11 +1391,11 @@ class DocSearcherAPI:
             # Remove line number and file path prefix
             content = line
             # Standard format: /path/to/file.md:123:content
-            if re.match(r'^(.+?):\d+:', line):
-                content = re.sub(r'^(.+?):\d+:', '', line)
+            if re.match(r"^(.+?):\d+:", line):
+                content = re.sub(r"^(.+?):\d+:", "", line)
             # Space-separated format: /path/to/file.md- content or /path/to/file.md-123-content
-            elif re.match(r'^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*(.+)$', line):
-                content = re.sub(r'^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*', '', line)
+            elif re.match(r"^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*(.+)$", line):
+                content = re.sub(r"^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*", "", line)
 
             # Remove URL info from context
             content = self._clean_context_from_urls(content)
@@ -1238,11 +1408,11 @@ class DocSearcherAPI:
     def _clean_context_from_urls(self, text: str) -> str:
         """Remove URL link information from context."""
         # Remove markdown link format [text](url) -> text
-        text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+        text = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", text)
         # Remove bare URLs
-        text = re.sub(r'https?://[^\s]+', '', text)
+        text = re.sub(r"https?://[^\s]+", "", text)
         # Remove www. links
-        text = re.sub(r'www\.[^\s]+', '', text)
+        text = re.sub(r"www\.[^\s]+", "", text)
         return text.strip()
 
     def _find_nearest_heading_in_block(self, block: str) -> Dict[str, Any]:
@@ -1260,14 +1430,14 @@ class DocSearcherAPI:
             # Remove line number and file path prefix
             content = line
             # Standard format: /path/to/file.md:123:content
-            if re.match(r'^(.+?):\d+:', line):
-                content = re.sub(r'^(.+?):\d+:', '', content)
+            if re.match(r"^(.+?):\d+:", line):
+                content = re.sub(r"^(.+?):\d+:", "", content)
             # Space-separated format: /path/to/file.md- content
-            elif re.match(r'^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*(.+)$', line):
-                content = re.sub(r'^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*', '', content)
+            elif re.match(r"^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*(.+)$", line):
+                content = re.sub(r"^(.+\.md[a-zA-Z0-9_-]*)\s*-\s*", "", content)
 
             # Detect heading (#开头)
-            match = re.match(r'^(#{1,6})\s+(.+)$', content.strip())
+            match = re.match(r"^(#{1,6})\s+(.+)$", content.strip())
             if match:
                 heading_text = self._remove_url_from_heading(content.strip())
                 return {
@@ -1300,7 +1470,7 @@ class DocSearcherAPI:
             # Try to extract from path normally
             # Remove base_dir prefix if present
             if self.base_dir and file_path.startswith(self.base_dir):
-                relative_path = file_path[len(self.base_dir):].lstrip("/")
+                relative_path = file_path[len(self.base_dir) :].lstrip("/")
             else:
                 relative_path = file_path
 
@@ -1308,9 +1478,17 @@ class DocSearcherAPI:
             parts = relative_path.split("/")
             if len(parts) >= 2:
                 # Check if this looks like a valid page title (not a file path artifact)
-                potential_title = parts[-2] if parts[-1] in ("docTOC.md", "docContent.md") else parts[-1]
+                potential_title = (
+                    parts[-2]
+                    if parts[-1] in ("docTOC.md", "docContent.md")
+                    else parts[-1]
+                )
                 # Valid page title should not be empty and should not look like a file artifact
-                if potential_title and not potential_title.endswith(".md") and len(potential_title) > 1:
+                if (
+                    potential_title
+                    and not potential_title.endswith(".md")
+                    and len(potential_title) > 1
+                ):
                     return potential_title
 
         # Fallback: try to read the actual file to get page title from first line
@@ -1318,7 +1496,9 @@ class DocSearcherAPI:
         # If the path looks malformed, try to construct the correct path
         if not Path(actual_path).exists():
             # Try to find the file by looking for docContent.md in the parent directory
-            potential_dir = Path(file_path).parent if Path(file_path).parent.exists() else None
+            potential_dir = (
+                Path(file_path).parent if Path(file_path).parent.exists() else None
+            )
             if potential_dir:
                 doc_content = potential_dir / "docContent.md"
                 if doc_content.exists():
@@ -1452,7 +1632,8 @@ class DocSearcherAPI:
             # 计算需要过滤的关键词（排除受保护的关键词）
             protected_keywords = self._get_protected_keywords()
             skiped_keywords_filter = [
-                kw for kw in self.skiped_keywords
+                kw
+                for kw in self.skiped_keywords
                 if kw.lower() not in {pk.lower() for pk in protected_keywords}
             ]
 
@@ -1469,7 +1650,7 @@ class DocSearcherAPI:
                         "doc_sets_found": [],
                         "results": [],
                         "fallback_used": None,
-                        "message": "All queries filtered out by skiped_keywords.txt"
+                        "message": "All queries filtered out by skiped_keywords.txt",
                     }
 
                 queries = filtered_queries
@@ -1538,20 +1719,24 @@ class DocSearcherAPI:
             if self.reranker_enabled and self._reranker:
                 self._debug_print("  Applying transformer re-ranking to headings")
                 # 使用批量 reranking 替代循环调用
-                self._batch_rerank_pages_and_headings(scored_pages, queries, self.rerank_scopes)
+                self._batch_rerank_pages_and_headings(
+                    scored_pages, queries, self.rerank_scopes
+                )
 
                 for page in scored_pages:
                     original_headings_len = len(page.get("headings", []))
 
                     # 过滤 headings：根据 is_basic（reranker_threshold）过滤
-                    filtered_headings = [h for h in page.get("headings", []) if h.get("is_basic", True)]
+                    filtered_headings = [
+                        h for h in page.get("headings", []) if h.get("is_basic", True)
+                    ]
 
                     # 应用 hierarchical filter
                     if self.hierarchical_filter:
                         from .heading_filter import filter_headings_hierarchically
+
                         filtered_headings = filter_headings_hierarchically(
-                            filtered_headings,
-                            page["page_title"]
+                            filtered_headings, page["page_title"]
                         )
 
                     page["headings"] = filtered_headings
@@ -1579,7 +1764,9 @@ class DocSearcherAPI:
 
         # ========== PARALLEL MODE (default) ==========
         if self.fallback_mode == "parallel":
-            self._debug_print("Executing PARALLEL fallback mode (always when reranker disabled)")
+            self._debug_print(
+                "Executing PARALLEL fallback mode (always when reranker disabled)"
+            )
             toc_fallback = True
             grep_fallback = True
 
@@ -1598,7 +1785,9 @@ class DocSearcherAPI:
                         BM25Config(k1=self.bm25_k1, b=self.bm25_b),
                     )
                     result["is_basic"] = result["bm25_sim"] >= self.threshold_headings
-                    result["is_precision"] = result["bm25_sim"] >= self.threshold_precision
+                    result["is_precision"] = (
+                        result["bm25_sim"] >= self.threshold_precision
+                    )
 
                 page_map = {}
                 for r in grep_results:
@@ -1633,7 +1822,9 @@ class DocSearcherAPI:
                 fallback_strategies.append("FALLBACK_1")
 
                 # Execute FALLBACK_2 (without applying reranker yet)
-                context_results = self._fallback2_grep_context_bm25(queries, search_doc_sets)
+                context_results = self._fallback2_grep_context_bm25(
+                    queries, search_doc_sets
+                )
                 if context_results:
                     # Convert "heading" to "headings" list for consistency
                     for page in context_results:
@@ -1649,7 +1840,9 @@ class DocSearcherAPI:
                             }
                         ]
                         page["heading_count"] = 1
-                        page["precision_count"] = 1 if page.get("is_precision", False) else 0
+                        page["precision_count"] = (
+                            1 if page.get("is_precision", False) else 0
+                        )
 
                     all_fallback_results.extend(context_results)
                     fallback_strategies.append("FALLBACK_2")
@@ -1668,16 +1861,22 @@ class DocSearcherAPI:
                             deduped_results.append(page)
                         else:
                             existing = seen_pages[key]
-                            if (page.get("bm25_sim") or 0) > (existing.get("bm25_sim") or 0):
+                            if (page.get("bm25_sim") or 0) > (
+                                existing.get("bm25_sim") or 0
+                            ):
                                 seen_pages[key] = page
 
                     all_results = deduped_results
 
                     # Apply reranker once to merged results
                     if self.reranker_enabled and self._reranker:
-                        self._debug_print("  Applying transformer re-ranking to merged PARALLEL fallback results")
+                        self._debug_print(
+                            "  Applying transformer re-ranking to merged PARALLEL fallback results"
+                        )
                         # 使用批量 reranking
-                        self._batch_rerank_pages_and_headings(all_results, queries, self.rerank_scopes)
+                        self._batch_rerank_pages_and_headings(
+                            all_results, queries, self.rerank_scopes
+                        )
 
                         for page in all_results:
                             # 当 rerank_scopes 不包含 "headings" 时，跳过 heading rerank 处理
@@ -1689,32 +1888,52 @@ class DocSearcherAPI:
                             reranked_headings = []
                             for heading in page["headings"]:
                                 semantic_score = heading.get("rerank_sim") or 0.0
-                                if semantic_score < self._reranker.config.min_score_threshold:
+                                if (
+                                    semantic_score
+                                    < self._reranker.config.min_score_threshold
+                                ):
                                     continue
                                 original_bm25_score = heading.get("bm25_sim") or 0.0
                                 updated_heading = dict(heading)
                                 updated_heading["bm25_sim"] = original_bm25_score
                                 updated_heading["rerank_sim"] = semantic_score
                                 updated_heading["is_basic"] = True
-                                precision_threshold = self._reranker.config.min_score_threshold + 0.2
-                                updated_heading["is_precision"] = semantic_score >= precision_threshold
+                                precision_threshold = (
+                                    self._reranker.config.min_score_threshold + 0.2
+                                )
+                                updated_heading["is_precision"] = (
+                                    semantic_score >= precision_threshold
+                                )
                                 reranked_headings.append(updated_heading)
-                            reranked_headings.sort(key=lambda h: h.get("rerank_sim") or 0.0, reverse=True)
-                            if self._reranker.config.top_k is not None and self._reranker.config.top_k > 0:
-                                reranked_headings = reranked_headings[:self._reranker.config.top_k]
+                            reranked_headings.sort(
+                                key=lambda h: h.get("rerank_sim") or 0.0, reverse=True
+                            )
+                            if (
+                                self._reranker.config.top_k is not None
+                                and self._reranker.config.top_k > 0
+                            ):
+                                reranked_headings = reranked_headings[
+                                    : self._reranker.config.top_k
+                                ]
                             page["headings"] = reranked_headings
                             page["heading_count"] = len(reranked_headings)
                             page["precision_count"] = sum(
-                                1 for h in reranked_headings if h.get("is_precision", False)
+                                1
+                                for h in reranked_headings
+                                if h.get("is_precision", False)
                             )
 
-                    fallback_used = "+".join(fallback_strategies) if fallback_strategies else None
+                    fallback_used = (
+                        "+".join(fallback_strategies) if fallback_strategies else None
+                    )
                 else:
                     all_results = scored_pages
 
             # ========== SERIAL MODE (backward compatible) ==========
             if self.fallback_mode == "serial":
-                self._debug_print("Executing SERIAL fallback mode (always when reranker disabled)")
+                self._debug_print(
+                    "Executing SERIAL fallback mode (always when reranker disabled)"
+                )
 
                 # FALLBACK_1
                 toc_fallback = True
@@ -1729,8 +1948,12 @@ class DocSearcherAPI:
                             result.get("heading", ""),
                             BM25Config(k1=self.bm25_k1, b=self.bm25_b),
                         )
-                        result["is_basic"] = result["bm25_sim"] >= self.threshold_headings
-                        result["is_precision"] = result["bm25_sim"] >= self.threshold_precision
+                        result["is_basic"] = (
+                            result["bm25_sim"] >= self.threshold_headings
+                        )
+                        result["is_precision"] = (
+                            result["bm25_sim"] >= self.threshold_precision
+                        )
 
                     page_map = {}
                     for r in grep_results:
@@ -1762,8 +1985,12 @@ class DocSearcherAPI:
 
                     # Apply reranker if enabled for FALLBACK_1 (serial mode)
                     if self.reranker_enabled and self._reranker:
-                        self._debug_print("  Applying transformer re-ranking to FALLBACK_1 results")
-                        self._batch_rerank_pages_and_headings(list(page_map.values()), queries, self.rerank_scopes)
+                        self._debug_print(
+                            "  Applying transformer re-ranking to FALLBACK_1 results"
+                        )
+                        self._batch_rerank_pages_and_headings(
+                            list(page_map.values()), queries, self.rerank_scopes
+                        )
 
                         for page in page_map.values():
                             # 当 rerank_scopes 不包含 "headings" 时，跳过 heading rerank 处理
@@ -1775,23 +2002,39 @@ class DocSearcherAPI:
                             reranked_headings = []
                             for heading in page["headings"]:
                                 semantic_score = heading.get("rerank_sim") or 0.0
-                                if semantic_score < self._reranker.config.min_score_threshold:
+                                if (
+                                    semantic_score
+                                    < self._reranker.config.min_score_threshold
+                                ):
                                     continue
                                 original_bm25_score = heading.get("bm25_sim") or 0.0
                                 updated_heading = dict(heading)
                                 updated_heading["bm25_sim"] = original_bm25_score
                                 updated_heading["rerank_sim"] = semantic_score
                                 updated_heading["is_basic"] = True
-                                precision_threshold = self._reranker.config.min_score_threshold + 0.2
-                                updated_heading["is_precision"] = semantic_score >= precision_threshold
+                                precision_threshold = (
+                                    self._reranker.config.min_score_threshold + 0.2
+                                )
+                                updated_heading["is_precision"] = (
+                                    semantic_score >= precision_threshold
+                                )
                                 reranked_headings.append(updated_heading)
-                            reranked_headings.sort(key=lambda h: h.get("rerank_sim") or 0.0, reverse=True)
-                            if self._reranker.config.top_k is not None and self._reranker.config.top_k > 0:
-                                reranked_headings = reranked_headings[:self._reranker.config.top_k]
+                            reranked_headings.sort(
+                                key=lambda h: h.get("rerank_sim") or 0.0, reverse=True
+                            )
+                            if (
+                                self._reranker.config.top_k is not None
+                                and self._reranker.config.top_k > 0
+                            ):
+                                reranked_headings = reranked_headings[
+                                    : self._reranker.config.top_k
+                                ]
                             page["headings"] = reranked_headings
                             page["heading_count"] = len(reranked_headings)
                             page["precision_count"] = sum(
-                                1 for h in reranked_headings if h.get("is_precision", False)
+                                1
+                                for h in reranked_headings
+                                if h.get("is_precision", False)
                             )
 
                     all_results.extend(list(page_map.values()))
@@ -1799,14 +2042,20 @@ class DocSearcherAPI:
 
                 # FALLBACK_2 (always execute in serial mode when reranker disabled)
                 grep_fallback = True
-                context_results = self._fallback2_grep_context_bm25(query, search_doc_sets)
+                context_results = self._fallback2_grep_context_bm25(
+                    query, search_doc_sets
+                )
 
                 if context_results:
                     # Apply reranker if enabled for FALLBACK_2 (serial mode)
                     if self.reranker_enabled and self._reranker:
-                        self._debug_print("  Applying transformer re-ranking to FALLBACK_2 results")
+                        self._debug_print(
+                            "  Applying transformer re-ranking to FALLBACK_2 results"
+                        )
                         # 使用批量 reranking
-                        self._batch_rerank_pages_and_headings(context_results, queries, self.rerank_scopes)
+                        self._batch_rerank_pages_and_headings(
+                            context_results, queries, self.rerank_scopes
+                        )
 
                         for page in context_results:
                             # 当 rerank_scopes 不包含 "headings" 时，跳过 heading rerank 处理
@@ -1818,42 +2067,64 @@ class DocSearcherAPI:
                             reranked_headings = []
                             for heading in page["headings"]:
                                 semantic_score = heading.get("rerank_sim") or 0.0
-                                if semantic_score < self._reranker.config.min_score_threshold:
+                                if (
+                                    semantic_score
+                                    < self._reranker.config.min_score_threshold
+                                ):
                                     continue
                                 original_bm25_score = heading.get("bm25_sim") or 0.0
                                 updated_heading = dict(heading)
                                 updated_heading["bm25_sim"] = original_bm25_score
                                 updated_heading["rerank_sim"] = semantic_score
                                 updated_heading["is_basic"] = True
-                                precision_threshold = self._reranker.config.min_score_threshold + 0.2
-                                updated_heading["is_precision"] = semantic_score >= precision_threshold
+                                precision_threshold = (
+                                    self._reranker.config.min_score_threshold + 0.2
+                                )
+                                updated_heading["is_precision"] = (
+                                    semantic_score >= precision_threshold
+                                )
                                 reranked_headings.append(updated_heading)
-                            reranked_headings.sort(key=lambda h: h.get("rerank_sim") or 0.0, reverse=True)
-                            if self._reranker.config.top_k is not None and self._reranker.config.top_k > 0:
-                                reranked_headings = reranked_headings[:self._reranker.config.top_k]
+                            reranked_headings.sort(
+                                key=lambda h: h.get("rerank_sim") or 0.0, reverse=True
+                            )
+                            if (
+                                self._reranker.config.top_k is not None
+                                and self._reranker.config.top_k > 0
+                            ):
+                                reranked_headings = reranked_headings[
+                                    : self._reranker.config.top_k
+                                ]
                             if reranked_headings:
                                 page["headings"] = reranked_headings
                             else:
                                 page["headings"] = [
                                     {
                                         "text": page.get("heading", ""),
-                                        "level": self._extract_heading_level(page.get("heading", "")),
+                                        "level": self._extract_heading_level(
+                                            page.get("heading", "")
+                                        ),
                                         "bm25_sim": page.get("bm25_sim"),
                                         "is_basic": True,
                                         "is_precision": page.get("is_precision", False),
-                                        "related_context": page.get("related_context", ""),
+                                        "related_context": page.get(
+                                            "related_context", ""
+                                        ),
                                     }
                                 ]
                             page["heading_count"] = len(page.get("headings", []))
                             page["precision_count"] = sum(
-                                1 for h in page.get("headings", []) if h.get("is_precision", False)
+                                1
+                                for h in page.get("headings", [])
+                                if h.get("is_precision", False)
                             )
                     else:
                         for page in context_results:
                             page["headings"] = [
                                 {
                                     "text": page["heading"],
-                                    "level": self._extract_heading_level(page["heading"]),
+                                    "level": self._extract_heading_level(
+                                        page["heading"]
+                                    ),
                                     "bm25_sim": page.get("bm25_sim"),
                                     "is_basic": page.get("is_basic", True),
                                     "is_precision": page.get("is_precision", False),
@@ -1861,11 +2132,17 @@ class DocSearcherAPI:
                                 }
                             ]
                             page["heading_count"] = 1
-                            page["precision_count"] = 1 if page.get("is_precision", False) else 0
+                            page["precision_count"] = (
+                                1 if page.get("is_precision", False) else 0
+                            )
 
                     # Merge FALLBACK_2 results with existing results
                     all_results.extend(context_results)
-                    fallback_used = "FALLBACK_1+FALLBACK_2" if fallback_used == "FALLBACK_1" else "FALLBACK_2"
+                    fallback_used = (
+                        "FALLBACK_1+FALLBACK_2"
+                        if fallback_used == "FALLBACK_1"
+                        else "FALLBACK_2"
+                    )
 
         # Calculate final success
         success = len(all_results) >= self.min_page_titles
@@ -1879,9 +2156,9 @@ class DocSearcherAPI:
             # Apply hierarchical filter if enabled
             if self.hierarchical_filter:
                 from .heading_filter import filter_headings_hierarchically
+
                 filtered_headings = filter_headings_hierarchically(
-                    filtered_headings,
-                    page["page_title"]
+                    filtered_headings, page["page_title"]
                 )
 
             if filtered_headings:
@@ -1915,7 +2192,9 @@ class DocSearcherAPI:
                     )
             elif (page.get("bm25_sim") or 0) >= self.threshold_page_title:
                 rerank_sim = page.get("rerank_sim")
-                if not self.reranker_enabled or (rerank_sim is not None and rerank_sim >= self.reranker_threshold):
+                if not self.reranker_enabled or (
+                    rerank_sim is not None and rerank_sim >= self.reranker_threshold
+                ):
                     results.append(
                         {
                             "doc_set": page["doc_set"],
@@ -1967,9 +2246,12 @@ class DocSearcherAPI:
         """
         return OutputFormatter.format_aop(result)
 
-    def format_structured_output(self, result: Dict[str, Any],
-                                  queries: Optional[List[str]] = None,
-                                  reranker_enabled: Optional[bool] = None) -> str:
+    def format_structured_output(
+        self,
+        result: Dict[str, Any],
+        queries: Optional[List[str]] = None,
+        reranker_enabled: Optional[bool] = None,
+    ) -> str:
         """
         Format result as structured JSON for machine parsing.
 
@@ -1987,13 +2269,12 @@ class DocSearcherAPI:
         """
         if reranker_enabled is None:
             reranker_enabled = self.reranker_enabled
-        return OutputFormatter.format_structured(result, queries=queries,
-                                                  reranker_enabled=reranker_enabled)
+        return OutputFormatter.format_structured(
+            result, queries=queries, reranker_enabled=reranker_enabled
+        )
 
     def rerank(
-        self,
-        pages: List[Dict[str, Any]],
-        queries: Union[str, List[str]]
+        self, pages: List[Dict[str, Any]], queries: Union[str, List[str]]
     ) -> Dict[str, Any]:
         """
         对页面执行独立的 transformer semantic reranking。
@@ -2016,7 +2297,7 @@ class DocSearcherAPI:
                 "doc_sets_found": [],
                 "results": [],
                 "fallback_used": None,
-                "message": "No pages to rerank"
+                "message": "No pages to rerank",
             }
 
         if not self._reranker:
@@ -2027,23 +2308,27 @@ class DocSearcherAPI:
                 "doc_sets_found": list(set(p.get("doc_set", "") for p in pages)),
                 "results": pages,
                 "fallback_used": None,
-                "message": "Reranker not enabled, returning original results"
+                "message": "Reranker not enabled, returning original results",
             }
 
         queries = [queries] if isinstance(queries, str) else queries
-        self._debug_print(f"Executing transformer reranking on {len(pages)} pages with {len(queries)} queries")
+        self._debug_print(
+            f"Executing transformer reranking on {len(pages)} pages with {len(queries)} queries"
+        )
 
         self._batch_rerank_pages_and_headings(pages, queries, self.rerank_scopes)
 
         for page in pages:
             original_headings_len = len(page.get("headings", []))
-            filtered_headings = [h for h in page.get("headings", []) if h.get("is_basic", True)]
+            filtered_headings = [
+                h for h in page.get("headings", []) if h.get("is_basic", True)
+            ]
 
             if self.hierarchical_filter:
                 from .heading_filter import filter_headings_hierarchically
+
                 filtered_headings = filter_headings_hierarchically(
-                    filtered_headings,
-                    page["page_title"]
+                    filtered_headings, page["page_title"]
                 )
 
             page["headings"] = filtered_headings
@@ -2061,5 +2346,5 @@ class DocSearcherAPI:
             "doc_sets_found": list(set(p.get("doc_set", "") for p in pages)),
             "results": pages,
             "fallback_used": None,
-            "message": "Transformer reranking completed"
+            "message": "Transformer reranking completed",
         }

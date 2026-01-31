@@ -75,7 +75,7 @@ from doc4llm.doc_rag.searcher.doc_searcher_api import DocSearcherAPI
 from doc4llm.doc_rag.reader.doc_reader_api import DocReaderAPI
 
 # Type alias for stop_at_phase parameter
-StopPhase = Literal["0a", "0b", "1", "1.5", "2"]
+StopPhase = Literal["0a", "0b", "1", "1.5", "2", "4"]
 
 
 # =============================================================================
@@ -186,11 +186,13 @@ def _build_doc_metas(results: Dict[str, Any]) -> List[Dict[str, Any]]:
             # local_path points to docContent.md
             local_path = toc_path.replace("/docTOC.md", "/docContent.md")
             # Extract original URL from docContent.md
+            # Format: "> **原文链接**: https://..." or "原文链接: https://..."
             try:
                 with open(local_path, 'r', encoding='utf-8') as f:
                     for line in f:
-                        if line.startswith("原文链接:"):
-                            source_url = line.replace("原文链接:", "").strip()
+                        if "> **原文链接**:" in line or "原文链接:" in line:
+                            # Remove markdown blockquote and formatting
+                            source_url = line.replace("> **原文链接**:", "").replace("原文链接:", "").strip()
                             break
             except Exception:
                 pass
@@ -207,6 +209,81 @@ def _build_doc_metas(results: Dict[str, Any]) -> List[Dict[str, Any]]:
         })
 
     return doc_metas
+
+
+def _restore_toc_paths(
+    results: Dict[str, Any],
+    toc_path_map: Dict[tuple, str]
+) -> Dict[str, Any]:
+    """从映射表回溯还原 toc_path 字段。
+
+    Phase 1.5 LLM Reranking 会过滤掉 toc_path 字段，
+    此函数用于从 Phase 1 保存的映射表中回溯还原。
+
+    Args:
+        results: Phase 1.5 结果（可能不含 toc_path）
+        toc_path_map: (doc_set, page_title) → toc_path 映射表
+
+    Returns:
+        还原 toc_path 后的结果
+    """
+    if not toc_path_map:
+        return results
+
+    results_copy = {
+        "query": results.get("query", []),
+        "doc_sets_found": results.get("doc_sets_found", []),
+        "results": []
+    }
+
+    for page in results.get("results", []):
+        page_copy = page.copy()
+        key = (page.get("doc_set", ""), page.get("page_title", ""))
+
+        # 如果 toc_path 缺失，从映射表回溯
+        if not page_copy.get("toc_path") and key in toc_path_map:
+            page_copy["toc_path"] = toc_path_map[key]
+
+        results_copy["results"].append(page_copy)
+
+    return results_copy
+
+
+def _build_output_with_wrapper_and_sources(
+    raw_content: str,
+    doc_metas: List[Dict[str, Any]],
+    doc_sets: List[str]
+) -> str:
+    """Build output with AOP-FINAL wrapper and Sources section.
+
+    Args:
+        raw_content: Raw extracted content from Phase 2
+        doc_metas: List of document metadata from _build_doc_metas
+        doc_sets: List of doc-set names for source field
+
+    Returns:
+        Formatted output with wrapper and sources
+    """
+    # Count actual lines in content
+    actual_line_count = len(raw_content.strip().split('\n'))
+
+    # Build sources section
+    sources_section = "\n---\n\n### 文档来源 (Sources)\n\n"
+    for i, doc_meta in enumerate(doc_metas, 1):
+        sources_section += f"{i}. **{doc_meta.get('title', '')}**\n"
+        sources_section += f"   - 原文链接: {doc_meta.get('source_url', '')}\n"
+        sources_section += f"   - 本地文档: `{doc_meta.get('local_path', '')}`\n\n"
+
+    # Build source field value (comma-separated doc_sets)
+    source_field = ", ".join(doc_sets) if doc_sets else "unknown"
+
+    # Combine wrapper + content + sources
+    return f"""=== AOP-FINAL | agent=rag | format=markdown | lines={actual_line_count} | source={source_field} ===
+**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
+
+{raw_content}
+{sources_section}=== END-AOP-FINAL ===
+"""
 
 
 # =============================================================================
@@ -650,6 +727,12 @@ class DocRAGOrchestrator:
         # -------------------------------------------------------------------------
         start_phase_1_5 = time.perf_counter()
 
+        # 保存 Phase 1 结果的 toc_path 映射（用于 Phase 1.5 后回溯）
+        toc_path_map = {
+            (page.get("doc_set", ""), page.get("page_title", "")): page.get("toc_path", "")
+            for page in search_result.get("results", [])
+        }
+
         # 清理 search_result，移除多余字段，只保留核心字段
         search_result_cleaned = _filter_search_result_fields(search_result)
         # 创建清除 rerank_sim 的副本（不修改原始数据）
@@ -822,6 +905,9 @@ class DocRAGOrchestrator:
         rerank_type = "LLM" if rerank_executed else ("Embedding" if embedding_rerank_executed else "Skipped")
         print(f"▶ [Phase 1.5] Re-ranking ({rerank_type}) 耗时: {timing['phase_1_5']:.2f}ms")
 
+        # 回溯还原 toc_path 字段（Phase 1.5 可能会过滤掉此字段）
+        current_results = _restore_toc_paths(current_results, toc_path_map)
+
         # Check if should stop at Phase 1.5
         if self.config.stop_at_phase == "1.5":
             doc_metas = _build_doc_metas(current_results)
@@ -918,10 +1004,17 @@ class DocRAGOrchestrator:
         )
 
         # Check if should stop at Phase 2
-        if self.config.stop_at_phase == "2" or scene == "faithful_how_to":
+        if self.config.stop_at_phase == "2" or scene in ("faithful_how_to", "faithful_reference", "how_to"):
             doc_metas = _build_doc_metas(current_results)
             raw_output = "\n\n".join(extraction_result.contents.values()) if extraction_result.contents else ""
             print(f"▶ [Phase 2] Content Extraction 耗时: {timing['phase_2']:.2f}ms")
+
+            # Build wrapped output for faithful_* and how_to scenes
+            if scene in ("faithful_how_to", "faithful_reference", "how_to"):
+                wrapped_output = _build_output_with_wrapper_and_sources(raw_output, doc_metas, target_doc_sets)
+            else:
+                wrapped_output = raw_output
+
             if self.config.debug:
                 print(f"\n{'─' * 60}")
                 print(f"▶ Phase 2: Content Extraction [原始输出]")
@@ -937,7 +1030,7 @@ class DocRAGOrchestrator:
                 print(f"{'─' * 60}\n")
             return DocRAGResult(
                 success=True,
-                output=raw_output,
+                output=wrapped_output,
                 scene=scene,
                 documents_extracted=extraction_result.document_count,
                 total_lines=extraction_result.total_line_count,
@@ -1013,9 +1106,16 @@ class DocRAGOrchestrator:
                 thinking=output_result.thinking,
             )
 
+        # Wrap output with AOP format and sources for Phase 4
+        wrapped_output = _build_output_with_wrapper_and_sources(
+            output_result.output,
+            doc_metas,
+            target_doc_sets
+        )
+
         result = DocRAGResult(
             success=True,
-            output=output_result.output,
+            output=wrapped_output,
             scene=scene,
             documents_extracted=extraction_result.document_count,
             total_lines=extraction_result.total_line_count,
@@ -1080,7 +1180,7 @@ def retrieve(
         reranker_threshold: Threshold for transformer embedding reranker (default 0.6)
         debug: Enable debug mode
         skiped_keywords_path: Custom path for skiped_keywords.txt file
-        stop_at_phase: Stop pipeline at specified phase ("0a", "0b", "1", "1.5", "2")
+        stop_at_phase: Stop pipeline at specified phase ("0a", "0b", "1", "1.5", "2", "4")
         reader_config: Configuration dict for DocReaderAPI (e.g., {"search_mode": "fuzzy"})
         searcher_config: Configuration dict for DocSearcherAPI (e.g., {"bm25_k1": 1.5})
 
@@ -1198,8 +1298,8 @@ Examples:
     parser.add_argument(
         "--stop-at",
         dest="stop_at_phase",
-        choices=["0a", "0b", "1", "1.5", "2"],
-        help="Stop pipeline at specified phase (0a, 0b, 1, 1.5, or 2)",
+        choices=["0a", "0b", "1", "1.5", "2", "4"],
+        help="Stop pipeline at specified phase (0a, 0b, 1, 1.5, 2, or 4)",
     )
 
     parser.add_argument(

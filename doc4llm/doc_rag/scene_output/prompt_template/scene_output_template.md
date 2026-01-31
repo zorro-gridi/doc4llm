@@ -34,10 +34,10 @@ It does NOT:
 | fact_lookup        | Short, precise answer + citation |
 | faithful_reference | Verbatim original paragraphs     |
 | faithful_how_to    | Verbatim ordered steps           |
-| concept_learning   | 教学式结构化讲解                         |
-| how_to             | 规范化可执行步骤                         |
-| comparison         | 表格 + 优缺点 + 推荐                    |
-| exploration        | 多角度深度分析                          |
+| concept_learning   | 教学式结构化讲解                    |
+| how_to             | 规范化可执行步骤                    |
+| comparison         | 表格 + 优缺点 + 推荐                |
+| exploration        | 多角度深度分析                      |
 
 ---
 
@@ -51,36 +51,6 @@ Format content based on scene:
 * concept / exploration → structured explanation
 * how_to → ordered, actionable steps
 * comparison → table + recommendation
-
----
-
-### 2. Compression Notice (Conditional)
-
-If `compression_meta.compression_applied == true`:
-
-Append:
-
-```markdown
----
-
-**注意：源文档已被压缩输出；原文: {{original_line_count}} 行，当前输出: {{output_line_count}} 行**
-```
-
----
-
-### 3. Sources Section (REQUIRED)
-
-Always append:
-
-```markdown
----
-
-### 文档来源 (Sources)
-
-1. **{{doc_meta.title}}**
-   - 原文链接: {{doc_meta.source_url}}
-   - 路径: `{{doc_meta.local_path}}`
-```
 
 ---
 
@@ -100,18 +70,6 @@ Always append:
 * Depth and insight in exploration
 * Precision in fact_lookup
 
----
-
-## Your Output Wrapping Requirement
-
-```markdown
-=== AOP-FINAL | agent=doc-retriever | format=markdown | lines={{actual_output_line_count}} | source={{doc_sets_name, ...}} ===
-**Pass through EXACTLY as-is** — NO summarizing, NO rephrasing, NO commentary
-
-[your final content here]
-
-=== END-AOP-FINAL ===
-```
 ---
 
 # The Related Raw Docs Data Info
