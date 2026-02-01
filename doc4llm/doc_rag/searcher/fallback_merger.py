@@ -7,6 +7,8 @@ from FALLBACK_1 (grep TOC search) and FALLBACK_2 (grep context + BM25).
 
 from typing import Any, Dict, List
 
+from .common_utils import normalize_heading_text
+
 
 class FallbackMerger:
     """Fallback 结果合并器"""
@@ -17,7 +19,7 @@ class FallbackMerger:
 
         合并策略：
         1. 按 (doc_set, page_title) 去重
-        2. 合并 headings（去重，保留最高 BM25 分数）
+        2. 合并 headings（使用规范化文本去重，保留最高 BM25 分数和 related_context）
         3. 聚合 heading_count 和 precision_count
         4. 更新 page 分数为最高 heading 分数
 
@@ -45,22 +47,49 @@ class FallbackMerger:
                     "is_precision": result.get("is_precision", False),
                 }
 
-            # Aggregate headings (deduplicate by heading_text)
-            existing_headings = {h["text"] for h in merged_pages[key]["headings"]}
+            # Aggregate headings (deduplicate by normalized heading_text)
+            # Mapping: normalized_text -> index in headings list
+            existing_headings_map = {}  # {normalized_text: index}
+
+            for idx, existing in enumerate(merged_pages[key]["headings"]):
+                normalized = normalize_heading_text(existing.get("text", ""))
+                if normalized:
+                    existing_headings_map[normalized] = idx
 
             for heading in result.get("headings", []):
-                if heading["text"] not in existing_headings:
+                heading_text = heading.get("text", "")
+                normalized = normalize_heading_text(heading_text)
+
+                if not normalized:
+                    # If normalized text is empty, add directly
                     merged_pages[key]["headings"].append(heading)
-                    existing_headings.add(heading["text"])
+                    continue
+
+                if normalized not in existing_headings_map:
+                    # New heading, add it
+                    merged_pages[key]["headings"].append(heading)
+                    existing_headings_map[normalized] = len(merged_pages[key]["headings"]) - 1
                 else:
-                    # If heading already exists, keep the one with higher BM25 score
-                    for idx, existing in enumerate(merged_pages[key]["headings"]):
-                        if existing["text"] == heading["text"]:
-                            existing_score = existing.get("bm25_sim") or 0
-                            new_score = heading.get("bm25_sim") or 0
-                            if new_score > existing_score:
-                                merged_pages[key]["headings"][idx] = heading
-                            break
+                    # Heading exists, decide whether to update based on bm25_sim and related_context
+                    idx = existing_headings_map[normalized]
+                    existing = merged_pages[key]["headings"][idx]
+                    existing_rc = existing.get("related_context", "")
+                    new_rc = heading.get("related_context", "")
+                    existing_bm25 = existing.get("bm25_sim") or 0
+                    new_bm25 = heading.get("bm25_sim") or 0
+
+                    # Merge strategy:
+                    # 1. Keep heading with higher BM25 score
+                    # 2. If BM25 equal, prefer to keep the one with non-empty related_context
+                    # 3. Preserve original text field
+                    if new_bm25 > existing_bm25:
+                        merged_pages[key]["headings"][idx] = heading
+                    elif new_rc and not existing_rc:
+                        # Preserve related_context from FALLBACK_2
+                        existing["related_context"] = new_rc
+                        # Also update source if it comes from FALLBACK_2
+                        if heading.get("source") == "FALLBACK_2":
+                            existing["source"] = "FALLBACK_2"
 
             # Update page-level statistics
             merged_pages[key]["heading_count"] = len(merged_pages[key]["headings"])

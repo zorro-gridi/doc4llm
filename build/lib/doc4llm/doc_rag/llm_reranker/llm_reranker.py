@@ -367,85 +367,13 @@ __all__ = ["LLMReranker", "LLMRerankerConfig", "RerankerResult"]
 
 if __name__ == '__main__':
     from pprint import pprint
+    import json
+
     # 测试用例
     reranker = LLMReranker()
 
-    input_data = {
-  "success": True,
-  "toc_fallback": True,
-  "grep_fallback": True,
-  "query": [
-    "opencode skills creation guide",
-    "opencode skills setup tutorial",
-    "how to create skills in opencode",
-    "opencode skills configuration reference"
-  ],
-  "retrieval_scene": "how_to",
-  "doc_sets_found": [
-    "OpenCode_Docs@latest"
-  ],
-  "results": [
-    {
-      "doc_set": "OpenCode_Docs@latest",
-      "page_title": "Agent Skills",
-      "headings": [
-        {
-          "text": "Agent Skills",
-          "level": 1,
-          "rerank_sim": None,
-          "bm25_sim": None
-        }
-      ],
-      "bm25_sim": 3.3782821163340384,
-      "rerank_sim": None
-    },
-    {
-      "doc_set": "OpenCode_Docs@latest",
-      "page_title": "Plugins",
-      "headings": [
-        {
-          "text": "3. Create a plugin",
-          "level": 2,
-          "rerank_sim": None,
-          "bm25_sim": None
-        }
-      ],
-      "bm25_sim": None,
-      "rerank_sim": None
-    },
-    {
-      "doc_set": "OpenCode_Docs@latest",
-      "page_title": "Web",
-      "headings": [
-        {
-          "text": "3. Configuration",
-          "level": 2,
-          "rerank_sim": None,
-          "bm25_sim": None
-        }
-      ],
-      "bm25_sim": 3.3782821163340384,
-      "rerank_sim": None
-    },
-    {
-      "doc_set": "OpenCode_Docs@latest",
-      "page_title": "Formatters",
-      "headings": [
-        {
-          "text": "3. How it works",
-          "level": 2,
-          "rerank_sim": None,
-          "bm25_sim": None
-        }
-      ],
-      "bm25_sim": 3.3782821163340384,
-      "rerank_sim": None
-    }
-  ],
-  "fallback_used": "FALLBACK_1",
-  "reranker_threshold": 0.6,
-  "message": "Search completed"
-}
+    with open('phase1_5_input.json', 'r') as f:
+        input_data = json.load(f)
 
     result = reranker.rerank(input_data)
     print(f"Success: {result.success}")

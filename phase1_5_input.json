@@ -2,8 +2,8 @@
   "query": [
     "transcript definition",
     "what is transcript in",
-    "transcript concept guide",
-    "transcript usage tutorial"
+    "transcript usage guide",
+    "transcript example tutorial"
   ],
   "doc_sets_found": [
     "Claude_Code_Docs@latest"
@@ -20,12 +20,6 @@
         }
       ],
       "rerank_sim": null
-    },
-    {
-      "doc_set": "Claude_Code_Docs@latest",
-      "page_title": "Hooks reference",
-      "headings": [],
-      "rerank_sim": 1
     },
     {
       "doc_set": "Claude_Code_Docs@latest",
@@ -52,11 +46,6 @@
           "text": "### Session quality surveys",
           "rerank_sim": null,
           "related_context": "When you see the “How is Claude doing this session?” prompt in Claude Code, responding to this survey (including selecting “Dismiss”), only your numeric rating (1, 2, 3, or dismiss) is recorded. We do not collect or store any conversation transcripts, inputs, outputs, or other session data as part of this survey. Unlike thumbs up/down feedback or `/bug` reports, this session quality survey is a simple product satisfaction metric. Your responses to this survey do not impact your data training preferences and cannot be used to train our AI models."
-        },
-        {
-          "text": "### Data retention",
-          "rerank_sim": null,
-          "related_context": "Anthropic retains Claude Code data based on your account type and preferences. **Consumer users (Free, Pro, and Max plans)** :\n* Users who allow data use for model improvement: 5-year retention period to support model development and safety improvements\n* Users who don’t allow data use for model improvement: 30-day retention period\n* Privacy settings can be changed at any time at [claude.ai/settings/data-privacy-controls](https://claude.ai/settings/data-privacy-controls).\n**Commercial users (Team, Enterprise, and API)** :\n* Standard: 30-day retention period\n* Zero data retention: Available with appropriately configured API keys - Claude Code will not retain chat transcripts on servers"
         }
       ],
       "rerank_sim": null
@@ -75,5 +64,5 @@
     }
   ],
   "retrieval_scene": "faithful_reference",
-  "reranker_threshold": 0.61
+  "reranker_threshold": 0.6
 }

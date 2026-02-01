@@ -859,12 +859,35 @@ class DocRAGOrchestrator:
                 "retrieval_scene": scene,
                 "reranker_threshold": reranker_threshold,
             }
-            # 如果 headings 数量 >= 8，设置 rerank_sim=1 并清空 headings
-            for page in search_result_with_scene.get("results", []):
+            # 分离记录：截留 headings=[] 或 headings>=10 的记录
+            original_results = search_result_with_scene.get("results", [])
+            skipped_pages = []  # 截留的页面（headings=[] 或 headings>=10）
+            rerank_input_pages = []  # 送入 LLM reranker 的页面 (0 < len(headings) < 10)
+
+            for page in original_results:
                 headings = page.get("headings", [])
-                if len(headings) >= 8:
-                    page["rerank_sim"] = 1
-                    page["headings"] = []
+                if len(headings) == 0 or len(headings) >= 10:
+                    # 截留：直接转为 sections（整页提取）
+                    skipped_pages.append(page)
+                else:
+                    # 送入 LLM reranker 处理
+                    rerank_input_pages.append(page)
+
+            # 更新 LLM reranker 输入（只包含 0 < len(headings) < 10 的记录）
+            search_result_with_scene["results"] = rerank_input_pages
+
+            # Debug: 打印截留信息
+            if self.config.debug:
+                skipped_empty = sum(1 for p in skipped_pages if len(p.get("headings", [])) == 0)
+                skipped_many = sum(1 for p in skipped_pages if len(p.get("headings", [])) >= 10)
+                print(f"\n{'─' * 60}")
+                print(f"▶ Phase 1.5: 记录分离 [Debug]")
+                print(f"{'─' * 60}")
+                print(f"  总页面数: {len(original_results)}")
+                print(f"  截留页面: {len(skipped_pages)} (空 headings: {skipped_empty}, headings>=10: {skipped_many})")
+                print(f"  送入 LLM reranker: {len(rerank_input_pages)}")
+                print(f"{'─' * 60}\n")
+
             # 保存 Phase 1.5 输入数据（调试用途）
             if self.config.debug:
                 self._save_reranker_input(search_result_with_scene)
@@ -899,6 +922,9 @@ class DocRAGOrchestrator:
                 total_headings_after = llm_result.total_headings_after
                 pages_after = len(llm_result.data.get("results", []))
                 rerank_thinking = llm_result.thinking
+                # 合并：截留记录 + LLM 输出记录 → 形成完整 results
+                reranker_output_results = current_results.get("results", [])
+                self._merged_results_for_parser = skipped_pages + reranker_output_results
             elif embedding_result and embedding_result.get("results"):
                 current_results = embedding_result
                 embedding_rerank_executed = True
@@ -910,6 +936,8 @@ class DocRAGOrchestrator:
                     len(p.get("headings", [])) for p in embedding_pages
                 )
                 pages_after = len(embedding_pages)
+                # 合并：截留记录 + Embedding 输出记录 → 形成完整 results
+                self._merged_results_for_parser = skipped_pages + embedding_pages
             else:
                 traceback.print_exc()
                 llm_empty = not (llm_result and llm_result.data.get("results"))
@@ -959,20 +987,44 @@ class DocRAGOrchestrator:
 
         elif self.config.llm_reranker or needs_rerank:
             try:
+                # 1. 分离记录：截留 headings=[] 或 headings>=10 的记录
+                original_results = search_result_for_rerank.get("results", [])
+                skipped_pages = []  # 截留的页面（headings=[] 或 headings>=10）
+                rerank_input_pages = []  # 送入 LLM reranker 的页面 (0 < len(headings) < 10)
+
+                for page in original_results:
+                    headings = page.get("headings", [])
+                    if len(headings) == 0 or len(headings) >= 10:
+                        # 截留：直接转为 sections（整页提取）
+                        skipped_pages.append(page)
+                    else:
+                        # 送入 LLM reranker 处理
+                        rerank_input_pages.append(page)
+
+                # 2. 构造 LLM reranker 输入（只包含 0 < len(headings) < 10 的记录）
                 search_result_with_scene = {
                     **search_result_for_rerank,
                     "retrieval_scene": scene,
                     "reranker_threshold": reranker_threshold,
+                    "results": rerank_input_pages,
                 }
-                # 如果 headings 数量 >= 8，设置 rerank_sim=1 并清空 headings
-                for page in search_result_with_scene.get("results", []):
-                    headings = page.get("headings", [])
-                    if len(headings) >= 8:
-                        page["rerank_sim"] = 1
-                        page["headings"] = []
+
+                # Debug: 打印截留信息
+                if self.config.debug:
+                    skipped_empty = sum(1 for p in skipped_pages if len(p.get("headings", [])) == 0)
+                    skipped_many = sum(1 for p in skipped_pages if len(p.get("headings", [])) >= 10)
+                    print(f"\n{'─' * 60}")
+                    print(f"▶ Phase 1.5: 记录分离 [Debug]")
+                    print(f"{'─' * 60}")
+                    print(f"  总页面数: {len(original_results)}")
+                    print(f"  截留页面: {len(skipped_pages)} (空 headings: {skipped_empty}, headings>=10: {skipped_many})")
+                    print(f"  送入 LLM reranker: {len(rerank_input_pages)}")
+                    print(f"{'─' * 60}\n")
+
                 # 保存 Phase 1.5 输入数据（调试用途）
                 if self.config.debug:
                     self._save_reranker_input(search_result_with_scene)
+
                 reranker = LLMReranker()
                 rerank_result = reranker.rerank(search_result_with_scene)
                 rerank_thinking = rerank_result.thinking
@@ -983,6 +1035,10 @@ class DocRAGOrchestrator:
                     total_headings_before = rerank_result.total_headings_before
                     total_headings_after = rerank_result.total_headings_after
                     pages_after = len(rerank_result.data.get("results", []))
+
+                    # 4. 合并：截留记录 + LLM 输出记录 → 形成完整 results
+                    reranker_output_results = current_results.get("results", [])
+                    self._merged_results_for_parser = skipped_pages + reranker_output_results
                 else:
                     traceback.print_exc()
                     raise Exception(
@@ -1127,11 +1183,26 @@ class DocRAGOrchestrator:
         # -------------------------------------------------------------------------
         # Phase 1.5 -> Phase 2: Parse Parameters
         # -------------------------------------------------------------------------
+        # 如果有合并后的 results（截留记录 + LLM 输出），使用合并结果
+        # 否则使用 params parser 从 reranker 结果解析
+
+        if hasattr(self, '_merged_results_for_parser') and self._merged_results_for_parser:
+            # 使用合并后的 results 构造 parser 输入
+            merged_results = self._merged_results_for_parser
+            parser_input = {
+                "query": current_results.get("query", []),
+                "doc_sets_found": current_results.get("doc_sets_found", []),
+                "results": merged_results,
+            }
+            delattr(self, '_merged_results_for_parser')
+        else:
+            parser_input = current_results
+
         # 根据是否执行了 reranker 来确定 from_phase
         source_phase = "1.5" if (rerank_executed or embedding_rerank_executed) else "1"
         start_parser_1_5_to_2 = time.perf_counter()
         reader_config_response = parser.parse(
-            from_phase=source_phase, to_phase="2", upstream_output=current_results
+            from_phase=source_phase, to_phase="2", upstream_output=parser_input
         )
         timing["phase_1_5_to_2"] = (time.perf_counter() - start_parser_1_5_to_2) * 1000
         print(

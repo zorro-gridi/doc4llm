@@ -16,7 +16,6 @@ from anthropic import Anthropic
 @dataclass
 class LLM_Config:
     """LLM 调用配置类"""
-    show_thinking: bool = True
     api_key: Optional[str] = None
     base_url: Optional[str] = None
     timeout: int = 60
@@ -82,12 +81,17 @@ class AnthropicClient:
             stream 模式: anthropic.types.Stream[Message] 生成器
             错误时: 透传模型的错误响应
         """
+        # 自动启用流式模式（用户未显式指定时）
+        if "stream" not in kwargs:
+            stream = True
+
         request_kwargs = {
             "model": model,
             "max_tokens": max_tokens,
             "temperature": temperature,
             "messages": messages,
             "stream": stream,
+            # 注意：不传递 thinking 参数，MiniMax 会自动返回 thinking 内容
         }
 
         if system:
@@ -97,22 +101,42 @@ class AnthropicClient:
         if tool_choice:
             request_kwargs["tool_choice"] = tool_choice
 
-        # 根据 show_thinking 配置启用 thinking 模式
-        if self.config.show_thinking:
-            request_kwargs["thinking"] = {"type": "enabled"}
-
         request_kwargs.update(kwargs)
 
         response = self._client.messages.create(**request_kwargs)
 
-        if stream and self.config.show_thinking:
+        if stream:
+            # 真正的流式输出：边接收边打印
+            message = None
             for chunk in response:
-                if hasattr(chunk, "type") and chunk.type == "content_block_delta":
+                if chunk.type == "content_block_delta":
                     delta = getattr(chunk, "delta", None)
-                    if delta and hasattr(delta, "type") and delta.type == "thinking_delta":
-                        thinking = getattr(delta, "thinking", None)
-                        if thinking:
-                            print(thinking, end="", flush=True)
+                    if delta:
+                        if delta.type == "thinking_delta":
+                            thinking = getattr(delta, "thinking", None)
+                            if thinking:
+                                print(thinking, end="", flush=True)
+                        elif delta.type == "text_delta":
+                            text = getattr(delta, "text", None)
+                            if text:
+                                print(text, end="", flush=True)
+                elif chunk.type == "message_stop":
+                    # 流结束时收集完整的 Message
+                    message = getattr(chunk, "message", None)
+
+            if message:
+                return message
+
+            # 如果没有 message_stop，fallback 到非流式请求
+            request_kwargs["stream"] = False
+            return self._client.messages.create(**request_kwargs)
+
+            if message:
+                return message
+
+            # 如果没有 message_stop，fallback 到非流式请求
+            request_kwargs["stream"] = False
+            return self._client.messages.create(**request_kwargs)
 
         return response
 
@@ -141,7 +165,7 @@ def invoke(
         stream: 是否使用流式输出
         tools: 工具定义列表
         tool_choice: 工具选择策略
-        config: LLM_Config 配置对象（show_thinking 控制是否启用 thinking）
+        config: LLM_Config 配置对象
         **kwargs: 其他透传参数
 
     Returns:

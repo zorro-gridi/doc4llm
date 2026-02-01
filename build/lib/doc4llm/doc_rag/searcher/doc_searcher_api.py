@@ -33,7 +33,7 @@ from .anchor_searcher import AnchorSearcher, AnchorSearcherConfig
 from .text_preprocessor import TextPreprocessor, LanguageDetector
 from .search_utils import debug_print
 from .fallback_merger import FallbackMerger
-from .common_utils import filter_query_keywords, extract_heading_level
+from .common_utils import filter_query_keywords, extract_heading_level, normalize_heading_text
 
 import numpy as np
 
@@ -769,14 +769,18 @@ class DocSearcherAPI:
                         # 遍历 fallback headings，更新或添加到 existing headings
                         for fb_heading in fallback_headings:
                             fb_text = fb_heading.get("text", "")
+                            fb_normalized = normalize_heading_text(fb_text)
                             fb_related_ctx = fb_heading.get("related_context", "")
                             fb_source = fb_heading.get("source", "")
 
-                            # 查找是否已存在相同 heading
+                            # 查找是否已存在相同 heading（使用规范化匹配）
                             existing_heading = None
+                            existing_normalized = None
                             for eh in bm25_headings:
-                                if eh.get("text") == fb_text:
+                                eh_normalized = normalize_heading_text(eh.get("text", ""))
+                                if eh_normalized == fb_normalized:
                                     existing_heading = eh
+                                    existing_normalized = eh_normalized
                                     break
 
                             if existing_heading:

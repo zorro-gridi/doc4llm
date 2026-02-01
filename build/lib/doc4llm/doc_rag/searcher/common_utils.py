@@ -227,6 +227,42 @@ def clean_context_from_urls(context: str) -> str:
     return cleaned.strip()
 
 
+def normalize_heading_text(heading_text: str) -> str:
+    """Normalize heading text for matching by removing markdown and numbering patterns.
+
+    Removes:
+    1. Markdown heading markers (#, ##, etc.)
+    2. Number patterns (1., 1.2., （一）, ①, etc.)
+    3. Leading/trailing whitespace
+
+    Args:
+        heading_text: Original heading text
+
+    Returns:
+        Normalized text for matching comparison
+    """
+    if not heading_text:
+        return ""
+
+    text = heading_text.strip()
+
+    # Remove markdown heading markers (#, ##, etc.)
+    text = re.sub(r"^#{1,6}\s+", "", text)
+
+    # Remove numbered patterns at the start:
+    # - Arabic numerals: 1., 1.2., 1.2.3., 1.2
+    # - Chinese numerals: （一）, （二）, etc.
+    # - Circle numbers: ①, ②, ③
+    # - Roman numerals: I., II., iii.
+    # Pattern matches: 1, 1.2, 1.2.3 followed by . or whitespace
+    text = re.sub(r"^\d+(?:\.\d+)*(?:\.|\s)\s*", "", text)
+    text = re.sub(r"^（[一二三四五六七八九十]+）\s*", "", text)
+    text = re.sub(r"^[①②③④⑤⑥⑦⑧⑨⑩]\s*", "", text)
+    text = re.sub(r"^(?:I{1,3}|IV|V|VI{0,3}|IX|X)\.\s*", "", text, flags=re.IGNORECASE)
+
+    return text.strip()
+
+
 __all__ = [
     "remove_url_from_heading",
     "extract_page_title_from_path",
@@ -234,4 +270,5 @@ __all__ = [
     "filter_query_keywords",
     "count_words",
     "clean_context_from_urls",
+    "normalize_heading_text",
 ]
