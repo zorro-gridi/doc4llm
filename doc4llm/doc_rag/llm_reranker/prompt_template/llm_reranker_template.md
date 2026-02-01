@@ -180,24 +180,23 @@ To avoid misunderstanding, we make the commom ground definition below:
 
 ---
 
-## Edge Cases Overide
+## Hard Output Constraint (Must Follow)
 
-### When Page title or Headings ALL Filtered Out
+After all scoring & filtering:
 
-- You **MUST at least add the best one heading matcher back to results list** when you filter out all page title and headings.
-- **Return empty list results is not allowed.**
+1. `results` MUST NOT be empty.
+2. There MUST exist at least ONE result where:
+   - `headings.length >= 1`
+
+❗ If after applying threshold: `{LLM_RERANKER_THRESHOLD}`:
+- No heading satisfies `heading.rerank_sim >= {LLM_RERANKER_THRESHOLD}`
+
+→ You MUST keep the single heading with the **highest `rerank_sim`** across all inputs,
+and return its page with that one heading.
 
 ---
 
 ## Output Format
-
-Return the **exact same JSON structure** with:
-
-1. `rerank_sim` populated: Fill in `null` values with calculated scores (0.0 - 1.0)
-2. `page_title`conditional: Keep page_title with `page_title.rerank_sim >= {LLM_RERANKER_THRESHOLD}` or corresponding `headings[].rerank_sim >= {LLM_RERANKER_THRESHOLD}`
-3. `headings` filtered: Remove headings with `headings[].rerank_sim < {LLM_RERANKER_THRESHOLD}`
-4. `results` notEmpty: Return empty results list is not allowed!
-5. `related_context` removal: Do not remain the related_context field in headings
 
 ```json
 {{
