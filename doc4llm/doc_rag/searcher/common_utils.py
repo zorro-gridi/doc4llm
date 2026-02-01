@@ -33,7 +33,7 @@ def remove_url_from_heading(heading_text: str, preserve_hash: bool = False) -> s
         Cleaned heading text with URLs removed
     """
     # Remove markdown link format [text](url) -> text
-    link_pattern = re.compile(r"\[([^\]]+)\]\([^\)]+\)")
+    link_pattern = re.compile(r"\[([^\[\]]+)\]\([^)]+\)")
     # Remove trailing anchor links (Chinese ：and English :)
     anchor_pattern = re.compile(r"：https://[^\s]+|: https://[^\s]+")
 
@@ -178,9 +178,9 @@ def clean_context_from_urls(context: str) -> str:
     1. Markdown link format [text](url) -> text
     2. Angle bracket links <url> -> url
     3. Trailing anchor links
-    4. Pure URLs (embedded in text)
-    5. Code block URLs ```url```
-    6. Inline code URLs `url`
+    4. Pure URLs (standalone lines)
+    5. URLs in code blocks
+    6. URLs in inline code
 
     Args:
         context: Original context text
@@ -189,7 +189,7 @@ def clean_context_from_urls(context: str) -> str:
         Cleaned context text with URLs removed
     """
     # 1. Remove markdown link format [text](url) -> text
-    link_pattern = re.compile(r"\[([^\]]+)\]\([^\)]+\)")
+    link_pattern = re.compile(r"\[([^\[\]]+)\]\([^)]+\)")
     cleaned = link_pattern.sub(r"\1", context)
 
     # 2. Remove angle bracket links <url> -> url
@@ -200,24 +200,29 @@ def clean_context_from_urls(context: str) -> str:
     anchor_pattern = re.compile(r"：https://[^\s]+|: https://[^\s]+")
     cleaned = anchor_pattern.sub("", cleaned)
 
-    # 4. Remove code block URLs ```url```
-    code_block_pattern = re.compile(r"```[\s\S]*?https?://[^\s]*?```", re.DOTALL)
-    cleaned = code_block_pattern.sub("", cleaned)
-
-    # 5. Remove inline code URLs `url`
-    inline_code_pattern = re.compile(r"`[^`]*?https?://[^\s]*?`")
-    cleaned = inline_code_pattern.sub("", cleaned)
-
-    # 6. Remove remaining pure URLs in code blocks (simple approach)
-    # Remove any line that contains only a URL
+    # 4. Remove standalone URL lines (only URL on the line)
     url_only_pattern = re.compile(r"^\s*https?://[^\s]*\s*$", re.MULTILINE)
     cleaned = url_only_pattern.sub("", cleaned)
 
-    # 6. Remove pure URLs (when URL has no whitespace around it)
-    # (?=\S) ensures non-whitespace after
-    # (?<=\S) ensures non-whitespace before
-    url_pattern = re.compile(r"(?<=\S)https?://[^\s<>]+(?=\S)")
-    cleaned = url_pattern.sub("", cleaned)
+    # 5. Remove code blocks containing URLs (entire block)
+    # Match ``` ... ``` with any URL inside
+    code_block_pattern = re.compile(r"```[^\n]*\n[^\n]*https?://[^\n]*\n```", re.DOTALL)
+    cleaned = code_block_pattern.sub("", cleaned)
+
+    # 6. Remove inline code URLs `url`
+    inline_code_pattern = re.compile(r"`[^`]*?https?://[^\s]*?`")
+    cleaned = inline_code_pattern.sub("", cleaned)
+
+    # 7. Remove remaining pure URLs (with at least one space before)
+    url_with_space_pattern = re.compile(r"\s+https?://[^\s<>]+")
+    cleaned = url_with_space_pattern.sub("", cleaned)
+
+    # 8. Remove remaining URL fragments at line start
+    url_start_pattern = re.compile(r"^https?://[^\s]+", re.MULTILINE)
+    cleaned = url_start_pattern.sub("", cleaned)
+
+    # 9. Clean up empty code block markers
+    cleaned = re.sub(r"```\s*```", "", cleaned)
 
     return cleaned.strip()
 
