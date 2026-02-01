@@ -409,6 +409,25 @@ class DocRAGOrchestrator:
         self.config = config or DocRAGConfig()
         self.last_result = None
 
+    def _save_reranker_input(
+        self,
+        data: Dict[str, Any]
+    ) -> None:
+        """保存 Phase 1.5 LLM Re-ranker 输入数据到 JSON 文件。
+
+        Args:
+            data: 输入数据 (search_result_with_scene)
+        """
+        filename = "phase1_5_input.json"
+        filepath = os.path.join(os.getcwd(), filename)
+
+        try:
+            with open(filepath, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            print(f"▶ [Debug] Phase 1.5 输入数据已保存: {filepath}")
+        except Exception as e:
+            print(f"▶ [Debug] 保存 Phase 1.5 输入数据失败: {e}")
+
     def retrieve(self, query: str) -> DocRAGResult:
         """Execute complete Doc-RAG retrieval workflow.
 
@@ -834,23 +853,34 @@ class DocRAGOrchestrator:
         embedding_result = None
 
         if self.config.embedding_reranker and self.config.llm_reranker:
+            # 构造 Phase 1.5 LLM Re-ranker 输入数据
+            search_result_with_scene = {
+                **search_result_for_rerank,
+                "retrieval_scene": scene,
+                "reranker_threshold": reranker_threshold,
+            }
+            # 如果 headings 数量 >= 8，设置 rerank_sim=1 并清空 headings
+            for page in search_result_with_scene.get("results", []):
+                headings = page.get("headings", [])
+                if len(headings) >= 8:
+                    page["rerank_sim"] = 1
+                    page["headings"] = []
+            # 保存 Phase 1.5 输入数据（调试用途）
+            if self.config.debug:
+                self._save_reranker_input(search_result_with_scene)
+
             with ThreadPoolExecutor(max_workers=2) as executor:
 
-                def run_llm_rerank():
-                    search_result_with_scene = {
-                        **search_result_for_rerank,
-                        "retrieval_scene": scene,
-                        "reranker_threshold": reranker_threshold,
-                    }
+                def run_llm_rerank(input_data: Dict[str, Any]) -> RerankerResult:
                     reranker = LLMReranker()
-                    return reranker.rerank(search_result_with_scene)
+                    return reranker.rerank(input_data)
 
                 def run_embedding_rerank():
                     return searcher.rerank(
                         search_result_for_rerank.get("results", []), optimized_queries
                     )
 
-                future_llm = executor.submit(run_llm_rerank)
+                future_llm = executor.submit(run_llm_rerank, search_result_with_scene)
                 future_embedding = executor.submit(run_embedding_rerank)
 
                 try:
@@ -934,6 +964,15 @@ class DocRAGOrchestrator:
                     "retrieval_scene": scene,
                     "reranker_threshold": reranker_threshold,
                 }
+                # 如果 headings 数量 >= 8，设置 rerank_sim=1 并清空 headings
+                for page in search_result_with_scene.get("results", []):
+                    headings = page.get("headings", [])
+                    if len(headings) >= 8:
+                        page["rerank_sim"] = 1
+                        page["headings"] = []
+                # 保存 Phase 1.5 输入数据（调试用途）
+                if self.config.debug:
+                    self._save_reranker_input(search_result_with_scene)
                 reranker = LLMReranker()
                 rerank_result = reranker.rerank(search_result_with_scene)
                 rerank_thinking = rerank_result.thinking

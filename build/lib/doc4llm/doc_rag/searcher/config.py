@@ -78,14 +78,14 @@ class FallbackConfig:
     Attributes:
         mode: Fallback execution mode - "serial" or "parallel" (default "parallel")
         fallback_2_local_rerank: Enable local reranking for fallback 2 (default True)
-        fallback_2_local_rerank_ratio: Retention ratio for local reranking (0.0-1.0, default 0.6)
+        fallback_2_local_rerank_ratio: Retention ratio for local reranking (0.0-1.0, default 0.8)
         local_device: Device for local reranking - "cpu" or "cuda" (default "cpu")
         local_model_zh: Chinese model for local reranking (default "BAAI/bge-base-zh-v1.5")
         local_model_en: English model for local reranking (default "BAAI/bge-base-en-v1.5")
     """
     mode: str = "parallel"
     fallback_2_local_rerank: bool = True
-    fallback_2_local_rerank_ratio: float = 0.6
+    fallback_2_local_rerank_ratio: float = 0.8
     local_device: str = "cpu"
     local_model_zh: str = "BAAI/bge-base-zh-v1.5"
     local_model_en: str = "BAAI/bge-base-en-v1.5"

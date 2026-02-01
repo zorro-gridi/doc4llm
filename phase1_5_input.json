@@ -1,0 +1,79 @@
+{
+  "query": [
+    "transcript definition",
+    "what is transcript in",
+    "transcript concept guide",
+    "transcript usage tutorial"
+  ],
+  "doc_sets_found": [
+    "Claude_Code_Docs@latest"
+  ],
+  "results": [
+    {
+      "doc_set": "Claude_Code_Docs@latest",
+      "page_title": "Get started with Claude Code hooks",
+      "headings": [
+        {
+          "text": "# Get started with Claude Code hooks",
+          "rerank_sim": null,
+          "related_context": ""
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "Claude_Code_Docs@latest",
+      "page_title": "Hooks reference",
+      "headings": [],
+      "rerank_sim": 1
+    },
+    {
+      "doc_set": "Claude_Code_Docs@latest",
+      "page_title": "Claude Code in Slack",
+      "headings": [
+        {
+          "text": "### Session flow",
+          "rerank_sim": null,
+          "related_context": "1. **Initiation** : You @mention Claude with a coding request\n2. **Detection** : Claude analyzes your message and detects coding intent\n3. **Session creation** : A new Claude Code session is created on claude.ai/code\n4. **Progress updates** : Claude posts status updates to your Slack thread as work progresses\n5. **Completion** : When finished, Claude @mentions you with a summary and action buttons\n6. **Review** : Click “View Session” to see the full transcript, or “Create PR” to open a pull request"
+        },
+        {
+          "text": "## What’s accessible where",
+          "rerank_sim": null,
+          "related_context": "**In Slack** : You’ll see status updates, completion summaries, and action buttons. The full transcript is preserved and always accessible. **On the web** : The complete Claude Code session with full conversation history, all code changes, file operations, and the ability to continue the session or create pull requests."
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "Claude_Code_Docs@latest",
+      "page_title": "Data usage",
+      "headings": [
+        {
+          "text": "### Session quality surveys",
+          "rerank_sim": null,
+          "related_context": "When you see the “How is Claude doing this session?” prompt in Claude Code, responding to this survey (including selecting “Dismiss”), only your numeric rating (1, 2, 3, or dismiss) is recorded. We do not collect or store any conversation transcripts, inputs, outputs, or other session data as part of this survey. Unlike thumbs up/down feedback or `/bug` reports, this session quality survey is a simple product satisfaction metric. Your responses to this survey do not impact your data training preferences and cannot be used to train our AI models."
+        },
+        {
+          "text": "### Data retention",
+          "rerank_sim": null,
+          "related_context": "Anthropic retains Claude Code data based on your account type and preferences. **Consumer users (Free, Pro, and Max plans)** :\n* Users who allow data use for model improvement: 5-year retention period to support model development and safety improvements\n* Users who don’t allow data use for model improvement: 30-day retention period\n* Privacy settings can be changed at any time at [claude.ai/settings/data-privacy-controls](https://claude.ai/settings/data-privacy-controls).\n**Commercial users (Team, Enterprise, and API)** :\n* Standard: 30-day retention period\n* Zero data retention: Available with appropriately configured API keys - Claude Code will not retain chat transcripts on servers"
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "Claude_Code_Docs@latest",
+      "page_title": "Create custom subagents",
+      "headings": [
+        {
+          "text": "#### Resume subagents",
+          "rerank_sim": null,
+          "related_context": "Use the code-reviewer subagent to review the authentication module\n[Agent completes]\nContinue that code review and now analyze the authorization logic\n[Claude resumes the subagent with full context from previous conversation]\nYou can also ask Claude for the agent ID if you want to reference it explicitly, or find IDs in the transcript files at `~/.claude/projects/{project}/{sessionId}/subagents/`. Each transcript is stored as `agent-{agentId}.jsonl`. For programmatic usage, see [Subagents in the Agent SDK](https://code.claude.com/docs/en/agent-sdk/subagents). Subagent transcripts persist independently of the main conversation:\n* **Main conversation compaction** : When the main conversation compacts, subagent transcripts are unaffected. They’re stored in separate files."
+        }
+      ],
+      "rerank_sim": null
+    }
+  ],
+  "retrieval_scene": "faithful_reference",
+  "reranker_threshold": 0.61
+}

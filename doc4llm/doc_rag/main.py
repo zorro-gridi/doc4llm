@@ -8,7 +8,7 @@ result = retrieve(
     embedding_reranker=False,
     searcher_reranker=False,
     llm_reranker=True,
-    stop_at_phase='1',  # 停在 Phase 1 查看 search_result
+    # stop_at_phase='1',  # 停在 Phase 1 查看 search_result
     debug=True,
     searcher_config={
         'embedding_provider': 'ms',

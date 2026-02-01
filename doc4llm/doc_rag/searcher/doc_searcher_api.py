@@ -222,7 +222,7 @@ class DocSearcherAPI:
             # FALLBACK_2 local rerank parameters
             "fallback_2_local_rerank": True,
             "fallback_2_local_device": "cpu",
-            "fallback_2_local_rerank_ratio": 0.6,
+            "fallback_2_local_rerank_ratio": 0.8,
         }
 
         # Build config dict and set instance attributes

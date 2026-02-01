@@ -134,7 +134,7 @@ Score headings based on **semantic relevance** regardless of language.
 ### Don't:
 
 - Score based solely on keyword presence
-- Remove results of page_title with a empty headings
+- Remove results where page_title.rerank_sim >= 0.7 (these should have headings = [])
 - Modify any fields other than `rerank_sim`
 - Change the overall JSON structure
 
@@ -149,10 +149,8 @@ Score headings based on **semantic relevance** regardless of language.
 ## Pre Definition
 To avoid misunderstanding, we make the commom ground definition below:
 
-- page title with headings = [], means keep whole page headings
-- page title with headings != [], means keep page with specific headings
-
-You can't remove the page title with headings = [] result.
+- when `page_title.rerank_sim >= threshold` and headings = [], means keep the whole page
+- when `page_title.rerank_sim < threshold` and headings != [], means keep the page with specific headings
 
 ---
 
@@ -227,7 +225,7 @@ Return the **exact same JSON structure** with:
 
 ## Edge Cases
 
-### When Page Title or Headings ALL Filtered Out
+### When Page title or Headings ALL Filtered Out
 
 - You must return the best match result at least when you filter out all page title and headings.
 - **Return empty results is prohibited.**
