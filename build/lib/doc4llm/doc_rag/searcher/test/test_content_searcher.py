@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Test suite for FallbackSearcher module."""
+"""Test suite for ContentSearcher module."""
 import sys
 import tempfile
 from pathlib import Path
@@ -7,7 +7,7 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-from doc4llm.doc_rag.searcher.fallback_searcher import FallbackSearcher
+from doc4llm.doc_rag.searcher.content_searcher import ContentSearcher
 
 
 def create_test_docs(base_dir: Path) -> None:
@@ -95,7 +95,7 @@ def test_basic_search():
         base_dir = Path(tmpdir)
         create_test_docs(base_dir)
 
-        searcher = FallbackSearcher(
+        searcher = ContentSearcher(
             base_dir=str(base_dir),
             domain_nouns=["hooks"],
             debug=True,
@@ -132,7 +132,7 @@ def test_heading_deduplication():
         base_dir = Path(tmpdir)
         create_test_docs(base_dir)
 
-        searcher = FallbackSearcher(
+        searcher = ContentSearcher(
             base_dir=str(base_dir),
             domain_nouns=["hooks"],
             debug=True,
@@ -175,7 +175,7 @@ def test_no_domain_nouns():
         create_test_docs(base_dir)
 
         # Test with empty domain_nouns
-        searcher = FallbackSearcher(
+        searcher = ContentSearcher(
             base_dir=str(base_dir),
             domain_nouns=[],  # Empty
             debug=True,
@@ -203,7 +203,7 @@ def test_max_results_limit():
         create_test_docs(base_dir)
 
         # Set very low max_results
-        searcher = FallbackSearcher(
+        searcher = ContentSearcher(
             base_dir=str(base_dir),
             domain_nouns=["hooks"],
             max_results=3,  # Very low limit
@@ -234,7 +234,7 @@ def test_url_cleaning():
         base_dir = Path(tmpdir)
         create_test_docs(base_dir)
 
-        searcher = FallbackSearcher(
+        searcher = ContentSearcher(
             base_dir=str(base_dir),
             domain_nouns=["hooks"],
             debug=True,
@@ -274,7 +274,7 @@ def test_case_insensitive():
         create_test_docs(base_dir)
 
         # Search with uppercase
-        searcher = FallbackSearcher(
+        searcher = ContentSearcher(
             base_dir=str(base_dir),
             domain_nouns=["HOOKS"],  # Uppercase
             debug=True,
@@ -304,7 +304,7 @@ def test_empty_doc_set():
         base_dir = Path(tmpdir)
         create_test_docs(base_dir)
 
-        searcher = FallbackSearcher(
+        searcher = ContentSearcher(
             base_dir=str(base_dir),
             domain_nouns=["hooks"],
             debug=True,
@@ -332,7 +332,7 @@ def test_nonexistent_keyword():
         base_dir = Path(tmpdir)
         create_test_docs(base_dir)
 
-        searcher = FallbackSearcher(
+        searcher = ContentSearcher(
             base_dir=str(base_dir),
             domain_nouns=["nonexistentkeyword12345"],
             debug=True,
@@ -388,7 +388,7 @@ More content with hooks.
             encoding="utf-8",
         )
 
-        searcher = FallbackSearcher(
+        searcher = ContentSearcher(
             base_dir=str(base_dir),
             domain_nouns=["hooks"],
             debug=True,
@@ -415,7 +415,7 @@ More content with hooks.
 def run_all_tests():
     """Run all tests."""
     print("\n" + "#" * 60)
-    print("# FallbackSearcher Test Suite")
+    print("# ContentSearcher Test Suite")
     print("#" * 60)
 
     tests = [

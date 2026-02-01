@@ -37,12 +37,12 @@ Note:
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 from typing import List, Optional
 
 from .doc_searcher_api import DocSearcherAPI
+from .common_utils import filter_query_keywords
 
 
 def load_skiped_keywords(domain_nouns: List[str] = None) -> List[str]:
@@ -69,34 +69,6 @@ def load_skiped_keywords(domain_nouns: List[str] = None) -> List[str]:
         return [kw for kw in all_keywords if kw.lower() in domain_set]
 
     return all_keywords
-
-
-def filter_query_keywords(query: str, skiped_keywords: List[str]) -> str:
-    """Filter out skiped keywords from query string (case-insensitive).
-
-    Args:
-        query: Original query string
-        skiped_keywords: List of keywords to remove
-
-    Returns:
-        Filtered query string with keywords removed (case-insensitive match)
-    """
-    # Strip query for processing
-    query_lower = query.strip()
-    result = query_lower
-
-    for keyword in skiped_keywords:
-        keyword_lower = keyword.strip().lower()
-        if not keyword_lower:
-            continue
-        # Case-insensitive replacement
-        pattern = keyword_lower
-        # Use regex with re.IGNORECASE flag
-        result = re.sub(re.escape(pattern), '', result, flags=re.IGNORECASE)
-
-    # Clean up extra spaces that may result from keyword removal
-    result = re.sub(r'\s+', ' ', result).strip()
-    return result
 
 
 def create_parser() -> argparse.ArgumentParser:

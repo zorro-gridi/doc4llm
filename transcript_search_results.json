@@ -1,0 +1,41 @@
+[
+  {
+    "doc_set": "Claude_Code_Docs@latest/Data usage",
+    "page_title": "Data usage",
+    "heading": "### Development Partner Program",
+    "toc_path": "/Users/zorro/project/md_docs_base/Claude_Code_Docs@latest/Data usage/docTOC.md",
+    "bm25_sim": 0.0,
+    "is_basic": true,
+    "is_precision": false,
+    "related_context": "",
+    "source_file": "/Users/zorro/project/md_docs_base/Claude_Code_Docs@latest/Data usage/docContent.md",
+    "match_line_num": 15,
+    "source": "FALLBACK_2"
+  },
+  {
+    "doc_set": "Claude_Code_Docs@latest/Data usage",
+    "page_title": "Data usage",
+    "heading": "### Session quality surveys",
+    "toc_path": "/Users/zorro/project/md_docs_base/Claude_Code_Docs@latest/Data usage/docTOC.md",
+    "bm25_sim": 0.0,
+    "is_basic": true,
+    "is_precision": false,
+    "related_context": "### Session quality surveys\nWhen you see the “How is Claude doing this session?” prompt in Claude Code, responding to this survey (including selecting “Dismiss”), only your numeric rating (1, 2, 3, or dismiss) is recorded. We do not collect or store any conversation transcripts, inputs, outputs, or other session data as part of this survey. Unlike thumbs up/down feedback or `/bug` reports, this session quality survey is a simple product satisfaction metric. Your responses to this survey do not impact your data training preferences and cannot be used to train our AI models.\n### Data retention",
+    "source_file": "/Users/zorro/project/md_docs_base/Claude_Code_Docs@latest/Data usage/docContent.md",
+    "match_line_num": 19,
+    "source": "FALLBACK_2"
+  },
+  {
+    "doc_set": "Claude_Code_Docs@latest/Data usage",
+    "page_title": "Data usage",
+    "heading": "### Data retention",
+    "toc_path": "/Users/zorro/project/md_docs_base/Claude_Code_Docs@latest/Data usage/docTOC.md",
+    "bm25_sim": 0.0,
+    "is_basic": true,
+    "is_precision": false,
+    "related_context": "* Standard: 30-day retention period\n* Zero data retention: Available with appropriately configured API keys - Claude Code will not retain chat transcripts on servers\n* Local caching: Claude Code clients may store sessions locally for up to 30 days to enable session resumption (configurable)",
+    "source_file": "/Users/zorro/project/md_docs_base/Claude_Code_Docs@latest/Data usage/docContent.md",
+    "match_line_num": 32,
+    "source": "FALLBACK_2"
+  }
+]

@@ -6,7 +6,7 @@ retrieval functionality.
 
 Example:
     >>> from bm25_recall import BM25Recall, BM25Config
-    >>> recall = BM25Recall(k1=1.2, b=0.75)
+    >>> recall = BM25Recall(base_dir="/path/to/docs", k1=1.2, b=0.75)
     >>> scored_pages = recall.recall_pages(doc_set, query, threshold=0.6)
     >>> for page in scored_pages:
     ...     print(f"{page['page_title']}: {page['score']}")
@@ -19,6 +19,8 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
+
+from .interfaces import BaseSearcher
 
 
 class SimpleStemmer:
@@ -514,7 +516,7 @@ class ScoredHeading:
         }
 
 
-class BM25Recall:
+class BM25Recall(BaseSearcher):
     """BM25-based recall for page titles and headings.
 
     This class provides methods to recall relevant pages and headings
@@ -549,6 +551,53 @@ class BM25Recall:
         self.threshold_headings = threshold_headings
         self.threshold_precision = threshold_precision
         self.debug = debug
+
+    @property
+    def name(self) -> str:
+        """Get the searcher name.
+
+        Returns:
+            Human-readable name identifying this searcher
+        """
+        return "BM25"
+
+    def search(
+        self, queries: List[str], doc_sets: List[str]
+    ) -> List[Dict[str, Any]]:
+        """Execute search for the given queries.
+
+        Args:
+            queries: List of search query strings
+            doc_sets: List of doc-set names to search within
+
+        Returns:
+            List of search result dictionaries with fields:
+                - doc_set: Document set name
+                - page_title: Page title
+                - heading: None (BM25 searches at page level)
+                - toc_path: Path to TOC file
+                - bm25_sim: BM25 similarity score
+                - is_basic: Whether meets basic threshold
+                - is_precision: Whether meets precision threshold
+                - source: Strategy/source identifier ("BM25")
+                - headings: List of scored headings
+        """
+        results = []
+        for doc_set in doc_sets:
+            page_results = self.recall_pages(doc_set, queries)
+            for page in page_results:
+                results.append({
+                    "doc_set": page["doc_set"],
+                    "page_title": page["page_title"],
+                    "heading": None,  # Page-level search returns None for heading
+                    "toc_path": page["toc_path"],
+                    "bm25_sim": page["bm25_sim"],
+                    "is_basic": page["is_basic"],
+                    "is_precision": page.get("is_precision", False),
+                    "source": "BM25",
+                    "headings": page.get("headings", []),
+                })
+        return results
 
     def _debug_print(self, message: str):
         """Print debug message."""
@@ -684,6 +733,7 @@ class BM25Recall:
 
 
 __all__ = [
+    "BaseSearcher",
     "BM25Config",
     "BM25Matcher",
     "BM25Recall",

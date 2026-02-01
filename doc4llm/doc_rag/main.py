@@ -6,15 +6,18 @@ result = retrieve(
     skiped_keywords_path="/Users/zorro/project/doc4llm/doc4llm/doc_rag/searcher/skiped_keywords.txt",
     threshold=3000,
     embedding_reranker=False,
-    searcher_reranker=True,
+    searcher_reranker=False,
     llm_reranker=True,
-    # stop_at_phase='1',  # 停在 Phase 1 查看 search_result
+    stop_at_phase='1',  # 停在 Phase 1 查看 search_result
     debug=True,
     searcher_config={
         'embedding_provider': 'ms',
         'reranker_model_zh': 'Qwen/Qwen3-Embedding-8B',
         'reranker_model_en': 'Qwen/Qwen3-Embedding-8B',
         'embedding_model_id': 'Qwen/Qwen3-Embedding-8B',
+        'local_model_zh': 'BAAI/bge-base-zh-v1.5',
+        'local_model_en': 'BAAI/bge-base-en-v1.5',
+        'fallback_2_local_rerank_ratio': 0.8,
         # 检索召回的阈值
         # 'reranker_threshold': 0.6,
         'hf_inference_provider': 'auto',
@@ -23,7 +26,7 @@ result = retrieve(
         # 精准匹配的阈值
         # 当 rerank_sim 超过此阈值，其下属headings列表会被置空，表示将提取整个文档
         'threshold_precision': 0.7,
-        'threshold_page_title': 3.0,
+        'threshold_page_title': 4,
     }
 )
 

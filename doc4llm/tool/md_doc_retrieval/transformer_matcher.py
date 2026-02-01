@@ -4,12 +4,23 @@ Transformer-based semantic matcher using HuggingFace embeddings.
 Provides language detection and model selection for Chinese/English text.
 Uses BAAI/bge-large-zh-v1.5 for Chinese and BAAI/bge-large-en-v1.5 for English.
 
+Supports two modes:
+- Remote API mode (default): Uses HuggingFace InferenceClient API
+- Local mode: Uses sentence-transformers with models downloaded from HuggingFace Hub
+
 Example:
     >>> from doc4llm.tool.md_doc_retrieval import TransformerMatcher, TransformerConfig
+
+    Remote API mode:
     >>> matcher = TransformerMatcher()
     >>> results = matcher.rerank("查询文本", ["候选1", "候选2", "候选3"])
     >>> for text, score in results:
     ...     print(f"{score:.4f} | {text}")
+
+    Local mode (no API key required):
+    >>> config = TransformerConfig(use_local=True, device="cpu")
+    >>> matcher = TransformerMatcher(config)
+    >>> embeddings = matcher.encode(["文本1", "文本2"])
 """
 
 import os
@@ -23,6 +34,7 @@ import dotenv
 import httpx
 import numpy as np
 from huggingface_hub import InferenceClient, set_client_factory
+from sentence_transformers import SentenceTransformer
 
 
 @dataclass
@@ -30,33 +42,47 @@ class TransformerConfig:
     """Configuration for transformer-based semantic matching.
 
     Attributes:
-        model_zh: Chinese model ID (default: BAAI/bge-large-zh-v1.5)
-        model_en: English model ID (default: BAAI/bge-large-en-v1.5)
+        use_local: Whether to use local model inference (default: False)
+        device: Device to use for local inference ("cpu" or "cuda")
+        local_model_zh: Chinese model ID for local inference (default: BAAI/bge-base-zh-v1.5)
+        local_model_en: English model ID for local inference (default: BAAI/bge-base-en-v1.5)
+        model_zh: Chinese model ID for remote API inference (default: BAAI/bge-large-zh-v1.5)
+        model_en: English model ID for remote API inference (default: BAAI/bge-large-en-v1.5)
         api_key_env: Environment variable name for HuggingFace API key
         env_path: Path to .env file containing HF_KEY
-        device: Device to use ("cpu" or "cuda")
         batch_size: Batch size for embedding computation
         lang_threshold: Ratio of Chinese characters to trigger Chinese model (0-1)
         hf_inference_provider: HuggingFace inference provider (default: "auto")
     """
+    use_local: bool = False
+    device: str = "cpu"
+    local_model_zh: str = "BAAI/bge-base-zh-v1.5"
+    local_model_en: str = "BAAI/bge-base-en-v1.5"
     model_zh: str = "BAAI/bge-large-zh-v1.5"
     model_en: str = "BAAI/bge-large-en-v1.5"
     api_key_env: str = "HF_KEY"
     env_path: str = "doc4llm/.env"
-    device: str = "cpu"
     batch_size: int = 32
-    lang_threshold: float = 0.3
+    lang_threshold: float = 0.9
     hf_inference_provider: str = "auto"
 
 
 class TransformerMatcher:
     """Transformer-based semantic matcher with language auto-detection.
 
-    Uses HuggingFace InferenceClient for embeddings and supports:
+    Supports two modes:
+    - Remote API mode (use_local=False, default): Uses HuggingFace InferenceClient
+    - Local mode (use_local=True): Uses sentence-transformers with local model inference
+
+    Features:
     - Automatic language detection (Chinese/English)
     - Model selection based on text language
     - Batch embedding computation
     - Cosine similarity via normalized dot product
+    - Lazy loading of local models (downloaded from HuggingFace Hub on first use)
+
+    Args:
+        config: Optional configuration. Uses default if not provided.
     """
 
     def __init__(self, config: Optional[TransformerConfig] = None):
@@ -67,10 +93,15 @@ class TransformerMatcher:
         """
         self.config = config or TransformerConfig()
         self._client: Optional[InferenceClient] = None
+        self._local_models: dict = {}
         self._load_env()
 
     def _load_env(self):
         """Load environment variables from .env file."""
+        # Local mode does not require API key
+        if self.config.use_local:
+            return
+
         env_path = self.config.env_path
         if not os.path.isabs(env_path):
             # Try to find the .env file relative to the project root
@@ -124,19 +155,47 @@ class TransformerMatcher:
     def _get_model_id(self, texts: List[str]) -> str:
         """Select model based on aggregated language detection of all texts.
 
+        Uses local_model_zh/local_model_en when use_local=True,
+        otherwise uses model_zh/model_en for remote API inference.
+
         Args:
             texts: List of texts to analyze
 
         Returns:
-            Model ID (either model_zh or model_en)
+            Model ID based on language and mode
         """
         if not texts:
-            return self.config.model_en
+            # Default to English model when no texts provided
+            return self.config.local_model_en if self.config.use_local else self.config.model_en
 
         # Combine all texts for language detection
         combined = " ".join(texts)
         lang = self._detect_language(combined)
-        return self.config.model_zh if lang == "zh" else self.config.model_en
+
+        if self.config.use_local:
+            # Local mode uses local_model_zh/local_model_en
+            return self.config.local_model_zh if lang == "zh" else self.config.local_model_en
+        else:
+            # Remote API mode uses model_zh/model_en
+            return self.config.model_zh if lang == "zh" else self.config.model_en
+
+    def _load_local_model(self, model_id: str) -> SentenceTransformer:
+        """Load local SentenceTransformer model (lazy loading).
+
+        Models are automatically downloaded from HuggingFace Hub if not cached.
+
+        Args:
+            model_id: Model ID from HuggingFace Hub (e.g., "BAAI/bge-large-zh-v1.5")
+
+        Returns:
+            SentenceTransformer model instance
+        """
+        if model_id not in self._local_models:
+            self._local_models[model_id] = SentenceTransformer(
+                model_id,
+                device=self.config.device
+            )
+        return self._local_models[model_id]
 
     def _normalize(self, v: np.ndarray) -> np.ndarray:
         """Normalize vectors for cosine similarity via dot product.
@@ -164,22 +223,29 @@ class TransformerMatcher:
         if not texts:
             return np.array([], dtype=np.float32)
 
-        if self._client is None:
-            raise RuntimeError("InferenceClient not initialized. Call _load_env() first.")
-
         model_id = self._get_model_id(texts)
 
-        # Process in batches
-        all_embeddings = []
-        for i in range(0, len(texts), self.config.batch_size):
-            batch = texts[i:i + self.config.batch_size]
-            # The InferenceClient.feature_extraction accepts a list of strings
-            outputs = self._client.feature_extraction(batch, model=model_id)
-            all_embeddings.append(outputs)
+        if self.config.use_local:
+            # Local mode using SentenceTransformer
+            model = self._load_local_model(model_id)
+            embeddings = model.encode(texts, normalize_embeddings=True)
+            return np.array(embeddings, dtype=np.float32)
+        else:
+            # Remote API mode using InferenceClient
+            if self._client is None:
+                raise RuntimeError("InferenceClient not initialized. Call _load_env() first.")
 
-        # Concatenate all batches
-        embeddings = np.concatenate(all_embeddings, axis=0)
-        return np.array(embeddings, dtype=np.float32)
+            # Process in batches
+            all_embeddings = []
+            for i in range(0, len(texts), self.config.batch_size):
+                batch = texts[i:i + self.config.batch_size]
+                # The InferenceClient.feature_extraction accepts a list of strings
+                outputs = self._client.feature_extraction(batch, model=model_id)
+                all_embeddings.append(outputs)
+
+            # Concatenate all batches
+            embeddings = np.concatenate(all_embeddings, axis=0)
+            return np.array(embeddings, dtype=np.float32)
 
     def rerank(
         self,

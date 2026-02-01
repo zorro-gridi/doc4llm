@@ -166,12 +166,14 @@ class LLMReranker:
             LLM_RERANKER_THRESHOLD=reranker_threshold
         )
 
-    def _parse_response(self, message, reranker_threshold: float = None) -> RerankerResult:
+    def _parse_response(self, message, reranker_threshold: float = None, data: dict = None) -> RerankerResult:
         """
         解析 LLM 响应
 
         Args:
             message: LLM 返回的消息对象
+            reranker_threshold: 重排序阈值
+            data: 原始输入数据字典
 
         Returns:
             RerankerResult: 解析后的重排序结果
@@ -207,6 +209,7 @@ class LLMReranker:
                 )
 
         # 解析失败，返回失败结果
+        data = data or {}
         return RerankerResult(
             data={
                 "success": False,
@@ -288,11 +291,6 @@ class LLMReranker:
             "results": filtered_results
         }
 
-        return {
-            **data,
-            "results": filtered_results
-        }
-
     def rerank(self, data: dict) -> RerankerResult:
         """
         执行重排序（同步）
@@ -330,7 +328,7 @@ class LLMReranker:
             messages=[{"role": "user", "content": prompt}],
         )
 
-        self.last_result = self._parse_response(message, reranker_threshold)
+        self.last_result = self._parse_response(message, reranker_threshold, data)
         return self.last_result
 
     async def rerank_async(self, data: dict) -> RerankerResult:

@@ -1,24 +1,27 @@
 #!/usr/bin/env python
-"""FallbackSearcher - Pythonic 降级搜索器。
+"""ContentSearcher - Pythonic 内容搜索器。
 
-独立于 grep 的检索实现，提供：
 - 纯 Python 文件搜索
 - Heading 级去重（page_title + heading）
 - 全局结果数量限制（无每 doc_set 限制）
 - 足够的上下文回溯 heading
-
-与 DocSearcherAPI 的 FALLBACK_2 策略对比：
-- grep 版本：基于 source_file 去重，每 doc_set 最多 10 条
-- Pythonic 版本：基于 (doc_set, page_title, heading) 去重，全局最多 20 条
 """
 
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
+from .common_utils import (
+    remove_url_from_heading,
+    extract_page_title_from_path,
+    count_words,
+    clean_context_from_urls,
+)
+from .interfaces import BaseSearcher
 
-class FallbackSearcher:
-    """Pythonic 降级搜索器 - 独立于 grep 的检索实现。
+
+class ContentSearcher(BaseSearcher):
+    """Pythonic 内容搜索器 - 独立于 grep 的检索实现。
 
     Features:
     - 纯 Python 实现，无需调用外部 grep 命令
@@ -36,7 +39,7 @@ class FallbackSearcher:
         context_lines: int = 100,
         debug: bool = False,
     ):
-        """初始化 FallbackSearcher。
+        """初始化 ContentSearcher。
 
         Args:
             base_dir: 知识库根目录
@@ -51,9 +54,16 @@ class FallbackSearcher:
         self.context_lines = context_lines
         self.debug = debug
 
-    def search(
-        self, queries: List[str], doc_sets: List[str]
-    ) -> List[Dict[str, Any]]:
+    @property
+    def name(self) -> str:
+        """Get the searcher name.
+
+        Returns:
+            Human-readable name identifying this searcher
+        """
+        return "FALLBACK_2"
+
+    def search(self, queries: List[str], doc_sets: List[str]) -> List[Dict[str, Any]]:
         """主搜索方法。
 
         Features:
@@ -73,7 +83,7 @@ class FallbackSearcher:
         # Step 1: 确定关键词 - 仅使用 domain_nouns
         keywords = self.domain_nouns
         if not keywords:
-            self._debug_print("No domain_nouns, skipping FallbackSearcher")
+            self._debug_print("No domain_nouns, skipping ContentSearcher")
             return []
 
         # Step 2: 构建正则表达式
@@ -99,7 +109,9 @@ class FallbackSearcher:
                 for result in file_results:
                     results.append(result)
                     if len(results) >= self.max_results:
-                        self._debug_print(f"Reached max_results ({self.max_results}), stopping")
+                        self._debug_print(
+                            f"Reached max_results ({self.max_results}), stopping"
+                        )
                         break
 
                 # 检查是否达到全局限制
@@ -109,7 +121,7 @@ class FallbackSearcher:
             if len(results) >= self.max_results:
                 break
 
-        self._debug_print(f"FallbackSearcher: found {len(results)} results")
+        self._debug_print(f"ContentSearcher: found {len(results)} results")
         return results
 
     def _build_pattern(self, keywords: List[str]) -> Optional[re.Pattern]:
@@ -163,7 +175,10 @@ class FallbackSearcher:
         # 提取页面标题
         page_title = self._extract_page_title(lines)
         if page_title == "Unknown":
-            page_title = self._extract_page_title_from_path(str(content_file))
+            page_title = extract_page_title_from_path(str(content_file))
+
+        # 计算 toc_path（与 docContent.md 同目录的 docTOC.md）
+        toc_path = str(content_file.parent / "docTOC.md")
 
         # 搜索所有匹配行
         for line_num, line in enumerate(lines, start=1):
@@ -189,7 +204,7 @@ class FallbackSearcher:
                     "doc_set": doc_set,
                     "page_title": page_title,
                     "heading": heading,
-                    "toc_path": "",
+                    "toc_path": toc_path,
                     "bm25_sim": 0.0,
                     "is_basic": True,
                     "is_precision": False,
@@ -234,32 +249,76 @@ class FallbackSearcher:
         return None
 
     def _extract_context(
-        self, lines: List[str], match_line: int, context_size: int = 5
+        self, lines: List[str], match_line: int, context_size: int = 2
     ) -> str:
-        """提取匹配行周围的上下文。
+        """提取匹配行周围的上下文（限制在 heading 边界内）。
+
+        特点：
+        - 上下文限制在上下 heading 边界内
+        - 返回内容不包含 heading 行
+        - 以匹配行为中心，动态扩展，返回不超过 80 单词的文本
 
         Args:
             lines: 文件所有行
             match_line: 匹配行号（1-based）
-            context_size: 上下文行数（前后各多少行）
+            context_size: 初始上下文行数（前后各多少行）
 
         Returns:
-            上下文文本
+            上下文文本（不超过 80 单词，不包含 heading）
         """
-        context_lines = []
+        # 空列表检查
+        if not lines:
+            return ""
 
-        # 提取上下文行
-        start_idx = max(0, match_line - context_size - 1)
-        end_idx = min(len(lines), match_line + context_size)
+        # 边界检查：match_line 超出范围
+        if match_line < 1 or match_line > len(lines):
+            return ""
 
-        for i in range(start_idx, end_idx):
-            line = lines[i].strip()
-            if line and not line.startswith("--"):
-                context_lines.append(line)
+        # 获取 heading 边界
+        upper_bound, lower_bound = self._find_heading_boundaries(lines, match_line)
+        match_idx = match_line - 1
+        max_words = 80
+        max_context_size = 50
+        expand_step = 5
 
-        # 清理 URL 信息
-        context_text = "\n".join(context_lines)
-        return self._clean_context_from_urls(context_text)
+        # 确保 context_size 不超过最大值
+        current_size = min(context_size, max_context_size)
+        context_lines: List[str] = []  # 预初始化，避免 Pyright 警告
+
+        # 使用 for-else 语法：当循环正常结束（达到最大 context_size）时执行截断
+        for _ in range((max_context_size - context_size) // expand_step + 1):
+            # 计算行索引范围（0-based），限制在 heading 边界内
+            start_idx = max(upper_bound, match_idx - current_size)
+            end_idx = min(lower_bound, match_idx + current_size + 1)
+
+            # 提取并过滤 heading 行
+            for i in range(start_idx, end_idx):
+                line = lines[i].strip()
+                # 跳过 heading 行
+                if self._is_heading_line(line):
+                    continue
+                # 移除 leading "---"（表格分隔线、YAML 分隔符等），保留后续正文
+                line = re.sub(r"^---+\s*", "", line)
+                if line:  # 清理后非空则保留
+                    context_lines.append(line)
+
+            # 清理 URL 并统计单词
+            context_text = "\n".join(context_lines)
+            context_text = self._clean_context_from_urls(context_text)
+            word_count = self._count_words(context_text)
+
+            if word_count <= max_words:
+                return context_text
+
+            # 超过单词限制，扩展上下文再尝试
+            if current_size < max_context_size:
+                current_size += expand_step
+            else:
+                # 已达到最大 context_size，进行截断
+                return self._truncate_symmetric(context_lines, 0, max_words)
+
+        # 兜底：达到最大 context_size，进行截断
+        return self._truncate_symmetric(context_lines, 0, max_words)
 
     def _extract_page_title(self, lines: List[str]) -> str:
         """从文件内容提取页面标题（第一行的 # heading）。
@@ -282,71 +341,119 @@ class FallbackSearcher:
         return "Unknown"
 
     def _extract_page_title_from_path(self, file_path: str) -> str:
-        """从文件路径提取页面标题。
-
-        Args:
-            file_path: 文件路径
-
-        Returns:
-            页面标题
-        """
-        path = Path(file_path)
-
-        # 从路径中提取，如 "docSetName/pageTitle/docContent.md"
-        parts = path.parts
-        if len(parts) >= 2:
-            potential_title = (
-                parts[-2] if parts[-1] in ("docTOC.md", "docContent.md") else parts[-1]
-            )
-            if potential_title and not potential_title.endswith(".md"):
-                return potential_title
-
-        # 尝试读取文件内容
-        try:
-            if path.exists():
-                with open(path, "r", encoding="utf-8") as f:
-                    first_line = f.readline().strip()
-                    if first_line.startswith("#"):
-                        title = first_line.lstrip("#").strip()
-                        if title:
-                            return title
-        except Exception:
-            pass
-
-        return "Unknown"
+        """从文件路径提取页面标题。"""
+        return extract_page_title_from_path(file_path)
 
     def _remove_url_from_heading(self, heading_text: str) -> str:
-        """从 heading 文本中移除 URL 链接。
-
-        Args:
-            heading_text: 原始 heading 文本
-
-        Returns:
-            清理后的 heading 文本
-        """
-        # 移除 markdown 链接格式 [text](url) -> text
-        link_pattern = re.compile(r"\[([^\]]+)\]\([^\)]+\)")
-        # 移除行尾锚点链接
-        anchor_pattern = re.compile(r"：https://[^\s]+|: https://[^\s]+")
-
-        text = link_pattern.sub(r"\1", heading_text)
-        text = anchor_pattern.sub("", text).strip()
-
-        return text
+        """从 heading 文本中移除 URL 链接。"""
+        return remove_url_from_heading(heading_text)
 
     def _clean_context_from_urls(self, context: str) -> str:
-        """从上下文中清理 URL 信息。
+        """从上下文中清理 URL 信息。"""
+        return clean_context_from_urls(context)
+
+    def _count_words(self, text: str) -> int:
+        """统计文本中的词/字符数量（中英文混合支持）。"""
+        return count_words(text)
+
+    def _find_heading_boundaries(
+        self, lines: List[str], match_line: int
+    ) -> Tuple[int, int]:
+        """查找匹配行上下文的扩展边界（受 heading 限制）。
+
+        向上：找到匹配行所属 heading，返回其下一行作为上边界
+        向下：找到下一个 heading，返回其上一行作为下边界
+
+        简言之，上下文只能在匹配行所在 heading 的内容范围内扩展。
 
         Args:
-            context: 原始上下文
+            lines: 文件所有行
+            match_line: 匹配行号（1-based）
 
         Returns:
-            清理后的上下文
+            (start_idx, end_idx) 0-based 索引范围
+            - start_idx: 上边界（可扩展的最早行）
+            - end_idx: 下边界（可扩展的最晚行）+ 1
         """
-        # 移除行尾锚点链接
-        anchor_pattern = re.compile(r"：https://[^\s]+|: https://[^\s]+")
-        cleaned = anchor_pattern.sub("", context)
-        return cleaned.strip()
+        match_idx = match_line - 1  # 0-based
+        n = len(lines)
+
+        # 向上查找最近的 heading
+        upper_bound = 0
+        for i in range(match_idx - 1, -1, -1):
+            line = lines[i].strip()
+            if self._is_heading_line(line):
+                upper_bound = i + 1  # heading 的下一行开始
+                break
+
+        # 向下查找最近的 heading
+        lower_bound = n
+        for i in range(match_idx + 1, n):
+            line = lines[i].strip()
+            if self._is_heading_line(line):
+                lower_bound = i  # heading 的上一行结束
+                break
+
+        return (upper_bound, lower_bound)
+
+    def _is_heading_line(self, line: str) -> bool:
+        """检查行是否为 markdown heading。
+
+        Args:
+            line: 行文本
+
+        Returns:
+            是否为 heading 行
+        """
+        stripped = line.strip()
+        return bool(stripped.startswith("#")) and bool(
+            re.match(r"^#{1,6}\s+", stripped)
+        )
+
+    def _truncate_symmetric(
+        self, lines: List[str], match_idx: int, max_words: int
+    ) -> str:
+        """截断文本到目标词数，使用上下交替剔除策略。
+
+        Args:
+            lines: 原始行列表（已排除 heading 行）
+            match_idx: 匹配行索引（0-based，相对于输入的 lines）
+            max_words: 最大词数
+
+        Returns:
+            截断后的文本
+        """
+        if not lines:
+            return ""
+
+        current_text = "\n".join(lines)
+        word_count = self._count_words(current_text)
+
+        if word_count <= max_words:
+            return current_text
+
+        # 交替剔除上下文
+        left_idx = 0
+        right_idx = len(lines) - 1
+
+        while word_count > max_words and left_idx < right_idx:
+            # 交替从两边剔除一行
+            if (left_idx + right_idx) % 2 == 0:
+                left_idx += 1  # 剔除左边
+            else:
+                right_idx -= 1  # 剔除右边
+
+            current_lines = lines[left_idx : right_idx + 1]
+            current_text = "\n".join(current_lines)
+            word_count = self._count_words(current_text)
+
+        # 边界情况：如果最后 word_count 仍超过 max_words（只剩一行），截断该行
+        if word_count > max_words and current_text:
+            words = current_text.split()
+            if len(words) > max_words:
+                current_text = " ".join(words[:max_words])
+
+        return current_text
 
     def _debug_print(self, message: str) -> None:
         """调试输出。
@@ -355,4 +462,4 @@ class FallbackSearcher:
             message: 调试消息
         """
         if self.debug:
-            print(f"[FallbackSearcher] {message}")
+            print(f"[ContentSearcher] {message}")

@@ -21,13 +21,11 @@ Improve retrieval quality by:
 Use this skill when:
 
 1. Results contain `rerank_sim` fields that need to be rescored or populated
-2. `rerank_sim < threshold` results element need to be filtered out from retrieval results
+2. `rerank_sim(you updated) < threshold` results element need to be filtered out from retrieval results
 
 ---
 
 ## Scene Definitions
-
-Refer to `query_router_template.md` for detailed scene descriptions:
 
 | Scene | Description |
 |-------|-------------|
@@ -80,6 +78,7 @@ When filtering results, you MUST combine:
 1. **Retrieval Scene requirements**
 2. **User Query Intent analysis**
 3. **Document coverage balance**
+4. **Refer the related_context field** if filled
 
 ❗ **Do NOT rely only on literal semantic similarity scores.**
 You must ensure the final document list:
@@ -187,9 +186,10 @@ You can't remove the page title with headings = [] result.
 Return the **exact same JSON structure** with:
 
 1. `rerank_sim` populated: Fill in `null` values with calculated scores (0.0 - 1.0)
-2. `page_title`preserved: Keep page_title with `rerank_sim >= {LLM_RERANKER_THRESHOLD}`
-3. `headings` filtered: Remove headings with `rerank_sim < {LLM_RERANKER_THRESHOLD}`
+2. `page_title`conditional: Keep page_title with `page_title.rerank_sim >= {LLM_RERANKER_THRESHOLD}` or corresponding `headings[].rerank_sim >= {LLM_RERANKER_THRESHOLD}`
+3. `headings` filtered: Remove headings with `headings[].rerank_sim < {LLM_RERANKER_THRESHOLD}`
 4. `results` preserved: Keep results even if headings array is empty
+5. `related_context` removal: Do not remain the related_context field in headings
 
 ```json
 {{
@@ -227,22 +227,11 @@ Return the **exact same JSON structure** with:
 
 ## Edge Cases
 
-### No Matching Page Title or Headings in Results
+### When Page Title or Headings ALL Filtered Out
 
-If all page_title **and** headings are filtered out, keep the result with empty headings:
+- You must return the best match result at least when you filter out all page title and headings.
+- **Return empty results is prohibited.**
 
-```json
-{{
-  "query": [...],
-  "doc_sets_found": [...],
-  "results": [
-    {{
-      "page_title": "",
-      "headings": []
-    }}
-  ]
-}}
-```
 ---
 
 # User Input
