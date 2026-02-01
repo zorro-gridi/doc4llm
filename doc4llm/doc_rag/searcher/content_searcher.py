@@ -37,6 +37,7 @@ class ContentSearcher(BaseSearcher):
         domain_nouns: Optional[List[str]] = None,
         max_results: int = 20,
         context_lines: int = 100,
+        max_words: int = 100,
         debug: bool = False,
     ):
         """初始化 ContentSearcher。
@@ -46,12 +47,14 @@ class ContentSearcher(BaseSearcher):
             domain_nouns: 领域关键词列表（用于精确匹配）
             max_results: 全局最大结果数量（默认 20）
             context_lines: 回溯 heading 的上下文行数（默认 100）
+            max_words: 上下文最大词数（默认 80）
             debug: 是否启用调试输出
         """
         self.base_dir = Path(base_dir)
         self.domain_nouns = domain_nouns or []
         self.max_results = max_results
         self.context_lines = context_lines
+        self.max_words = max_words
         self.debug = debug
 
     @property
@@ -256,7 +259,7 @@ class ContentSearcher(BaseSearcher):
         特点：
         - 上下文限制在上下 heading 边界内
         - 返回内容不包含 heading 行
-        - 以匹配行为中心，动态扩展，返回不超过 80 单词的文本
+        - 尽量逼近 max_words 词数（在边界内尽量收集更多内容）
 
         Args:
             lines: 文件所有行
@@ -264,7 +267,7 @@ class ContentSearcher(BaseSearcher):
             context_size: 初始上下文行数（前后各多少行）
 
         Returns:
-            上下文文本（不超过 80 单词，不包含 heading）
+            上下文文本（不超过 max_words 词，不包含 heading）
         """
         # 空列表检查
         if not lines:
@@ -277,48 +280,93 @@ class ContentSearcher(BaseSearcher):
         # 获取 heading 边界
         upper_bound, lower_bound = self._find_heading_boundaries(lines, match_line)
         match_idx = match_line - 1
-        max_words = 80
-        max_context_size = 50
-        expand_step = 5
+        max_words = self.max_words if hasattr(self, "max_words") else 100
 
-        # 确保 context_size 不超过最大值
-        current_size = min(context_size, max_context_size)
-        context_lines: List[str] = []  # 预初始化，避免 Pyright 警告
+        if max_words <= 0:
+            max_words = 100
 
-        # 使用 for-else 语法：当循环正常结束（达到最大 context_size）时执行截断
-        for _ in range((max_context_size - context_size) // expand_step + 1):
-            # 计算行索引范围（0-based），限制在 heading 边界内
-            start_idx = max(upper_bound, match_idx - current_size)
-            end_idx = min(lower_bound, match_idx + current_size + 1)
+        # 步骤1：收集 heading 边界内的所有非 heading 行
+        all_context_lines: List[Tuple[int, str]] = []  # (原始索引, 行内容)
+        for i in range(upper_bound, lower_bound):
+            line = lines[i].strip()
+            if self._is_heading_line(line):
+                continue
+            line = re.sub(r"^---+\s*", "", line)
+            if line:
+                all_context_lines.append((i, line))
 
-            # 提取并过滤 heading 行
-            for i in range(start_idx, end_idx):
-                line = lines[i].strip()
-                # 跳过 heading 行
-                if self._is_heading_line(line):
+        if not all_context_lines:
+            return ""
+
+        # 步骤2：找到匹配行在列表中的位置
+        match_position = next(
+            (
+                idx
+                for idx, (orig_idx, _) in enumerate(all_context_lines)
+                if orig_idx == match_idx
+            ),
+            0,
+        )
+
+        # 步骤3：统计总词数，如果 <= max_words 直接返回
+        full_text = self._clean_context_from_urls(
+            "\n".join([line for _, line in all_context_lines])
+        )
+        total_words = self._count_words(full_text)
+        if total_words <= max_words:
+            return full_text
+
+        # 步骤4：超过限制，从匹配行向两边扩展
+        left_idx = match_position
+        right_idx = match_position
+        selected: List[str] = [all_context_lines[match_position][1]]
+        current_words = self._count_words(self._clean_context_from_urls(selected[0]))
+
+        # 交替向两边扩展
+        while left_idx > 0 or right_idx < len(all_context_lines) - 1:
+            # 尝试左边
+            if left_idx > 0:
+                left_line = all_context_lines[left_idx - 1][1]
+                left_words = self._count_words(self._clean_context_from_urls(left_line))
+                if current_words + left_words <= max_words:
+                    selected.insert(0, left_line)
+                    current_words += left_words
+                    left_idx -= 1
                     continue
-                # 移除 leading "---"（表格分隔线、YAML 分隔符等），保留后续正文
-                line = re.sub(r"^---+\s*", "", line)
-                if line:  # 清理后非空则保留
-                    context_lines.append(line)
 
-            # 清理 URL 并统计单词
-            context_text = "\n".join(context_lines)
-            context_text = self._clean_context_from_urls(context_text)
-            word_count = self._count_words(context_text)
+            # 尝试右边
+            if right_idx < len(all_context_lines) - 1:
+                right_line = all_context_lines[right_idx + 1][1]
+                right_words = self._count_words(
+                    self._clean_context_from_urls(right_line)
+                )
+                if current_words + right_words <= max_words:
+                    selected.append(right_line)
+                    current_words += right_words
+                    right_idx += 1
+                    continue
 
-            if word_count <= max_words:
-                return context_text
+            # 两边都加不了，停止
+            break
 
-            # 超过单词限制，扩展上下文再尝试
-            if current_size < max_context_size:
-                current_size += expand_step
+        # 步骤5：如果还超了，逐行截断
+        while current_words > max_words and selected:
+            if len(selected) > 1:
+                # 去掉最远的一行
+                removed = selected.pop(0 if left_idx < match_position else -1)
+                current_words -= self._count_words(
+                    self._clean_context_from_urls(removed)
+                )
+                left_idx = max(left_idx, match_position - len(selected))
             else:
-                # 已达到最大 context_size，进行截断
-                return self._truncate_symmetric(context_lines, 0, max_words)
+                # 只剩一行，截断到 max_words
+                words = selected[0].split()
+                if len(words) > max_words:
+                    selected[0] = " ".join(words[:max_words])
+                current_words = self._count_words(selected[0])
+                break
 
-        # 兜底：达到最大 context_size，进行截断
-        return self._truncate_symmetric(context_lines, 0, max_words)
+        return "\n".join(selected)
 
     def _extract_page_title(self, lines: List[str]) -> str:
         """从文件内容提取页面标题（第一行的 # heading）。
