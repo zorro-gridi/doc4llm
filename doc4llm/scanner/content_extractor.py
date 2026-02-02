@@ -357,6 +357,12 @@ class ContentExtractor(DebugMixin):
             cleaned_soup = self.content_filter.filter_non_content_blocks(soup)
             cleaned_soup = self.content_filter.filter_logging_outputs(cleaned_soup)
 
+            # 处理 data-src 懒加载图片：将 data-src 复制到 src
+            for img in cleaned_soup.find_all('img'):
+                data_src = img.get('data-src')
+                if data_src and not img.get('src'):
+                    img['src'] = data_src
+
             # 转换为Markdown
             markdown_content = self.markdown_converter.convert_to_markdown(str(cleaned_soup))
 
@@ -365,6 +371,11 @@ class ContentExtractor(DebugMixin):
 
             # 移除无意义内容
             markdown_content = self.content_filter.remove_meaningless_content(markdown_content)
+
+            # 添加图片URL（在图片下方显示纯URL）
+            extract_images = self.config.extract_image_list
+            if extract_images is not None:
+                markdown_content = self.markdown_converter.add_image_urls(markdown_content, extract_images)
 
             # 添加元数据头部
             header = f"# {title}\n\n"

@@ -114,3 +114,49 @@ class MarkdownConverter:
         markdown = self._clean_markdown(markdown)
 
         return markdown
+
+    def add_image_urls(self, markdown: str, image_filter: list = None) -> str:
+        """
+        在每个图片下方添加纯 URL 链接
+
+        Args:
+            markdown: 原始 Markdown 内容
+            image_filter: 可选，指定要处理的图片 URL 列表
+                         None=不过滤所有图片，[]=不添加任何图片URL，list=只处理匹配的URL
+
+        Returns:
+            str: 处理后的 Markdown 内容
+        """
+        import re
+        from urllib.parse import urlparse
+
+        def _url_matches_filter(url: str, filter_list: list) -> bool:
+            """检查URL是否匹配过滤器"""
+            if not filter_list:
+                return False
+            try:
+                parsed = urlparse(url)
+                for pattern in filter_list:
+                    if pattern in parsed.netloc or pattern in url:
+                        return True
+                return False
+            except Exception:
+                return False
+
+        # 如果配置为空列表，不添加任何图片URL
+        if image_filter is False or image_filter == []:
+            return markdown
+
+        def replace_func(match):
+            alt_text = match.group(1)
+            url = match.group(2)
+
+            # 如果有过滤列表，只处理匹配的 URL
+            if image_filter is not None and image_filter:
+                if not _url_matches_filter(url, image_filter):
+                    return match.group(0)
+
+            return f'{match.group(0)}\n{url}'
+
+        markdown = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', replace_func, markdown)
+        return markdown

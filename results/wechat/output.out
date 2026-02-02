@@ -1279,3 +1279,770 @@ TOC提取失败: 0
 输出目录: /Users/zorro/project/md_docs_base/WeChat@latest
 ============================================================
 
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+==============================================
+=== 开始链接: https://mp.weixin.qq.com/s/NLPK2p10J2mGmHywhCgpOQ
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.w3.org', 'www.baidu.com'}
+=== 白域名单: {'mp.weixin.qq.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/wechat/wechat_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.mkv', '.dll', '.exe', '.css', '.xml', '.wmv', '.flac', '.map', '.7z', '.gz', '.apk', '.docx', '.avi', '.aac', '.json', '.tiff', '.zip', '.ttf', '.eot', '.xlsx', '.xls', '.pptx', '.ppt', '.bz2', '.pdf', '.bmp', '.wav', '.txt', '.ico', '.ogg', '.mov', '.rar', '.otf', '.bin', '.swf', '.flv', '.gif', '.mp4', '.webm', '.doc', '.woff', '.tar', '.woff2', '.mp3', '.js', '.dmg', '.svg', '.iso'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/s/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+==============================================
+=== 文档爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/WeChat@latest
+=== 文档版本: latest
+=== 最大爬取深度: 0
+=== 检测到CSV文件已存在且有内容，跳过URL扫描 ===
+=== 使用 -force-scan 1 可强制刷新CSV文件 ===
+=== 第二步：从CSV文件爬取文档内容 ===
+使用增强版过滤器（支持 content_end_markers）
+
+============================================================
+开始爬取文档站点
+起始URL: https://mp.weixin.qq.com/s/NLPK2p10J2mGmHywhCgpOQ
+输出目录: /Users/zorro/project/md_docs_base/WeChat@latest
+最大深度: 0
+============================================================
+
+从CSV文件读取URL列表...
+从CSV文件读取到 59 个URL
+开始批量爬取 59 个URL...
+
+转换了 27 个相对链接为绝对链接
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接
+转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接移除了 0 个非正文区块
+转换了 27 个相对链接为绝对链接强制删除: <meta class="">移除了 0 个可能的日志输出区块转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接
+转换了 27 个相对链接为绝对链接
+
+
+
+转换了 27 个相对链接为绝对链接
+
+
+转换了 27 个相对链接为绝对链接
+
+强制删除: <meta class="">
+转换了 27 个相对链接为绝对链接
+转换了 27 个相对链接为绝对链接
+
+
+转换了 27 个相对链接为绝对链接
+强制删除: <meta class="">
+转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接
+转换了 27 个相对链接为绝对链接强制删除: <meta class="">转换了 27 个相对链接为绝对链接强制删除: <meta class="">转换了 27 个相对链接为绝对链接
+强制删除: <meta class="">
+
+转换了 27 个相对链接为绝对链接✓ _src.slice -> _src.slice/强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+转换了 27 个相对链接为绝对链接强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+移除了 39 个非正文区块
+
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+移除了 0 个可能的日志输出区块强制删除: <meta class="">
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">
+
+
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">✓ telephone=no -> telephone=no/
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+
+强制删除: <meta class="">转换了 27 个相对链接为绝对链接
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+
+
+强制删除: <meta class="">
+✓ src -> src/
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+移除了 25 个非正文区块强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">移除了 20 个非正文区块强制删除: <meta class="">
+
+
+强制删除: <meta class="">
+
+转换了 27 个相对链接为绝对链接
+
+转换了 116 个相对链接为绝对链接强制删除: <meta class="">
+移除了 21 个非正文区块强制删除: <meta class="">移除了 35 个非正文区块
+
+转换了 27 个相对链接为绝对链接
+
+
+
+强制删除: <meta class="">
+
+移除了 0 个可能的日志输出区块
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">移除了 33 个非正文区块
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">移除了 0 个可能的日志输出区块强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+强制删除: <meta class="">强制删除: <meta class="">移除了 0 个可能的日志输出区块强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+✓ location.protocol -> location.protocol/强制删除: <meta class="">
+找到主要内容区域: <div>
+移除了 1 个非正文区块
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+移除了 0 个可能的日志输出区块
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">
+
+移除了 17 个非正文区块强制删除: <meta class="">移除了 0 个可能的日志输出区块强制删除: <meta class="">
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+移除了 47 个非正文区块
+移除了 37 个非正文区块移除了 53 个非正文区块移除了 52 个非正文区块
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">✓ %2342ecdbc5-cb5f-41dc-88b6-1ee9f740fee0-a -> %2342ecdbc5-cb5f-41dc-88b6-1ee9f740fee0-a/移除了 56 个非正文区块
+
+强制删除: <meta class="">移除了 58 个非正文区块
+移除了 0 个可能的日志输出区块移除了 0 个可能的日志输出区块移除了 50 个非正文区块
+
+
+
+强制删除: <meta class="">转换了 27 个相对链接为绝对链接
+✓ HistoryKey -> HistoryKey/强制删除: <meta class="">
+
+移除了 39 个非正文区块
+强制删除: <meta class="">移除了 0 个可能的日志输出区块
+转换了 27 个相对链接为绝对链接
+移除了 68 个非正文区块
+
+
+移除了 65 个非正文区块强制删除: <img class="wx_follow_avatar_pic">
+转换了 27 个相对链接为绝对链接移除了 0 个可能的日志输出区块转换了 27 个相对链接为绝对链接强制删除: <meta class="">移除了 0 个可能的日志输出区块
+强制删除: <meta class="">
+
+
+
+
+移除了 0 个可能的日志输出区块
+
+移除了 67 个非正文区块
+
+强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+移除了 0 个可能的日志输出区块移除了 73 个非正文区块
+
+移除了 0 个可能的日志输出区块移除了 61 个非正文区块
+移除了 4 个非正文区块
+强制删除: <meta class="">✓ batch_report -> batch_report/移除了 0 个可能的日志输出区块移除了 0 个可能的日志输出区块强制删除: <meta class="">✓ == -> ==/强制删除: <meta class="">
+
+
+转换了 27 个相对链接为绝对链接
+✓ A -> A/
+
+
+✓ item.getAttribute -> item.getAttribute/
+
+
+
+
+移除了 6 个非正文区块强制删除: <meta class="">
+移除了 0 个可能的日志输出区块
+✓ loca -> loca/
+
+✓ res.action -> res.action/移除了 0 个可能的日志输出区块✓ obj.url -> obj.url/
+✓ textContainer -> textContainer/
+强制删除: <meta class="">移除了 0 个可能的日志输出区块
+
+✓ search_click_id -> search_click_id/强制删除: <meta class="">✓ mp.weixin.qq.com -> mp.weixin.qq.com/
+
+
+转换了 27 个相对链接为绝对链接强制删除: <meta class="">
+
+
+
+强制删除: <div class="">强制删除: <meta class="">
+强制删除: <meta class="">移除了 2 个非正文区块✓ IE=edge -> IE=edge/
+
+
+
+强制删除: <meta class="">移除了 0 个可能的日志输出区块✓ origin-when-cross-origin -> origin-when-cross-origin/强制删除: <meta class="">移除了 0 个可能的日志输出区块强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+
+✓ e.src -> e.src/
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+移除了 0 个可能的日志输出区块✓ action -> action/
+强制删除: <meta class="">
+强制删除: <meta class="">
+✓ width=device-width -> width=device-width/
+
+转换了 27 个相对链接为绝对链接
+
+转换了 27 个相对链接为绝对链接
+强制删除: <meta class="">✓ summary -> summary/
+
+
+移除了 0 个可能的日志输出区块转换了 27 个相对链接为绝对链接强制删除: <meta class="">✓ %23b -> %23b/转换了 27 个相对链接为绝对链接
+转换了 27 个相对链接为绝对链接强制删除: <meta class="">
+转换了 27 个相对链接为绝对链接
+
+
+转换了 27 个相对链接为绝对链接✓ urlarr -> urlarr/移除了 0 个非正文区块
+
+转换了 27 个相对链接为绝对链接
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+转换了 27 个相对链接为绝对链接转换了 27 个相对链接为绝对链接强制删除: <meta class="">转换了 27 个相对链接为绝对链接
+✓ true -> true/
+转换了 27 个相对链接为绝对链接
+强制删除: <meta class="">
+转换了 27 个相对链接为绝对链接
+
+
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+✓ imgPagePosKey -> imgPagePosKey/强制删除: <meta class="">
+
+
+
+
+移除了 1 个非正文区块
+
+转换了 27 个相对链接为绝对链接强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+转换了 27 个相对链接为绝对链接
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+移除了 0 个可能的日志输出区块
+
+
+
+强制删除: <meta class="">移除了 0 个可能的日志输出区块
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+转换了 27 个相对链接为绝对链接
+
+
+强制删除: <meta class="">
+移除了 6 个非正文区块强制删除: <meta class="">转换了 27 个相对链接为绝对链接
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+转换了 27 个相对链接为绝对链接强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+移除了 9 个非正文区块
+✓ batch_get_weapp -> batch_get_weapp/强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+✓ yes -> yes/
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+转换了 27 个相对链接为绝对链接强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">移除了 0 个可能的日志输出区块
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">移除了 27 个非正文区块强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+移除了 5 个非正文区块
+
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+移除了 0 个可能的日志输出区块强制删除: <meta class="">
+
+
+✓ hitItenNode -> hitItenNode/
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">移除了 0 个可能的日志输出区块
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">✓ %23linearGradient-1 -> %23linearGradient-1/
+
+强制删除: <meta class="">移除了 37 个非正文区块强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+移除了 51 个非正文区块
+强制删除: <meta class="">
+
+强制删除: <meta class="">
+
+
+
+
+强制删除: <meta class="">
+强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">移除了 66 个非正文区块
+强制删除: <meta class="">✓ tripleKey -> tripleKey/
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">
+强制删除: <meta class="">强制删除: <meta class="">
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+强制删除: <meta class="">
+
+移除了 76 个非正文区块
+移除了 77 个非正文区块
+
+
+
+强制删除: <meta class="">移除了 0 个可能的日志输出区块强制删除: <meta class="">移除了 0 个可能的日志输出区块
+强制删除: <meta class="">
+移除了 0 个可能的日志输出区块移除了 0 个可能的日志输出区块强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+✓ light -> light/
+
+
+强制删除: <meta class="">移除了 93 个非正文区块
+
+强制删除: <meta class="">
+移除了 0 个可能的日志输出区块
+
+
+
+移除了 0 个可能的日志输出区块
+强制删除: <meta class="">强制删除: <meta class="">
+移除了 94 个非正文区块移除了 96 个非正文区块
+
+移除了 102 个非正文区块强制删除: <meta class="">
+
+
+
+强制删除: <meta class="">
+移除了 108 个非正文区块强制删除: <meta class="">强制删除: <meta class="">
+
+
+
+
+✓ adIframeUrl -> adIframeUrl/移除了 0 个可能的日志输出区块强制删除: <meta class="">移除了 0 个可能的日志输出区块强制删除: <meta class="">
+
+✓ article -> article/
+
+
+
+
+强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">强制删除: <meta class="">
+
+✓ home&real_type=43&__biz= -> home&real_type=43&__biz=/强制删除: <meta class="">✓ %23a -> %23a/
+移除了 0 个可能的日志输出区块✓ imgDataSrc -> imgDataSrc/
+强制删除: <meta class="">
+
+
+移除了 0 个可能的日志输出区块移除了 124 个非正文区块
+
+移除了 114 个非正文区块✓ uri -> uri/
+转换了 116 个相对链接为绝对链接移除了 121 个非正文区块
+移除了 118 个非正文区块移除了 126 个非正文区块
+
+
+
+
+
+
+强制删除: <meta class="">移除了 0 个可能的日志输出区块
+强制删除: <meta class="">移除了 1 个非正文区块移除了 0 个可能的日志输出区块
+
+
+移除了 6 个非正文区块移除了 0 个可能的日志输出区块
+移除了 0 个可能的日志输出区块强制删除: <meta class="">移除了 0 个可能的日志输出区块找到主要内容区域: <div>移除了 4 个非正文区块✓ location.href -> location.href/
+强制删除: <meta class="">
+✓ reportData -> reportData/移除了 9 个非正文区块
+
+
+
+
+强制删除: <meta class="">
+
+
+✓ _o.relativeURL -> _o.relativeURL/
+移除了 0 个可能的日志输出区块
+
+
+✓ get_windowproduct -> get_windowproduct/✓ %2342ecdbc5-cb5f-41dc-88b6-1ee9f740fee0-b -> %2342ecdbc5-cb5f-41dc-88b6-1ee9f740fee0-b/
+
+强制删除: <meta class="">
+
+移除了 0 个可能的日志输出区块✓ node -> node/✓ cardData.novel_cover -> cardData.novel_cover/
+移除了 13 个非正文区块
+强制删除: <meta class="">强制删除: <img class="wx_follow_avatar_pic">
+✓ get_wxa_code -> get_wxa_code/移除了 0 个可能的日志输出区块
+
+
+移除了 0 个可能的日志输出区块移除了 0 个可能的日志输出区块
+
+
+
+
+移除了 17 个非正文区块强制删除: <div class="">✓ origin -> origin/
+强制删除: <meta class="">
+
+✓ interactionStatusKey -> interactionStatusKey/
+移除了 0 个可能的日志输出区块
+
+
+
+✓ String -> String/移除了 22 个非正文区块移除了 21 个非正文区块
+
+✓ black -> black/✓ top.location.href -> top.location.href/
+
+移除了 0 个可能的日志输出区块
+
+移除了 0 个可能的日志输出区块
+✓ %23linearGradient-2 -> %23linearGradient-2/
+✓ 名誉保护投诉指引 -> 名誉保护投诉指引/
+
+============================================================
+爬取完成统计
+============================================================
+总计URL: 59
+成功: 59
+失败: 0
+跳过: 0
+过滤: 0
+输出目录: /Users/zorro/project/md_docs_base/WeChat@latest
+============================================================
+

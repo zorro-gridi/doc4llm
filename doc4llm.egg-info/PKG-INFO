@@ -71,6 +71,7 @@ doc4llm is a documentation crawler designed for collecting and converting web do
 | **1** | Document content crawling - saves Markdown files |
 | **2** | Anchor link extraction - extracts TOC links |
 | **3** | Combined mode - executes content crawl and anchor extraction |
+| **4** | Single page crawl - crawls only the specified URL (no recursion, no CSV) |
 
 ### URL Scope Modes
 
@@ -315,6 +316,13 @@ python -m doc4llm -u https://docs.example.com -mode 3 -force-scan 0
 
 ```bash
 python -m doc4llm -u https://docs.example.com -mode 1 -doc-name mydocs -doc-version v1.0
+```
+
+### Single Page Crawl (Mode 4)
+
+```bash
+# Crawl only the specified URL, no recursion, no CSV generation
+python -m doc4llm -u https://docs.example.com/page -mode 4
 ```
 
 ### Scope-Limited Scanning

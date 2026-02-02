@@ -10,3 +10,52 @@
 === 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
 === 所有输出将同时记录到 results/output.out 文件中
 === 扫描开始时间: 2026-02-02 18:01:26
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-02 18:17:10
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-02 18:21:44
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://example.com
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'www.baidu.com', 'claude.com', 'github.com'}
+=== 白域名单: {'code.claude.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/url_extration_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.xlsx', '.xls', '.rar', '.css', '.pdf', '.tar', '.ico', '.mkv', '.ttf', '.wmv', '.avi', '.gz', '.json', '.flac', '.woff2', '.mov', '.mp4', '.bz2', '.xml', '.mp3', '.gif', '.jpeg', '.exe', '.zip', '.ogg', '.swf', '.iso', '.tiff', '.bmp', '.webm', '.png', '.svg', '.dll', '.aac', '.eot', '.7z', '.doc', '.pptx', '.otf', '.webp', '.docx', '.flv', '.js', '.txt', '.jpg', '.ppt', '.wav', '.dmg', '.apk', '.woff', '.map', '.bin'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/docs/en/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: md_docs/Claude_Code_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://example.com ===
+转换了 0 个相对链接为绝对链接
+移除了 0 个非正文区块
+移除了 0 个可能的日志输出区块
+✓ Example Domain -> Example Domain/

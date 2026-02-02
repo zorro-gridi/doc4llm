@@ -44,7 +44,9 @@ class ScannerConfig(DebugMixin):
                  # 内容过滤器配置
                  content_filter=None,
                  # 内联提取配置
-                 enable_inline_extraction=1):
+                 enable_inline_extraction=1,
+                 # 图片URL列表配置
+                 extract_image_list=None):
         # 基础配置
         self.start_url = start_url
         self.proxy = self._init_proxy(proxy)
@@ -115,6 +117,10 @@ class ScannerConfig(DebugMixin):
         # 内联提取配置
         # 0=关闭（使用传统爬虫流程），1=开启（在扫描过程中实时提取内容/TOC）
         self.enable_inline_extraction = int(enable_inline_extraction)
+
+        # 图片URL列表配置
+        # None=启用并提取所有图片，False=禁用，list=只提取匹配的URL
+        self.extract_image_list = extract_image_list
 
         # 扩展名过滤配置
         self.extension_blacklist = self._init_extension_blacklist(extension_blacklist)
