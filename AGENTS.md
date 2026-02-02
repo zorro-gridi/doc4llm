@@ -15,9 +15,6 @@ doc4llm is a documentation crawler for LLM training data. It features recursive 
 **IMPORTANT:** All Python scripts must be executed within the `k8s` conda virtual environment.
 
 ```bash
-# Activate the k8s conda environment
-conda activate k8s
-
 # Install dependencies (first time only)
 pip install -r requirements.txt
 ```

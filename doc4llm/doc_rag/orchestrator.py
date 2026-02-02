@@ -88,6 +88,11 @@ from doc4llm.doc_rag.utils.reranker_utils import (
     adjust_threshold,
     filter_reranker_output,
 )
+from doc4llm.doc_rag.utils.doc_meta_utils import (
+    build_doc_metas_from_results,
+    build_doc_metas_from_sections,
+    build_sources_section,
+)
 
 # Type alias for stop_at_phase parameter
 StopPhase = Literal["0a", "0b", "1", "1.5", "2", "4"]
@@ -185,61 +190,6 @@ def _router_result_to_dict(result: RoutingResult) -> Dict[str, Any]:
     }
 
 
-def _build_doc_metas(results: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Build document metadata list from search/rerank results.
-
-    Args:
-        results: Search results from DocSearcherAPI or reranked results
-
-    Returns:
-        List of document metadata dictionaries
-    """
-    doc_metas = []
-    for page in results.get("results", []):
-        doc_set = page.get("doc_set", "")
-        page_title = page.get("page_title", "")
-
-        # Extract toc_path for source tracking
-        toc_path = page.get("toc_path", "")
-
-        # Build local_path and source_url
-        local_path = ""
-        source_url = ""
-        if toc_path:
-            # local_path points to docContent.md
-            local_path = toc_path.replace("/docTOC.md", "/docContent.md")
-            # Extract original URL from docContent.md
-            # Format: "> **原文链接**: https://..." or "原文链接: https://..."
-            try:
-                with open(local_path, "r", encoding="utf-8") as f:
-                    for line in f:
-                        if "> **原文链接**:" in line or "原文链接:" in line:
-                            # Remove markdown blockquote and formatting
-                            source_url = (
-                                line.replace("> **原文链接**:", "")
-                                .replace("原文链接:", "")
-                                .strip()
-                            )
-                            break
-            except Exception:
-                pass
-
-        headings = page.get("headings", [])
-        heading_texts = [h.get("text", "") for h in headings if h.get("text")]
-
-        doc_metas.append(
-            {
-                "title": page_title,
-                "doc_set": doc_set,
-                "source_url": source_url,
-                "local_path": local_path,
-                "headings": heading_texts,
-            }
-        )
-
-    return doc_metas
-
-
 def _restore_toc_paths(
     results: Dict[str, Any], toc_path_map: Dict[tuple, str]
 ) -> Dict[str, Any]:
@@ -284,7 +234,7 @@ def _build_output_with_wrapper_and_sources(
 
     Args:
         raw_content: Raw extracted content from Phase 2
-        doc_metas: List of document metadata from _build_doc_metas
+        doc_metas: List of document metadata from build_doc_metas_from_sections
         doc_sets: List of doc-set names for source field
 
     Returns:
@@ -293,12 +243,8 @@ def _build_output_with_wrapper_and_sources(
     # Count actual lines in content
     actual_line_count = len(raw_content.strip().split("\n"))
 
-    # Build sources section
-    sources_section = "\n---\n\n### 文档来源 (Sources)\n\n"
-    for i, doc_meta in enumerate(doc_metas, 1):
-        sources_section += f"{i}. **{doc_meta.get('title', '')}**\n"
-        sources_section += f"   - 原文链接: {doc_meta.get('source_url', '')}\n"
-        sources_section += f"   - 本地文档: `{doc_meta.get('local_path', '')}`\n\n"
+    # Build sources section using new module function
+    sources_section = build_sources_section(doc_metas)
 
     # Build source field value (comma-separated doc_sets)
     source_field = ", ".join(doc_sets) if doc_sets else "unknown"
@@ -482,7 +428,7 @@ class DocRAGOrchestrator:
                 print(
                     f"▶ [Phase 0a] Query Optimization 耗时: {timing['phase_0a']:.2f}ms"
                 )
-            if self.config.debug:
+            if self.config.debug and not self.config.silent:
                 print(f"\n{'─' * 60}")
                 print(f"▶ Phase 0a: Query Optimization [原始输出]")
                 print(f"{'─' * 60}")
@@ -526,7 +472,7 @@ class DocRAGOrchestrator:
             timing["phase_0b"] = (time.perf_counter() - start) * 1000
             if not self.config.silent:
                 print(f"▶ [Phase 0b] Scene Routing 耗时: {timing['phase_0b']:.2f}ms")
-            if self.config.debug:
+            if self.config.debug and not self.config.silent:
                 print(f"\n{'─' * 60}")
                 print(f"▶ Phase 0b: Scene Routing [原始输出]")
                 print(f"{'─' * 60}")
@@ -625,7 +571,7 @@ class DocRAGOrchestrator:
             )
 
         # Debug: 打印原始输出
-        if self.config.debug:
+        if self.config.debug and not self.config.silent:
             print_phase_0a_debug(
                 query_analysis=opt_result.query_analysis,
                 optimized_queries=optimized_queries,
@@ -653,7 +599,7 @@ class DocRAGOrchestrator:
             )
 
         # Debug: 打印原始输出
-        if self.config.debug and router_result:
+        if self.config.debug and not self.config.silent and router_result:
             print_phase_0b_debug(
                 scene=scene,
                 confidence=router_result.confidence,
@@ -706,7 +652,7 @@ class DocRAGOrchestrator:
         searcher_config = searcher_config_response.config or {}
 
         # Debug: 打印参数解析结果
-        if self.config.debug:
+        if self.config.debug and not self.config.silent:
             print_phase_0a_0b_to_1_debug(
                 phases=phases_output,
                 config=searcher_config,
@@ -791,10 +737,10 @@ class DocRAGOrchestrator:
 
         # Check if should stop at Phase 1
         if self.config.stop_at_phase == "1":
-            doc_metas = _build_doc_metas(search_result)
+            doc_metas = build_doc_metas_from_results(search_result)
             if not self.config.silent:
                 print(f"▶ [Phase 1] Document Search 耗时: {timing['phase_1']:.2f}ms")
-            if self.config.debug:
+            if self.config.debug and not self.config.silent:
                 print(f"\n{'─' * 60}")
                 print(f"▶ Phase 1: 文档检索 (Document Search) [原始输出]")
                 print(f"{'─' * 60}")
@@ -835,7 +781,7 @@ class DocRAGOrchestrator:
             )
 
         # Debug: 打印 Phase 1 结果（仅原始 JSON 输出）
-        if self.config.debug:
+        if self.config.debug and not self.config.silent:
             print_phase_1_debug(
                 results=search_result,
                 query=search_query,
@@ -910,7 +856,7 @@ class DocRAGOrchestrator:
             search_result_with_scene["results"] = rerank_input_pages
 
             # Debug: 打印截留信息
-            if self.config.debug:
+            if self.config.debug and not self.config.silent:
                 skipped_empty = sum(
                     1 for p in skipped_pages if len(p.get("headings", [])) == 0
                 )
@@ -969,11 +915,21 @@ class DocRAGOrchestrator:
                 current_results = filter_reranker_output(
                     current_results, reranker_threshold
                 )
+                # 先对 LLM 输出结果回溯 toc_path
+                current_results_with_toc = _restore_toc_paths(current_results, toc_path_map)
                 # 合并：截留记录 + 过滤后 LLM 输出记录 → 形成完整 results
-                reranker_output_results = current_results.get("results", [])
+                reranker_output_results = current_results_with_toc.get("results", [])
                 self._merged_results_for_parser = (
                     skipped_pages + reranker_output_results
                 )
+                # DEBUG: 打印 _merged_results_for_parser 内容
+                if self.config.debug and not self.config.silent:
+                    print(f"[DEBUG] _merged_results_for_parser 设置完成:")
+                    print(f"  - skipped_pages 数量: {len(skipped_pages)}")
+                    print(f"  - reranker_output_results 数量: {len(reranker_output_results)}")
+                    print(f"  - 总数量: {len(self._merged_results_for_parser)}")
+                    for i, page in enumerate(self._merged_results_for_parser):
+                        print(f"    [{i}] {page.get('page_title', 'Unknown')}")
             elif embedding_result and embedding_result.get("results"):
                 current_results = embedding_result
                 embedding_rerank_executed = True
@@ -1045,6 +1001,10 @@ class DocRAGOrchestrator:
                 )
 
         elif self.config.llm_reranker or needs_rerank:
+            # 注意：LLM reranker 需要截留逻辑
+            # - headings=[] 或 headings>=10 的页面直接截留（不送入 LLM）
+            # - 截留页面会在后续与 LLM 结果合并，确保来源信息不丢失
+            # Embedding reranker 不需要截留，使用原始输入和阈值过滤
             try:
                 # 1. 分离记录：截留 headings=[] 或 headings>=10 的记录
                 original_results = search_result_for_rerank.get("results", [])
@@ -1073,7 +1033,7 @@ class DocRAGOrchestrator:
                 }
 
                 # Debug: 打印截留信息
-                if self.config.debug:
+                if self.config.debug and not self.config.silent:
                     skipped_empty = sum(
                         1 for p in skipped_pages if len(p.get("headings", [])) == 0
                     )
@@ -1109,8 +1069,10 @@ class DocRAGOrchestrator:
                     current_results = filter_reranker_output(
                         current_results, reranker_threshold
                     )
+                    # 先对 LLM 输出结果回溯 toc_path
+                    current_results_with_toc = _restore_toc_paths(current_results, toc_path_map)
                     # 合并：截留记录 + 过滤后 LLM 输出记录 → 形成完整 results
-                    reranker_output_results = current_results.get("results", [])
+                    reranker_output_results = current_results_with_toc.get("results", [])
                     self._merged_results_for_parser = (
                         skipped_pages + reranker_output_results
                     )
@@ -1139,7 +1101,7 @@ class DocRAGOrchestrator:
         elif rerank_executed:
             # debug 模式下调用 print_phase_1_5_debug（内部会调用 print_phase_1_5 打印统计）
             # 非 debug 模式下单独调用 print_phase_1_5 打印统计
-            if self.config.debug:
+            if self.config.debug and not self.config.silent:
                 print_phase_1_5_debug(
                     total_before=total_headings_before,
                     total_after=total_headings_after,
@@ -1159,7 +1121,7 @@ class DocRAGOrchestrator:
         elif embedding_rerank_executed:
             # debug 模式下调用 print_phase_1_5_debug（内部会调用 print_phase_1_5 打印统计）
             # 非 debug 模式下调用 print_phase_1_5_embedding（显示 embedding 特有标签）
-            if self.config.debug:
+            if self.config.debug and not self.config.silent:
                 print_phase_1_5_debug(
                     total_before=total_headings_before,
                     total_after=total_headings_after,
@@ -1182,7 +1144,7 @@ class DocRAGOrchestrator:
             fail_reason = "Reranker 返回空结果"
             # debug 模式下调用 print_phase_1_5_debug（内部会调用 print_phase_1_5 打印统计）
             # 非 debug 模式下单独调用 print_phase_1_5_failed 打印失败信息
-            if self.config.debug:
+            if self.config.debug and not self.config.silent:
                 print_phase_1_5_debug(
                     total_before=total_headings_count,
                     total_after=total_headings_count,
@@ -1215,12 +1177,12 @@ class DocRAGOrchestrator:
 
         # Check if should stop at Phase 1.5
         if self.config.stop_at_phase == "1.5":
-            doc_metas = _build_doc_metas(current_results)
+            doc_metas = build_doc_metas_from_results(current_results)
             if not self.config.silent:
                 print(
                     f"▶ [Phase 1.5] Re-ranking ({rerank_type}) 耗时: {timing['phase_1_5']:.2f}ms"
                 )
-            if self.config.debug:
+            if self.config.debug and not self.config.silent:
                 print(f"\n{'─' * 60}")
                 print(f"▶ Phase 1.5: LLM Re-ranking [原始输出]")
                 print(f"{'─' * 60}")
@@ -1275,7 +1237,7 @@ class DocRAGOrchestrator:
                 "doc_sets_found": current_results.get("doc_sets_found", []),
                 "results": merged_results,
             }
-            delattr(self, "_merged_results_for_parser")
+            # 注意：不要在这里删除 _merged_results_for_parser，后面构建 doc_metas 还需要使用
         else:
             parser_input = current_results
 
@@ -1300,7 +1262,7 @@ class DocRAGOrchestrator:
         reader_config = reader_config_response.config or {}
 
         # Debug: 打印参数解析结果
-        if self.config.debug:
+        if self.config.debug and not self.config.silent:
             print_phase_1_to_2_debug(
                 upstream_output=current_results,
                 config=reader_config,
@@ -1349,7 +1311,8 @@ class DocRAGOrchestrator:
             "faithful_reference",
             "how_to",
         ):
-            doc_metas = _build_doc_metas(current_results)
+            # 使用 sections 构建 doc_metas（新方式）
+            doc_metas = build_doc_metas_from_sections(sections, self.config.base_dir)
             raw_output = (
                 "\n\n".join(extraction_result.contents.values())
                 if extraction_result.contents
@@ -1365,7 +1328,7 @@ class DocRAGOrchestrator:
                 wrapped_output = raw_output
 
             # Debug: 打印统计信息
-            if self.config.debug:
+            if self.config.debug and not self.config.silent:
                 total_chars = sum(
                     len(content) for content in extraction_result.contents.values()
                 )
@@ -1397,7 +1360,7 @@ class DocRAGOrchestrator:
                 timing=timing,
             )
 
-        if self.config.debug:
+        if self.config.debug and not self.config.silent:
             print_phase_2_debug(
                 document_count=extraction_result.document_count,
                 total_line_count=extraction_result.total_line_count,
@@ -1414,8 +1377,8 @@ class DocRAGOrchestrator:
         try:
             outputter = SceneOutput()
 
-            # Build doc_metas from current_results
-            doc_metas = _build_doc_metas(current_results)
+            # 使用 sections 构建 doc_metas（新方式）
+            doc_metas = build_doc_metas_from_sections(sections, self.config.base_dir)
 
             # Build compression metadata (Phase 3 is skipped)
             compression_meta = {
@@ -1461,7 +1424,7 @@ class DocRAGOrchestrator:
             )
 
         # Debug: 打印原始输出
-        if self.config.debug:
+        if self.config.debug and not self.config.silent:
             print_phase_4_debug(
                 output_length=len(output_result.output),
                 documents_used=len(doc_metas),
@@ -1701,9 +1664,10 @@ Examples:
 
     parser.add_argument(
         "--silent",
-        action="store_true",
-        default=True,
-        help="Enable silent mode, suppress all output (default: true)",
+        type=int,
+        choices=[0, 1],
+        default=1,
+        help="Enable silent mode, suppress all output (0=off, 1=on, default: 1)",
     )
 
     return parser.parse_args()
@@ -1713,7 +1677,7 @@ def _main() -> int:
     """Main entry point for CLI."""
     start_cli = time.perf_counter()
     args = _parse_args()
-    silent = getattr(args, "silent", True)
+    silent = bool(getattr(args, "silent", 1))  # CLI int (0/1) -> bool for API
 
     if not silent:
         cli_parse_time = (time.perf_counter() - start_cli) * 1000
@@ -1751,7 +1715,7 @@ def _main() -> int:
             stop_at_phase=args.stop_at_phase,
             reader_config=reader_config,
             searcher_config=searcher_config,
-            silent=True,  # CLI 模式静默输出，结果写入文件供 hook 读取
+            silent=silent,  # CLI 模式静默输出，结果写入文件供 hook 读取
         )
 
         # Write to temp file for hook injection (Claude context only, user invisible)
@@ -1765,6 +1729,10 @@ def _main() -> int:
                 f.write(result.output)
             if not silent:
                 print(f"\n[Output saved to: {args.output_file}]", file=sys.stderr)
+
+        # Print result output to console in non-silent mode
+        # if not silent:
+        print(result.output)
 
         return 0 if result.success else 1
 

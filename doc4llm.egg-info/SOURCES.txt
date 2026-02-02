@@ -65,6 +65,8 @@ requirements.txt
 ./doc4llm/doc_rag/test/test_orchestrator_integration.py
 ./doc4llm/doc_rag/test/test_phase1_5_to_phase2.py
 ./doc4llm/doc_rag/test/test_phase_0a_0b.py
+./doc4llm/doc_rag/utils/doc_meta_utils.py
+./doc4llm/doc_rag/utils/reranker_utils.py
 ./doc4llm/extractor/WebContentExtractor.py
 ./doc4llm/extractor/__init__.py
 ./doc4llm/filter/__init__.py
@@ -167,6 +169,8 @@ doc4llm/doc_rag/test/conftest.py
 doc4llm/doc_rag/test/test_orchestrator_integration.py
 doc4llm/doc_rag/test/test_phase1_5_to_phase2.py
 doc4llm/doc_rag/test/test_phase_0a_0b.py
+doc4llm/doc_rag/utils/doc_meta_utils.py
+doc4llm/doc_rag/utils/reranker_utils.py
 doc4llm/extractor/WebContentExtractor.py
 doc4llm/extractor/__init__.py
 doc4llm/filter/__init__.py

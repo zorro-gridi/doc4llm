@@ -42,6 +42,7 @@ class QueryRouterConfig:
         prompt_template_path: prompt 模板文件路径
         max_retries: 最大重试次数（不包含首次调用）(default: 2)
         retry_on_empty_fields: 是否启用重试机制 (default: True)
+        silent: 静默模式，不打印流式输出 (default: False)
     """
     model: str = "MiniMax-M2.1"
     max_tokens: int = 20000
@@ -49,6 +50,7 @@ class QueryRouterConfig:
     prompt_template_path: str = "doc4llm/doc_rag/query_router/prompt_template/query_router_template.md"
     max_retries: int = 2
     retry_on_empty_fields: bool = True
+    silent: bool = False
 
 
 @dataclass
@@ -266,6 +268,7 @@ class QueryRouter:
             temperature=self.config.temperature,
             system=self._prompt_template,
             messages=[{"role": "user", "content": query}],
+            silent=self.config.silent,
         )
 
         # 首次尝试解析
@@ -307,6 +310,7 @@ class QueryRouter:
                 temperature=retry_temp,
                 system=self._prompt_template,
                 messages=[{"role": "user", "content": retry_content}],
+                silent=self.config.silent,
             )
 
             # 尝试解析，失败则继续重试

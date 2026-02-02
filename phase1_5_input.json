@@ -1,20 +1,22 @@
 {
   "query": [
-    "transcript definition",
-    "what is transcript in",
-    "transcript usage guide",
-    "transcript example tutorial"
+    "skills creation guide",
+    "skills setup tutorial",
+    "how to create skills in",
+    "skills configuration reference",
+    "skills creating guide"
   ],
   "doc_sets_found": [
-    "Claude_Code_Docs@latest"
+    "OpenCode_Docs@latest"
   ],
   "results": [
     {
-      "doc_set": "Claude_Code_Docs@latest",
-      "page_title": "Get started with Claude Code hooks",
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "Plugins",
+      "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Plugins/docTOC.md",
       "headings": [
         {
-          "text": "# Get started with Claude Code hooks",
+          "text": "## 3. Create a plugin",
           "rerank_sim": null,
           "related_context": ""
         }
@@ -22,47 +24,165 @@
       "rerank_sim": null
     },
     {
-      "doc_set": "Claude_Code_Docs@latest",
-      "page_title": "Claude Code in Slack",
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "GitLab",
+      "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/GitLab/docTOC.md",
       "headings": [
         {
-          "text": "### Session flow",
+          "text": "### 2.2. Setup",
           "rerank_sim": null,
-          "related_context": "1. **Initiation** : You @mention Claude with a coding request\n2. **Detection** : Claude analyzes your message and detects coding intent\n3. **Session creation** : A new Claude Code session is created on claude.ai/code\n4. **Progress updates** : Claude posts status updates to your Slack thread as work progresses\n5. **Completion** : When finished, Claude @mentions you with a summary and action buttons\n6. **Review** : Click “View Session” to see the full transcript, or “Create PR” to open a pull request"
+          "related_context": "* **Use custom configuration per job** : Configure OpenCode with a custom configuration directory, for example `./config/#custom-directory` to enable or disable functionality per OpenCode invocation.\n* **Minimal setup** : The CI component sets up OpenCode in the background, you only need to create the OpenCode configuration and the initial prompt.\n* **Flexible** : The CI component supports several inputs for customizing its behavior\n* * *\n1. Store your OpenCode authentication JSON as a File type CI environment variables under **Settings** > **CI/CD** > **Variables**. Make sure to mark them as “Masked and hidden”.\n2. Add the following to your `.gitlab-ci.yml` file.\n.gitlab-ci.yml\ninclude:\n- component: $CI_SERVER_FQDN/nagyv/gitlab-opencode/opencode@2\ninputs:\nconfig_dir: ${CI_PROJECT_DIR}/opencode-config"
         },
         {
-          "text": "## What’s accessible where",
+          "text": "### 3.2. Setup",
           "rerank_sim": null,
-          "related_context": "**In Slack** : You’ll see status updates, completion summaries, and action buttons. The full transcript is preserved and always accessible. **On the web** : The complete Claude Code session with full conversation history, all code changes, file operations, and the ability to continue the session or create pull requests."
+          "related_context": ""
+        },
+        {
+          "text": "### Features",
+          "rerank_sim": null,
+          "related_context": "* **Use custom configuration per job** : Configure OpenCode with a custom configuration directory, for example `./config/#custom-directory` to enable or disable functionality per OpenCode invocation.\n* **Minimal setup** : The CI component sets up OpenCode in the background, you only need to create the OpenCode configuration and the initial prompt.\n* **Flexible** : The CI component supports several inputs for customizing its behavior\n* * *"
         }
       ],
       "rerank_sim": null
     },
     {
-      "doc_set": "Claude_Code_Docs@latest",
-      "page_title": "Data usage",
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "Custom Tools",
+      "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Custom Tools/docTOC.md",
       "headings": [
         {
-          "text": "### Session quality surveys",
+          "text": "## 2. Creating a tool",
           "rerank_sim": null,
-          "related_context": "When you see the “How is Claude doing this session?” prompt in Claude Code, responding to this survey (including selecting “Dismiss”), only your numeric rating (1, 2, 3, or dismiss) is recorded. We do not collect or store any conversation transcripts, inputs, outputs, or other session data as part of this survey. Unlike thumbs up/down feedback or `/bug` reports, this session quality survey is a simple product satisfaction metric. Your responses to this survey do not impact your data training preferences and cannot be used to train our AI models."
+          "related_context": ""
         }
       ],
       "rerank_sim": null
     },
     {
-      "doc_set": "Claude_Code_Docs@latest",
-      "page_title": "Create custom subagents",
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "IDE",
+      "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/IDE/docTOC.md",
       "headings": [
         {
-          "text": "#### Resume subagents",
+          "text": "## Installation",
           "rerank_sim": null,
-          "related_context": "Use the code-reviewer subagent to review the authentication module\n[Agent completes]\nContinue that code review and now analyze the authorization logic\n[Claude resumes the subagent with full context from previous conversation]\nYou can also ask Claude for the agent ID if you want to reference it explicitly, or find IDs in the transcript files at `~/.claude/projects/{project}/{sessionId}/subagents/`. Each transcript is stored as `agent-{agentId}.jsonl`. For programmatic usage, see [Subagents in the Agent SDK](https://code.claude.com/docs/en/agent-sdk/subagents). Subagent transcripts persist independently of the main conversation:\n* **Main conversation compaction** : When the main conversation compacts, subagent transcripts are unaffected. They’re stored in separate files."
+          "related_context": "To install OpenCode on VS Code and popular forks like Cursor, Windsurf, VSCodium:\n1. Open VS Code\n2. Open the integrated terminal\n3. Run `opencode` \\- the extension installs automatically\nIf on the other hand you want to use your own IDE when you run `/editor` or `/export` from the TUI, you’ll need to set `export EDITOR=\"code --wait\"`. Learn more.\n* * *"
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "Tools",
+      "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Tools/docTOC.md",
+      "headings": [
+        {
+          "text": "### skill",
+          "rerank_sim": null,
+          "related_context": "Load a skill (a `SKILL.md` file) and return its content in the conversation.\nopencode.json\n{\n\"$schema\": \"https://opencode.ai/config.json\",\n\"permission\": {\n\"skill\": \"allow\"\n}\n}\n* * *"
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "Config",
+      "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Config/docTOC.md",
+      "headings": [
+        {
+          "text": "## Locations",
+          "rerank_sim": null,
+          "related_context": "You can place your config in a couple of different locations and they have a different order of precedence.\nConfiguration files are merged together, not replaced. Settings from the following config locations are combined. Later configs override earlier ones only for conflicting keys. Non-conflicting settings from all configs are preserved.\nFor example, if your global config sets `theme: \"opencode\"` and `autoupdate: true`, and your project config sets `model: \"anthropic/claude-sonnet-4-5\"`, the final configuration will include all three settings.\n* * *"
+        },
+        {
+          "text": "### Remote",
+          "rerank_sim": null,
+          "related_context": "Organizations can provide default configuration via the `.well-known/opencode` endpoint. This is fetched automatically when you authenticate with a provider that supports it.\nRemote config is loaded first, serving as the base layer. All other config sources (global, project) can override these defaults.\nFor example, if your organization provides MCP servers that are disabled by default:\nRemote config from .well-known/opencode\n{\n\"mcp\": {\n\"jira\": {\n\"type\": \"remote\",\n\"url\": \"https://jira.example.com/mcp\",\n\"enabled\": false\n}\n}\n}\nYou can enable specific servers in your local config:\nopencode.json\n{\n\"mcp\": {\n\"jira\": {\n\"type\": \"remote\",\n\"url\": \"https://jira.example.com/mcp\",\n\"enabled\": true\n}\n}\n}\n* * *"
+        },
+        {
+          "text": "#### Provider-Specific Options",
+          "rerank_sim": null,
+          "related_context": "Some providers support additional configuration options beyond the generic `timeout` and `apiKey` settings."
+        },
+        {
+          "text": "##### Amazon Bedrock",
+          "rerank_sim": null,
+          "related_context": "Amazon Bedrock supports AWS-specific configuration:\nopencode.json\n{\n\"$schema\": \"https://opencode.ai/config.json\",\n\"provider\": {\n\"amazon-bedrock\": {\n\"options\": {\n\"region\": \"us-east-1\",\n\"profile\": \"my-aws-profile\",\n\"endpoint\": \"https://bedrock-runtime.us-east-1.vpce-xxxxx.amazonaws.com\"\n}\n}\n}\n}\n* `region` \\- AWS region for Bedrock (defaults to `AWS_REGION` env var or `us-east-1`)\n* `profile` \\- AWS named profile from `~/.aws/credentials` (defaults to `AWS_PROFILE` env var)\n* `endpoint` \\- Custom endpoint URL for VPC endpoints. This is an alias for the generic `baseURL` option using AWS-specific terminology. If both are specified, `endpoint` takes precedence.\nLearn more about Amazon Bedrock configuration.\n* * *"
+        },
+        {
+          "text": "### Files",
+          "rerank_sim": null,
+          "related_context": "Use `{file:path/to/file}` to substitute the contents of a file:\nopencode.json\n{\n\"$schema\": \"https://opencode.ai/config.json\",\n\"instructions\": [\"./custom-instructions.md\"],\n\"provider\": {\n\"openai\": {\n\"options\": {\n\"apiKey\": \"{file:~/.secrets/openai-key}\"\n}\n}\n}\n}\nFile paths can be:\n* Relative to the config file directory\n* Or absolute paths starting with `/` or `~`\nThese are useful for:\n* Keeping sensitive data like API keys in separate files.\n* Including large instruction files without cluttering your config.\n* Sharing common configuration snippets across multiple config files."
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "TUI",
+      "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/TUI/docTOC.md",
+      "headings": [
+        {
+          "text": "## Editor setup",
+          "rerank_sim": null,
+          "related_context": "Unshare current session. Learn more.\n/unshare\n* * *\nBoth the `/editor` and `/export` commands use the editor specified in your `EDITOR` environment variable.\n* Linux/macOS\n* Windows (CMD)\n* Windows (PowerShell)\nTerminal window"
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "MCP servers",
+      "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/MCP servers/docTOC.md",
+      "headings": [
+        {
+          "text": "#### Options",
+          "rerank_sim": null,
+          "related_context": "Option| Type| Required| Description\n|---|---|---\n`type`| String| Y| Type of MCP server connection, must be `\"remote\"`.\n`url`| String| Y| URL of the remote MCP server.\n`enabled`| Boolean| | Enable or disable the MCP server on startup.\n`headers`| Object| | Headers to send with the request.\n`oauth`| Object| | OAuth authentication configuration. See OAuth section below.\n`timeout`| Number| | Timeout in ms for fetching tools from the MCP server. Defaults to 5000 (5 seconds).\n* * *"
+        },
+        {
+          "text": "### Automatic",
+          "rerank_sim": null,
+          "related_context": "For most OAuth-enabled MCP servers, no special configuration is needed. Just configure the remote server:\nopencode.json\n{\n\"$schema\": \"https://opencode.ai/config.json\",\n\"mcp\": {\n\"my-oauth-server\": {\n\"type\": \"remote\",\n\"url\": \"https://mcp.example.com/mcp\"\n}\n}\n}\nIf the server requires authentication, OpenCode will prompt you to authenticate when you first try to use it. If not, you can manually trigger the flow with `opencode mcp auth <server-name>`.\n* * *"
+        },
+        {
+          "text": "### Sentry",
+          "rerank_sim": null,
+          "related_context": "Add the Sentry MCP server to interact with your Sentry projects and issues.\nopencode.json\n{\n\"$schema\": \"https://opencode.ai/config.json\",\n\"mcp\": {\n\"sentry\": {\n\"type\": \"remote\",\n\"url\": \"https://mcp.sentry.dev/mcp\",\n\"oauth\": {}\n}\n}\n}\nAfter adding the configuration, authenticate with Sentry:\nTerminal window\nopencode mcp auth sentry\nThis will open a browser window to complete the OAuth flow and connect OpenCode to your Sentry account.\nOnce authenticated, you can use Sentry tools in your prompts to query issues, projects, and error data.\nShow me the latest unresolved issues in my project. use sentry\n* * *"
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "OpenCode_Docs@latest",
+      "page_title": "Providers",
+      "toc_path": "/Users/zorro/project/md_docs_base/OpenCode_Docs@latest/Providers/docTOC.md",
+      "headings": [
+        {
+          "text": "#### Configuration File (Recommended)",
+          "rerank_sim": null,
+          "related_context": "AWS_BEARER_TOKEN_BEDROCK=XXX opencode\nOr add them to your bash profile:\n~/.bash_profile\nexport AWS_PROFILE=my-dev-profile\nexport AWS_REGION=us-east-1\nFor project-specific or persistent configuration, use `opencode.json`:\nopencode.json\n{\n\"$schema\": \"https://opencode.ai/config.json\",\n\"provider\": {\n\"amazon-bedrock\": {\n\"options\": {\n\"region\": \"us-east-1\",\n\"profile\": \"my-aws-profile\"\n}\n}\n}\n}\n**Available options:**\n* `region` \\- AWS region (e.g., `us-east-1`, `eu-west-1`)\n* `profile` \\- AWS named profile from `~/.aws/credentials`\n* `endpoint` \\- Custom endpoint URL for VPC endpoints (alias for generic `baseURL` option)"
+        },
+        {
+          "text": "### llama.cpp",
+          "rerank_sim": null,
+          "related_context": "opencode.json\n{\n\"$schema\": \"https://opencode.ai/config.json\",\n\"provider\": {\n\"llama.cpp\": {\n\"npm\": \"@ai-sdk/openai-compatible\",\n\"name\": \"llama-server (local)\",\n\"options\": {\n\"baseURL\": \"http://127.0.0.1:8080/v1\"\n},\n\"models\": {\n\"qwen3-coder:a3b\": {\n\"name\": \"Qwen3-Coder: a3b-30b (local)\",\n\"limit\": {\n\"context\": 128000,\n\"output\": 65536\n}\n}\n}\n}\n}\n}\nIn this example:\n* `llama.cpp` is the custom provider ID. This can be any string you want.\n* `npm` specifies the package to use for this provider. Here, `@ai-sdk/openai-compatible` is used for any OpenAI-compatible API.\n* `name` is the display name for the provider in the UI.\n* `options.baseURL` is the endpoint for the local server.\n* `models` is a map of model IDs to their configurations. The model name will be displayed in the model selection list.\n* * *"
+        },
+        {
+          "text": "### LM Studio",
+          "rerank_sim": null,
+          "related_context": "opencode.json\n{\n\"$schema\": \"https://opencode.ai/config.json\",\n\"provider\": {\n\"lmstudio\": {\n\"npm\": \"@ai-sdk/openai-compatible\",\n\"name\": \"LM Studio (local)\",\n\"options\": {\n\"baseURL\": \"http://127.0.0.1:1234/v1\"\n},\n\"models\": {\n\"google/gemma-3n-e4b\": {\n\"name\": \"Gemma 3n-e4b (local)\"\n}\n}\n}\n}\n}\nIn this example:\n* `lmstudio` is the custom provider ID. This can be any string you want.\n* `npm` specifies the package to use for this provider. Here, `@ai-sdk/openai-compatible` is used for any OpenAI-compatible API.\n* `name` is the display name for the provider in the UI.\n* `options.baseURL` is the endpoint for the local server.\n* `models` is a map of model IDs to their configurations. The model name will be displayed in the model selection list.\n* * *"
+        },
+        {
+          "text": "### Ollama",
+          "rerank_sim": null,
+          "related_context": "opencode.json\n{\n\"$schema\": \"https://opencode.ai/config.json\",\n\"provider\": {\n\"ollama\": {\n\"npm\": \"@ai-sdk/openai-compatible\",\n\"name\": \"Ollama (local)\",\n\"options\": {\n\"baseURL\": \"http://localhost:11434/v1\"\n},\n\"models\": {\n\"llama2\": {\n\"name\": \"Llama 2\"\n}\n}\n}\n}\n}\nIn this example:\n* `ollama` is the custom provider ID. This can be any string you want.\n* `npm` specifies the package to use for this provider. Here, `@ai-sdk/openai-compatible` is used for any OpenAI-compatible API.\n* `name` is the display name for the provider in the UI.\n* `options.baseURL` is the endpoint for the local server.\n* `models` is a map of model IDs to their configurations. The model name will be displayed in the model selection list.\n* * *"
         }
       ],
       "rerank_sim": null
     }
   ],
-  "retrieval_scene": "faithful_reference",
-  "reranker_threshold": 0.6
+  "retrieval_scene": "how_to",
+  "reranker_threshold": 0.54
 }

@@ -10,6 +10,7 @@ result = retrieve(
     llm_reranker=True,
     # stop_at_phase='1',  # 停在 Phase 1 查看 search_result
     debug=True,
+    silent=True,
     searcher_config={
         'embedding_provider': 'ms',
         'reranker_model_zh': 'Qwen/Qwen3-Embedding-8B',

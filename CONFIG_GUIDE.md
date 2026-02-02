@@ -169,17 +169,55 @@ max_depth = 2:
 |------|------|--------|
 | 智能URL拼接 | bool | `true` |
 
-**作用**：启用智能URL拼接功能
+**作用**：启用智能URL拼接功能，自动处理相对路径、绝对路径的拼接，以及URL标准化问题
 
 **配置示例**：
 ```json
 "smart_concatenation": true
 ```
 
+**核心功能**：
+
+| 功能 | 说明 | 示例 |
+|------|------|------|
+| 相对路径处理 | 自动将相对路径转换为绝对路径 | `/docs/guide` + `../api/ref` → `/docs/api/ref` |
+| 绝对路径处理 | 自动补全缺失的协议和域名 | `docs.example.com` → `https://docs.example.com/` |
+| URL标准化 | 自动处理末尾斜杠、重复斜杠、路径规范化 | `//api//v1///users/` → `/api/v1/users` |
+| 参数保留 | 自动保留原有URL的查询参数和锚点 | `?version=1#section` 保持不变 |
+| 拼接模式 | 支持多种拼接策略（智能合并、仅父级、仅子级） | 由 `path_route` 和 `api_route` 控制 |
+
+**详细配置**：
+
+`smart_concatenation` 配合以下配置使用：
+
+```json
+{
+  "smart_concatenation": true,
+  "path_route": ["/docs/", "/guide/"],
+  "api_route": ["/v1/", "/v2/"]
+}
+```
+
 **应用场景**：
-- 相对路径处理：自动处理相对路径和绝对路径的拼接
-- URL标准化：自动处理URL末尾斜杠、重复斜杠等问题
-- 参数保留：保留原有URL的查询参数和锚点
+- 处理复杂导航结构：文档站点通常有嵌套的导航层级
+- 混合内容类型：同一页面可能包含文档链接和API端点
+- 相对路径站点：部分站点使用相对路径引用资源
+- 多语言文档：处理不同语言版本的文档路径
+
+**注意事项**：
+- 与 `fuzz` 模式互斥：启用 fuzz 模式时，`smart_concatenation` 自动禁用
+- 性能影响：智能拼接会增加少量CPU开销，但能显著提高URL发现率
+- 安全性：拼接前会进行URL安全检查，防止路径遍历攻击
+
+**与 fuzz 模式对比**：
+
+| 特性 | `smart_concatenation` | `fuzz` |
+|------|----------------------|--------|
+| 工作方式 | 自动分析已有链接进行拼接 | 根据预定义规则暴力拼接 |
+| URL来源 | 基于页面实际发现的链接 | 人工定义的路由规则 |
+| 适用场景 | 结构清晰的文档站点 | API端点、特殊路径结构 |
+| 误报率 | 低（基于实际链接） | 高（可能产生无效URL） |
+| 配置复杂度 | 低（自动处理） | 高（需手动定义路由） |
 
 ---
 
@@ -1161,6 +1199,8 @@ TOC 锚点链接的直接父元素类名（白名单）：
 | `merge_mode` | `string` | `"extend"` | 合并模式：`extend` 或 `replace` |
 | `documentation_preset` | `string\|null` | `null` | 框架预设：`mintlify` / `docusaurus` / `vitepress` / `gitbook` |
 | `non_content_selectors` | `array` | `[...]` | 非正文元素的 CSS 选择器列表 |
+| `force_remove_selectors` | `array` | `[...]` | 强制删除的 CSS 选择器（最高优先级） |
+| `protected_tag_blacklist` | `array` | `[...]` | 强制移除的 HTML 标签黑名单 |
 | `fuzzy_keywords` | `array` | `[...]` | 模糊匹配关键词（用于 class/id 匹配） |
 | `log_levels` | `array` | `[...]` | 日志级别过滤（移除包含这些级别的行） |
 | `meaningless_content` | `array` | `[...]` | 无意义内容模式（从文档中移除） |
@@ -1228,6 +1268,164 @@ TOC 锚点链接的直接父元素类名（白名单）：
   }
 }
 ```
+
+### `force_remove_selectors` - 强制删除选择器
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| 强制删除选择器 | array | `[]` |
+
+**作用**：指定必须被强制移除的 CSS 选择器，具有**最高优先级**，会覆盖 `content_preserve_selectors` 的保护规则
+
+**核心特性**：
+- **最高优先级**：即使元素被 `content_preserve_selectors` 保护，也会强制移除
+- **精确匹配**：只移除完全匹配选择器的元素，不影响子元素
+- **安全机制**：删除前会进行内容备份，方便调试和恢复
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "force_remove_selectors": [
+      ".advertisement",
+      ".tracking-pixel",
+      ".analytics-widget",
+      ".social-share-buttons",
+      "#cookie-banner"
+    ]
+  }
+}
+```
+
+**应用场景**：
+- 广告和追踪脚本容器：移除页面中的广告代码和追踪像素
+- 社交分享按钮：移除社交媒体分享组件
+- Cookie 横幅：移除cookie同意弹窗
+- 调查问卷：移除网站调查弹窗
+- 促销横幅：移除临时促销信息
+
+**工作原理**：
+```
+配置：force_remove_selectors: [".advertisement"]
+      content_preserve_selectors: ["aside"]
+
+页面结构：
+<div class="advertisement">
+  <aside class="callout">
+    <p>重要内容</p>
+  </aside>
+</div>
+
+结果：整个 advertisement 元素（包括里面的 aside）被强制移除
+      不会被 content_preserve_selectors 保护
+```
+
+**与 `non_content_selectors` 的区别**：
+
+| 特性 | `non_content_selectors` | `force_remove_selectors` |
+|------|------------------------|-------------------------|
+| 优先级 | 常规优先级 | **最高优先级** |
+| 保护覆盖 | 会被 `content_preserve_selectors` 保护 | 忽略保护规则 |
+| 适用场景 | 常规非内容元素 | 必须移除的干扰元素 |
+| 误删风险 | 较低（有保护机制） | 较高（可能误删重要内容） |
+
+**注意事项**：
+- 谨慎使用：优先尝试 `non_content_selectors` + `content_preserve_selectors` 组合
+- 备份重要内容：强制删除前确保不需要其中的内容
+- 测试验证：使用 `debug_mode: 1` 查看删除效果
+
+---
+
+### `protected_tag_blacklist` - HTML 标签黑名单
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| 强制移除标签黑名单 | array | `["footer", "aside", "nav"]` |
+
+**作用**：指定必须被强制移除的 HTML 标签类型，无论其内容或属性如何
+
+**核心特性**：
+- **标签类型匹配**：按 HTML 标签名匹配（如 `nav`, `footer`, `aside`）
+- **全局生效**：匹配该标签的所有元素都会被移除
+- **自动保护**：对于需要保护的标签，可从此列表中移除
+
+**默认配置**：
+```json
+"protected_tag_blacklist": [
+  "footer",   // 页脚区域
+  "aside",    // 侧边栏内容
+  "nav"       // 导航栏
+]
+```
+
+**配置示例**：
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "protected_tag_blacklist": [
+      "footer",    // 页脚
+      "aside",     // 侧边栏
+      "nav",       // 导航
+      "script",    // JavaScript 脚本
+      "style",     // 内联样式
+      "iframe",    // 内嵌框架
+      "object",    // 对象嵌入
+      "embed"      // 嵌入内容
+    ]
+  }
+}
+```
+
+**应用场景**：
+- 移除脚本和样式：清理页面中的 JavaScript 和 CSS 代码
+- 移除嵌入内容：清理 iframe、object 等嵌入元素
+- 移除导航元素：移除 nav、header、footer 等非正文标签
+- 移除侧边栏：清理 aside 标签中的非正文内容
+
+**与 `non_content_selectors` 的配合使用**：
+
+```json
+{
+  "content_filter": {
+    "merge_mode": "extend",
+    "protected_tag_blacklist": [
+      "nav", "footer", "aside"
+    ],
+    "non_content_selectors": [
+      ".sidebar",
+      ".breadcrumb",
+      ".pagination"
+    ],
+    "content_preserve_selectors": [
+      "aside.note",
+      "aside.tip"
+    ]
+  }
+}
+```
+
+**注意事项**：
+- `aside` 标签特殊处理：默认在黑名单中，但如果需要保留某些 aside 内容（如提示框），请：
+  1. 从 `protected_tag_blacklist` 中移除 `aside`
+  2. 使用 `non_content_selectors` 移除不需要的 aside
+  3. 使用 `content_preserve_selectors` 保护需要保留的 aside
+- 标签匹配是**精确匹配**：`<nav>` 和 `<NAV>` 视为不同标签
+- 不支持 CSS 选择器：这里是标签名，不是选择器（使用 `non_content_selectors`）
+
+**常见标签用途参考**：
+
+| 标签 | 语义 | 是否建议移除 |
+|------|------|-------------|
+| `nav` | 导航区域 | ✅ 建议移除 |
+| `header` | 页头 | ⚠️ 视情况而定 |
+| `footer` | 页脚 | ✅ 建议移除 |
+| `aside` | 侧边栏 | ⚠️ 视情况而定 |
+| `script` | 脚本代码 | ✅ 建议移除 |
+| `style` | 内联样式 | ✅ 建议移除 |
+| `iframe` | 内嵌框架 | ✅ 建议移除 |
+| `form` | 表单 | ⚠️ 视情况而定 |
 
 ### `fuzzy_keywords` - 模糊匹配关键词
 

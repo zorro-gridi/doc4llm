@@ -9,7 +9,6 @@ import dotenv
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-import anthropic
 from anthropic import Anthropic
 
 
@@ -60,6 +59,7 @@ class AnthropicClient:
         stream: bool = False,
         tools: Optional[List[Dict]] = None,
         tool_choice: Optional[Dict] = None,
+        silent: bool = False,
         **kwargs
     ) -> Any:
         """
@@ -74,6 +74,7 @@ class AnthropicClient:
             stream: 是否使用流式输出
             tools: 工具定义列表
             tool_choice: 工具选择策略
+            silent: 静默模式，不打印流式输出
             **kwargs: 其他透传参数
 
         Returns:
@@ -106,7 +107,20 @@ class AnthropicClient:
         response = self._client.messages.create(**request_kwargs)
 
         if stream:
-            # 真正的流式输出：边接收边打印
+            # 静默模式下不打印任何输出
+            if silent:
+                # 静默模式：收集所有内容但不打印
+                message = None
+                for chunk in response:
+                    if chunk.type == "message_stop":
+                        message = getattr(chunk, "message", None)
+                if message:
+                    return message
+                # 如果没有 message_stop，fallback 到非流式请求
+                request_kwargs["stream"] = False
+                return self._client.messages.create(**request_kwargs)
+
+            # 非静默模式：边接收边打印
             message = None
             for chunk in response:
                 if chunk.type == "content_block_delta":
@@ -131,13 +145,6 @@ class AnthropicClient:
             request_kwargs["stream"] = False
             return self._client.messages.create(**request_kwargs)
 
-            if message:
-                return message
-
-            # 如果没有 message_stop，fallback 到非流式请求
-            request_kwargs["stream"] = False
-            return self._client.messages.create(**request_kwargs)
-
         return response
 
 
@@ -151,6 +158,7 @@ def invoke(
     tools: Optional[List[Dict]] = None,
     tool_choice: Optional[Dict] = None,
     config: Optional[LLM_Config] = None,
+    silent: bool = False,
     **kwargs
 ) -> Any:
     """
@@ -166,6 +174,7 @@ def invoke(
         tools: 工具定义列表
         tool_choice: 工具选择策略
         config: LLM_Config 配置对象
+        silent: 静默模式，不打印流式输出
         **kwargs: 其他透传参数
 
     Returns:
@@ -183,5 +192,6 @@ def invoke(
         stream=stream,
         tools=tools,
         tool_choice=tool_choice,
+        silent=silent,
         **kwargs
     )

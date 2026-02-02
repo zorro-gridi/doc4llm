@@ -2,6 +2,13 @@ from dotenv import load_dotenv
 load_dotenv('doc4llm/.env')
 
 from sentence_transformers import SentenceTransformer
+from transformers import logging
+
+# 禁用加载模型时的进度条（如下载权重时的进度条）
+logging.disable_progress_bar()
+# 只显示 error，不显示 info / warning
+logging.set_verbosity_error()
+
 
 import os
 

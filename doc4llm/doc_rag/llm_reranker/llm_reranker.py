@@ -16,6 +16,7 @@ Example:
 """
 
 from dataclasses import dataclass, field
+import json
 from pathlib import Path
 from typing import Optional, Union
 
@@ -34,12 +35,16 @@ class LLMRerankerConfig:
         temperature: 生成温度 0.0-1.0 (default: 0.1)
         prompt_template_path: prompt 模板文件路径
         filter_threshold: 重排序阈值 (default: 0.5)
+        silent: 静默模式，不打印流式输出 (default: False)
     """
     model: str = "MiniMax-M2.1"
+    # coding plan 暂时不支持
+    # model: str = "MiniMax-M2.1-lightning"
     max_tokens: int = 20000
     temperature: float = 0.1
     prompt_template_path: str = "doc4llm/doc_rag/llm_reranker/prompt_template/llm_reranker_template.md"
     filter_threshold: float = 0.5
+    silent: bool = False
 
 
 @dataclass
@@ -166,13 +171,12 @@ class LLMReranker:
             LLM_RERANKER_THRESHOLD=reranker_threshold
         )
 
-    def _parse_response(self, message, reranker_threshold: float = None, data: dict = None) -> RerankerResult:
+    def _parse_response(self, message, data: dict = None) -> RerankerResult:
         """
         解析 LLM 响应
 
         Args:
             message: LLM 返回的消息对象
-            reranker_threshold: 重排序阈值
             data: 原始输入数据字典
 
         Returns:
@@ -190,16 +194,14 @@ class LLMReranker:
         if raw_response:
             parsed_data = extract_json_from_codeblock(raw_response)
             if parsed_data:
-                threshold = reranker_threshold if reranker_threshold is not None else self.config.filter_threshold
-                filtered_data = self._filter_results(parsed_data, threshold)
                 total_before = self._count_headings(parsed_data)
-                total_after = self._count_headings(filtered_data)
+                total_after = total_before
 
-                success = filtered_data.get("success", True)
-                reason = None if success else filtered_data.get("reason", "Unknown error")
+                success = parsed_data.get("success", True)
+                reason = None if success else parsed_data.get("reason", "Unknown error")
 
                 return RerankerResult(
-                    data=filtered_data,
+                    data=parsed_data,
                     success=success,
                     reason=reason,
                     total_headings_before=total_before,
@@ -241,56 +243,6 @@ class LLMReranker:
             count += len(result.get("headings", []))
         return count
 
-    def _filter_results(self, data: dict, threshold: float) -> dict:
-        """
-        过滤低评分结果
-
-        规则：
-        1. 如果 page_title.rerank_sim >= threshold，保留整个 result（包括所有 headings）
-        2. 如果 page_title.rerank_sim < threshold，只保留 rerank_sim >= threshold 的 headings
-        3. 如果 result 的 headings 列表为空，过滤这条 result
-
-        Args:
-            data: 原始数据字典
-            threshold: 过滤阈值（优先使用传入值，否则使用 config 默认值）
-
-        Returns:
-            过滤后的数据字典
-        """
-        filtered_results = []
-
-        for result in data.get("results", []):
-            page_rerank_sim = result.get("rerank_sim")
-            headings = result.get("headings", [])
-
-            if page_rerank_sim is not None and page_rerank_sim >= threshold:
-                filtered_results.append(result)
-            else:
-                filtered_headings = [
-                    h for h in headings
-                    if h.get("rerank_sim") is not None and h.get("rerank_sim") >= threshold
-                ]
-
-                if filtered_headings:
-                    result_copy = result.copy()
-                    result_copy["headings"] = filtered_headings
-                    filtered_results.append(result_copy)
-
-        # 判断是否所有结果都被过滤掉了
-        if not filtered_results:
-            return {
-                "success": False,
-                "reason": "No relevant results found after LLM reranking",
-                "query": data.get("query", []),
-                "doc_sets_found": data.get("doc_sets_found", []),
-                "results": []
-            }
-
-        return {
-            **data,
-            "results": filtered_results
-        }
-
     def rerank(self, data: dict) -> RerankerResult:
         """
         执行重排序（同步）
@@ -319,16 +271,18 @@ class LLMReranker:
             self._load_prompt_template()
 
         prompt = self._build_prompt(data)
-        reranker_threshold = data.get("reranker_threshold", self.config.filter_threshold)
         message = invoke(
             model=self.config.model,
             max_tokens=self.config.max_tokens,
             temperature=self.config.temperature,
             system=self._prompt_template,
             messages=[{"role": "user", "content": prompt}],
+            silent=self.config.silent,
         )
+        # NOTE: 调试分析原始输出
+        # print(message)
 
-        self.last_result = self._parse_response(message, reranker_threshold, data)
+        self.last_result = self._parse_response(message, data)
         return self.last_result
 
     async def rerank_async(self, data: dict) -> RerankerResult:
@@ -357,9 +311,6 @@ class LLMReranker:
 
     def __repr__(self) -> str:
         return f"LLMReranker(model={self.config.model!r}, filter_threshold={self.config.filter_threshold})"
-
-
-import json
 
 
 __all__ = ["LLMReranker", "LLMRerankerConfig", "RerankerResult"]

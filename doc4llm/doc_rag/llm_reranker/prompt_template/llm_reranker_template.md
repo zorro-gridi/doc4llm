@@ -9,19 +9,17 @@ Analyze and re-rank document retrieval results based on query intent and semanti
 
 Improve retrieval quality by:
 
-- Analyzing semantic relevance between query and retrieved page titles and headings
-- Assigning or reassigning similarity scores (`rerank_sim`) to each page title and heading
-- Filtering out irrelevant results based on score threshold
-- Preserving the original input structure in output
+- **Analyzing** semantic relevance between query and retrieved page titles and headings
+- **Assigning or Override** similarity scores (`rerank_sim`) to each page title and heading
+- **Filtering out** irrelevant results based on score threshold
+- **Preserving** the original input structure in output
 
 ---
 
 ## When to Use
 
-Use this skill when:
-
-1. Results contain `rerank_sim` fields that need to be rescored or populated
-2. `rerank_sim(you updated) < threshold` results element need to be filtered out from retrieval results
+1. Results contain `rerank_sim` fields that need to be **rescored or populated**
+2. `rerank_sim(you updated) < threshold` results need to be filtered out from retrieval results
 
 ---
 
@@ -134,24 +132,15 @@ Score headings based on **semantic relevance** regardless of language.
 ### Don't:
 
 - Score based solely on keyword presence
-- Remove results where page_title.rerank_sim >= 0.7 (these should have headings = [])
+- Remove result with page_title.rerank_sim < threshold but headings[].rerank_sim >= threhold
 - Modify any fields other than `rerank_sim`
 - Change the overall JSON structure
-- Result empty list of results
 
 ### Scoring Order Rule
 
 1. Always score `page_title.rerank_sim` **FIRST**
 2. Then score each `headings[].rerank_sim`
 3. Then apply filtering rules
-
----
-
-## Pre Definition
-To avoid misunderstanding, we make the commom ground definition below:
-
-- when `page_title.rerank_sim >= threshold` and headings = [], means keep the whole page
-- when `page_title.rerank_sim < threshold` and headings != [], means keep the page with specific headings
 
 ---
 
@@ -162,41 +151,50 @@ To avoid misunderstanding, we make the commom ground definition below:
 
 1. **Filtering based on Scene**: You are currently in `{RETRIEVAL_SCENE}` retrieval scene, refer to the scene definition for filtering requirements
 2. **Filtering based on Query intent analysis**
-3. **What is Preserved / Filtered:**
+3. **Heading Filtering:**
 
-  - If `page_title.rerank_sim >= 0.7`, which means **OVER strong match level**
+  - ForEach result in UserInput.results:
+    - ForEach heading in result.headings:
+       - IF `heading.rerank_sim >= {LLM_RERANKER_THRESHOLD}`:
 
-    → page_title preserved **AND** set corresponding headings = []
+         → continue
 
-  - ELSE
+       - ELSE:
 
-    → filter headings where `heading.rerank_sim >= {LLM_RERANKER_THRESHOLD}`
+          → remove the heading
 
-    → if no headings remain
+    - IF (result.headings[] all removed) & `page_title.rerank_sim >= {LLM_RERANKER_THRESHOLD}`:
 
-    → remove this result entirely
+        → still keep this result
+
+     - ELSE:
+
+        → remove this result entirely
+
+  - IF all result removed:
+
+    → add the highest rerank_sim heading back to results like the following
+      ```json
+      {{
+        "doc_set": "doc_name@version",
+        "page_title": <page_title>,
+        "headings": [
+          {{
+            "text": <the highest heading text>,
+            "rerank_sim": <the highest heading.rerank_sim>,
+            "related_context": <...>
+          }}
+        ],
+        "rerank_sim": <page_title.rerank_sim>
+      }}
 
 4. **Return Final Output**: Return the complete filtered JSON data
 
 ---
 
-## Hard Output Constraint (Must Follow)
-
-After all scoring & filtering:
-
-1. `results` MUST NOT be empty.
-2. There MUST exist at least ONE result where:
-   - `headings.length >= 1`
-
-❗ If after applying threshold: `{LLM_RERANKER_THRESHOLD}`:
-- No heading satisfies `heading.rerank_sim >= {LLM_RERANKER_THRESHOLD}`
-
-→ You MUST keep the single heading with the **highest `rerank_sim`** across all inputs,
-and return its page with that one heading.
-
----
-
 ## Output Format
+
+- Notice: no need to return `related_context` field
 
 ```json
 {{
@@ -208,25 +206,18 @@ and return its page with that one heading.
     doc_name@version
   ],
   "results": [
-    // case 1.  When `page_title.rerank_sim >= {LLM_RERANKER_THRESHOLD}`, headings MUST set be [].
     {{
-      "doc_set": doc_name@version,
-      "page_title": relavent_page_title,
-      "headings": [],
-      "rerank_sim": page_title.rerank_sim >= {LLM_RERANKER_THRESHOLD}
-    }},
-    // case 2. When `heading.rerank_sim >= {LLM_RERANKER_THRESHOLD}`, remained
-    {{
-      "doc_set": doc_name@version,
-      "page_title": other_page_title,
+      "doc_set": <doc_name@version>,
+      "page_title": <page_title>,
       "headings": [
         {{
-          "text": relavent_heading,
-          "rerank_sim": heading.rerank_sim >= {LLM_RERANKER_THRESHOLD}
+          "text": <relavent_heading>,
+          "rerank_sim": <heading.rerank_sim >= {LLM_RERANKER_THRESHOLD}>
         }}
       ],
-      "rerank_sim": page_title.rerank_sim for whatever number
-    }}
+      "rerank_sim": <page_title.rerank_sim for whatever number>
+    }},
+    ...
   ]
 }}
 ```
