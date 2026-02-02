@@ -112,7 +112,8 @@ class DocContentCrawler:
                     meaningless_content=filter_config.get('meaningless_content'),
                     preset=filter_config.get('documentation_preset'),
                     auto_detect_framework=True,
-                    merge_mode=filter_config.get('merge_mode', 'extend')
+                    merge_mode=filter_config.get('merge_mode', 'extend'),
+                    force_remove_selectors=filter_config.get('force_remove_selectors')
                 )
                 # 应用高级配置
                 if filter_config.get('content_end_markers'):
@@ -121,6 +122,8 @@ class DocContentCrawler:
                     content_filter.content_preserve_selectors = filter_config['content_preserve_selectors']
                 if filter_config.get('code_container_selectors'):
                     content_filter.code_container_selectors = filter_config['code_container_selectors']
+                if filter_config.get('protected_tag_blacklist'):
+                    content_filter.protected_tag_blacklist = filter_config['protected_tag_blacklist']
 
                 print("使用增强版过滤器（支持 content_end_markers）")
                 return content_filter

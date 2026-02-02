@@ -59,7 +59,8 @@ class EnhancedContentFilter(BaseContentFilter):
         meaningless_content: Optional[List[str]] = None,
         preset: Optional[str] = None,
         auto_detect_framework: bool = True,
-        merge_mode: str = 'extend'
+        merge_mode: str = 'extend',
+        force_remove_selectors: Optional[List[str]] = None
     ):
         """
         初始化增强版内容过滤器
@@ -72,6 +73,7 @@ class EnhancedContentFilter(BaseContentFilter):
             preset: 文档框架预设 ('mintlify', 'docusaurus', 'vitepress', 'gitbook')
             auto_detect_framework: 是否自动检测文档框架
             merge_mode: 合并模式 ('extend' 或 'replace')
+            force_remove_selectors: 自定义强制删除选择器（优先级最高）
         """
         self.removed_count = 0
         self.removed_log_count = 0
@@ -87,6 +89,7 @@ class EnhancedContentFilter(BaseContentFilter):
             custom_fuzzy_keywords=fuzzy_keywords,
             custom_log_levels=log_levels,
             custom_meaningless_content=meaningless_content,
+            custom_force_remove_selectors=force_remove_selectors,
             merge_mode=merge_mode
         )
 
