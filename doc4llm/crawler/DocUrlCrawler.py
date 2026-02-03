@@ -689,7 +689,7 @@ class DocUrlCrawler(DebugMixin):
             self._debug_print("检测到 mermaid 元素，等待渲染完成...")
 
             # 等待更长时间让Mermaid完全渲染
-            page.wait_for_timeout(8000)  # 等待8秒
+            page.wait_for_timeout(3000)  # 等待3秒
 
             # 检查渲染结果
             render_status = page.evaluate("""
