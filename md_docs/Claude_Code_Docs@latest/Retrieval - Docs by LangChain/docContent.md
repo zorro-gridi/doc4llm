@@ -125,8 +125,6 @@ flowchart TB
     I --> J
 ```
 
-
-Copy
     
     
     import requests
@@ -156,8 +154,6 @@ Copy
 Show Extended example: Agentic RAG for LangGraph's llms.txt
 
 This example implements an **Agentic RAG system** to assist users in querying LangGraph documentation. The agent begins by loading [llms.txt](https://llmstxt.org/), which lists available documentation URLs, and can then dynamically use a `fetch_documentation` tool to retrieve and process the relevant content based on the user’s question.
-
-Copy
 
 [Tutorial: Retrieval-Augmented Generation (RAG)See how to build a Q&A chatbot that can answer questions grounded in your data using Retrieval-Augmented Generation. This tutorial walks through two approaches:
 

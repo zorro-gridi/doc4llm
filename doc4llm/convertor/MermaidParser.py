@@ -103,17 +103,70 @@ class MermaidParser:
         """
         graph = {"id": svg.get("id", "graph"), "nodes": {}, "edges": [], "clusters": {}}
 
-        # 解析节点
-        for g in svg.select("g.nodes g.node"):
-            raw_id = g.get("id", "")
-            m = re.search(r"flowchart-([A-Za-z0-9_]+)-", raw_id)
-            if not m:
-                continue
-            node_id = m.group(1)
+        # 解析节点 - 支持多种SVG结构
+        node_elements = []
+        
+        # 方式1: 标准Mermaid结构 g.nodes g.node
+        node_elements.extend(svg.select("g.nodes g.node"))
+        
+        # 方式2: 直接查找所有g元素中包含文本的（LangChain可能的结构）
+        if not node_elements:
+            all_g_elements = svg.select("g")
+            for g in all_g_elements:
+                # 如果g元素包含文本内容，可能是节点
+                text_content = g.get_text(strip=True)
+                if text_content and len(text_content) > 0 and len(text_content) < 200:
+                    # 排除太长的文本（可能是整个图表的文本）
+                    node_elements.append(g)
 
-            # 获取标签
-            label_el = g.select_one(".nodeLabel p, .nodeLabel span")
-            label = label_el.get_text(strip=True) if label_el else ""
+        for i, g in enumerate(node_elements):
+            raw_id = g.get("id", "")
+            
+            # 尝试多种ID模式
+            node_id = None
+            
+            # 模式1: 标准flowchart模式
+            m = re.search(r"flowchart-([A-Za-z0-9_]+)-", raw_id)
+            if m:
+                node_id = m.group(1)
+            
+            # 模式2: 其他可能的模式
+            elif raw_id:
+                # 使用完整ID或生成简化ID
+                node_id = raw_id.replace("-", "_")[:20]  # 限制长度
+            else:
+                # 生成默认ID
+                node_id = f"node_{i}"
+
+            # 获取标签 - 支持多种标签结构
+            label = ""
+            
+            # 方式1: 标准nodeLabel
+            label_el = g.select_one(".nodeLabel p, .nodeLabel span, .nodeLabel")
+            if label_el:
+                label = label_el.get_text(strip=True)
+            
+            # 方式2: 直接查找text元素
+            if not label:
+                text_elements = g.select("text")
+                if text_elements:
+                    # 取最长的文本作为标签
+                    texts = [t.get_text(strip=True) for t in text_elements]
+                    texts = [t for t in texts if t]  # 过滤空文本
+                    if texts:
+                        label = max(texts, key=len)
+            
+            # 方式3: 使用g元素的直接文本内容
+            if not label:
+                label = g.get_text(strip=True)
+            
+            # 清理标签
+            if label:
+                # 移除换行符和多余空格
+                label = re.sub(r'\s+', ' ', label).strip()
+                # 限制长度
+                if len(label) > 100:
+                    label = label[:97] + "..."
 
             # 获取类型
             cls = g.get("class", [])
@@ -121,33 +174,67 @@ class MermaidParser:
                 (c for c in cls if c in self.NODE_TYPE_MAP.keys()), "unknown"
             )
 
-            graph["nodes"][node_id] = {
-                "id": node_id,
-                "label": label,
-                "type": node_type,
-                "cluster": None,
-            }
+            if node_id and label:  # 只有当有ID和标签时才添加节点
+                graph["nodes"][node_id] = {
+                    "id": node_id,
+                    "label": label,
+                    "type": node_type,
+                    "cluster": None,
+                }
 
         # -------- Edges --------
-        # Mermaid SVG 中 edgeLabels 和 edgePaths 按相同顺序排列
+        # 支持多种边结构
         edge_labels = []
+        
+        # 方式1: 标准edgeLabels结构
         label_elements = svg.select("g.edgeLabels g.edgeLabel")
         for lbl in label_elements:
             text_el = lbl.select_one("span.edgeLabel")
             text = text_el.get_text(strip=True) if text_el else ""
             edge_labels.append(text)
 
-        edge_paths = svg.select("g.edgePaths path")
-        for i, path in enumerate(edge_paths):
-            edge_id = path.get("id", "")
-            if edge_id.startswith("L_"):
-                parts = edge_id.split("_")
-                if len(parts) >= 3:
-                    _, src, dst = parts[0], parts[1], parts[2]
-                    label = edge_labels[i] if i < len(edge_labels) else None
-                    graph["edges"].append(
-                        {"from": src, "to": dst, "label": label if label else None}
-                    )
+        # 方式2: 查找所有可能的边路径
+        edge_paths = svg.select("g.edgePaths path, path")
+        
+        # 如果没有找到标准结构，尝试从节点推断连接
+        if not edge_paths and len(graph["nodes"]) > 1:
+            # 简单的线性连接（适用于流程图）
+            node_ids = list(graph["nodes"].keys())
+            for i in range(len(node_ids) - 1):
+                graph["edges"].append({
+                    "from": node_ids[i], 
+                    "to": node_ids[i + 1], 
+                    "label": None
+                })
+        else:
+            # 解析实际的路径
+            for i, path in enumerate(edge_paths):
+                edge_id = path.get("id", "")
+                
+                # 尝试多种边ID模式
+                src, dst = None, None
+                
+                # 模式1: L_src_dst
+                if edge_id.startswith("L_"):
+                    parts = edge_id.split("_")
+                    if len(parts) >= 3:
+                        src, dst = parts[1], parts[2]
+                
+                # 模式2: 其他可能的模式
+                elif "-" in edge_id:
+                    # 尝试从ID中提取源和目标
+                    parts = edge_id.split("-")
+                    if len(parts) >= 2:
+                        src, dst = parts[0], parts[1]
+                
+                # 如果找到了源和目标
+                if src and dst:
+                    # 确保源和目标节点存在
+                    if src in graph["nodes"] and dst in graph["nodes"]:
+                        label = edge_labels[i] if i < len(edge_labels) else None
+                        graph["edges"].append(
+                            {"from": src, "to": dst, "label": label if label else None}
+                        )
 
         return graph if graph["nodes"] or graph["edges"] else None
 
@@ -323,6 +410,204 @@ class MermaidParser:
         result += "\n".join(mermaid_blocks)
 
         return result
+
+    def replace_mermaid_with_placeholders(self, html_content: str) -> tuple[str, dict]:
+        """
+        将 HTML 中的 mermaid 元素替换为占位符，并返回映射关系
+
+        Args:
+            html_content: HTML 内容字符串
+
+        Returns:
+            tuple: (替换后的HTML, {placeholder_id: mermaid_code})
+        """
+        soup = BeautifulSoup(html_content, "html.parser")
+        mermaid_map = {}
+        placeholder_counter = 0
+        processed_elements = set()  # 跟踪已处理的元素，避免重复处理
+
+        print(f"[DEBUG] 开始处理Mermaid元素替换...")
+
+        # 处理 SVG flowchart 元素（优先级最高，这些是真正渲染的图表）
+        svg_elements = soup.find_all("svg", class_="flowchart")
+        print(f"[DEBUG] 找到 {len(svg_elements)} 个SVG flowchart元素")
+        
+        for svg in svg_elements:
+            graph = self.parse_single_graph(svg)
+            if graph and (graph.get("nodes") or graph.get("edges")):  # 确保图表有内容
+                code = self.graph_to_mermaid_code(graph)
+                if code and len(code.strip()) > 20:  # 确保生成的代码有意义
+                    placeholder_id = f"MERMAID_PLACEHOLDER_{placeholder_counter}"
+                    mermaid_code = f"\n```mermaid\n{code}\n```\n"
+                    mermaid_map[placeholder_id] = mermaid_code
+                    
+                    # 创建占位符元素
+                    placeholder = soup.new_tag("div", attrs={"data-mermaid-placeholder": placeholder_id})
+                    placeholder.string = f"[{placeholder_id}]"
+                    
+                    # 记录父元素，避免重复处理
+                    parent = svg.parent
+                    if parent:
+                        processed_elements.add(id(parent))
+                    
+                    svg.replace_with(placeholder)
+                    placeholder_counter += 1
+                    print(f"[DEBUG] 创建SVG占位符: {placeholder_id}")
+                else:
+                    print(f"[DEBUG] 跳过空的SVG图表")
+            else:
+                print(f"[DEBUG] 跳过无效的SVG图表")
+
+        # 处理 LangChain 格式的 mermaid 容器（优先级第二）
+        langchain_containers = soup.find_all(attrs={"data-component-name": "mermaid-container"})
+        print(f"[DEBUG] 找到 {len(langchain_containers)} 个LangChain mermaid容器")
+        
+        for container in langchain_containers:
+            # 跳过已处理的元素
+            if id(container) in processed_elements:
+                print(f"[DEBUG] 跳过已处理的LangChain容器")
+                continue
+                
+            # 检查容器是否包含SVG（如果包含，说明已经被上面处理过了）
+            if container.find("svg", class_="flowchart"):
+                print(f"[DEBUG] LangChain容器包含SVG，跳过")
+                processed_elements.add(id(container))
+                continue
+            
+            # 尝试从容器中提取 mermaid 源码
+            text_content = container.get_text(strip=True)
+            if text_content and len(text_content) > 10:  # 确保有足够的内容
+                source = self.parse_mermaid_source(text_content)
+                if source and ("flowchart" in source.lower() or "graph" in source.lower()):
+                    placeholder_id = f"MERMAID_PLACEHOLDER_{placeholder_counter}"
+                    mermaid_code = f"\n```mermaid\n{source}\n```\n"
+                    mermaid_map[placeholder_id] = mermaid_code
+                    
+                    # 创建占位符元素
+                    placeholder = soup.new_tag("div", attrs={"data-mermaid-placeholder": placeholder_id})
+                    placeholder.string = f"[{placeholder_id}]"
+                    container.replace_with(placeholder)
+                    placeholder_counter += 1
+                    processed_elements.add(id(container))
+                    print(f"[DEBUG] 创建LangChain容器占位符: {placeholder_id}")
+                else:
+                    print(f"[DEBUG] LangChain容器无有效mermaid源码: {text_content[:50]}...")
+            else:
+                print(f"[DEBUG] LangChain容器内容为空或太短")
+
+        # 处理 .mermaid 类元素（优先级最低，避免重复处理）
+        mermaid_elements = soup.find_all(class_="mermaid")
+        print(f"[DEBUG] 找到 {len(mermaid_elements)} 个.mermaid类元素")
+        
+        for mermaid_elem in mermaid_elements:
+            # 跳过已处理的元素
+            if id(mermaid_elem) in processed_elements:
+                print(f"[DEBUG] 跳过已处理的.mermaid元素")
+                continue
+                
+            # 检查是否包含SVG（如果包含，说明已经被上面处理过了）
+            if mermaid_elem.find("svg", class_="flowchart"):
+                print(f"[DEBUG] .mermaid元素包含SVG，跳过")
+                continue
+            
+            # 检查是否包含源码
+            code_elem = mermaid_elem.find("code", type="mermaid")
+            if code_elem:
+                source = self.parse_mermaid_source(code_elem.get_text(strip=True))
+            else:
+                text_content = mermaid_elem.get_text(strip=True)
+                if len(text_content) < 10:  # 内容太短，可能是空容器
+                    print(f"[DEBUG] .mermaid元素内容太短，跳过: {text_content}")
+                    continue
+                source = self.parse_mermaid_source(text_content)
+            
+            if source and ("flowchart" in source.lower() or "graph" in source.lower()):
+                placeholder_id = f"MERMAID_PLACEHOLDER_{placeholder_counter}"
+                mermaid_code = f"\n```mermaid\n{source}\n```\n"
+                mermaid_map[placeholder_id] = mermaid_code
+                
+                # 创建占位符元素
+                placeholder = soup.new_tag("div", attrs={"data-mermaid-placeholder": placeholder_id})
+                placeholder.string = f"[{placeholder_id}]"
+                mermaid_elem.replace_with(placeholder)
+                placeholder_counter += 1
+                print(f"[DEBUG] 创建.mermaid元素占位符: {placeholder_id}")
+            else:
+                print(f"[DEBUG] .mermaid元素无有效源码，跳过")
+
+        print(f"[DEBUG] 总共创建了 {len(mermaid_map)} 个有效的Mermaid占位符")
+        for pid, code in mermaid_map.items():
+            print(f"[DEBUG] {pid}: {len(code)} 字符")
+
+        return str(soup), mermaid_map
+
+    def restore_mermaid_in_markdown(self, markdown_content: str, mermaid_map: dict) -> str:
+        """
+        在 Markdown 内容中恢复 mermaid 图表到原始位置
+
+        Args:
+            markdown_content: Markdown 内容
+            mermaid_map: 占位符到 mermaid 代码的映射
+
+        Returns:
+            str: 恢复后的 Markdown 内容
+        """
+        if not mermaid_map:
+            print("[DEBUG] 没有Mermaid映射，跳过替换")
+            return markdown_content
+            
+        print(f"[DEBUG] 开始替换 {len(mermaid_map)} 个Mermaid占位符")
+        original_content = markdown_content
+        
+        for placeholder_id, mermaid_code in mermaid_map.items():
+            print(f"[DEBUG] 处理占位符: {placeholder_id}")
+            print(f"[DEBUG] Mermaid代码长度: {len(mermaid_code)} 字符")
+            
+            # 尝试多种占位符格式
+            patterns_to_try = [
+                f"[{placeholder_id}]",           # 标准格式
+                f"`[{placeholder_id}]`",         # 可能被转义为代码
+                f"\\[{placeholder_id}\\]",       # 可能被转义
+                placeholder_id,                   # 纯ID
+                f"```mermaid\n[{placeholder_id}]\n```",  # 可能已经在代码块中
+            ]
+            
+            replaced = False
+            for pattern in patterns_to_try:
+                if pattern in markdown_content:
+                    print(f"[DEBUG] 找到匹配模式: {pattern}")
+                    markdown_content = markdown_content.replace(pattern, mermaid_code)
+                    replaced = True
+                    break
+            
+            # 如果都没找到，尝试正则表达式匹配
+            if not replaced:
+                import re
+                # 查找任何包含placeholder_id的行
+                pattern = re.compile(f".*{re.escape(placeholder_id)}.*", re.MULTILINE)
+                matches = pattern.findall(markdown_content)
+                if matches:
+                    print(f"[DEBUG] 正则匹配找到: {matches}")
+                    # 替换找到的第一个匹配
+                    markdown_content = pattern.sub(mermaid_code, markdown_content, count=1)
+                    replaced = True
+                else:
+                    print(f"[DEBUG] 未找到占位符 {placeholder_id} 的任何匹配")
+                    # 显示markdown内容的前几行用于调试
+                    lines = markdown_content.split('\n')[:10]
+                    print(f"[DEBUG] Markdown前10行:")
+                    for i, line in enumerate(lines):
+                        print(f"[DEBUG]   {i+1}: {line}")
+            
+            if replaced:
+                print(f"[DEBUG] 成功替换占位符: {placeholder_id}")
+            else:
+                print(f"[DEBUG] 失败：未能替换占位符: {placeholder_id}")
+        
+        final_placeholder_count = sum(1 for pid in mermaid_map.keys() if f"[{pid}]" in markdown_content)
+        print(f"[DEBUG] 替换完成，剩余占位符: {final_placeholder_count} 个")
+        
+        return markdown_content
 
     def replace_svg_with_mermaid(self, html_content: str) -> str:
         """

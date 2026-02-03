@@ -628,6 +628,9 @@ class DocUrlCrawler(DebugMixin):
             bool: 是否等待成功（超时也算成功，避免阻塞）
         """
         try:
+            # 首先等待页面稳定
+            page.wait_for_timeout(2000)
+            
             # 检查页面是否有 mermaid 相关元素
             has_mermaid = page.evaluate("""
                 () => {
@@ -637,89 +640,78 @@ class DocUrlCrawler(DebugMixin):
                         'pre.mermaid',        // pre 标签
                         'div.mermaid',        // div 标签
                         '[data-component-name="mermaid-container"]',  // LangChain
+                        '[data-component-name*="mermaid"]',  // 包含mermaid的组件
                         'mermaid',            // 自定义标签
-                        'code.language-mermaid'  // 代码块
+                        'code.language-mermaid',  // 代码块
+                        'script[src*="mermaid"]'  // mermaid脚本
                     ];
 
+                    let found = [];
                     for (const sel of selectors) {
-                        if (document.querySelector(sel)) {
-                            return true;
+                        const elements = document.querySelectorAll(sel);
+                        if (elements.length > 0) {
+                            found.push(`${sel}: ${elements.length}`);
                         }
                     }
-
-                    // 检查是否有 mermaid 脚本
-                    const scripts = document.querySelectorAll('script[src*="mermaid"]');
-                    return scripts.length > 0;
+                    
+                    console.log('Mermaid检测结果:', found);
+                    return found.length > 0;
                 }
             """)
 
             if not has_mermaid:
-                self._debug_print("页面没有 mermaid 相关元素，跳过等待")
-                return True
+                # 再次检查，可能需要更多时间加载
+                self._debug_print("第一次检查未发现mermaid元素，等待5秒后重新检查...")
+                page.wait_for_timeout(5000)
+                
+                has_mermaid = page.evaluate("""
+                    () => {
+                        const selectors = [
+                            '.mermaid', 'pre.mermaid', 'div.mermaid',
+                            '[data-component-name="mermaid-container"]',
+                            '[data-component-name*="mermaid"]'
+                        ];
+                        
+                        for (const sel of selectors) {
+                            if (document.querySelector(sel)) {
+                                console.log('延迟检查发现:', sel);
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                """)
+                
+                if not has_mermaid:
+                    self._debug_print("页面没有 mermaid 相关元素，跳过等待")
+                    return True
 
             self._debug_print("检测到 mermaid 元素，等待渲染完成...")
 
-            # 方案1: 等待 .mermaid 元素内的 SVG 或 g 元素出现
-            try:
-                page.wait_for_selector(
-                    ".mermaid svg, .mermaid g",
-                    timeout=min(timeout, 5000),  # 先尝试短超时
-                    state="attached",
-                )
-                self._debug_print("Mermaid SVG 渲染完成")
-                return True
-            except Exception:
-                pass
-
-            # 方案2: 执行 JavaScript 检查 mermaid 状态并等待
-            try:
-                result = page.evaluate("""
-                    async () => {
-                        // 检查是否有 mermaid 正在渲染
-                        const mermaid = window.mermaid;
-                        if (mermaid && typeof mermaid.isRendering === 'function') {
-                            // 等待渲染完成
-                            let attempts = 0;
-                            while (mermaid.isRendering() && attempts < 20) {
-                                await new Promise(r => setTimeout(r, 200));
-                                attempts++;
-                            }
-                            return true;
-                        }
-
-                        // 检查所有 .mermaid 元素是否都有内容
-                        const containers = document.querySelectorAll('.mermaid');
-                        for (const container of containers) {
-                            // 如果容器是空的或只有 pre，没有 SVG，就没渲染完
-                            const hasSvg = container.querySelector('svg');
-                            const hasG = container.querySelector('g');
-                            const textContent = container.textContent.trim();
-
-                            if (!hasSvg && !hasG) {
-                                // 可能是空的，需要等待
-                                if (textContent.length > 0 && !container.querySelector('pre')) {
-                                    return false;
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                """)
-                if result:
-                    self._debug_print("Mermaid 渲染检查通过")
-                    return True
-            except Exception as e:
-                self._debug_print(f"Mermaid 状态检查跳过: {e}")
-
-            # 方案3: 等待一段时间让 JS 完成渲染
-            try:
-                page.wait_for_timeout(3000)  # 等待 3 秒
-                self._debug_print("等待 mermaid 渲染（3秒）")
-                return True
-            except Exception:
-                pass
-
-            self._debug_print("Mermaid 渲染等待完成（超时或完成）")
+            # 等待更长时间让Mermaid完全渲染
+            page.wait_for_timeout(8000)  # 等待8秒
+            
+            # 检查渲染结果
+            render_status = page.evaluate("""
+                () => {
+                    const containers = document.querySelectorAll('[data-component-name="mermaid-container"], .mermaid');
+                    const svgs = document.querySelectorAll('svg.flowchart');
+                    
+                    return {
+                        containers: containers.length,
+                        svgs: svgs.length,
+                        hasContent: svgs.length > 0
+                    };
+                }
+            """)
+            
+            self._debug_print(f"Mermaid渲染状态: {render_status}")
+            
+            if render_status.get('hasContent', False):
+                self._debug_print("Mermaid 渲染完成")
+            else:
+                self._debug_print("Mermaid 可能未完全渲染，但继续处理")
+            
             return True
 
         except Exception as e:
@@ -1547,13 +1539,6 @@ class DocUrlCrawler(DebugMixin):
             link_processor = self.link_processor(url)
             soup = link_processor.convert_relative_links(soup)
 
-            # 先从原始 HTML 解析 mermaid 图表
-            # 必须在过滤非正文内容之前，因为 filter_non_content_blocks
-            # 会用主要内容区域替换 soup，导致 .mermaid 元素丢失
-            mermaid_content = self.mermaid_parser.extract_and_convert_mermaid_blocks(
-                str(soup)
-            )
-
             # 过滤非正文内容
             cleaned_soup = self.content_filter.filter_non_content_blocks(soup)
             cleaned_soup = self.content_filter.filter_logging_outputs(cleaned_soup)
@@ -1564,23 +1549,21 @@ class DocUrlCrawler(DebugMixin):
                 if data_src and not img.get("src"):
                     img["src"] = data_src
 
-            # 在转换为 Markdown 之前，移除 SVG flowchart 元素
-            # 防止 html2text 把节点文本提取出来导致重复
-            for svg in cleaned_soup.select("svg.flowchart"):
-                svg.decompose()
-            for mermaid_div in cleaned_soup.select(
-                ".mermaid, [data-component-name='mermaid-container']"
-            ):
-                mermaid_div.decompose()
-
-            # 转换为Markdown
-            markdown_content = self.markdown_converter.convert_to_markdown(
+            # 新方法：将 mermaid 元素替换为占位符，保持位置信息
+            html_with_placeholders, mermaid_map = self.mermaid_parser.replace_mermaid_with_placeholders(
                 str(cleaned_soup)
             )
 
-            # 添加 mermaid 代码块
-            if mermaid_content and mermaid_content.strip():
-                markdown_content += mermaid_content
+            # 转换为Markdown（占位符会被保留在相应位置）
+            markdown_content = self.markdown_converter.convert_to_markdown(
+                html_with_placeholders
+            )
+
+            # 在 Markdown 中恢复 mermaid 图表到原始位置
+            if mermaid_map:
+                markdown_content = self.mermaid_parser.restore_mermaid_in_markdown(
+                    markdown_content, mermaid_map
+                )
 
             # 过滤内容结束标识
             markdown_content = self.content_filter.filter_content_end_markers(
@@ -1598,6 +1581,17 @@ class DocUrlCrawler(DebugMixin):
                 markdown_content = self.markdown_converter.add_image_urls(
                     markdown_content, extract_images
                 )
+
+            # 添加元数据头部
+            header = f"# {page_title}\n\n"
+            header += f"> **原文链接**: {url}\n\n"
+            header += "---\n\n"
+
+            return header + markdown_content
+
+        except Exception as e:
+            self._debug_print(f"转换Markdown时出错: {e}")
+            return f"# {page_title}\n\n原文链接: {url}\n\n转换失败: {e}"
 
             # 添加元数据头部
             header = f"# {page_title}\n\n"

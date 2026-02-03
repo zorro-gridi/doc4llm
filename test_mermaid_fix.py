@@ -1,129 +1,123 @@
 #!/usr/bin/env python3
-"""测试 MermaidParser 对 LangChain 格式的支持"""
+"""
+测试修复后的 Mermaid 占位符替换功能
+"""
+
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'doc4llm'))
 
 from doc4llm.convertor.MermaidParser import MermaidParser
 
-
-def test_langchain_mermaid_format():
-    """测试 LangChain 的 mermaid 格式: <div class="mermaid"><code type="mermaid">"""
+def test_langchain_mermaid_fix():
+    """测试 LangChain 页面的 Mermaid 处理"""
+    
+    # 模拟 LangChain 页面的 HTML 结构
+    html_content = '''
+    <html>
+    <body>
+        <div data-component-name="mermaid-container">
+            <div class="mermaid">
+                <svg class="flowchart" id="flowchart-1">
+                    <g class="nodes">
+                        <g class="node" id="flowchart-A-1">
+                            <text>Load Documents</text>
+                        </g>
+                        <g class="node" id="flowchart-B-2">
+                            <text>Split Text</text>
+                        </g>
+                    </g>
+                    <g class="edgePaths">
+                        <path id="L_A_B"></path>
+                    </g>
+                </svg>
+            </div>
+        </div>
+        
+        <div data-component-name="mermaid-container">
+            <div class="mermaid">
+                <!-- 空容器，应该被跳过 -->
+            </div>
+        </div>
+        
+        <div data-component-name="mermaid-container">
+            <div class="mermaid">
+                <svg class="flowchart" id="flowchart-2">
+                    <g class="nodes">
+                        <g class="node" id="flowchart-C-3">
+                            <text>Embed</text>
+                        </g>
+                        <g class="node" id="flowchart-D-4">
+                            <text>Store</text>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+        </div>
+        
+        <div data-component-name="mermaid-container">
+            <!-- 另一个空容器 -->
+        </div>
+        
+        <div class="mermaid">
+            <!-- 独立的空 mermaid 容器 -->
+        </div>
+        
+        <div class="mermaid">
+            <code type="mermaid">
+                flowchart TD
+                    E[Query] --> F[Retrieve]
+                    F --> G[Generate]
+            </code>
+        </div>
+    </body>
+    </html>
+    '''
+    
     parser = MermaidParser()
+    
+    print("=== 测试占位符替换 ===")
+    modified_html, mermaid_map = parser.replace_mermaid_with_placeholders(html_content)
+    
+    print(f"\n生成的占位符数量: {len(mermaid_map)}")
+    for placeholder_id, code in mermaid_map.items():
+        print(f"- {placeholder_id}: {len(code)} 字符")
+    
+    print(f"\n修改后的HTML中的占位符:")
+    import re
+    placeholders = re.findall(r'\[MERMAID_PLACEHOLDER_\d+\]', modified_html)
+    for p in placeholders:
+        print(f"- {p}")
+    
+    # 模拟 Markdown 转换后的内容
+    markdown_content = '''
+# Retrieval
 
-    # LangChain 实际 HTML 结构
-    html = """
-    <div class="content">
-        <div class="mermaid">
-            <code type="mermaid">flowchart LR
-    S([Sources<br/>(Google Drive, Slack, Notion, etc.)]) --&gt; L[Document Loaders]
-    L --&gt; A([Documents])
-    A --&gt; B[Split into chunks]
-    B --&gt; C[Turn into embeddings]
-    C --&gt; D[(Vector Store)]
-    Q([User Query]) --&gt; E[Query embedding]
-    E --&gt; D
-    D --&gt; F[Retriever]
-    F --&gt; G[LLM uses retrieved info]
-    G --&gt; H([Answer])</code>
-        </div>
-        <div class="mermaid">
-            <code type="mermaid">graph TD
-    A[Start] --&gt; B{Decision}
-    B -- Yes --&gt; C[Action 1]
-    B -- No --&gt; D[Action 2]</code>
-        </div>
-    </div>
-    """
+Some content here...
 
-    print("🔍 测试 LangChain 格式 mermaid 解析...")
+[MERMAID_PLACEHOLDER_0]
 
-    # 测试源码提取
-    sources = parser.extract_mermaid_from_pre_code_blocks(html)
-    print(f"✅ 找到 {len(sources)} 个 mermaid 源码块")
+More content...
 
-    for i, source in enumerate(sources, 1):
-        print(f"\n--- 源码 {i} ---")
-        print(source[:200] + "..." if len(source) > 200 else source)
+[MERMAID_PLACEHOLDER_1]
 
-    # 测试完整转换
-    result = parser.extract_and_convert_mermaid_blocks(html)
-    print(f"\n✅ 转换结果长度: {len(result)} 字符")
+Final content...
 
-    if "```mermaid" in result:
-        count = result.count("```mermaid")
-        print(f"✅ 成功生成 {count} 个 mermaid 代码块")
-        print("\n--- 转换结果预览 ---")
-        print(result[:500])
+[MERMAID_PLACEHOLDER_2]
+'''
+    
+    print("\n=== 测试占位符恢复 ===")
+    restored_markdown = parser.restore_mermaid_in_markdown(markdown_content, mermaid_map)
+    
+    print("\n恢复后的 Markdown:")
+    print(restored_markdown[:500] + "..." if len(restored_markdown) > 500 else restored_markdown)
+    
+    # 检查是否还有未替换的占位符
+    remaining_placeholders = re.findall(r'\[MERMAID_PLACEHOLDER_\d+\]', restored_markdown)
+    if remaining_placeholders:
+        print(f"\n⚠️  仍有未替换的占位符: {remaining_placeholders}")
     else:
-        print("❌ 未找到 mermaid 代码块")
-
-    return result
-
-
-def test_pre_mermaid_format():
-    """测试标准 <pre class="mermaid"> 格式"""
-    parser = MermaidParser()
-
-    html = """
-    <div>
-        <pre class="mermaid">
-            <code>
-flowchart TB
-    A[Start] --&gt; B[Process]
-</code>
-        </pre>
-    </div>
-    """
-
-    print("\n\n🔍 测试 pre.mermaid 格式解析...")
-    sources = parser.extract_mermaid_from_pre_code_blocks(html)
-    print(f"✅ 找到 {len(sources)} 个 mermaid 源码块")
-
-    if sources:
-        print(f"源码: {sources[0][:100]}...")
-
-
-def test_svg_format():
-    """测试 SVG 格式 (保持向后兼容)"""
-    parser = MermaidParser()
-
-    html = """
-    <svg class="flowchart" id="mermaid-graph-1">
-        <g class="nodes">
-            <g class="node" id="flowchart-A-1">
-                <rect class="shape" rx="0" ry="0"></rect>
-                <foreignObject class="nodeLabel">
-                    <div>Start</div>
-                </foreignObject>
-            </g>
-        </g>
-        <g class="edgePaths">
-            <path id="L_A_B_1" d="M..."></path>
-        </g>
-        <g class="edgeLabels">
-            <g class="edgeLabel">
-                <span class="edgeLabel"></span>
-            </g>
-        </g>
-    </svg>
-    """
-
-    print("\n\n🔍 测试 SVG 格式解析 (向后兼容)...")
-    graphs = parser.parse_graphs_from_html(html)
-    print(f"✅ 找到 {len(graphs)} 个 SVG 图表")
-
-    if graphs:
-        code = parser.graph_to_mermaid_code(graphs[0])
-        print(f"生成的代码:\n{code}")
-
+        print("\n✅ 所有占位符都已成功替换")
 
 if __name__ == "__main__":
-    print("=" * 60)
-    print("🧪 MermaidParser 修复测试")
-    print("=" * 60)
-
-    test_langchain_mermaid_format()
-    test_pre_mermaid_format()
-    test_svg_format()
-
-    print("\n" + "=" * 60)
-    print("✅ 测试完成")
-    print("=" * 60)
+    test_langchain_mermaid_fix()

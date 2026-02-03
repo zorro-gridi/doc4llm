@@ -886,28 +886,21 @@ class DocContentCrawler:
                 if data_src and not img.get("src"):
                     img["src"] = data_src
 
-            # 先解析 mermaid 图表（使用原始 cleaned_soup）
-            mermaid_content = self.mermaid_parser.extract_and_convert_mermaid_blocks(
+            # 新方法：将 mermaid 元素替换为占位符，保持位置信息
+            html_with_placeholders, mermaid_map = self.mermaid_parser.replace_mermaid_with_placeholders(
                 str(cleaned_soup)
             )
 
-            # 在转换为 Markdown 之前，移除 SVG flowchart 元素
-            # 防止 html2text 把节点文本提取出来导致重复
-            for svg in cleaned_soup.select("svg.flowchart"):
-                svg.decompose()
-            for mermaid_div in cleaned_soup.select(
-                ".mermaid, [data-component-name='mermaid-container']"
-            ):
-                mermaid_div.decompose()
-
-            # 转换为Markdown
+            # 转换为Markdown（占位符会被保留在相应位置）
             markdown_content = self.markdown_converter.convert_to_markdown(
-                str(cleaned_soup)
+                html_with_placeholders
             )
 
-            # 添加 mermaid 代码块
-            if mermaid_content and mermaid_content.strip():
-                markdown_content += mermaid_content
+            # 在 Markdown 中恢复 mermaid 图表到原始位置
+            if mermaid_map:
+                markdown_content = self.mermaid_parser.restore_mermaid_in_markdown(
+                    markdown_content, mermaid_map
+                )
 
             # 过滤内容结束标识（如 "Next steps" 后的内容）
             markdown_content = self.content_filter.filter_content_end_markers(
