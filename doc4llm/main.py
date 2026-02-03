@@ -335,6 +335,7 @@ def _parse_arguments():
         parser.add_argument('-doc-version', dest='doc_version', type=str, help='文档版本号 (默认: latest)')
         parser.add_argument('-doc-depth', dest='doc_max_depth', type=int, help='文档爬取最大深度 (默认: 10)')
         parser.add_argument('-doc-toc-selector', dest='doc_toc_selector', type=str, help='TOC区域CSS选择器 (如: .toc, #navigation)')
+        parser.add_argument('-playwright-force', dest='playwright_force', type=int, default=0, help='强制使用 Playwright 获取所有页面 1启用 0关闭 (默认: 0)')
         return parser.parse_args()
     except SystemExit:
         # argparse 触发 --help 或参数错误时会抛出 SystemExit
@@ -539,7 +540,9 @@ def _create_config(args, config_data, get_config_value):
         # 内容过滤器配置
         content_filter=get_config_value('content_filter', {}),
         # 内联提取配置
-        enable_inline_extraction=get_config_value('enable_inline_extraction', 1)
+        enable_inline_extraction=get_config_value('enable_inline_extraction', 1),
+        # Playwright 配置
+        playwright_force=get_config_value('playwright_force', 0)
     )
 
 

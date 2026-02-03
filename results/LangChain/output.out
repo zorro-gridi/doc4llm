@@ -1,0 +1,1012 @@
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'www.w3.org', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.woff2', '.doc', '.ico', '.rar', '.png', '.eot', '.json', '.dmg', '.map', '.xls', '.gz', '.apk', '.mp3', '.woff', '.flv', '.mov', '.zip', '.tar', '.bz2', '.webm', '.swf', '.avi', '.mkv', '.flac', '.aac', '.docx', '.jpg', '.bin', '.css', '.xlsx', '.ppt', '.ogg', '.js', '.txt', '.jpeg', '.iso', '.bmp', '.ttf', '.dll', '.otf', '.xml', '.pdf', '.7z', '.svg', '.webp', '.gif', '.tiff', '.exe', '.wmv', '.mp4', '.wav', '.pptx'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.w3.org', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.webp', '.webm', '.pdf', '.exe', '.gif', '.gz', '.doc', '.eot', '.dmg', '.jpeg', '.ico', '.flac', '.7z', '.xml', '.tiff', '.svg', '.apk', '.wav', '.map', '.bmp', '.avi', '.ttf', '.tar', '.mp4', '.json', '.png', '.docx', '.xlsx', '.wmv', '.rar', '.dll', '.bin', '.flv', '.pptx', '.ogg', '.jpg', '.aac', '.woff2', '.otf', '.css', '.bz2', '.mkv', '.mov', '.iso', '.js', '.mp3', '.zip', '.swf', '.woff', '.ppt', '.txt', '.xls'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/retrieval: BrowserType.launch: Executable doesn't exist at /Users/zorro/Library/Caches/ms-playwright/chromium_headless_shell-1200/chrome-headless-shell-mac-arm64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     playwright install                                     ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'www.w3.org', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.map', '.exe', '.pdf', '.doc', '.ppt', '.ogg', '.rar', '.dll', '.ttf', '.ico', '.mov', '.tiff', '.dmg', '.otf', '.webp', '.7z', '.txt', '.woff2', '.jpeg', '.mp4', '.woff', '.svg', '.mkv', '.webm', '.pptx', '.gz', '.bz2', '.js', '.swf', '.gif', '.xml', '.mp3', '.png', '.iso', '.json', '.avi', '.flac', '.apk', '.wav', '.xlsx', '.bin', '.bmp', '.aac', '.docx', '.jpg', '.xls', '.tar', '.wmv', '.eot', '.flv', '.zip', '.css'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+移除了 1 个非正文区块
+移除了 0 个可能的日志输出区块
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'www.baidu.com', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.woff2', '.aac', '.map', '.txt', '.eot', '.avi', '.7z', '.flac', '.dll', '.webm', '.mkv', '.ppt', '.jpeg', '.tar', '.tiff', '.ttf', '.wmv', '.png', '.doc', '.bmp', '.css', '.mov', '.xls', '.wav', '.zip', '.gz', '.pptx', '.woff', '.bin', '.jpg', '.iso', '.js', '.swf', '.ico', '.gif', '.dmg', '.flv', '.xml', '.mp4', '.exe', '.rar', '.pdf', '.svg', '.ogg', '.xlsx', '.json', '.webp', '.apk', '.otf', '.docx', '.mp3', '.bz2'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+移除了 1 个非正文区块
+移除了 0 个可能的日志输出区块
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.baidu.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.svg', '.dll', '.mp4', '.css', '.iso', '.dmg', '.ogg', '.ppt', '.js', '.mp3', '.doc', '.webm', '.woff2', '.otf', '.zip', '.txt', '.bz2', '.mkv', '.flv', '.exe', '.json', '.7z', '.apk', '.xls', '.mov', '.docx', '.png', '.ttf', '.jpeg', '.tiff', '.swf', '.eot', '.map', '.flac', '.xlsx', '.rar', '.gif', '.woff', '.wmv', '.tar', '.jpg', '.bin', '.webp', '.pdf', '.aac', '.xml', '.gz', '.pptx', '.wav', '.avi', '.bmp', '.ico'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取成功，HTML 长度: 29764 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+移除了 1 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.baidu.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.gz', '.zip', '.rar', '.js', '.svg', '.pptx', '.exe', '.dmg', '.map', '.webp', '.wav', '.jpeg', '.bmp', '.flac', '.eot', '.pdf', '.flv', '.ogg', '.doc', '.tar', '.iso', '.7z', '.gif', '.xls', '.xml', '.mp4', '.png', '.swf', '.woff', '.ttf', '.tiff', '.mkv', '.aac', '.avi', '.ppt', '.dll', '.wmv', '.docx', '.otf', '.webm', '.mov', '.woff2', '.json', '.css', '.ico', '.jpg', '.mp3', '.xlsx', '.bz2', '.bin', '.apk', '.txt'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/retrieval: Page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to "https://docs.langchain.com/oss/python/langchain/retrieval", waiting until "networkidle"
+
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'www.baidu.com', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.svg', '.avi', '.ogg', '.pptx', '.pdf', '.bin', '.bz2', '.tiff', '.otf', '.webp', '.aac', '.exe', '.woff2', '.flv', '.eot', '.rar', '.ppt', '.swf', '.mov', '.mp4', '.jpeg', '.webm', '.png', '.flac', '.doc', '.wmv', '.dll', '.json', '.map', '.txt', '.woff', '.tar', '.apk', '.mp3', '.wav', '.7z', '.dmg', '.xlsx', '.css', '.jpg', '.iso', '.mkv', '.js', '.gz', '.docx', '.xls', '.xml', '.zip', '.bmp', '.ttf', '.gif', '.ico'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'github.com', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.flv', '.wav', '.webm', '.jpg', '.bz2', '.tar', '.xls', '.bin', '.mov', '.json', '.docx', '.map', '.gif', '.eot', '.png', '.dll', '.ttf', '.woff2', '.xlsx', '.xml', '.mp4', '.zip', '.exe', '.txt', '.wmv', '.ogg', '.woff', '.swf', '.mp3', '.webp', '.pdf', '.bmp', '.ppt', '.iso', '.ico', '.otf', '.js', '.tiff', '.css', '.pptx', '.doc', '.7z', '.avi', '.svg', '.aac', '.flac', '.rar', '.gz', '.mkv', '.jpeg', '.dmg', '.apk'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取成功，HTML 长度: 31138 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+移除了 1 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+[DEBUG] 配置初始化完成: 起始URL: https://python.langchain.com/docs/docs 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://python.langchain.com/docs/docs
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.w3.org', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.mp4', '.txt', '.wav', '.ttf', '.dmg', '.docx', '.gz', '.map', '.svg', '.woff2', '.png', '.ico', '.zip', '.iso', '.flv', '.webm', '.avi', '.tiff', '.bin', '.woff', '.exe', '.7z', '.wmv', '.bmp', '.bz2', '.webp', '.swf', '.xml', '.ogg', '.css', '.mp3', '.js', '.mov', '.flac', '.pptx', '.jpeg', '.aac', '.tar', '.xlsx', '.apk', '.otf', '.eot', '.doc', '.xls', '.json', '.jpg', '.rar', '.gif', '.dll', '.mkv', '.pdf', '.ppt'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://python.langchain.com/docs/docs ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://python.langchain.com/docs/docs
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/overview
+[DEBUG] Playwright 获取成功，HTML 长度: 572902 字符
+转换了 119 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+移除了 7 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/LangChain overview/docContent.md
+✓ LangChain overview -> LangChain overview/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.baidu.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.apk', '.mp3', '.bin', '.css', '.js', '.gif', '.iso', '.webm', '.ogg', '.webp', '.avi', '.woff', '.xls', '.wmv', '.mov', '.woff2', '.otf', '.rar', '.aac', '.ppt', '.tar', '.zip', '.pdf', '.flac', '.7z', '.jpg', '.ttf', '.xlsx', '.txt', '.flv', '.jpeg', '.wav', '.eot', '.doc', '.ico', '.docx', '.exe', '.json', '.bz2', '.swf', '.mkv', '.pptx', '.mp4', '.svg', '.tiff', '.dll', '.dmg', '.gz', '.bmp', '.png', '.xml', '.map'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取成功，HTML 长度: 31147 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+移除了 1 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+警告: 无法加载 headers 文件 Config/headers.json: [Errno 2] No such file or directory: 'Config/headers.json'
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'www.baidu.com', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.wmv', '.png', '.pptx', '.zip', '.7z', '.js', '.mp4', '.bmp', '.xls', '.mp3', '.apk', '.gif', '.svg', '.xlsx', '.jpg', '.map', '.webp', '.gz', '.woff2', '.wav', '.webm', '.bz2', '.ttf', '.mov', '.flv', '.otf', '.dll', '.dmg', '.ogg', '.exe', '.jpeg', '.json', '.ppt', '.rar', '.docx', '.ico', '.woff', '.swf', '.bin', '.doc', '.xml', '.tiff', '.flac', '.iso', '.txt', '.tar', '.aac', '.pdf', '.eot', '.avi', '.mkv', '.css'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取成功，HTML 长度: 31139 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+移除了 1 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'github.com', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.xls', '.tiff', '.ico', '.wmv', '.bz2', '.css', '.gz', '.mkv', '.pdf', '.doc', '.iso', '.pptx', '.json', '.apk', '.dmg', '.bin', '.ttf', '.docx', '.flv', '.map', '.tar', '.txt', '.mp3', '.zip', '.7z', '.woff', '.webp', '.svg', '.png', '.swf', '.gif', '.xlsx', '.webm', '.wav', '.js', '.ogg', '.otf', '.woff2', '.aac', '.rar', '.ppt', '.exe', '.flac', '.xml', '.eot', '.mp4', '.jpg', '.avi', '.jpeg', '.bmp', '.dll', '.mov'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取成功，HTML 长度: 31143 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+移除了 1 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'www.w3.org', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.jpeg', '.gif', '.webp', '.rar', '.xls', '.doc', '.xml', '.apk', '.ppt', '.gz', '.ttf', '.json', '.otf', '.mov', '.css', '.pptx', '.ico', '.woff2', '.aac', '.7z', '.dll', '.mkv', '.swf', '.map', '.woff', '.zip', '.wav', '.avi', '.exe', '.tiff', '.js', '.xlsx', '.bz2', '.mp4', '.flv', '.eot', '.bmp', '.pdf', '.ogg', '.png', '.bin', '.iso', '.tar', '.flac', '.txt', '.wmv', '.webm', '.docx', '.mp3', '.svg', '.dmg', '.jpg'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取成功，HTML 长度: 31147 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+移除了 1 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'www.baidu.com', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.map', '.webp', '.gif', '.jpg', '.mov', '.ppt', '.tar', '.ogg', '.dll', '.txt', '.svg', '.bin', '.docx', '.rar', '.exe', '.flv', '.eot', '.js', '.ico', '.iso', '.png', '.mp4', '.woff', '.mp3', '.jpeg', '.webm', '.woff2', '.pptx', '.gz', '.json', '.ttf', '.zip', '.xlsx', '.pdf', '.avi', '.bz2', '.7z', '.mkv', '.xml', '.swf', '.tiff', '.flac', '.wmv', '.wav', '.apk', '.bmp', '.doc', '.css', '.dmg', '.xls', '.aac', '.otf'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取成功，HTML 长度: 31144 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+移除了 1 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/concepts/overview 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/concepts/overview
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.txt', '.xls', '.tar', '.xml', '.wav', '.doc', '.gif', '.mp3', '.aac', '.pptx', '.7z', '.ogg', '.pdf', '.gz', '.swf', '.avi', '.xlsx', '.ppt', '.webp', '.exe', '.jpg', '.bin', '.dmg', '.zip', '.css', '.json', '.otf', '.webm', '.rar', '.png', '.apk', '.js', '.ttf', '.ico', '.flac', '.woff2', '.jpeg', '.wmv', '.flv', '.bmp', '.eot', '.woff', '.docx', '.mp4', '.tiff', '.bz2', '.iso', '.dll', '.mkv', '.mov', '.svg', '.map'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/concepts/overview ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/concepts/overview
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/concepts/overview
+[DEBUG] Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/concepts/overview: Target page, context or browser has been closed
+=========================== logs ===========================
+"load" event fired
+============================================================
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/concepts/overview
+转换了 92 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+保护元素: <ul class="sidebar-group mt-6 lg:mt-8">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <button class="chat-assistant-send-button flex justify-center items-center rounded-full p-1 size-6 bg-primary/30 dark:bg-primary-dark/30 absolute right-2.5 bottom-2">
+保护元素: <div class="flex flex-col items-center justify-center w-full max-w-lg overflow-x-hidden mx-auto py-48 px-5 text-center *:text-center gap-y-8 not-found-container">
+保护元素: <div class="hidden sticky shrink-0 w-[18rem] lg:flex flex-col left-0 top-[7rem] bottom-0 right-auto border-r border-gray-100 dark:border-white/10 transition-transform duration-100">
+保护元素: <div class="left-0 right-0 sticky sm:px-4 pb-4 sm:pb-6 bottom-0 pt-1 flex flex-col items-center w-full overflow-hidden z-20 pointer-events-none print:hidden">
+保护元素: <ul class="sidebar-group mt-6 lg:mt-8">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <button class="chat-assistant-send-button flex justify-center items-center rounded-full p-1 size-6 bg-primary/30 dark:bg-primary-dark/30 absolute right-2.5 bottom-2">
+保护元素: <div class="flex flex-col items-center justify-center w-full max-w-lg overflow-x-hidden mx-auto py-48 px-5 text-center *:text-center gap-y-8 not-found-container">
+保护元素: <div class="hidden sticky shrink-0 w-[18rem] lg:flex flex-col left-0 top-[7rem] bottom-0 right-auto border-r border-gray-100 dark:border-white/10 transition-transform duration-100">
+保护元素: <div class="left-0 right-0 sticky sm:px-4 pb-4 sm:pb-6 bottom-0 pt-1 flex flex-col items-center w-full overflow-hidden z-20 pointer-events-none print:hidden">
+保护元素: <ul class="sidebar-group mt-6 lg:mt-8">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="flex flex-col items-center justify-center w-full max-w-lg overflow-x-hidden mx-auto py-48 px-5 text-center *:text-center gap-y-8 not-found-container">
+保护元素: <div class="hidden sticky shrink-0 w-[18rem] lg:flex flex-col left-0 top-[7rem] bottom-0 right-auto border-r border-gray-100 dark:border-white/10 transition-transform duration-100">
+保护元素: <div class="left-0 right-0 sticky sm:px-4 pb-4 sm:pb-6 bottom-0 pt-1 flex flex-col items-center w-full overflow-hidden z-20 pointer-events-none print:hidden">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="hidden sticky shrink-0 w-[18rem] lg:flex flex-col left-0 top-[7rem] bottom-0 right-auto border-r border-gray-100 dark:border-white/10 transition-transform duration-100">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <h5 class="">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <h5 class="">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <h5 class="">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group mt-6 lg:mt-8">
+保护元素: <h5 class="">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <h5 class="">
+保护元素: <h5 class="">
+保护元素: <div class="flex-1 pr-5 pt-5 pb-4 overflow-y-auto stable-scrollbar-gutter">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="hidden sticky shrink-0 w-[18rem] lg:flex flex-col left-0 top-[7rem] bottom-0 right-auto border-r border-gray-100 dark:border-white/10 transition-transform duration-100">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <h5 class="">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <h5 class="">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <h5 class="">
+保护元素: <div class="sidebar-nav-group-divider h-px w-full bg-gray-100 dark:bg-white/10">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <ul class="sidebar-group mt-6 lg:mt-8">
+保护元素: <h5 class="">
+保护元素: <ul class="sidebar-group space-y-px">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <h5 class="">
+保护元素: <h5 class="">
+保护元素: <div class="flex-1 pr-5 pt-5 pb-4 overflow-y-auto stable-scrollbar-gutter">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+保护元素: <div class="sidebar-group-header flex items-center gap-2.5 pl-4 mb-3.5 lg:mb-2.5 font-semibold text-gray-700 dark:text-gray-300 text-xs">
+移除了 0 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Page Not Found/docContent.md
+✓ Page Not Found -> Page Not Found/
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.w3.org', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.mkv', '.ppt', '.7z', '.pptx', '.otf', '.bmp', '.ttf', '.xls', '.bz2', '.flv', '.apk', '.eot', '.swf', '.pdf', '.docx', '.wmv', '.mp3', '.jpg', '.doc', '.js', '.flac', '.rar', '.bin', '.png', '.ogg', '.aac', '.dll', '.tiff', '.ico', '.gz', '.gif', '.txt', '.avi', '.xlsx', '.css', '.svg', '.tar', '.zip', '.iso', '.xml', '.jpeg', '.mp4', '.webm', '.json', '.woff2', '.webp', '.woff', '.mov', '.map', '.wav', '.dmg', '.exe'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+✓ Retrieval -> Retrieval/

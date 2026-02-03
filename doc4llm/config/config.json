@@ -217,5 +217,24 @@
   "output_log_file": "results/output.out",
   "debug_log_file": "results/debug.log",
   "log_max_lines": 10000,
-  "enable_inline_extraction": 1
+  "enable_inline_extraction": 1,
+  "playwright": {
+    "enabled": true,
+    "force": false,
+    "timeout": 30,
+    "headless": true
+  },
+  "stealth": {
+    "enabled": true,
+    "platform": "darwin",
+    "screen_width": 1920,
+    "screen_height": 1080,
+    "device_scale_factor": 1,
+    "timezone": "Asia/Shanghai",
+    "locale": "zh-CN"
+  },
+  "cookies": {
+    "file": null,
+    "inline": []
+  }
 }

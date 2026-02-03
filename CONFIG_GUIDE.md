@@ -16,6 +16,8 @@
 - [内容过滤配置](#内容过滤配置)
 - [工具配置](#工具配置)
 - [内联提取优化](#内联提取优化)
+- [Playwright 配置](#playwright-配置)
+- [完整配置示例](#完整配置示例)
 
 ---
 
@@ -2129,6 +2131,127 @@ md_docs/
 
 ---
 
+## Playwright 配置
+
+### `playwright`
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| Playwright 配置 | object | `{...}` |
+
+**作用**：配置 Playwright 浏览器渲染选项，用于获取 JavaScript 动态渲染的内容（如 mermaid 流程图）
+
+**配置示例**：
+```json
+"playwright": {
+  "enabled": true,
+  "timeout": 30,
+  "headless": true
+}
+```
+
+### 配置字段说明
+
+| 字段 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `enabled` | `bool` | `true` | 是否启用 Playwright Fallback |
+| `force` | `bool` | `false` | 是否强制使用 Playwright 获取所有页面 |
+| `timeout` | `int` | `30` | Playwright 超时时间（秒） |
+| `headless` | `bool` | `true` | 是否使用 headless 模式 |
+
+### `playwright.enabled` - 启用 Playwright
+
+**作用**：当检测到页面需要客户端渲染时，是否自动切换到 Playwright 获取渲染后的 HTML
+
+| 设置值 | 行为说明 | 适用场景 |
+|--------|----------|----------|
+| `true`（默认） | 检测到动态内容时自动使用 Playwright | 需要提取 mermaid 等动态内容 |
+| `false` | 禁用 Playwright，使用原始 HTML | 静态页面，性能优先 |
+
+**检测触发条件**：
+- Next.js bailout 标记（`BAILOUT_TO_CLIENT_SIDE_RENDERING`）
+- LangChain 特定标记（`[data-component-name="mermaid-container"]`）
+- Mintlify hydration 标记（`[data-ice]`）
+- `client-only` 类名
+- 大量空容器（>10 个）
+
+### `playwright.force` - 强制使用 Playwright
+
+| 参数 | 类型 | 默认值 |
+|------|------|--------|
+| 强制启动 Playwright | bool | `false` |
+
+**作用**：是否强制使用 Playwright 获取所有页面内容
+
+| 设置值 | 行为说明 | 适用场景 |
+|--------|----------|----------|
+| `false`（默认） | 自动检测，按需触发 | 性能优先 |
+| `true` | 所有页面都使用 Playwright | 需要提取动态内容 |
+
+**配置示例**：
+```json
+"playwright": {
+  "enabled": true,
+  "force": true,
+  "timeout": 30,
+  "headless": true
+}
+```
+
+**命令行使用**：
+```bash
+# 强制使用 Playwright
+python -m doc4llm -u https://docs.example.com -mode 4 -playwright-force 1
+
+# 配置文件方式
+python -m doc4llm -u https://docs.example.com -mode 4 -config config.json
+```
+
+**注意事项**：
+- 强制模式会显著降低爬取速度，因为每个页面都需要启动浏览器渲染
+- 建议仅在需要提取 mermaid 流程图等动态内容时启用
+- 可以配合 `playwright.headless: false` 进行调试
+
+### `playwright.timeout` - 超时时间
+
+**作用**：Playwright 获取页面的超时时间（秒）
+
+**配置示例**：
+```json
+"playwright": {
+  "timeout": 60
+}
+```
+
+**应用场景**：
+- 慢速网站：设置为 60-120 秒
+- 快速扫描：设置为 15-30 秒
+
+### `playwright.headless` - Headless 模式
+
+**作用**：是否使用 headless 模式运行浏览器（无 GUI 界面）
+
+| 设置值 | 行为说明 | 内存占用 |
+|--------|----------|----------|
+| `true`（默认） | 无界面模式 | 低内存 |
+| `false` | 显示浏览器窗口 | 高内存，仅调试用 |
+
+**配置示例**：
+```json
+"playwright": {
+  "headless": true
+}
+```
+
+## 安装依赖
+
+```bash
+pip install playwright
+playwright install chromium
+```
+
+---
+
 ## 完整配置示例
 
 ```json
@@ -2239,7 +2362,13 @@ md_docs/
   "output_log_file": "results/output.out",
   "debug_log_file": "results/debug.log",
   "log_max_lines": 10000,
-  "enable_inline_extraction": 1
+  "enable_inline_extraction": 1,
+  "playwright": {
+    "enabled": true,
+    "force": false,
+    "timeout": 30,
+    "headless": true
+  }
 }
 ```
 
@@ -2309,15 +2438,31 @@ python -m doc4llm -u https://example.com -debug 1
 
 # URL范围模式
 python -m doc4llm -u https://example.com -scope 3
+
+# 强制使用 Playwright 获取所有页面
+python -m doc4llm -u https://example.com -mode 4 -playwright-force 1
 ```
 
 ---
 
-**文档版本**: v1.6
-**更新日期**: 2026-01-30
+**文档版本**: v1.8
+**更新日期**: 2026-02-03
 **项目**: doc4llm
 
 ## 更新日志
+
+### v1.8 (2026-02-03)
+- 新增 `playwright.force` 配置参数（强制使用 Playwright 获取所有页面）
+- 新增 `-playwright-force` 命令行参数（1=启用，0=关闭）
+- 新增"playwright.force" 文档说明章节
+- 更新完整配置示例，包含 playwright.force 配置
+- 更新命令行参数快速参考
+
+### v1.7 (2026-02-03)
+- 新增 `playwright` 配置参数（Playwright 浏览器渲染选项）
+- 新增"Playwright 配置"章节（完整的 playwright 配置说明）
+- 新增安装依赖说明（pip install playwright + playwright install chromium）
+- 更新完整配置示例，包含 playwright 配置
 
 ### v1.6 (2026-01-30)
 - 完善 `max_depth` 参数说明，新增递归深度行为表和深度计数示例

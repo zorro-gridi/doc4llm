@@ -27,6 +27,22 @@ import requests
 from bs4 import BeautifulSoup
 import traceback
 
+# Playwright 导入（可选依赖）
+try:
+    from playwright.sync_api import sync_playwright
+
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    PLAYWRIGHT_AVAILABLE = False
+
+# Playwright stealth 导入（可选依赖）
+try:
+    from playwright_stealth import stealth_sync
+
+    STEALTH_AVAILABLE = True
+except ImportError:
+    STEALTH_AVAILABLE = False
+
 try:
     from colorama import init, Fore, Style
 
@@ -72,6 +88,26 @@ class DocUrlCrawler(DebugMixin):
         super().__init__(debug_mode=config.debug_mode)
 
         self.config = config
+
+        # Playwright 配置
+        self.playwright_enabled = getattr(config, "playwright_enabled", True)
+        self.playwright_timeout = getattr(config, "playwright_timeout", 30)
+        self.playwright_headless = getattr(config, "playwright_headless", True)
+        self.playwright_force = getattr(config, "playwright_force", False)
+
+        # 指纹伪装配置
+        self.playwright_stealth = getattr(config, 'playwright_stealth', True)
+        self.playwright_platform = getattr(config, 'playwright_platform', 'win32')
+        self.playwright_screen_width = getattr(config, 'playwright_screen_width', 1920)
+        self.playwright_screen_height = getattr(config, 'playwright_screen_height', 1080)
+        self.playwright_device_scale_factor = getattr(config, 'playwright_device_scale_factor', 1)
+        self.playwright_timezone = getattr(config, 'playwright_timezone', 'Asia/Shanghai')
+        self.playwright_locale = getattr(config, 'playwright_locale', 'zh-CN')
+
+        # Cookie 配置
+        self.playwright_cookies_file = getattr(config, 'playwright_cookies_file', None)
+        self.playwright_cookies = getattr(config, 'playwright_cookies', [])
+
         # 从 config.content_filter 加载过滤器配置（与 Mode 1 一致）
         self.content_filter = self._load_content_filter()
 
@@ -146,33 +182,47 @@ class DocUrlCrawler(DebugMixin):
         """
         try:
             # 使用传入的 config 对象中的 content_filter 配置
-            filter_config = FilterConfigLoader.load_from_config({'content_filter': self.config.content_filter})
+            filter_config = FilterConfigLoader.load_from_config(
+                {"content_filter": self.config.content_filter}
+            )
 
             # 如果配置了 content_end_markers 或其他高级配置，使用增强版过滤器
-            if filter_config and (filter_config.get('content_end_markers') or
-                                 filter_config.get('documentation_preset') or
-                                 filter_config.get('force_remove_selectors')):
+            if filter_config and (
+                filter_config.get("content_end_markers")
+                or filter_config.get("documentation_preset")
+                or filter_config.get("force_remove_selectors")
+            ):
                 content_filter = EnhancedContentFilter(
-                    non_content_selectors=filter_config.get('non_content_selectors'),
-                    fuzzy_keywords=filter_config.get('fuzzy_keywords'),
-                    log_levels=filter_config.get('log_levels'),
-                    meaningless_content=filter_config.get('meaningless_content'),
-                    preset=filter_config.get('documentation_preset'),
+                    non_content_selectors=filter_config.get("non_content_selectors"),
+                    fuzzy_keywords=filter_config.get("fuzzy_keywords"),
+                    log_levels=filter_config.get("log_levels"),
+                    meaningless_content=filter_config.get("meaningless_content"),
+                    preset=filter_config.get("documentation_preset"),
                     auto_detect_framework=True,
-                    merge_mode=filter_config.get('merge_mode', 'extend'),
-                    force_remove_selectors=filter_config.get('force_remove_selectors')
+                    merge_mode=filter_config.get("merge_mode", "extend"),
+                    force_remove_selectors=filter_config.get("force_remove_selectors"),
                 )
                 # 应用高级配置
-                if filter_config.get('content_end_markers'):
-                    content_filter.content_end_markers = filter_config['content_end_markers']
-                if filter_config.get('content_preserve_selectors'):
-                    content_filter.content_preserve_selectors = filter_config['content_preserve_selectors']
-                if filter_config.get('code_container_selectors'):
-                    content_filter.code_container_selectors = filter_config['code_container_selectors']
-                if filter_config.get('protected_tag_blacklist'):
-                    content_filter.protected_tag_blacklist = filter_config['protected_tag_blacklist']
+                if filter_config.get("content_end_markers"):
+                    content_filter.content_end_markers = filter_config[
+                        "content_end_markers"
+                    ]
+                if filter_config.get("content_preserve_selectors"):
+                    content_filter.content_preserve_selectors = filter_config[
+                        "content_preserve_selectors"
+                    ]
+                if filter_config.get("code_container_selectors"):
+                    content_filter.code_container_selectors = filter_config[
+                        "code_container_selectors"
+                    ]
+                if filter_config.get("protected_tag_blacklist"):
+                    content_filter.protected_tag_blacklist = filter_config[
+                        "protected_tag_blacklist"
+                    ]
 
-                self._debug_print("Mode 4: 使用增强版过滤器（支持 force_remove_selectors）")
+                self._debug_print(
+                    "Mode 4: 使用增强版过滤器（支持 force_remove_selectors）"
+                )
                 return content_filter
             else:
                 self._debug_print("Mode 4: 使用标准内容过滤器")
@@ -369,6 +419,390 @@ class DocUrlCrawler(DebugMixin):
 
         return urls
 
+    def _get_playwright_proxy(self):
+        """
+        获取 Playwright 代理配置
+
+        Returns:
+            dict 或 None: Playwright 代理配置
+        """
+        if self.config.proxy:
+            http_proxy = self.config.proxy.get("http") or self.config.proxy.get("https")
+            if http_proxy:
+                return {"server": http_proxy}
+        return None
+
+    def _apply_fingerprint_stealth(self, page):
+        """
+        应用 stealth 插件指纹伪装
+
+        Args:
+            page: Playwright page 对象
+        """
+        if not STEALTH_AVAILABLE or not self.playwright_stealth:
+            self._debug_print("Stealth 插件不可用或已禁用，跳过指纹伪装")
+            return
+
+        try:
+            self._debug_print(f"应用 stealth 指纹伪装: platform={self.playwright_platform}")
+
+            stealth_sync(page,
+                platform=self.playwright_platform,
+                screen_width=self.playwright_screen_width,
+                screen_height=self.playwright_screen_height,
+                device_scale_factor=self.playwright_device_scale_factor,
+                timezone=self.playwright_timezone,
+                locale=self.playwright_locale
+            )
+
+            self._debug_print("Stealth 指纹伪装应用成功")
+        except Exception as e:
+            self._debug_print(f"应用 stealth 指纹伪装失败: {e}")
+
+    def _load_playwright_cookies(self) -> list:
+        """
+        加载 Playwright Cookie（支持文件和内联配置）
+
+        Returns:
+            list: Cookie 列表
+        """
+        cookies = []
+
+        # 从文件加载
+        if self.playwright_cookies_file:
+            cookies.extend(self._load_cookies_from_file(self.playwright_cookies_file))
+
+        # 从内联配置加载
+        if self.playwright_cookies:
+            cookies.extend(self.playwright_cookies)
+
+        if cookies:
+            self._debug_print(f"已加载 {len(cookies)} 个 Cookie")
+
+        return cookies
+
+    def _load_cookies_from_file(self, file_path: str) -> list:
+        """
+        从 Netscape 格式的 cookies.txt 文件加载 Cookie
+
+        Args:
+            file_path: Cookie 文件路径
+
+        Returns:
+            list: Cookie 列表
+        """
+        cookies = []
+
+        if not os.path.exists(file_path):
+            self._debug_print(f"Cookie 文件不存在: {file_path}")
+            return cookies
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        parts = line.split('\t')
+                        if len(parts) >= 7:
+                            cookie = {
+                                'name': parts[5],
+                                'value': parts[6],
+                                'domain': parts[0],
+                                'path': parts[2],
+                                'expires': float(parts[4]) if parts[4] else -1,
+                                'httpOnly': parts[6].upper() == 'TRUE',
+                                'secure': parts[3].upper() == 'TRUE'
+                            }
+                            cookies.append(cookie)
+
+            self._debug_print(f"从文件加载了 {len(cookies)} 个 Cookie: {file_path}")
+        except Exception as e:
+            self._debug_print(f"加载 Cookie 文件失败: {e}")
+
+        return cookies
+
+    def _needs_client_side_rendering(self, soup: BeautifulSoup) -> bool:
+        """
+        检测页面是否需要客户端渲染（JavaScript 动态内容）
+
+        检测条件（满足任一即触发 Playwright）：
+        1. 强制模式：playwright_force=True 时始终返回 True
+        2. Next.js bailout 标记
+        3. LangChain 特定标记（mermaid 容器）
+        4. Mintlify hydration 标记
+        5. client-only 类名
+        6. 大量空容器
+
+        Args:
+            soup: BeautifulSoup 解析后的 HTML
+
+        Returns:
+            bool: True 表示需要客户端渲染
+        """
+        # 1. 强制模式
+        if self.playwright_force:
+            self._debug_print("强制模式：使用 Playwright 获取所有页面")
+            return True
+
+        if not PLAYWRIGHT_AVAILABLE or not self.playwright_enabled:
+            return False
+
+        # 2. 检测 Next.js bailout 标记
+        templates = soup.find_all("template")
+        for template in templates:
+            if template.get(
+                "data-nextjs-router"
+            ) == "push" or "BAILOUT_TO_CLIENT_SIDE_RENDERING" in str(template):
+                self._debug_print("检测到 Next.js bailout 标记，需要客户端渲染")
+                return True
+
+        # 3. 检测 LangChain 特定标记 (mermaid 容器)
+        mermaid_containers = soup.find_all(
+            attrs={"data-component-name": "mermaid-container"}
+        )
+        for container in mermaid_containers:
+            text = container.get_text(strip=True)
+            if not text or len(text) < 10:
+                self._debug_print("检测到空的 mermaid-container，需要客户端渲染")
+                return True
+
+        # 4. 检测 Mintlify hydration 标记
+        mintlify_elements = soup.find_all(attrs={"data-ice": True})
+        if mintlify_elements:
+            empty_containers = 0
+            for elem in mintlify_elements:
+                text = elem.get_text(strip=True)
+                if not text:
+                    empty_containers += 1
+            if empty_containers > 0:
+                self._debug_print(
+                    f"检测到 {empty_containers} 个空的 Mintlify hydration 容器，需要客户端渲染"
+                )
+                return True
+
+        # 5. 检测 client-only 类名
+        client_only_elements = soup.find_all(
+            class_=lambda x: x and "client-only" in " ".join(x) if x else False
+        )
+        if client_only_elements:
+            self._debug_print(
+                f"检测到 {len(client_only_elements)} 个 client-only 元素，需要客户端渲染"
+            )
+            return True
+
+        # 6. 检测大量空容器
+        empty_containers = soup.find_all(
+            lambda tag: (
+                tag.name in ["div", "span"]
+                and not tag.get("class")
+                and not tag.findChildren()
+                and len(tag.get_text(strip=True)) == 0
+            )
+        )
+        if len(empty_containers) > 10:
+            self._debug_print(
+                f"检测到 {len(empty_containers)} 个空容器，可能需要客户端渲染"
+            )
+            return True
+
+        return False
+
+    def _wait_for_mermaid_render(self, page, timeout: int = 10000) -> bool:
+        """
+        等待 mermaid 图表渲染完成（通用方案）
+
+        策略：
+        1. 检测页面是否有 mermaid 相关元素或脚本
+        2. 如果有 .mermaid 类元素，等待其内容变成 SVG 或 g 元素
+        3. 执行 JavaScript 检查 mermaid 是否正在运行
+        4. 如果检测不到渲染，直接返回 True
+
+        Args:
+            page: Playwright page 对象
+            timeout: 超时时间（毫秒）
+
+        Returns:
+            bool: 是否等待成功（超时也算成功，避免阻塞）
+        """
+        try:
+            # 检查页面是否有 mermaid 相关元素
+            has_mermaid = page.evaluate("""
+                () => {
+                    // 检查多种可能的 mermaid 标记
+                    const selectors = [
+                        '.mermaid',           // 标准 class
+                        'pre.mermaid',        // pre 标签
+                        'div.mermaid',        // div 标签
+                        '[data-component-name="mermaid-container"]',  // LangChain
+                        'mermaid',            // 自定义标签
+                        'code.language-mermaid'  // 代码块
+                    ];
+
+                    for (const sel of selectors) {
+                        if (document.querySelector(sel)) {
+                            return true;
+                        }
+                    }
+
+                    // 检查是否有 mermaid 脚本
+                    const scripts = document.querySelectorAll('script[src*="mermaid"]');
+                    return scripts.length > 0;
+                }
+            """)
+
+            if not has_mermaid:
+                self._debug_print("页面没有 mermaid 相关元素，跳过等待")
+                return True
+
+            self._debug_print("检测到 mermaid 元素，等待渲染完成...")
+
+            # 方案1: 等待 .mermaid 元素内的 SVG 或 g 元素出现
+            try:
+                page.wait_for_selector(
+                    ".mermaid svg, .mermaid g",
+                    timeout=min(timeout, 5000),  # 先尝试短超时
+                    state="attached"
+                )
+                self._debug_print("Mermaid SVG 渲染完成")
+                return True
+            except Exception:
+                pass
+
+            # 方案2: 执行 JavaScript 检查 mermaid 状态并等待
+            try:
+                result = page.evaluate("""
+                    async () => {
+                        // 检查是否有 mermaid 正在渲染
+                        const mermaid = window.mermaid;
+                        if (mermaid && typeof mermaid.isRendering === 'function') {
+                            // 等待渲染完成
+                            let attempts = 0;
+                            while (mermaid.isRendering() && attempts < 20) {
+                                await new Promise(r => setTimeout(r, 200));
+                                attempts++;
+                            }
+                            return true;
+                        }
+
+                        // 检查所有 .mermaid 元素是否都有内容
+                        const containers = document.querySelectorAll('.mermaid');
+                        for (const container of containers) {
+                            // 如果容器是空的或只有 pre，没有 SVG，就没渲染完
+                            const hasSvg = container.querySelector('svg');
+                            const hasG = container.querySelector('g');
+                            const textContent = container.textContent.trim();
+
+                            if (!hasSvg && !hasG) {
+                                // 可能是空的，需要等待
+                                if (textContent.length > 0 && !container.querySelector('pre')) {
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                """)
+                if result:
+                    self._debug_print("Mermaid 渲染检查通过")
+                    return True
+            except Exception as e:
+                self._debug_print(f"Mermaid 状态检查跳过: {e}")
+
+            # 方案3: 等待一段时间让 JS 完成渲染
+            try:
+                page.wait_for_timeout(3000)  # 等待 3 秒
+                self._debug_print("等待 mermaid 渲染（3秒）")
+                return True
+            except Exception:
+                pass
+
+            self._debug_print("Mermaid 渲染等待完成（超时或完成）")
+            return True
+
+        except Exception as e:
+            self._debug_print(f"检查 mermaid 状态失败: {e}")
+            return True
+
+    def _fetch_with_playwright(self, url: str, headers: dict) -> Optional[str]:
+        """
+        使用 Playwright 获取渲染后的页面内容
+
+        Args:
+            url: 目标 URL
+            headers: 请求头（用于设置 User-Agent 等）
+
+        Returns:
+            str: 渲染后的 HTML 内容，或 None（获取失败时）
+        """
+        if not PLAYWRIGHT_AVAILABLE:
+            self._debug_print("Playwright 不可用，无法使用浏览器渲染")
+            return None
+
+        try:
+            self._debug_print(f"使用 Playwright 获取渲染后的页面: {url}")
+
+            user_agent = headers.get("User-Agent", "Mozilla/5.0")
+
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=self.playwright_headless)
+
+                context_options = {
+                    "user_agent": user_agent,
+                    "ignore_https_errors": True,
+                    # 新增指纹参数
+                    "screen": {
+                        "width": self.playwright_screen_width,
+                        "height": self.playwright_screen_height
+                    },
+                    "device_scale_factor": self.playwright_device_scale_factor,
+                    "locale": self.playwright_locale,
+                }
+
+                # 设置时区
+                if self.playwright_timezone:
+                    context_options["timezone_id"] = self.playwright_timezone
+
+                proxy = self._get_playwright_proxy()
+                if proxy:
+                    context_options["proxy"] = proxy
+
+                context = browser.new_context(**context_options)
+
+                # 添加 Cookie
+                cookies = self._load_playwright_cookies()
+                if cookies:
+                    context.add_cookies(cookies)
+
+                page = context.new_page()
+
+                # 应用 stealth 指纹伪装
+                self._apply_fingerprint_stealth(page)
+
+                page.set_default_timeout(self.playwright_timeout * 1000)
+
+                # 使用 domcontentloaded 避免 SPA 网络活动导致的超时
+                page.goto(url, wait_until="domcontentloaded")
+
+                # 等待 mermaid 渲染完成（关键修改）
+                self._wait_for_mermaid_render(page, timeout=self.playwright_timeout * 1000)
+
+                # 短暂等待网络稳定
+                page.wait_for_load_state("networkidle", timeout=5000)
+
+                html_content = page.content()
+
+                context.close()
+                browser.close()
+
+                self._debug_print(
+                    f"Playwright 获取成功，HTML 长度: {len(html_content)} 字符"
+                )
+                return html_content
+
+        except Exception as e:
+            self._debug_print(f"Playwright 获取失败 {url}: {e}")
+            return None
+
     def _fetch_page_content(self, url: str) -> Optional[Tuple[str, str]]:
         """
         获取网页内容
@@ -389,7 +823,7 @@ class DocUrlCrawler(DebugMixin):
                 proxies=self.config.proxy,
                 verify=False,
                 allow_redirects=True,
-                )
+            )
 
             response.raise_for_status()
 
@@ -400,8 +834,26 @@ class DocUrlCrawler(DebugMixin):
             html_content = response.text
             final_url = response.url  # 获取最终URL（处理重定向后）
 
-            # 提取页面标题
+            # 检测是否需要客户端渲染
             soup = BeautifulSoup(html_content, "html.parser")
+
+            if self._needs_client_side_rendering(soup):
+                self._debug_print(
+                    f"检测到动态内容，使用 Playwright 获取渲染后的页面: {url}"
+                )
+
+                rendered_html = self._fetch_with_playwright(final_url, headers)
+
+                if rendered_html:
+                    html_content = rendered_html
+                    soup = BeautifulSoup(html_content, "html.parser")
+                else:
+                    self._print_colored(
+                        f"Playwright 获取失败，回退到原始 HTML: {final_url}",
+                        Fore.YELLOW,
+                    )
+
+            # 提取页面标题
             page_title = self.content_filter.get_page_title(final_url, soup)
 
             # 清理标题
@@ -1095,10 +1547,10 @@ class DocUrlCrawler(DebugMixin):
             cleaned_soup = self.content_filter.filter_logging_outputs(cleaned_soup)
 
             # 处理 data-src 懒加载图片：将 data-src 复制到 src
-            for img in cleaned_soup.find_all('img'):
-                data_src = img.get('data-src')
-                if data_src and not img.get('src'):
-                    img['src'] = data_src
+            for img in cleaned_soup.find_all("img"):
+                data_src = img.get("data-src")
+                if data_src and not img.get("src"):
+                    img["src"] = data_src
 
             # 转换为Markdown
             markdown_content = self.markdown_converter.convert_to_markdown(
@@ -1118,7 +1570,9 @@ class DocUrlCrawler(DebugMixin):
             # 添加图片URL（在图片下方显示纯URL）
             extract_images = self.config.extract_image_list
             if extract_images is not None:
-                markdown_content = self.markdown_converter.add_image_urls(markdown_content, extract_images)
+                markdown_content = self.markdown_converter.add_image_urls(
+                    markdown_content, extract_images
+                )
 
             # 添加元数据头部
             header = f"# {page_title}\n\n"

@@ -59,3 +59,364 @@
 移除了 0 个非正文区块
 移除了 0 个可能的日志输出区块
 ✓ Example Domain -> Example Domain/
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 00:33:53
+usage: __main__.py [-h] [-u START_URL] [-f URL_FILE] [-config CONFIG_FILE]
+                   [-workers MAX_WORKERS] [-delay DELAY] [-timeout TIMEOUT]
+                   [-depth MAX_DEPTH] [-out OUTPUT_FILE] [-proxy PROXY]
+                   [-debug DEBUG_MODE] [-scope URL_SCOPE_MODE]
+                   [-danger DANGER_FILTER_ENABLED] [-fuzz FUZZ] [-mode MODE]
+                   [-force-scan FORCE_SCAN] [-doc-dir DOC_DIR]
+                   [-doc-name DOC_NAME] [-doc-version DOC_VERSION]
+                   [-doc-depth DOC_MAX_DEPTH]
+                   [-doc-toc-selector DOC_TOC_SELECTOR]
+
+doc4llm 扫描工具
+
+options:
+  -h, --help            show this help message and exit
+  -u START_URL          起始URL
+  -f URL_FILE           批量URL文件，每行一个URL
+  -config CONFIG_FILE   配置文件路径 (默认: doc4llm/config/config.json)
+  -workers MAX_WORKERS  最大线程数
+  -delay DELAY          请求延迟（秒）
+  -timeout TIMEOUT      请求超时（秒）
+  -depth MAX_DEPTH      最大递归深度
+  -out OUTPUT_FILE      实时输出文件
+  -proxy PROXY          代理设置
+  -debug DEBUG_MODE     调试模式 1开启 0关闭
+  -scope URL_SCOPE_MODE
+                        URL扫描范围模式 0主域 1外部一次 2全放开 3白名单模式
+  -danger DANGER_FILTER_ENABLED
+                        危险接口过滤 1开启 0关闭 (默认: 1)
+  -fuzz FUZZ            是否启用自定义URL拼接参数 1启用 0关闭 (默认: 0)
+  -mode MODE            爬取模式 0=仅爬取CSV 1=抓取文档内容 2=抓取锚点链接 3=内容+锚点 4=单页面爬取(不递归)
+                        (默认: 0)
+  -force-scan FORCE_SCAN
+                        强制启动URL扫描器 (mode 1/2/3时有效，1=强制扫描刷新CSV，0=CSV不为空则跳过扫描)
+                        (默认: 0)
+  -doc-dir DOC_DIR      文档输出目录路径
+  -doc-name DOC_NAME    文档名称（覆盖自动检测）
+  -doc-version DOC_VERSION
+                        文档版本号 (默认: latest)
+  -doc-depth DOC_MAX_DEPTH
+                        文档爬取最大深度 (默认: 10)
+  -doc-toc-selector DOC_TOC_SELECTOR
+                        TOC区域CSS选择器 (如: .toc, #navigation)
+
+提示: 使用 -force-scan 而非 -force_scan（参数名用连字符）
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 00:35:33
+usage: __main__.py [-h] [-u START_URL] [-f URL_FILE] [-config CONFIG_FILE]
+                   [-workers MAX_WORKERS] [-delay DELAY] [-timeout TIMEOUT]
+                   [-depth MAX_DEPTH] [-out OUTPUT_FILE] [-proxy PROXY]
+                   [-debug DEBUG_MODE] [-scope URL_SCOPE_MODE]
+                   [-danger DANGER_FILTER_ENABLED] [-fuzz FUZZ] [-mode MODE]
+                   [-force-scan FORCE_SCAN] [-doc-dir DOC_DIR]
+                   [-doc-name DOC_NAME] [-doc-version DOC_VERSION]
+                   [-doc-depth DOC_MAX_DEPTH]
+                   [-doc-toc-selector DOC_TOC_SELECTOR]
+__main__.py: error: unrecognized arguments: -playwright-force 1
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 00:36:21
+usage: __main__.py [-h] [-u START_URL] [-f URL_FILE] [-config CONFIG_FILE]
+                   [-workers MAX_WORKERS] [-delay DELAY] [-timeout TIMEOUT]
+                   [-depth MAX_DEPTH] [-out OUTPUT_FILE] [-proxy PROXY]
+                   [-debug DEBUG_MODE] [-scope URL_SCOPE_MODE]
+                   [-danger DANGER_FILTER_ENABLED] [-fuzz FUZZ] [-mode MODE]
+                   [-force-scan FORCE_SCAN] [-doc-dir DOC_DIR]
+                   [-doc-name DOC_NAME] [-doc-version DOC_VERSION]
+                   [-doc-depth DOC_MAX_DEPTH]
+                   [-doc-toc-selector DOC_TOC_SELECTOR]
+                   [-playwright-force PLAYWRIGHT_FORCE]
+
+doc4llm 扫描工具
+
+options:
+  -h, --help            show this help message and exit
+  -u START_URL          起始URL
+  -f URL_FILE           批量URL文件，每行一个URL
+  -config CONFIG_FILE   配置文件路径 (默认: doc4llm/config/config.json)
+  -workers MAX_WORKERS  最大线程数
+  -delay DELAY          请求延迟（秒）
+  -timeout TIMEOUT      请求超时（秒）
+  -depth MAX_DEPTH      最大递归深度
+  -out OUTPUT_FILE      实时输出文件
+  -proxy PROXY          代理设置
+  -debug DEBUG_MODE     调试模式 1开启 0关闭
+  -scope URL_SCOPE_MODE
+                        URL扫描范围模式 0主域 1外部一次 2全放开 3白名单模式
+  -danger DANGER_FILTER_ENABLED
+                        危险接口过滤 1开启 0关闭 (默认: 1)
+  -fuzz FUZZ            是否启用自定义URL拼接参数 1启用 0关闭 (默认: 0)
+  -mode MODE            爬取模式 0=仅爬取CSV 1=抓取文档内容 2=抓取锚点链接 3=内容+锚点 4=单页面爬取(不递归)
+                        (默认: 0)
+  -force-scan FORCE_SCAN
+                        强制启动URL扫描器 (mode 1/2/3时有效，1=强制扫描刷新CSV，0=CSV不为空则跳过扫描)
+                        (默认: 0)
+  -doc-dir DOC_DIR      文档输出目录路径
+  -doc-name DOC_NAME    文档名称（覆盖自动检测）
+  -doc-version DOC_VERSION
+                        文档版本号 (默认: latest)
+  -doc-depth DOC_MAX_DEPTH
+                        文档爬取最大深度 (默认: 10)
+  -doc-toc-selector DOC_TOC_SELECTOR
+                        TOC区域CSS选择器 (如: .toc, #navigation)
+  -playwright-force PLAYWRIGHT_FORCE
+                        强制使用 Playwright 获取所有页面 1启用 0关闭 (默认: 0)
+
+提示: 使用 -force-scan 而非 -force_scan（参数名用连字符）
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 00:36:40
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 00:39:24
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:06:09
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:17:06
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:17:39
+=== 配置文件 Config/langchain.json 不存在，使用默认配置 ===
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: None 最大深度: 5 最大URL数: 10000 线程数: 30 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'www.baidu.com', 'github.com'}
+=== 白域名单: {'test.com', 'example.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/实时输出文件.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.css', '.mp4'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['del', 'delete', 'insert', 'logout', 'loginout', 'remove', 'drop', 'shutdown', 'stop', 'poweroff', 'restart', 'rewrite', 'terminate', 'deactivate', 'halt', 'disable']
+=== 允许接口: []
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: False
+=== Playwright超时: 30
+=== Playwright无头: True
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: md_docs/auto-detected@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+=== 从起始URL自动设置文档名称: docs_langchain_com ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: md_docs/docs_langchain_com@latest
+[DEBUG] 检测到 Next.js bailout 标记，需要客户端渲染
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/retrieval: Page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to "https://docs.langchain.com/oss/python/langchain/retrieval", waiting until "networkidle"
+
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 0 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: md_docs/docs_langchain_com@latest/Retrieval - Docs by LangChain/docContent.md
+✓ Retrieval - Docs by LangChain -> Retrieval - Docs by LangChain/
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:18:27
+=== 配置文件 Config/langchain.json 不存在，使用默认配置 ===
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: None 最大深度: 5 最大URL数: 10000 线程数: 30 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'test.com', 'example.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/实时输出文件.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.css', '.mp4'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['del', 'delete', 'insert', 'logout', 'loginout', 'remove', 'drop', 'shutdown', 'stop', 'poweroff', 'restart', 'rewrite', 'terminate', 'deactivate', 'halt', 'disable']
+=== 允许接口: []
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: False
+=== Playwright超时: 30
+=== Playwright无头: True
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: md_docs/auto-detected@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+=== 从起始URL自动设置文档名称: docs_langchain_com ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: md_docs/docs_langchain_com@latest
+[DEBUG] 检测到 Next.js bailout 标记，需要客户端渲染
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/retrieval: Page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to "https://docs.langchain.com/oss/python/langchain/retrieval", waiting until "networkidle"
+
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 0 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: md_docs/docs_langchain_com@latest/Retrieval - Docs by LangChain/docContent.md
+✓ Retrieval - Docs by LangChain -> Retrieval - Docs by LangChain/
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:19:11
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:19:42
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:23:47
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:26:32
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:27:06
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:27:58
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:28:34
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:30:06
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:32:20
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:33:51
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:34:19
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 09:35:54

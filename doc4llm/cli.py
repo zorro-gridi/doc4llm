@@ -233,6 +233,13 @@ class ArgumentParser:
             type=str,
             help="TOC区域CSS选择器 (如: .toc, #navigation)",
         )
+        parser.add_argument(
+            "-playwright-force",
+            dest="playwright_force",
+            type=int,
+            default=0,
+            help="强制使用 Playwright 获取所有页面 1启用 0关闭 (默认: 0)",
+        )
 
         return parser.parse_args()
 
@@ -368,6 +375,12 @@ class ConfigBuilder:
             else get_value("headers")
         )
 
+        # 获取 playwright 配置（嵌套对象）
+        playwright_config = config_data.get("playwright", {})
+        stealth_config = config_data.get("stealth", {})
+        fingerprint_config = config_data.get("fingerprint", {})
+        cookies_config = config_data.get("cookies", {})
+
         return ScannerConfig(
             start_url=get_value("start_url"),
             proxy=get_value("proxy"),
@@ -413,6 +426,21 @@ class ConfigBuilder:
             log_max_lines=get_value("log_max_lines", 10000),
             toc_filter=get_value("toc_filter"),
             content_filter=get_value("content_filter", {}),
+            playwright_enabled=playwright_config.get("enabled", True),
+            playwright_timeout=playwright_config.get("timeout", 30),
+            playwright_headless=playwright_config.get("headless", True),
+            playwright_force=playwright_config.get("force", False),
+            # 指纹伪装配置
+            playwright_stealth=stealth_config.get("enabled", True),
+            playwright_platform=stealth_config.get("platform", "win32"),
+            playwright_screen_width=stealth_config.get("screen_width", 1920),
+            playwright_screen_height=stealth_config.get("screen_height", 1080),
+            playwright_device_scale_factor=stealth_config.get("device_scale_factor", 1),
+            playwright_timezone=stealth_config.get("timezone", "Asia/Shanghai"),
+            playwright_locale=stealth_config.get("locale", "zh-CN"),
+            # Cookie 配置
+            playwright_cookies_file=cookies_config.get("file"),
+            playwright_cookies=cookies_config.get("inline", []),
         )
 
     @staticmethod
@@ -446,6 +474,10 @@ class ConfigBuilder:
         print(f"{Fore.CYAN}=== 自定路径: {config.path_route}")
         print(f"{Fore.CYAN}=== 自定API: {config.api_route}")
         print(f"{Fore.CYAN}=== 启用fuzz: {config.fuzz}")
+        print(f"{Fore.CYAN}=== Playwright启用: {config.playwright_enabled}")
+        print(f"{Fore.CYAN}=== Playwright强制: {config.playwright_force}")
+        print(f"{Fore.CYAN}=== Playwright超时: {config.playwright_timeout}")
+        print(f"{Fore.CYAN}=== Playwright无头: {config.playwright_headless}")
         print(
             f"{Fore.CYAN}=============================================={Style.RESET_ALL}"
         )

@@ -46,7 +46,23 @@ class ScannerConfig(DebugMixin):
                  # 内联提取配置
                  enable_inline_extraction=1,
                  # 图片URL列表配置
-                 extract_image_list=None):
+                 extract_image_list=None,
+                 # Playwright 配置
+                 playwright_enabled=True,
+                 playwright_timeout=30,
+                 playwright_headless=True,
+                 playwright_force=False,
+                 # 指纹伪装配置
+                 playwright_stealth=True,
+                 playwright_platform='win32',
+                 playwright_screen_width=1920,
+                 playwright_screen_height=1080,
+                 playwright_device_scale_factor=1,
+                 playwright_timezone='Asia/Shanghai',
+                 playwright_locale='zh-CN',
+                 # Cookie 配置
+                 playwright_cookies_file=None,
+                 playwright_cookies=None):
         # 基础配置
         self.start_url = start_url
         self.proxy = self._init_proxy(proxy)
@@ -121,6 +137,25 @@ class ScannerConfig(DebugMixin):
         # 图片URL列表配置
         # None=启用并提取所有图片，False=禁用，list=只提取匹配的URL
         self.extract_image_list = extract_image_list
+
+        # Playwright 配置
+        self.playwright_enabled = playwright_enabled
+        self.playwright_timeout = int(playwright_timeout) if playwright_timeout else 30
+        self.playwright_headless = playwright_headless
+        self.playwright_force = playwright_force
+
+        # 指纹伪装配置
+        self.playwright_stealth = playwright_stealth
+        self.playwright_platform = playwright_platform or 'win32'
+        self.playwright_screen_width = int(playwright_screen_width) if playwright_screen_width else 1920
+        self.playwright_screen_height = int(playwright_screen_height) if playwright_screen_height else 1080
+        self.playwright_device_scale_factor = int(playwright_device_scale_factor) if playwright_device_scale_factor else 1
+        self.playwright_timezone = playwright_timezone or 'Asia/Shanghai'
+        self.playwright_locale = playwright_locale or 'zh-CN'
+
+        # Cookie 配置
+        self.playwright_cookies_file = playwright_cookies_file
+        self.playwright_cookies = playwright_cookies or []
 
         # 扩展名过滤配置
         self.extension_blacklist = self._init_extension_blacklist(extension_blacklist)

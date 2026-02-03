@@ -1,0 +1,143 @@
+2026-02-03 00:36:40,992 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 00:36:40,994 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 00:36:40,994 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 00:36:40,996 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 00:36:41,181 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 00:36:42,873 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 00:39:24,455 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 00:39:24,457 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 00:39:24,458 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 00:39:24,460 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 00:39:24,639 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 00:39:24,748 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 00:39:24,748 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 00:39:24,748 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 00:39:24,748 DEBUG Using selector: KqueueSelector
+2026-02-03 00:39:25,332 DEBUG Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/retrieval: BrowserType.launch: Executable doesn't exist at /Users/zorro/Library/Caches/ms-playwright/chromium_headless_shell-1200/chrome-headless-shell-mac-arm64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     playwright install                                     ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+2026-02-03 00:39:26,755 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 09:19:11,090 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:19:11,091 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:19:11,091 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:19:11,092 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:19:11,201 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 09:19:11,267 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:19:11,267 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:19:11,267 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:19:11,267 DEBUG Using selector: KqueueSelector
+2026-02-03 09:19:14,276 DEBUG Playwright 获取成功，HTML 长度: 29764 字符
+2026-02-03 09:19:14,314 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 09:19:42,676 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:19:42,677 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:19:42,677 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:19:42,678 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:19:43,117 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 09:19:43,262 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:19:43,262 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:19:43,262 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:19:43,262 DEBUG Using selector: KqueueSelector
+2026-02-03 09:20:14,356 DEBUG Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/retrieval: Page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to "https://docs.langchain.com/oss/python/langchain/retrieval", waiting until "networkidle"
+
+2026-02-03 09:20:14,979 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 09:26:32,030 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:26:32,031 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:26:32,032 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:26:32,033 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:26:32,393 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 09:26:32,534 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:26:32,534 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:26:32,534 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:26:32,534 DEBUG Using selector: KqueueSelector
+2026-02-03 09:26:36,534 DEBUG Playwright 获取成功，HTML 长度: 31138 字符
+2026-02-03 09:26:36,671 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 09:27:06,118 DEBUG 配置初始化完成: 起始URL: https://python.langchain.com/docs/docs 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:27:06,121 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:27:06,122 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:27:06,123 DEBUG Starting new HTTPS connection (1): python.langchain.com:443
+2026-02-03 09:27:06,466 DEBUG https://python.langchain.com:443 "GET /docs/docs HTTP/1.1" 308 None
+2026-02-03 09:27:06,470 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:27:06,883 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/overview HTTP/1.1" 200 None
+2026-02-03 09:27:07,019 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:27:07,019 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://python.langchain.com/docs/docs
+2026-02-03 09:27:07,019 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/overview
+2026-02-03 09:27:07,019 DEBUG Using selector: KqueueSelector
+2026-02-03 09:27:10,347 DEBUG Playwright 获取成功，HTML 长度: 572902 字符
+2026-02-03 09:27:10,586 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/LangChain overview/docContent.md
+2026-02-03 09:27:58,272 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:27:58,273 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:27:58,273 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:27:58,274 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:27:58,633 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 09:27:58,792 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:27:58,792 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:27:58,792 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:27:58,792 DEBUG Using selector: KqueueSelector
+2026-02-03 09:28:01,450 DEBUG Playwright 获取成功，HTML 长度: 31147 字符
+2026-02-03 09:28:01,494 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 09:28:34,450 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:28:34,451 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:28:34,452 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:28:34,454 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:28:34,816 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 09:28:34,978 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:28:34,979 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:28:34,979 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:28:34,979 DEBUG Using selector: KqueueSelector
+2026-02-03 09:28:37,518 DEBUG Playwright 获取成功，HTML 长度: 31139 字符
+2026-02-03 09:28:37,627 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 09:30:06,629 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:30:06,630 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:30:06,630 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:30:06,632 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:30:07,038 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 09:30:07,183 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:30:07,183 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:30:07,183 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:30:07,183 DEBUG Using selector: KqueueSelector
+2026-02-03 09:30:09,528 DEBUG Playwright 获取成功，HTML 长度: 31143 字符
+2026-02-03 09:30:09,580 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 09:32:20,931 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:32:20,933 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:32:20,933 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:32:20,934 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:32:21,317 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 09:32:21,482 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:32:21,482 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:32:21,482 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:32:21,482 DEBUG Using selector: KqueueSelector
+2026-02-03 09:32:24,904 DEBUG Playwright 获取成功，HTML 长度: 31147 字符
+2026-02-03 09:32:24,946 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 09:33:51,202 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:33:51,204 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:33:51,204 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:33:51,206 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:33:51,578 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 09:33:51,746 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:33:51,746 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:33:51,746 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 09:33:51,746 DEBUG Using selector: KqueueSelector
+2026-02-03 09:33:55,118 DEBUG Playwright 获取成功，HTML 长度: 31144 字符
+2026-02-03 09:33:55,159 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 09:34:19,600 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/concepts/overview 基础域名: langchain.com 代理:  最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 09:34:19,601 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 09:34:19,602 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 09:34:19,604 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 09:34:21,982 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/concepts/overview HTTP/1.1" 200 None
+2026-02-03 09:34:22,097 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 09:34:22,097 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/concepts/overview
+2026-02-03 09:34:22,097 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/concepts/overview
+2026-02-03 09:34:22,097 DEBUG Using selector: KqueueSelector
+2026-02-03 09:34:28,693 DEBUG Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/concepts/overview: Target page, context or browser has been closed
+=========================== logs ===========================
+"load" event fired
+============================================================
+2026-02-03 09:34:30,083 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Page Not Found/docContent.md
