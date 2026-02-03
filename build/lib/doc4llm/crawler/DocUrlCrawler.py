@@ -630,7 +630,7 @@ class DocUrlCrawler(DebugMixin):
         try:
             # 首先等待页面稳定
             page.wait_for_timeout(2000)
-            
+
             # 检查页面是否有 mermaid 相关元素
             has_mermaid = page.evaluate("""
                 () => {
@@ -653,7 +653,7 @@ class DocUrlCrawler(DebugMixin):
                             found.push(`${sel}: ${elements.length}`);
                         }
                     }
-                    
+
                     console.log('Mermaid检测结果:', found);
                     return found.length > 0;
                 }
@@ -661,9 +661,9 @@ class DocUrlCrawler(DebugMixin):
 
             if not has_mermaid:
                 # 再次检查，可能需要更多时间加载
-                self._debug_print("第一次检查未发现mermaid元素，等待5秒后重新检查...")
-                page.wait_for_timeout(5000)
-                
+                self._debug_print("第一次检查未发现mermaid元素，等待3秒后重新检查...")
+                page.wait_for_timeout(3000)
+
                 has_mermaid = page.evaluate("""
                     () => {
                         const selectors = [
@@ -671,7 +671,7 @@ class DocUrlCrawler(DebugMixin):
                             '[data-component-name="mermaid-container"]',
                             '[data-component-name*="mermaid"]'
                         ];
-                        
+
                         for (const sel of selectors) {
                             if (document.querySelector(sel)) {
                                 console.log('延迟检查发现:', sel);
@@ -681,7 +681,7 @@ class DocUrlCrawler(DebugMixin):
                         return false;
                     }
                 """)
-                
+
                 if not has_mermaid:
                     self._debug_print("页面没有 mermaid 相关元素，跳过等待")
                     return True
@@ -690,13 +690,13 @@ class DocUrlCrawler(DebugMixin):
 
             # 等待更长时间让Mermaid完全渲染
             page.wait_for_timeout(8000)  # 等待8秒
-            
+
             # 检查渲染结果
             render_status = page.evaluate("""
                 () => {
                     const containers = document.querySelectorAll('[data-component-name="mermaid-container"], .mermaid');
                     const svgs = document.querySelectorAll('svg.flowchart');
-                    
+
                     return {
                         containers: containers.length,
                         svgs: svgs.length,
@@ -704,14 +704,14 @@ class DocUrlCrawler(DebugMixin):
                     };
                 }
             """)
-            
+
             self._debug_print(f"Mermaid渲染状态: {render_status}")
-            
+
             if render_status.get('hasContent', False):
                 self._debug_print("Mermaid 渲染完成")
             else:
                 self._debug_print("Mermaid 可能未完全渲染，但继续处理")
-            
+
             return True
 
         except Exception as e:

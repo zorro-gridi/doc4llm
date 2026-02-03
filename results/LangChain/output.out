@@ -3082,14 +3082,14 @@ Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/p
 [DEBUG] 未找到占位符 MERMAID_PLACEHOLDER_0 的任何匹配
 [DEBUG] Markdown前10行:
 [DEBUG]   1: Large Language Models (LLMs) are powerful, but they have two key limitations:
-[DEBUG]   2: 
+[DEBUG]   2:
 [DEBUG]   3:   * **Finite context** — they can’t ingest entire corpora at once.
 [DEBUG]   4:   * **Static knowledge** — their training data is frozen at a point in time.
-[DEBUG]   5: 
+[DEBUG]   5:
 [DEBUG]   6: Retrieval addresses these problems by fetching relevant external knowledge at query time. This is the foundation of **Retrieval-Augmented Generation (RAG)** : enhancing an LLM’s answers with context-specific information.
-[DEBUG]   7: 
+[DEBUG]   7:
 [DEBUG]   8: ## Building a knowledge base
-[DEBUG]   9: 
+[DEBUG]   9:
 [DEBUG]   10: A **knowledge base** is a repository of documents or structured data used during retrieval. If you need a custom knowledge base, you can use LangChain’s document loaders and vector stores to build one from your own data.
 [DEBUG] 失败：未能替换占位符: MERMAID_PLACEHOLDER_0
 [DEBUG] 处理占位符: MERMAID_PLACEHOLDER_1
@@ -3097,14 +3097,14 @@ Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/p
 [DEBUG] 未找到占位符 MERMAID_PLACEHOLDER_1 的任何匹配
 [DEBUG] Markdown前10行:
 [DEBUG]   1: Large Language Models (LLMs) are powerful, but they have two key limitations:
-[DEBUG]   2: 
+[DEBUG]   2:
 [DEBUG]   3:   * **Finite context** — they can’t ingest entire corpora at once.
 [DEBUG]   4:   * **Static knowledge** — their training data is frozen at a point in time.
-[DEBUG]   5: 
+[DEBUG]   5:
 [DEBUG]   6: Retrieval addresses these problems by fetching relevant external knowledge at query time. This is the foundation of **Retrieval-Augmented Generation (RAG)** : enhancing an LLM’s answers with context-specific information.
-[DEBUG]   7: 
+[DEBUG]   7:
 [DEBUG]   8: ## Building a knowledge base
-[DEBUG]   9: 
+[DEBUG]   9:
 [DEBUG]   10: A **knowledge base** is a repository of documents or structured data used during retrieval. If you need a custom knowledge base, you can use LangChain’s document loaders and vector stores to build one from your own data.
 [DEBUG] 失败：未能替换占位符: MERMAID_PLACEHOLDER_1
 [DEBUG] 处理占位符: MERMAID_PLACEHOLDER_2
@@ -3112,14 +3112,14 @@ Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/p
 [DEBUG] 未找到占位符 MERMAID_PLACEHOLDER_2 的任何匹配
 [DEBUG] Markdown前10行:
 [DEBUG]   1: Large Language Models (LLMs) are powerful, but they have two key limitations:
-[DEBUG]   2: 
+[DEBUG]   2:
 [DEBUG]   3:   * **Finite context** — they can’t ingest entire corpora at once.
 [DEBUG]   4:   * **Static knowledge** — their training data is frozen at a point in time.
-[DEBUG]   5: 
+[DEBUG]   5:
 [DEBUG]   6: Retrieval addresses these problems by fetching relevant external knowledge at query time. This is the foundation of **Retrieval-Augmented Generation (RAG)** : enhancing an LLM’s answers with context-specific information.
-[DEBUG]   7: 
+[DEBUG]   7:
 [DEBUG]   8: ## Building a knowledge base
-[DEBUG]   9: 
+[DEBUG]   9:
 [DEBUG]   10: A **knowledge base** is a repository of documents or structured data used during retrieval. If you need a custom knowledge base, you can use LangChain’s document loaders and vector stores to build one from your own data.
 [DEBUG] 失败：未能替换占位符: MERMAID_PLACEHOLDER_2
 [DEBUG] 处理占位符: MERMAID_PLACEHOLDER_3
@@ -3127,14 +3127,14 @@ Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/p
 [DEBUG] 未找到占位符 MERMAID_PLACEHOLDER_3 的任何匹配
 [DEBUG] Markdown前10行:
 [DEBUG]   1: Large Language Models (LLMs) are powerful, but they have two key limitations:
-[DEBUG]   2: 
+[DEBUG]   2:
 [DEBUG]   3:   * **Finite context** — they can’t ingest entire corpora at once.
 [DEBUG]   4:   * **Static knowledge** — their training data is frozen at a point in time.
-[DEBUG]   5: 
+[DEBUG]   5:
 [DEBUG]   6: Retrieval addresses these problems by fetching relevant external knowledge at query time. This is the foundation of **Retrieval-Augmented Generation (RAG)** : enhancing an LLM’s answers with context-specific information.
-[DEBUG]   7: 
+[DEBUG]   7:
 [DEBUG]   8: ## Building a knowledge base
-[DEBUG]   9: 
+[DEBUG]   9:
 [DEBUG]   10: A **knowledge base** is a repository of documents or structured data used during retrieval. If you need a custom knowledge base, you can use LangChain’s document loaders and vector stores to build one from your own data.
 [DEBUG] 失败：未能替换占位符: MERMAID_PLACEHOLDER_3
 [DEBUG] 处理占位符: MERMAID_PLACEHOLDER_4
@@ -3202,7 +3202,7 @@ Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/p
 [DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
 [DEBUG] 应用 stealth 指纹伪装
 [DEBUG] Stealth 指纹伪装应用成功
-[DEBUG] 第一次检查未发现mermaid元素，等待5秒后重新检查...
+[DEBUG] 第一次检查未发现mermaid元素，等待3秒后重新检查...
 [DEBUG] 检测到 mermaid 元素，等待渲染完成...
 [DEBUG] Mermaid渲染状态: {'containers': 8, 'svgs': 4, 'hasContent': True}
 [DEBUG] Mermaid 渲染完成

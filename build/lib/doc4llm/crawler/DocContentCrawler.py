@@ -568,7 +568,7 @@ class DocContentCrawler:
 
             # 方案2: 等待一段时间让 JS 完成渲染（如果方案1超时）
             try:
-                page.wait_for_timeout(5000)  # 等待 5 秒
+                page.wait_for_timeout(3000)  # 等待 5 秒
                 self._debug_print("等待 mermaid 渲染（5秒）")
 
                 # 再次检查 SVG 是否出现

@@ -18,26 +18,26 @@
 def _screenshot_mermaid_elements(self, page, url: str) -> List[Dict[str, str]]:
     """
     对页面中的 mermaid 流程图进行截图
-    
+
     Returns:
         List of screenshots: [{'path': 'path/to/image.png', 'alt': '流程图描述'}]
     """
     screenshots = []
-    
+
     try:
         # 等待 mermaid 渲染完成
         page.wait_for_timeout(3000)
-        
+
         # 获取所有 mermaid 容器
         mermaid_count = page.locator('.mermaid').count()
-        
+
         for i in range(mermaid_count):
             try:
                 # 滚动到元素并等待渲染
                 mermaid_el = page.locator('.mermaid').nth(i)
                 mermaid_el.scroll_into_view_if_needed()
                 page.wait_for_timeout(1000)
-                
+
                 # 生成文件名
                 from urllib.parse import urlparse
                 parsed = urlparse(url)
@@ -45,24 +45,24 @@ def _screenshot_mermaid_elements(self, page, url: str) -> List[Dict[str, str]]:
                 safe_path = parsed.path.strip('/').replace('/', '_')[:30]
                 screenshot_name = f"{domain}_{safe_path}_mermaid_{i}.png"
                 screenshot_path = os.path.join(self.output_dir, 'screenshots', screenshot_name)
-                
+
                 # 截图
                 os.makedirs(os.path.dirname(screenshot_path), exist_ok=True)
                 mermaid_el.screenshot(path=screenshot_path)
-                
+
                 screenshots.append({
                     'path': f"screenshots/{screenshot_name}",
                     'alt': f"Mermaid 流程图 #{i+1}"
                 })
-                
+
                 self._debug_print(f"Mermaid 截图已保存: {screenshot_path}")
-                
+
             except Exception as e:
                 self._debug_print(f"截图失败 #{i}: {e}")
-                
+
     except Exception as e:
         self._debug_print(f"Mermaid 截图失败: {e}")
-        
+
     return screenshots
 ```
 
@@ -73,20 +73,20 @@ def _screenshot_mermaid_elements(self, page, url: str) -> List[Dict[str, str]]:
 ```python
 def convert_to_markdown(self, html_content: str, mermaid_screenshots: List[Dict] = None) -> str:
     """将HTML内容转换为Markdown格式"""
-    
+
     # 先使用 html2text 转换
     markdown = self.converter.handle(html_content)
-    
+
     # 处理 mermaid 截图（插入到文档中）
     if mermaid_screenshots:
         for i, shot in enumerate(mermaid_screenshots):
             # 在文档末尾或适当位置插入截图
             markdown += f"\n\n## Mermaid 流程图 {i+1}\n\n"
             markdown += f"![{shot['alt']}]({shot['path']})\n"
-    
+
     # 后处理清理格式问题
     markdown = self._clean_markdown(markdown)
-    
+
     return markdown
 ```
 
@@ -95,22 +95,22 @@ def convert_to_markdown(self, html_content: str, mermaid_screenshots: List[Dict]
 ```python
 def crawl_with_playwright(self, url: str) -> Optional[str]:
     """使用 Playwright 渲染并提取内容"""
-    
+
     # ... 现有代码 ...
-    
+
     # 等待页面加载
     page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(5000)
-    
+    page.wait_for_timeout(3000)
+
     # 获取 HTML 内容
     html_content = page.content()
-    
+
     # 截图 mermaid 流程图（新增）
     mermaid_screenshots = self._screenshot_mermaid_elements(page, url)
-    
+
     # 转换为 Markdown
     markdown = self.convert_to_markdown(html_content, mermaid_screenshots)
-    
+
     return markdown
 ```
 
@@ -130,7 +130,7 @@ results/
 ```python
 class ScannerConfig:
     # ... 现有配置 ...
-    
+
     # Mermaid 截图配置
     mermaid_screenshot_enabled: bool = True  # 是否启用截图
     mermaid_screenshot_scale: int = 1        # 缩放比例 (1=标准, 2=高清)
