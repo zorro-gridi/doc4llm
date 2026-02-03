@@ -26,3 +26,11 @@ Call log:
   - navigating to "https://docs.langchain.com/oss/python/langchain/retrieval", waiting until "networkidle"
 
 2026-02-03 09:18:59,135 DEBUG 保存文件成功: md_docs/docs_langchain_com@latest/Retrieval - Docs by LangChain/docContent.md
+2026-02-03 10:57:43,074 DEBUG 配置初始化完成: 起始URL: https://example.com 基础域名: example.com 代理: None 最大深度: 5 最大URL数: 10000 线程数: 30 调试: 1
+2026-02-03 10:57:43,075 DEBUG 连接池配置: pool_connections=60, pool_maxsize=100
+2026-02-03 10:57:43,075 DEBUG 最大请求数配置: max_requests=10000
+2026-02-03 10:57:43,076 DEBUG 输出文件已初始化: results/url_extration_list.csv
+2026-02-03 10:57:43,076 DEBUG 扫描器初始化完成
+2026-02-03 10:57:43,076 DEBUG [worker_loop] 外部URL线程启动: ExternalURLThread
+2026-02-03 10:57:43,076 DEBUG [start_scan] 开始扫描过程: start_url=https://example.com
+2026-02-03 10:57:43,076 DEBUG [start_scan] 初始配置: 最大请求数=10000, 最大URL数=10000

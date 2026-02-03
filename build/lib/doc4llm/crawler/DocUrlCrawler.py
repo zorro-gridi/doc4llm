@@ -37,7 +37,7 @@ except ImportError:
 
 # Playwright stealth 导入（可选依赖）
 try:
-    from playwright_stealth import stealth_sync
+    from playwright_stealth import Stealth
 
     STEALTH_AVAILABLE = True
 except ImportError:
@@ -96,25 +96,33 @@ class DocUrlCrawler(DebugMixin):
         self.playwright_force = getattr(config, "playwright_force", False)
 
         # 指纹伪装配置
-        self.playwright_stealth = getattr(config, 'playwright_stealth', True)
-        self.playwright_platform = getattr(config, 'playwright_platform', 'win32')
-        self.playwright_screen_width = getattr(config, 'playwright_screen_width', 1920)
-        self.playwright_screen_height = getattr(config, 'playwright_screen_height', 1080)
-        self.playwright_device_scale_factor = getattr(config, 'playwright_device_scale_factor', 1)
-        self.playwright_timezone = getattr(config, 'playwright_timezone', 'Asia/Shanghai')
-        self.playwright_locale = getattr(config, 'playwright_locale', 'zh-CN')
+        self.playwright_stealth = getattr(config, "playwright_stealth", True)
+        self.playwright_platform = getattr(config, "playwright_platform", "win32")
+        self.playwright_screen_width = getattr(config, "playwright_screen_width", 1920)
+        self.playwright_screen_height = getattr(
+            config, "playwright_screen_height", 1080
+        )
+        self.playwright_device_scale_factor = getattr(
+            config, "playwright_device_scale_factor", 1
+        )
+        self.playwright_timezone = getattr(
+            config, "playwright_timezone", "Asia/Shanghai"
+        )
+        self.playwright_locale = getattr(config, "playwright_locale", "zh-CN")
 
         # Cookie 配置
-        self.playwright_cookies_file = getattr(config, 'playwright_cookies_file', None)
-        self.playwright_cookies = getattr(config, 'playwright_cookies', [])
+        self.playwright_cookies_file = getattr(config, "playwright_cookies_file", None)
+        self.playwright_cookies = getattr(config, "playwright_cookies", [])
 
         # 从 config.content_filter 加载过滤器配置（与 Mode 1 一致）
         self.content_filter = self._load_content_filter()
 
         # 初始化 Markdown 转换器（用于 Mode 4）
         from doc4llm.convertor.MarkdownConverter import MarkdownConverter
+        from doc4llm.convertor.MermaidParser import MermaidParser
 
         self.markdown_converter = MarkdownConverter()
+        self.mermaid_parser = MermaidParser()
         from doc4llm.link_processor.LinkProcessor import LinkProcessor
 
         self.link_processor = LinkProcessor
@@ -444,16 +452,11 @@ class DocUrlCrawler(DebugMixin):
             return
 
         try:
-            self._debug_print(f"应用 stealth 指纹伪装: platform={self.playwright_platform}")
+            self._debug_print("应用 stealth 指纹伪装")
 
-            stealth_sync(page,
-                platform=self.playwright_platform,
-                screen_width=self.playwright_screen_width,
-                screen_height=self.playwright_screen_height,
-                device_scale_factor=self.playwright_device_scale_factor,
-                timezone=self.playwright_timezone,
-                locale=self.playwright_locale
-            )
+            # 新版 playwright-stealth 使用 Stealth 类
+            stealth = Stealth()
+            stealth.apply_stealth_sync(page)
 
             self._debug_print("Stealth 指纹伪装应用成功")
         except Exception as e:
@@ -498,20 +501,20 @@ class DocUrlCrawler(DebugMixin):
             return cookies
 
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
-                    if line and not line.startswith('#'):
-                        parts = line.split('\t')
+                    if line and not line.startswith("#"):
+                        parts = line.split("\t")
                         if len(parts) >= 7:
                             cookie = {
-                                'name': parts[5],
-                                'value': parts[6],
-                                'domain': parts[0],
-                                'path': parts[2],
-                                'expires': float(parts[4]) if parts[4] else -1,
-                                'httpOnly': parts[6].upper() == 'TRUE',
-                                'secure': parts[3].upper() == 'TRUE'
+                                "name": parts[5],
+                                "value": parts[6],
+                                "domain": parts[0],
+                                "path": parts[2],
+                                "expires": float(parts[4]) if parts[4] else -1,
+                                "httpOnly": parts[6].upper() == "TRUE",
+                                "secure": parts[3].upper() == "TRUE",
                             }
                             cookies.append(cookie)
 
@@ -661,7 +664,7 @@ class DocUrlCrawler(DebugMixin):
                 page.wait_for_selector(
                     ".mermaid svg, .mermaid g",
                     timeout=min(timeout, 5000),  # 先尝试短超时
-                    state="attached"
+                    state="attached",
                 )
                 self._debug_print("Mermaid SVG 渲染完成")
                 return True
@@ -752,7 +755,7 @@ class DocUrlCrawler(DebugMixin):
                     # 新增指纹参数
                     "screen": {
                         "width": self.playwright_screen_width,
-                        "height": self.playwright_screen_height
+                        "height": self.playwright_screen_height,
                     },
                     "device_scale_factor": self.playwright_device_scale_factor,
                     "locale": self.playwright_locale,
@@ -784,10 +787,12 @@ class DocUrlCrawler(DebugMixin):
                 page.goto(url, wait_until="domcontentloaded")
 
                 # 等待 mermaid 渲染完成（关键修改）
-                self._wait_for_mermaid_render(page, timeout=self.playwright_timeout * 1000)
+                self._wait_for_mermaid_render(
+                    page, timeout=self.playwright_timeout * 1000
+                )
 
-                # 短暂等待网络稳定
-                page.wait_for_load_state("networkidle", timeout=5000)
+                # 短暂等待让 JS 完成渲染（不用 networkidle，避免持续请求导致超时）
+                page.wait_for_timeout(2000)
 
                 html_content = page.content()
 
@@ -1542,6 +1547,13 @@ class DocUrlCrawler(DebugMixin):
             link_processor = self.link_processor(url)
             soup = link_processor.convert_relative_links(soup)
 
+            # 先从原始 HTML 解析 mermaid 图表
+            # 必须在过滤非正文内容之前，因为 filter_non_content_blocks
+            # 会用主要内容区域替换 soup，导致 .mermaid 元素丢失
+            mermaid_content = self.mermaid_parser.extract_and_convert_mermaid_blocks(
+                str(soup)
+            )
+
             # 过滤非正文内容
             cleaned_soup = self.content_filter.filter_non_content_blocks(soup)
             cleaned_soup = self.content_filter.filter_logging_outputs(cleaned_soup)
@@ -1552,10 +1564,23 @@ class DocUrlCrawler(DebugMixin):
                 if data_src and not img.get("src"):
                     img["src"] = data_src
 
+            # 在转换为 Markdown 之前，移除 SVG flowchart 元素
+            # 防止 html2text 把节点文本提取出来导致重复
+            for svg in cleaned_soup.select("svg.flowchart"):
+                svg.decompose()
+            for mermaid_div in cleaned_soup.select(
+                ".mermaid, [data-component-name='mermaid-container']"
+            ):
+                mermaid_div.decompose()
+
             # 转换为Markdown
             markdown_content = self.markdown_converter.convert_to_markdown(
                 str(cleaned_soup)
             )
+
+            # 添加 mermaid 代码块
+            if mermaid_content and mermaid_content.strip():
+                markdown_content += mermaid_content
 
             # 过滤内容结束标识
             markdown_content = self.content_filter.filter_content_end_markers(

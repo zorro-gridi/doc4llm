@@ -420,3 +420,193 @@ Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/p
 === 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
 === 所有输出将同时记录到 results/output.out 文件中
 === 扫描开始时间: 2026-02-03 09:35:54
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 10:21:12
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 10:26:02
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 10:30:07
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 10:31:04
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 10:31:25
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 10:35:59
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 10:36:38
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 10:36:53
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 10:57:43
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://example.com 基础域名: example.com 代理: None 最大深度: 5 最大URL数: 10000 线程数: 30 调试: 1
+==============================================
+=== 开始链接: https://example.com
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'claude.com', 'www.w3.org', 'www.baidu.com', 'github.com'}
+=== 白域名单: {'code.claude.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/url_extration_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.xls', '.webm', '.iso', '.xml', '.apk', '.js', '.webp', '.swf', '.flv', '.docx', '.rar', '.mp3', '.exe', '.gz', '.woff2', '.eot', '.ttf', '.pptx', '.svg', '.json', '.mp4', '.jpg', '.css', '.bmp', '.wav', '.bz2', '.dmg', '.ppt', '.gif', '.otf', '.doc', '.zip', '.tar', '.woff', '.ogg', '.aac', '.xlsx', '.tiff', '.mov', '.wmv', '.pdf', '.avi', '.7z', '.map', '.txt', '.png', '.flac', '.ico', '.jpeg', '.dll', '.bin', '.mkv'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/docs/en/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: False
+=== Playwright超时: 30
+=== Playwright无头: True
+==============================================
+开始扫描: https://example.com
+[DEBUG] 连接池配置: pool_connections=60, pool_maxsize=100
+[DEBUG] 最大请求数配置: max_requests=10000
+[DEBUG] 输出文件已初始化: results/url_extration_list.csv
+[DEBUG] 扫描器初始化完成
+[start_scanning] 开始初始化扫描器...
+[start_scanning] 扫描器创建成功
+扫描器已就绪，开始扫描目标: https://example.com
+配置: 最大深度=5, 最大URL数=10000, 线程数=30
+[start_scanning] 外部URL线程已启动[DEBUG] [worker_loop] 外部URL线程启动: ExternalURLThread
+
+[DEBUG] [start_scan] 开始扫描过程: start_url=https://example.com
+[DEBUG] [start_scan] 初始配置: 最大请求数=10000, 最大URL数=10000
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 12:10:48
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 12:16:36
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 12:21:16
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 12:27:57
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 12:30:10
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 12:31:19
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 12:36:24
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 12:37:17
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 12:56:05
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 13:01:54
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 13:04:29
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 13:21:15
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 13:26:58
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 13:30:41
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-03 13:35:27

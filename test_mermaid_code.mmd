@@ -1,0 +1,22 @@
+flowchart TB
+    S["Sources(Google Drive, Slack, Notion, etc.)"]
+    L["Document Loaders"]
+    A["Documents"]
+    B["Split into chunks"]
+    C["Turn into embeddings"]
+    D["Vector Store"]
+    Q["User Query"]
+    E["Query embedding"]
+    F["Retriever"]
+    G["LLM uses retrieved info"]
+    H["Answer"]
+    S --> L
+    L --> A
+    A --> B
+    B --> C
+    C --> D
+    Q --> E
+    E --> D
+    D --> F
+    F --> G
+    G --> H

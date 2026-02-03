@@ -1,0 +1,47 @@
+{
+  "id": "mermaid-_r_9_-1770091427846",
+  "nodes": {
+    "A": {
+      "id": "A",
+      "label": "User Question",
+      "type": "startend",
+      "cluster": null
+    },
+    "B": {
+      "id": "B",
+      "label": "Retrieve Relevant Documents",
+      "type": "process",
+      "cluster": null
+    },
+    "C": {
+      "id": "C",
+      "label": "Generate Answer",
+      "type": "process",
+      "cluster": null
+    },
+    "D": {
+      "id": "D",
+      "label": "Return Answer to User",
+      "type": "startend",
+      "cluster": null
+    }
+  },
+  "edges": [
+    {
+      "from": "A",
+      "to": "B",
+      "label": null
+    },
+    {
+      "from": "B",
+      "to": "C",
+      "label": null
+    },
+    {
+      "from": "C",
+      "to": "D",
+      "label": null
+    }
+  ],
+  "clusters": {}
+}

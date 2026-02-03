@@ -13,6 +13,7 @@ requirements.txt
 ./doc4llm/config/config.json
 ./doc4llm/config/headers.json
 ./doc4llm/convertor/MarkdownConverter.py
+./doc4llm/convertor/MermaidParser.py
 ./doc4llm/convertor/__init__.py
 ./doc4llm/crawler/DocContentCrawler.py
 ./doc4llm/crawler/DocUrlCrawler.py
@@ -117,6 +118,7 @@ doc4llm.egg-info/top_level.txt
 doc4llm/config/config.json
 doc4llm/config/headers.json
 doc4llm/convertor/MarkdownConverter.py
+doc4llm/convertor/MermaidParser.py
 doc4llm/convertor/__init__.py
 doc4llm/crawler/DocContentCrawler.py
 doc4llm/crawler/DocUrlCrawler.py

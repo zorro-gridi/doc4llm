@@ -141,3 +141,243 @@ Call log:
 "load" event fired
 ============================================================
 2026-02-03 09:34:30,083 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Page Not Found/docContent.md
+2026-02-03 10:26:02,497 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: None 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 10:26:02,498 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 10:26:02,498 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 10:26:02,499 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 10:26:02,891 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 10:26:03,041 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 10:26:03,041 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 10:26:03,041 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 10:26:03,041 DEBUG Using selector: KqueueSelector
+2026-02-03 10:26:04,470 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 10:26:05,079 DEBUG 应用 stealth 指纹伪装: platform=darwin
+2026-02-03 10:26:05,079 DEBUG 应用 stealth 指纹伪装失败: stealth_sync() got an unexpected keyword argument 'platform'
+2026-02-03 10:26:05,602 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 10:26:06,528 DEBUG Playwright 获取成功，HTML 长度: 31140 字符
+2026-02-03 10:26:06,590 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 12:10:48,875 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 12:10:48,876 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 12:10:48,876 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 12:10:48,877 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 12:10:49,074 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 12:10:49,160 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 12:10:49,160 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:10:49,160 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:10:49,160 DEBUG Using selector: KqueueSelector
+2026-02-03 12:10:50,618 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 12:10:51,159 DEBUG 应用 stealth 指纹伪装
+2026-02-03 12:10:51,170 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 12:10:52,271 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 12:10:54,476 DEBUG Playwright 获取成功，HTML 长度: 813389 字符
+2026-02-03 12:10:55,560 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 12:16:36,846 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 12:16:36,847 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 12:16:36,848 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 12:16:36,848 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 12:16:37,058 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 12:16:37,163 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 12:16:37,163 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:16:37,163 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:16:37,163 DEBUG Using selector: KqueueSelector
+2026-02-03 12:16:38,595 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 12:16:39,396 DEBUG 应用 stealth 指纹伪装
+2026-02-03 12:16:39,404 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 12:16:39,753 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 12:16:41,929 DEBUG Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/retrieval: Page.content: Unable to retrieve content because the page is navigating and changing the content.
+2026-02-03 12:16:42,560 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 12:21:16,357 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 12:21:16,359 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 12:21:16,359 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 12:21:16,360 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 12:21:16,586 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 12:21:16,676 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 12:21:16,676 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:21:16,676 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:21:16,676 DEBUG Using selector: KqueueSelector
+2026-02-03 12:21:18,138 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 12:21:18,660 DEBUG 应用 stealth 指纹伪装
+2026-02-03 12:21:18,665 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 12:21:19,421 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 12:21:21,588 DEBUG Playwright 获取成功，HTML 长度: 809259 字符
+2026-02-03 12:21:22,702 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 12:27:57,259 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 12:27:57,261 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 12:27:57,261 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 12:27:57,262 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 12:27:57,484 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 12:27:57,574 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 12:27:57,574 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:27:57,574 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:27:57,574 DEBUG Using selector: KqueueSelector
+2026-02-03 12:27:58,989 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 12:27:59,611 DEBUG 应用 stealth 指纹伪装
+2026-02-03 12:27:59,624 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 12:27:59,955 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 12:28:02,130 DEBUG Playwright 获取成功，HTML 长度: 735713 字符
+2026-02-03 12:28:02,764 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 12:30:10,925 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 12:30:10,926 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 12:30:10,926 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 12:30:10,927 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 12:30:11,138 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 12:30:11,247 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 12:30:11,247 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:30:11,248 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:30:11,248 DEBUG Using selector: KqueueSelector
+2026-02-03 12:30:12,673 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 12:30:13,302 DEBUG 应用 stealth 指纹伪装
+2026-02-03 12:30:13,335 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 12:30:13,695 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 12:30:15,815 DEBUG Playwright 获取成功，HTML 长度: 31174 字符
+2026-02-03 12:30:15,905 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 12:31:19,428 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 12:31:19,429 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 12:31:19,429 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 12:31:19,430 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 12:31:19,625 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 12:31:19,704 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 12:31:19,705 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:31:19,705 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:31:19,705 DEBUG Using selector: KqueueSelector
+2026-02-03 12:31:21,020 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 12:31:21,644 DEBUG 应用 stealth 指纹伪装
+2026-02-03 12:31:21,657 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 12:31:22,455 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 12:31:24,650 DEBUG Playwright 获取成功，HTML 长度: 810950 字符
+2026-02-03 12:31:25,820 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 12:36:24,759 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 12:36:24,760 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 12:36:24,760 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 12:36:24,761 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 12:36:24,974 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 12:36:25,063 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 12:36:25,063 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:36:25,064 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:36:25,064 DEBUG Using selector: KqueueSelector
+2026-02-03 12:36:26,534 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 12:36:26,964 DEBUG 应用 stealth 指纹伪装
+2026-02-03 12:36:26,970 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 12:36:27,426 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 12:36:29,576 DEBUG Playwright 获取成功，HTML 长度: 733868 字符
+2026-02-03 12:36:30,168 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 12:37:17,221 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 12:37:17,223 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 12:37:17,223 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 12:37:17,224 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 12:37:17,441 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 12:37:17,525 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 12:37:17,525 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:37:17,525 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:37:17,525 DEBUG Using selector: KqueueSelector
+2026-02-03 12:37:18,896 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 12:37:19,514 DEBUG 应用 stealth 指纹伪装
+2026-02-03 12:37:19,523 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 12:37:19,842 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 12:37:22,133 DEBUG Playwright 获取成功，HTML 长度: 728965 字符
+2026-02-03 12:37:22,754 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 12:56:05,930 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 12:56:05,931 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 12:56:05,931 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 12:56:05,932 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 12:56:06,154 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 12:56:06,250 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 12:56:06,250 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:56:06,250 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 12:56:06,250 DEBUG Using selector: KqueueSelector
+2026-02-03 12:56:07,623 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 12:56:08,206 DEBUG 应用 stealth 指纹伪装
+2026-02-03 12:56:08,219 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 12:56:08,795 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 12:56:10,936 DEBUG Playwright 获取成功，HTML 长度: 811023 字符
+2026-02-03 12:56:12,009 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 13:01:54,984 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 13:01:54,985 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 13:01:54,986 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 13:01:54,987 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 13:01:55,197 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 13:01:55,309 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 13:01:55,309 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:01:55,309 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:01:55,309 DEBUG Using selector: KqueueSelector
+2026-02-03 13:01:56,767 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 13:01:57,206 DEBUG 应用 stealth 指纹伪装
+2026-02-03 13:01:57,211 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 13:01:57,546 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 13:01:59,852 DEBUG Playwright 获取成功，HTML 长度: 737818 字符
+2026-02-03 13:02:00,464 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 13:04:29,856 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 13:04:29,857 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 13:04:29,857 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 13:04:29,858 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 13:04:30,062 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 13:04:30,149 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 13:04:30,149 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:04:30,149 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:04:30,150 DEBUG Using selector: KqueueSelector
+2026-02-03 13:04:31,266 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 13:04:31,697 DEBUG 应用 stealth 指纹伪装
+2026-02-03 13:04:31,709 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 13:04:31,995 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 13:04:34,158 DEBUG Playwright 获取成功，HTML 长度: 735041 字符
+2026-02-03 13:04:34,798 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 13:21:15,224 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 13:21:15,226 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 13:21:15,226 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 13:21:15,227 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 13:21:15,492 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 13:21:15,589 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 13:21:15,589 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:21:15,589 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:21:15,590 DEBUG Using selector: KqueueSelector
+2026-02-03 13:21:17,258 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 13:21:17,893 DEBUG 应用 stealth 指纹伪装
+2026-02-03 13:21:17,916 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 13:21:19,791 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 13:21:21,998 DEBUG Playwright 获取成功，HTML 长度: 810896 字符
+2026-02-03 13:21:23,860 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 13:26:58,853 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 13:26:58,855 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 13:26:58,855 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 13:26:58,856 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 13:26:59,119 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 13:26:59,213 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 13:26:59,213 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:26:59,213 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:26:59,213 DEBUG Using selector: KqueueSelector
+2026-02-03 13:27:00,830 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 13:27:01,473 DEBUG 应用 stealth 指纹伪装
+2026-02-03 13:27:01,508 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 13:27:01,840 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 13:27:03,972 DEBUG Playwright 获取成功，HTML 长度: 31174 字符
+2026-02-03 13:27:04,058 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+2026-02-03 13:30:41,695 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 13:30:41,697 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 13:30:41,697 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 13:30:41,698 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 13:30:41,919 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 13:30:42,009 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 13:30:42,009 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:30:42,010 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:30:42,010 DEBUG Using selector: KqueueSelector
+2026-02-03 13:30:43,565 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 13:30:44,255 DEBUG 应用 stealth 指纹伪装
+2026-02-03 13:30:44,298 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 13:30:44,645 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 13:30:46,855 DEBUG Playwright 获取成功，HTML 长度: 735556 字符
+2026-02-03 13:30:48,003 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+2026-02-03 13:35:27,782 DEBUG 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: None 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+2026-02-03 13:35:27,784 DEBUG Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+2026-02-03 13:35:27,785 DEBUG 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+2026-02-03 13:35:27,786 DEBUG Starting new HTTPS connection (1): docs.langchain.com:443
+2026-02-03 13:35:28,159 DEBUG https://docs.langchain.com:443 "GET /oss/python/langchain/retrieval HTTP/1.1" 200 None
+2026-02-03 13:35:28,325 DEBUG 强制模式：使用 Playwright 获取所有页面
+2026-02-03 13:35:28,325 DEBUG 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:35:28,325 DEBUG 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+2026-02-03 13:35:28,325 DEBUG Using selector: KqueueSelector
+2026-02-03 13:35:29,945 DEBUG 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+2026-02-03 13:35:30,641 DEBUG 应用 stealth 指纹伪装
+2026-02-03 13:35:30,649 DEBUG Stealth 指纹伪装应用成功
+2026-02-03 13:35:32,001 DEBUG 页面没有 mermaid 相关元素，跳过等待
+2026-02-03 13:35:34,226 DEBUG Playwright 获取成功，HTML 长度: 810161 字符
+2026-02-03 13:35:36,302 DEBUG 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md

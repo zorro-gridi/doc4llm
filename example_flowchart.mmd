@@ -1,0 +1,11 @@
+flowchart TB
+
+    A["User Question"]
+    B["Retrieve Documents"]
+    C["Generate Answer"]
+    D{"Enough Info?"}
+
+    A --> B
+    B --> D
+    D -- "Yes" --> C
+    D -- "No" --> B

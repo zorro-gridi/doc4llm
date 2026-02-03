@@ -1010,3 +1010,1518 @@ Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/p
 移除了 9 个非正文区块
 移除了 1 个可能的日志输出区块
 ✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.w3.org', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.flac', '.ppt', '.ico', '.xml', '.zip', '.woff', '.ogg', '.exe', '.bz2', '.otf', '.js', '.mp4', '.flv', '.doc', '.woff2', '.iso', '.mov', '.wav', '.rar', '.css', '.xls', '.aac', '.gz', '.gif', '.mkv', '.dmg', '.bin', '.pdf', '.map', '.xlsx', '.avi', '.pptx', '.wmv', '.dll', '.tiff', '.apk', '.bmp', '.tar', '.json', '.swf', '.docx', '.txt', '.mp3', '.webm', '.ttf', '.eot', '.7z'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: None 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.xls', '.dll', '.apk', '.mkv', '.bin', '.doc', '.flac', '.gif', '.mp3', '.mov', '.pptx', '.iso', '.flv', '.css', '.mp4', '.xlsx', '.docx', '.map', '.ppt', '.eot', '.pdf', '.json', '.ttf', '.zip', '.rar', '.dmg', '.ico', '.wmv', '.tar', '.otf', '.bz2', '.wav', '.7z', '.ogg', '.webm', '.bmp', '.avi', '.swf', '.woff2', '.js', '.xml', '.txt', '.woff', '.tiff', '.aac', '.gz', '.exe'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装: platform=darwin
+[DEBUG] 应用 stealth 指纹伪装失败: stealth_sync() got an unexpected keyword argument 'platform'
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 31140 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+保护元素: <p class="">
+保护元素: <p class="">
+移除了 0 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'www.baidu.com', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.eot', '.js', '.flac', '.tar', '.iso', '.exe', '.txt', '.docx', '.bin', '.ppt', '.swf', '.css', '.bz2', '.xls', '.dmg', '.mp4', '.ogg', '.flv', '.rar', '.ttf', '.apk', '.webm', '.json', '.pptx', '.dll', '.doc', '.woff2', '.zip', '.aac', '.woff', '.wmv', '.xlsx', '.ico', '.gif', '.pdf', '.mov', '.map', '.tiff', '.gz', '.mp3', '.xml', '.mkv', '.otf', '.wav', '.7z', '.avi', '.bmp'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.json', '.zip', '.7z', '.flac', '.dmg', '.xls', '.mov', '.rar', '.woff', '.gif', '.eot', '.mkv', '.ogg', '.docx', '.js', '.pptx', '.bz2', '.ico', '.webm', '.swf', '.ppt', '.wmv', '.tar', '.aac', '.doc', '.iso', '.bin', '.tiff', '.wav', '.map', '.bmp', '.flv', '.woff2', '.apk', '.otf', '.exe', '.mp4', '.gz', '.dll', '.xml', '.ttf', '.txt', '.pdf', '.xlsx', '.avi', '.mp3', '.css'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.baidu.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.dll', '.aac', '.pptx', '.apk', '.bmp', '.mov', '.wav', '.tar', '.rar', '.flac', '.bin', '.iso', '.tiff', '.txt', '.swf', '.js', '.ogg', '.xml', '.otf', '.ppt', '.wmv', '.css', '.7z', '.ttf', '.mp3', '.json', '.mkv', '.pdf', '.xlsx', '.ico', '.map', '.exe', '.webm', '.docx', '.zip', '.woff2', '.eot', '.bz2', '.dmg', '.xls', '.doc', '.flv', '.mp4', '.avi', '.woff', '.gz', '.gif'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+保护元素: <p class="">
+保护元素: <p class="">
+移除了 0 个非正文区块
+移除了 0 个可能的日志输出区块
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'www.w3.org', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.eot', '.json', '.dll', '.avi', '.otf', '.tar', '.txt', '.pdf', '.flac', '.aac', '.doc', '.xls', '.swf', '.dmg', '.zip', '.ttf', '.rar', '.webm', '.wav', '.pptx', '.css', '.gz', '.bin', '.bz2', '.ico', '.map', '.gif', '.xml', '.xlsx', '.wmv', '.7z', '.docx', '.ogg', '.js', '.iso', '.mp4', '.ppt', '.tiff', '.mp3', '.bmp', '.flv', '.woff2', '.mkv', '.apk', '.exe', '.mov', '.woff'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'github.com', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.map', '.ppt', '.gif', '.bz2', '.swf', '.doc', '.flv', '.webm', '.flac', '.txt', '.wav', '.7z', '.bin', '.rar', '.eot', '.otf', '.mkv', '.woff', '.woff2', '.json', '.aac', '.wmv', '.xlsx', '.zip', '.js', '.css', '.ico', '.tiff', '.mp3', '.mp4', '.avi', '.ttf', '.iso', '.dll', '.docx', '.tar', '.bmp', '.xls', '.ogg', '.pdf', '.exe', '.mov', '.xml', '.gz', '.dmg', '.pptx', '.apk'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+保护元素: <p class="">
+保护元素: <p class="">
+移除了 0 个非正文区块
+移除了 0 个可能的日志输出区块
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'www.w3.org', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.mov', '.bz2', '.xlsx', '.webm', '.dmg', '.tar', '.swf', '.wav', '.aac', '.dll', '.gz', '.zip', '.ttf', '.exe', '.flac', '.js', '.eot', '.docx', '.apk', '.xml', '.woff2', '.ogg', '.otf', '.wmv', '.flv', '.7z', '.tiff', '.mp4', '.doc', '.map', '.ppt', '.bmp', '.rar', '.pdf', '.txt', '.iso', '.pptx', '.bin', '.xls', '.css', '.json', '.mp3', '.gif', '.mkv', '.avi', '.woff', '.ico'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+保护元素: <p class="">
+保护元素: <p class="">
+移除了 0 个非正文区块
+移除了 0 个可能的日志输出区块
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.w3.org', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.rar', '.wmv', '.pptx', '.dmg', '.zip', '.gif', '.css', '.flv', '.doc', '.xls', '.iso', '.docx', '.dll', '.xlsx', '.json', '.gz', '.bmp', '.bin', '.woff', '.7z', '.wav', '.aac', '.map', '.js', '.tar', '.xml', '.eot', '.exe', '.ttf', '.mp3', '.ogg', '.mkv', '.ppt', '.txt', '.bz2', '.ico', '.mov', '.pdf', '.tiff', '.otf', '.flac', '.mp4', '.webm', '.apk', '.swf', '.avi', '.woff2'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 813389 字符
+转换了 91 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.tar', '.mp3', '.mkv', '.exe', '.7z', '.wmv', '.json', '.ogg', '.woff2', '.xml', '.flac', '.avi', '.aac', '.ppt', '.gz', '.mov', '.docx', '.gif', '.pptx', '.woff', '.zip', '.wav', '.otf', '.xls', '.xlsx', '.dll', '.txt', '.mp4', '.js', '.rar', '.flv', '.bin', '.css', '.apk', '.tiff', '.iso', '.webm', '.eot', '.ttf', '.ico', '.map', '.bmp', '.doc', '.bz2', '.swf', '.pdf', '.dmg'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取失败 https://docs.langchain.com/oss/python/langchain/retrieval: Page.content: Unable to retrieve content because the page is navigating and changing the content.
+Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/python/langchain/retrieval
+转换了 122 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.jpg', '.wav', '.swf', '.apk', '.eot', '.aac', '.gif', '.bz2', '.map', '.ttf', '.woff2', '.webp', '.dll', '.zip', '.xls', '.woff', '.bin', '.gz', '.iso', '.webm', '.pdf', '.ppt', '.tar', '.js', '.7z', '.png', '.jpeg', '.flac', '.pptx', '.xml', '.flv', '.docx', '.dmg', '.mp3', '.css', '.mp4', '.wmv', '.ico', '.bmp', '.exe', '.xlsx', '.avi', '.mov', '.json', '.txt', '.mkv', '.doc', '.tiff', '.rar', '.otf', '.ogg'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 809259 字符
+转换了 80 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.w3.org', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.ogg', '.bz2', '.gz', '.zip', '.exe', '.mp4', '.bmp', '.bin', '.avi', '.docx', '.png', '.doc', '.dll', '.ppt', '.apk', '.jpeg', '.tiff', '.otf', '.pdf', '.mov', '.dmg', '.7z', '.js', '.txt', '.ttf', '.xml', '.jpg', '.flv', '.woff2', '.flac', '.pptx', '.xls', '.tar', '.wav', '.map', '.mkv', '.xlsx', '.iso', '.eot', '.css', '.webp', '.swf', '.woff', '.mp3', '.rar', '.json', '.gif', '.aac', '.webm', '.ico', '.wmv'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 735713 字符
+转换了 82 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.iso', '.webp', '.woff', '.jpeg', '.wav', '.bmp', '.mkv', '.ogg', '.js', '.mp3', '.7z', '.bz2', '.swf', '.eot', '.avi', '.apk', '.css', '.pptx', '.ttf', '.tiff', '.map', '.zip', '.aac', '.tar', '.ppt', '.mov', '.mp4', '.pdf', '.doc', '.jpg', '.bin', '.exe', '.docx', '.xls', '.dmg', '.txt', '.xlsx', '.webm', '.ico', '.png', '.dll', '.xml', '.gz', '.woff2', '.flac', '.wmv', '.flv', '.rar', '.otf', '.json', '.gif'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 31174 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+保护元素: <p class="">
+保护元素: <p class="">
+移除了 0 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.w3.org', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.js', '.mkv', '.css', '.json', '.mp4', '.7z', '.rar', '.wav', '.pdf', '.map', '.gif', '.doc', '.gz', '.webp', '.flv', '.jpeg', '.tar', '.woff', '.wmv', '.woff2', '.bmp', '.txt', '.aac', '.ppt', '.zip', '.otf', '.apk', '.dll', '.jpg', '.exe', '.iso', '.swf', '.flac', '.dmg', '.avi', '.xml', '.ttf', '.pptx', '.mov', '.tiff', '.eot', '.bin', '.ico', '.png', '.mp3', '.xlsx', '.xls', '.bz2', '.webm', '.docx', '.ogg'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 810950 字符
+转换了 92 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'www.w3.org', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.mp4', '.tiff', '.mov', '.wmv', '.txt', '.mkv', '.rar', '.woff2', '.css', '.js', '.jpeg', '.iso', '.woff', '.flv', '.otf', '.png', '.ogg', '.swf', '.doc', '.pdf', '.apk', '.avi', '.ico', '.flac', '.7z', '.bmp', '.tar', '.gif', '.wav', '.pptx', '.docx', '.webp', '.jpg', '.xls', '.dmg', '.mp3', '.dll', '.eot', '.gz', '.exe', '.xml', '.json', '.webm', '.bin', '.xlsx', '.ppt', '.bz2', '.ttf', '.map', '.zip', '.aac'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 733868 字符
+转换了 80 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.eot', '.webp', '.xls', '.js', '.jpg', '.aac', '.txt', '.dll', '.png', '.apk', '.mkv', '.docx', '.ico', '.ttf', '.avi', '.flac', '.7z', '.exe', '.flv', '.bz2', '.gif', '.otf', '.css', '.pdf', '.tar', '.woff', '.tiff', '.rar', '.wav', '.swf', '.mov', '.mp3', '.woff2', '.json', '.pptx', '.iso', '.xml', '.ogg', '.ppt', '.jpeg', '.wmv', '.webm', '.dmg', '.gz', '.bmp', '.mp4', '.bin', '.zip', '.map', '.doc', '.xlsx'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 728965 字符
+转换了 151 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'www.baidu.com', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.gz', '.xml', '.bin', '.txt', '.mkv', '.bz2', '.rar', '.css', '.ogg', '.pdf', '.pptx', '.dmg', '.eot', '.dll', '.zip', '.apk', '.ttf', '.xlsx', '.tiff', '.woff2', '.avi', '.jpeg', '.ico', '.mp4', '.mov', '.doc', '.swf', '.flv', '.7z', '.jpg', '.webp', '.docx', '.aac', '.gif', '.wmv', '.mp3', '.tar', '.png', '.bmp', '.woff', '.webm', '.flac', '.wav', '.ppt', '.otf', '.js', '.iso', '.xls', '.json', '.exe', '.map'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 811023 字符
+转换了 92 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'github.com', 'www.baidu.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.flac', '.css', '.otf', '.jpeg', '.woff2', '.mkv', '.json', '.pdf', '.xml', '.7z', '.ppt', '.mp3', '.exe', '.wav', '.mp4', '.xlsx', '.zip', '.ogg', '.eot', '.webm', '.aac', '.tiff', '.ico', '.pptx', '.gif', '.doc', '.tar', '.dmg', '.bmp', '.rar', '.docx', '.xls', '.dll', '.webp', '.flv', '.ttf', '.mov', '.swf', '.png', '.avi', '.jpg', '.iso', '.wmv', '.bin', '.woff', '.bz2', '.apk', '.map', '.txt', '.gz', '.js'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 737818 字符
+转换了 102 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.gz', '.tiff', '.dmg', '.jpg', '.woff2', '.gif', '.pptx', '.exe', '.jpeg', '.bz2', '.ttf', '.ppt', '.otf', '.txt', '.png', '.woff', '.zip', '.avi', '.pdf', '.apk', '.json', '.mp3', '.js', '.wav', '.iso', '.eot', '.mov', '.xlsx', '.flac', '.mp4', '.bin', '.aac', '.docx', '.7z', '.swf', '.map', '.xml', '.tar', '.wmv', '.rar', '.flv', '.dll', '.bmp', '.ogg', '.webm', '.doc', '.xls', '.ico', '.css', '.mkv', '.webp'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 735041 字符
+转换了 88 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.mov', '.xlsx', '.ogg', '.bin', '.tar', '.swf', '.jpeg', '.eot', '.avi', '.woff', '.json', '.wav', '.flv', '.gif', '.js', '.txt', '.ppt', '.dmg', '.png', '.ico', '.7z', '.map', '.mp4', '.aac', '.iso', '.otf', '.woff2', '.bmp', '.docx', '.exe', '.flac', '.jpg', '.tiff', '.ttf', '.pdf', '.webm', '.dll', '.mp3', '.gz', '.rar', '.pptx', '.doc', '.apk', '.webp', '.wmv', '.bz2', '.mkv', '.css', '.zip', '.xls', '.xml'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 810896 字符
+转换了 92 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.baidu.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.ttf', '.map', '.exe', '.docx', '.xml', '.woff', '.mp4', '.pptx', '.tar', '.dmg', '.bin', '.flac', '.webm', '.iso', '.flv', '.js', '.7z', '.apk', '.tiff', '.otf', '.aac', '.wav', '.gif', '.mov', '.mkv', '.gz', '.avi', '.xls', '.ogg', '.css', '.eot', '.dll', '.png', '.mp3', '.pdf', '.jpg', '.ppt', '.rar', '.webp', '.swf', '.bmp', '.xlsx', '.zip', '.woff2', '.doc', '.txt', '.bz2', '.jpeg', '.ico', '.wmv', '.json'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 31174 字符
+转换了 0 个相对链接为绝对链接
+找到主要内容区域: <main>
+保护元素: <p class="">
+保护元素: <p class="">
+移除了 0 个非正文区块
+移除了 0 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Vercel Security Checkpoint/docContent.md
+✓ Vercel Security Checkpoint -> Vercel Security Checkpoint/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: http://127.0.0.1:7890 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'www.w3.org', 'github.com'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.docx', '.swf', '.png', '.webm', '.7z', '.pdf', '.rar', '.mp3', '.txt', '.aac', '.jpg', '.map', '.dmg', '.eot', '.woff', '.mp4', '.mov', '.gif', '.woff2', '.ogg', '.zip', '.ppt', '.bmp', '.tar', '.doc', '.flac', '.bin', '.xls', '.gz', '.iso', '.xlsx', '.bz2', '.js', '.wmv', '.tiff', '.ico', '.apk', '.webp', '.ttf', '.css', '.exe', '.otf', '.avi', '.flv', '.dll', '.xml', '.pptx', '.wav', '.json', '.mkv', '.jpeg'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 735556 字符
+转换了 93 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/
+=== 正在初始化扫描器...
+[DEBUG] 配置初始化完成: 起始URL: https://docs.langchain.com/oss/python/langchain/retrieval 基础域名: langchain.com 代理: None 最大深度: 5 最大URL数: 10000 线程数: 10 调试: 1
+==============================================
+=== 开始链接: https://docs.langchain.com/oss/python/langchain/retrieval
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.baidu.com', 'www.w3.org'}
+=== 白域名单: {'docs.langchain.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/LangChain/LangChain_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.mp3', '.dmg', '.mp4', '.ico', '.jpg', '.mov', '.bin', '.apk', '.webp', '.wav', '.flv', '.mkv', '.xls', '.xlsx', '.swf', '.tar', '.otf', '.png', '.css', '.gif', '.bmp', '.bz2', '.pptx', '.txt', '.jpeg', '.exe', '.aac', '.tiff', '.ttf', '.js', '.flac', '.map', '.doc', '.7z', '.xml', '.iso', '.webm', '.rar', '.zip', '.json', '.woff', '.eot', '.dll', '.ppt', '.docx', '.gz', '.pdf', '.ogg', '.wmv', '.avi', '.woff2'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 1
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/oss/python/langchain/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: True
+=== Playwright超时: 30
+=== Playwright无头: False
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://docs.langchain.com/oss/python/langchain/retrieval ===
+[DEBUG] Mode 4: 使用增强版过滤器（支持 force_remove_selectors）
+[DEBUG] 文档根目录: /Users/zorro/project/md_docs_base/LangChain_Docs@latest
+[DEBUG] 强制模式：使用 Playwright 获取所有页面
+[DEBUG] 检测到动态内容，使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 使用 Playwright 获取渲染后的页面: https://docs.langchain.com/oss/python/langchain/retrieval
+[DEBUG] 从文件加载了 0 个 Cookie: /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/cookies.txt
+[DEBUG] 应用 stealth 指纹伪装
+[DEBUG] Stealth 指纹伪装应用成功
+[DEBUG] 页面没有 mermaid 相关元素，跳过等待
+[DEBUG] Playwright 获取成功，HTML 长度: 810161 字符
+转换了 86 个相对链接为绝对链接
+检测到文档框架: mintlify
+找到主要内容区域: <div>
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+强制删除: <div class="px-6 py-5 relative">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <button class="h-[26px] w-[26px] flex items-center justify-center rounded-md backdrop-blur peer group/copy-button">
+保护元素: <svg class="w-4 h-4 text-gray-400 group-hover/copy-button:text-gray-500 dark:text-white/40 dark:group-hover/copy-button:text-white/60">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+保护元素: <div class="absolute top-11 left-1/2 transform whitespace-nowrap -translate-x-1/2 -translate-y-1/2 peer-hover:opacity-100 opacity-0 text-tooltip-foreground rounded-lg px-1.5 py-0.5 text-xs bg-primary-dark">
+移除了 9 个非正文区块
+移除了 1 个可能的日志输出区块
+[DEBUG] 保存文件成功: /Users/zorro/project/md_docs_base/LangChain_Docs@latest/Retrieval/docContent.md
+✓ Retrieval -> Retrieval/

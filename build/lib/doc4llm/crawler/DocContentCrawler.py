@@ -47,6 +47,7 @@ except ImportError:
 from doc4llm.filter import ContentFilter, EnhancedContentFilter
 from doc4llm.filter.config import FilterConfigLoader
 from doc4llm.convertor.MarkdownConverter import MarkdownConverter
+from doc4llm.convertor.MermaidParser import MermaidParser
 from doc4llm.link_processor.LinkProcessor import LinkProcessor
 
 
@@ -74,22 +75,29 @@ class DocContentCrawler:
         self.playwright_force = config.playwright_force
 
         # 指纹伪装配置
-        self.playwright_stealth = getattr(config, 'playwright_stealth', True)
-        self.playwright_platform = getattr(config, 'playwright_platform', 'win32')
-        self.playwright_screen_width = getattr(config, 'playwright_screen_width', 1920)
-        self.playwright_screen_height = getattr(config, 'playwright_screen_height', 1080)
-        self.playwright_device_scale_factor = getattr(config, 'playwright_device_scale_factor', 1)
-        self.playwright_timezone = getattr(config, 'playwright_timezone', 'Asia/Shanghai')
-        self.playwright_locale = getattr(config, 'playwright_locale', 'zh-CN')
+        self.playwright_stealth = getattr(config, "playwright_stealth", True)
+        self.playwright_platform = getattr(config, "playwright_platform", "win32")
+        self.playwright_screen_width = getattr(config, "playwright_screen_width", 1920)
+        self.playwright_screen_height = getattr(
+            config, "playwright_screen_height", 1080
+        )
+        self.playwright_device_scale_factor = getattr(
+            config, "playwright_device_scale_factor", 1
+        )
+        self.playwright_timezone = getattr(
+            config, "playwright_timezone", "Asia/Shanghai"
+        )
+        self.playwright_locale = getattr(config, "playwright_locale", "zh-CN")
 
         # Cookie 配置
-        self.playwright_cookies_file = getattr(config, 'playwright_cookies_file', None)
-        self.playwright_cookies = getattr(config, 'playwright_cookies', [])
+        self.playwright_cookies_file = getattr(config, "playwright_cookies_file", None)
+        self.playwright_cookies = getattr(config, "playwright_cookies", [])
 
         # 从 config.content_filter 加载过滤器配置
         self.content_filter = self._load_content_filter()
 
         self.markdown_converter = MarkdownConverter()
+        self.mermaid_parser = MermaidParser()
 
         # 统计信息
         self.stats = {
@@ -308,15 +316,18 @@ class DocContentCrawler:
             return
 
         try:
-            self._debug_print(f"应用 stealth 指纹伪装: platform={self.playwright_platform}")
+            self._debug_print(
+                f"应用 stealth 指纹伪装: platform={self.playwright_platform}"
+            )
 
-            stealth_sync(page,
+            stealth_sync(
+                page,
                 platform=self.playwright_platform,
                 screen_width=self.playwright_screen_width,
                 screen_height=self.playwright_screen_height,
                 device_scale_factor=self.playwright_device_scale_factor,
                 timezone=self.playwright_timezone,
-                locale=self.playwright_locale
+                locale=self.playwright_locale,
             )
 
             self._debug_print("Stealth 指纹伪装应用成功")
@@ -362,20 +373,20 @@ class DocContentCrawler:
             return cookies
 
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
-                    if line and not line.startswith('#'):
-                        parts = line.split('\t')
+                    if line and not line.startswith("#"):
+                        parts = line.split("\t")
                         if len(parts) >= 7:
                             cookie = {
-                                'name': parts[5],
-                                'value': parts[6],
-                                'domain': parts[0],
-                                'path': parts[2],
-                                'expires': float(parts[4]) if parts[4] else -1,
-                                'httpOnly': parts[6].upper() == 'TRUE',
-                                'secure': parts[3].upper() == 'TRUE'
+                                "name": parts[5],
+                                "value": parts[6],
+                                "domain": parts[0],
+                                "path": parts[2],
+                                "expires": float(parts[4]) if parts[4] else -1,
+                                "httpOnly": parts[6].upper() == "TRUE",
+                                "secure": parts[3].upper() == "TRUE",
                             }
                             cookies.append(cookie)
 
@@ -511,7 +522,7 @@ class DocContentCrawler:
             bool: 是否等待成功（超时也算成功，避免阻塞）
         """
         try:
-            # 检查页面是否有 mermaid 相关元素
+            # 检查页面是否有 mermaid 相关元素（同步调用）
             has_mermaid = page.evaluate("""
                 () => {
                     // 检查多种可能的 mermaid 标记
@@ -544,61 +555,27 @@ class DocContentCrawler:
 
             # 方案1: 等待 .mermaid 元素内的 SVG 或 g 元素出现
             try:
+                # 尝试多种选择器
                 page.wait_for_selector(
-                    ".mermaid svg, .mermaid g",
-                    timeout=min(timeout, 5000),  # 先尝试短超时
-                    state="attached"
+                    ".mermaid svg, .mermaid > svg, svg.flowchart",
+                    timeout=min(timeout, 10000),  # 延长到 10 秒
+                    state="attached",
                 )
                 self._debug_print("Mermaid SVG 渲染完成")
                 return True
             except Exception:
                 pass
 
-            # 方案2: 执行 JavaScript 检查 mermaid 状态并等待
+            # 方案2: 等待一段时间让 JS 完成渲染（如果方案1超时）
             try:
-                result = page.evaluate("""
-                    async () => {
-                        // 检查是否有 mermaid 正在渲染
-                        const mermaid = window.mermaid;
-                        if (mermaid && typeof mermaid.isRendering === 'function') {
-                            // 等待渲染完成
-                            let attempts = 0;
-                            while (mermaid.isRendering() && attempts < 20) {
-                                await new Promise(r => setTimeout(r, 200));
-                                attempts++;
-                            }
-                            return true;
-                        }
+                page.wait_for_timeout(5000)  # 等待 5 秒
+                self._debug_print("等待 mermaid 渲染（5秒）")
 
-                        // 检查所有 .mermaid 元素是否都有内容
-                        const containers = document.querySelectorAll('.mermaid');
-                        for (const container of containers) {
-                            // 如果容器是空的或只有 pre，没有 SVG，就没渲染完
-                            const hasSvg = container.querySelector('svg');
-                            const hasG = container.querySelector('g');
-                            const textContent = container.textContent.trim();
-
-                            if (!hasSvg && !hasG) {
-                                // 可能是空的，需要等待
-                                if (textContent.length > 0 && !container.querySelector('pre')) {
-                                    return false;
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                """)
-                if result:
-                    self._debug_print("Mermaid 渲染检查通过")
+                # 再次检查 SVG 是否出现
+                svg_count = page.locator("svg.flowchart").count()
+                if svg_count > 0:
+                    self._debug_print(f"Mermaid 渲染完成，找到 {svg_count} 个图表")
                     return True
-            except Exception as e:
-                self._debug_print(f"Mermaid 状态检查跳过: {e}")
-
-            # 方案3: 等待一段时间让 JS 完成渲染
-            try:
-                page.wait_for_timeout(3000)  # 等待 3 秒
-                self._debug_print("等待 mermaid 渲染（3秒）")
-                return True
             except Exception:
                 pass
 
@@ -639,7 +616,7 @@ class DocContentCrawler:
                     # 新增指纹参数
                     "screen": {
                         "width": self.playwright_screen_width,
-                        "height": self.playwright_screen_height
+                        "height": self.playwright_screen_height,
                     },
                     "device_scale_factor": self.playwright_device_scale_factor,
                     "locale": self.playwright_locale,
@@ -672,8 +649,10 @@ class DocContentCrawler:
                 # 使用 domcontentloaded 避免 SPA 网络活动导致的超时
                 page.goto(url, wait_until="domcontentloaded")
 
-                # 等待 mermaid 渲染完成（关键修改）
-                self._wait_for_mermaid_render(page, timeout=self.playwright_timeout * 1000)
+                # 等待 mermaid 渲染完成
+                self._wait_for_mermaid_render(
+                    page, timeout=self.playwright_timeout * 1000
+                )
 
                 # 短暂等待网络稳定
                 page.wait_for_load_state("networkidle", timeout=5000)
@@ -907,10 +886,28 @@ class DocContentCrawler:
                 if data_src and not img.get("src"):
                     img["src"] = data_src
 
+            # 先解析 mermaid 图表（使用原始 cleaned_soup）
+            mermaid_content = self.mermaid_parser.extract_and_convert_mermaid_blocks(
+                str(cleaned_soup)
+            )
+
+            # 在转换为 Markdown 之前，移除 SVG flowchart 元素
+            # 防止 html2text 把节点文本提取出来导致重复
+            for svg in cleaned_soup.select("svg.flowchart"):
+                svg.decompose()
+            for mermaid_div in cleaned_soup.select(
+                ".mermaid, [data-component-name='mermaid-container']"
+            ):
+                mermaid_div.decompose()
+
             # 转换为Markdown
             markdown_content = self.markdown_converter.convert_to_markdown(
                 str(cleaned_soup)
             )
+
+            # 添加 mermaid 代码块
+            if mermaid_content and mermaid_content.strip():
+                markdown_content += mermaid_content
 
             # 过滤内容结束标识（如 "Next steps" 后的内容）
             markdown_content = self.content_filter.filter_content_end_markers(

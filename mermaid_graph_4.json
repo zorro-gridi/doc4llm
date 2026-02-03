@@ -1,0 +1,128 @@
+{
+  "id": "mermaid-_r_b_-1770091427848",
+  "nodes": {
+    "A": {
+      "id": "A",
+      "label": "User Question",
+      "type": "startend",
+      "cluster": null
+    },
+    "B": {
+      "id": "B",
+      "label": "Query Enhancement",
+      "type": "process",
+      "cluster": null
+    },
+    "C": {
+      "id": "C",
+      "label": "Retrieve Documents",
+      "type": "process",
+      "cluster": null
+    },
+    "D": {
+      "id": "D",
+      "label": "Sufficient Info?",
+      "type": "decision",
+      "cluster": null
+    },
+    "E": {
+      "id": "E",
+      "label": "Refine Query",
+      "type": "process",
+      "cluster": null
+    },
+    "F": {
+      "id": "F",
+      "label": "Generate Answer",
+      "type": "process",
+      "cluster": null
+    },
+    "G": {
+      "id": "G",
+      "label": "Answer Quality OK?",
+      "type": "decision",
+      "cluster": null
+    },
+    "H": {
+      "id": "H",
+      "label": "Try Different Approach?",
+      "type": "decision",
+      "cluster": null
+    },
+    "I": {
+      "id": "I",
+      "label": "Return Best Answer",
+      "type": "process",
+      "cluster": null
+    },
+    "J": {
+      "id": "J",
+      "label": "Return to User",
+      "type": "startend",
+      "cluster": null
+    }
+  },
+  "edges": [
+    {
+      "from": "A",
+      "to": "B",
+      "label": null
+    },
+    {
+      "from": "B",
+      "to": "C",
+      "label": null
+    },
+    {
+      "from": "C",
+      "to": "D",
+      "label": null
+    },
+    {
+      "from": "D",
+      "to": "E",
+      "label": null
+    },
+    {
+      "from": "E",
+      "to": "C",
+      "label": null
+    },
+    {
+      "from": "D",
+      "to": "F",
+      "label": null
+    },
+    {
+      "from": "F",
+      "to": "G",
+      "label": null
+    },
+    {
+      "from": "G",
+      "to": "H",
+      "label": null
+    },
+    {
+      "from": "H",
+      "to": "E",
+      "label": null
+    },
+    {
+      "from": "H",
+      "to": "I",
+      "label": null
+    },
+    {
+      "from": "G",
+      "to": "I",
+      "label": null
+    },
+    {
+      "from": "I",
+      "to": "J",
+      "label": null
+    }
+  ],
+  "clusters": {}
+}
