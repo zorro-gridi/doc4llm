@@ -23,9 +23,8 @@ Given a user query, analyze it and generate optimized search queries for better 
 
 Before query analysis, identify target documentation sets.
 
-**Knowledge Base Configuration**
+**Knowledge Base Available List**
 
-Example:
 ```
 {LOCAL_DOC_SETS_LIST}
 ```
@@ -154,6 +153,20 @@ If Enumerative:
 ```
 
 ### Phase 4: Domain Nouns
+
+**Single-Word Constraint Rule**
+
+> Domain nouns must be **atomic single-word** tokens.
+Any multi-word phrase is invalid and must be reduced to its core noun or excluded.
+
+Formal Requirements:
+* For each element in domain_nouns:
+  - ✅ Must be exactly one token
+  - ❌ Must NOT contain:
+    - whitespace (" ")
+    - hyphen ("-")
+    - underscore ("_")
+    - multiple lexical units
 
 **HIGH PRIORITY RULE: Query Focus Override**
 

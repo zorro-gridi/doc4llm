@@ -44,7 +44,8 @@ class QueryOptimizerConfig:
     max_tokens: int = 20000
     temperature: float = 0.1
     prompt_template_path: str = "doc4llm/doc_rag/query_optimizer/prompt_template/query_optimizer_prompt.md"
-    doc_sets_base_path: str = "doc4llm/md_docs_base"
+    # NOTE: 默认本地知识库路径
+    doc_sets_base_path: str = "~/project/md_docs_base"
     max_retries: int = 2
     retry_on_empty_fields: bool = True
     silent: bool = False
@@ -126,8 +127,21 @@ class QueryOptimizer:
             raise FileNotFoundError(f"Prompt template not found: {path}")
 
     def _load_doc_sets(self) -> None:
-        """加载本地文档集列表"""
+        """加载本地文档集列表，支持带 ~ 的路径解析"""
         base_path = Path(self.config.doc_sets_base_path)
+
+        # 解析 ~ 为用户主目录
+        if str(base_path).startswith('~'):
+            base_path = base_path.expanduser()
+        else:
+            base_path = Path(os.path.expanduser(str(base_path)))
+
+        if not base_path.exists():
+            raise FileNotFoundError(
+                f"知识库路径不存在: {base_path}\n"
+                f"请检查 doc_sets_base_path 配置或创建知识库目录。"
+            )
+
         if base_path.exists():
             self._doc_sets_list = sorted(base_path.iterdir())
             self._doc_sets_list = [d.name for d in self._doc_sets_list if d.is_dir()]
@@ -446,7 +460,7 @@ __all__ = ["QueryOptimizer", "QueryOptimizerConfig", "OptimizationResult"]
 
 if __name__ == '__main__':
     optimizer = QueryOptimizer()
-    result = optimizer.optimize("opencode 如何创建 skills?")
+    result = optimizer.optimize("dolphinscheduler 如何查询工作流列表？")
     if result.thinking:
         print(f"\nThinking: {result.thinking[:2000]}...")
 

@@ -1,0 +1,173 @@
+{
+  "query": [
+    "dolphinscheduler get running task list",
+    "dolphinscheduler query active task instances",
+    "dolphinscheduler list executing workflows",
+    "dolphinscheduler how to get running tasks tutorial",
+    "dolphinscheduler task execution state guide",
+    "dolphinscheduler check workflow instance status",
+    "dolphinscheduler retrieve task status reference",
+    "dolphinscheduler monitor running tasks setup",
+    "dolphinscheduler active instances monitoring guide",
+    "dolphinscheduler task instance state configuration",
+    "dolphinscheduler running workflow tasks list tutorial",
+    "dolphinscheduler get task and workflow status how-to"
+  ],
+  "doc_sets_found": [
+    "DolpinScheduler_Docs@latest"
+  ],
+  "results": [
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "Tutorial",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/Tutorial/docTOC.md",
+      "headings": [
+        {
+          "text": "# Tutorial",
+          "rerank_sim": null,
+          "related_context": ""
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "Concepts",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/Concepts/docTOC.md",
+      "headings": [
+        {
+          "text": "## 2. Workflow",
+          "rerank_sim": null,
+          "related_context": ""
+        },
+        {
+          "text": "## 3. Tasks",
+          "rerank_sim": null,
+          "related_context": ""
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "Condition",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/Condition/docTOC.md",
+      "headings": [
+        {
+          "text": "## 10. Status",
+          "rerank_sim": null,
+          "related_context": ""
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "How to develop",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/How to develop/docTOC.md",
+      "headings": [
+        {
+          "text": "# How to develop",
+          "rerank_sim": null,
+          "related_context": ""
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "Sub Workflow",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/Sub Workflow/docTOC.md",
+      "headings": [
+        {
+          "text": "# Sub Workflow",
+          "rerank_sim": null,
+          "related_context": ""
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "Submit Your Code from Different machine",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/Submit Your Code from Different machine/docTOC.md",
+      "headings": [
+        {
+          "text": "## 2. Export Configuration File",
+          "rerank_sim": null,
+          "related_context": ""
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "ResourcePlugin",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/ResourcePlugin/docTOC.md",
+      "headings": [
+        {
+          "text": "## 5. How to use",
+          "rerank_sim": null,
+          "related_context": ""
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "Started",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/Getting Started/docTOC.md",
+      "headings": [
+        {
+          "text": "# Install PyDolphinScheduler in develop mode",
+          "rerank_sim": null,
+          "related_context": "python -m pip install -e .\nAfter you installed _PyDolphinScheduler_ , please remember start Python Gateway Service which is required for _PyDolphinScheduler_ ’s workflow definition.\nAbove command will clone whole dolphinscheduler source code to local, maybe you want to install the latest pydolphinscheduler package directly and do not care about other code(including Python gateway service code), you can execute the command"
+        },
+        {
+          "text": "## Start Python Gateway Service",
+          "rerank_sim": null,
+          "related_context": "Since **PyDolphinScheduler** is Python API for Apache DolphinScheduler, it could define workflow and task structures, but could not run it unless you install Apache DolphinScheduler and start its API server which includes Python gateway service in it. We only write some key steps here and you could go install Apache DolphinScheduler for more details"
+        },
+        {
+          "text": "## Run an Example",
+          "rerank_sim": null,
+          "related_context": "Before run an example for pydolphinscheduler, you should get the example code from its source code. You could run single bash command to get it\nwget https://raw.githubusercontent.com/apache/dolphinscheduler-sdk-python/main/src/pydolphinscheduler/examples/tutorial.py\nor you could copy-paste the content from [tutorial source code](https://raw.githubusercontent.com/apache/dolphinscheduler-sdk-python/main/src/pydolphinscheduler/examples/tutorial.py). And then you could run the example in your terminal\npython tutorial.py\nIf you want to submit your workflow to a remote API server, which means that your workflow script is different from the API server, you should first change pydolphinscheduler configuration and then submit the workflow script\npydolphinscheduler config --init\npydolphinscheduler config --set java_gateway.address <YOUR-API-SERVER-IP-OR-HOSTNAME>\npython tutorial.py\nNote"
+        },
+        {
+          "text": "## What’s More",
+          "rerank_sim": null,
+          "related_context": "If you are not familiar with _PyDolphinScheduler_ , you could go to Tutorial and see how it works. But if you already know the basic usage or concept of _PyDolphinScheduler_ , you could go and play with all Tasks _PyDolphinScheduler_ supports, or see our HOWTOs about useful cases."
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "Python Module Index",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/Python Module Index/docTOC.md",
+      "headings": [
+        {
+          "text": "# Python Module Index",
+          "rerank_sim": null,
+          "related_context": "**p**\n|  |\n|---|---\n|  **p**|\n!- |  `pydolphinscheduler`|  __\n|  `pydolphinscheduler.constants`|  __\n|  `pydolphinscheduler.core`|  __\n|  `pydolphinscheduler.core.resource_plugin`|  __\n|  `pydolphinscheduler.exceptions`|  __\n|  `pydolphinscheduler.models`|  __\n|  `pydolphinscheduler.resources_plugin.github`|  __\n|  `pydolphinscheduler.resources_plugin.gitlab`|  __\n|  `pydolphinscheduler.resources_plugin.local`|  __\n|  `pydolphinscheduler.resources_plugin.OSS`|  __\n|  `pydolphinscheduler.resources_plugin.S3`|  __\n|  `pydolphinscheduler.tasks`|  __\n|  `pydolphinscheduler.tasks.condition`|  __\n|  `pydolphinscheduler.tasks.datax`|  __\n|  `pydolphinscheduler.tasks.dependent`|  __\n|  `pydolphinscheduler.tasks.dvc`|  __\n|  `pydolphinscheduler.tasks.flink`|  __\n|  `pydolphinscheduler.tasks.func_wrap`|  __\n|  `pydolphinscheduler.tasks.http`|  __\n|  `pydolphinscheduler.tasks.kubernetes`|  __\n|  `pydolphinscheduler.tasks.map_reduce`|  __\n|  `pydolphinscheduler.tasks.mlflow`|  __\n|  `pydolphinscheduler.tasks.openmldb`|  __\n|  `pydolphinscheduler.tasks.procedure`|  __\n|  `pydolphinscheduler.tasks.python`|  __\n|  `pydolphinscheduler.tasks.pytorch`|  __\n|  `pydolphinscheduler.tasks.sagemaker`|  __\n|  `pydolphinscheduler.tasks.shell`|  __\n|  `pydolphinscheduler.tasks.spark`|  __\n|  `pydolphinscheduler.tasks.sql`|  __\n|  `pydolphinscheduler.tasks.sub_workflow`|  __\n|  `pydolphinscheduler.tasks.switch`|  __"
+        }
+      ],
+      "rerank_sim": null
+    },
+    {
+      "doc_set": "DolpinScheduler_Docs@latest",
+      "page_title": "S3",
+      "toc_path": "/Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest/S3/docTOC.md",
+      "headings": [
+        {
+          "text": "# S3",
+          "rerank_sim": null,
+          "related_context": "S3 is a Amazon S3 resource plugin for pydolphinscheduler.\nWhen using a Amazon S3 resource plugin, you only need to add the resource_plugin parameter in the task subclass or workflow definition, such as resource_plugin=S3(prefix=”xxx”), if the file is publicly readable.\nWhen the file is private, using resource_plugin=S3(prefix=”xxx”, access_key_id=”xxx”, access_key_secret=”xxx”)\nYou can view this document when creating a pair AccessKey.\nFor the specific use of resource plugins, you can see How to use in ResourcePlugin"
+        }
+      ],
+      "rerank_sim": null
+    }
+  ],
+  "retrieval_scene": "how_to",
+  "reranker_threshold": 0.61
+}

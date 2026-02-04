@@ -3,17 +3,17 @@
 ## TL;DR
 
 > **测试目标**：使用自定义配置文件测试 playwright 有头模式下加载 URL 页面的能力
-> 
+>
 > **配置文件**：`/Users/zorro/project/md_docs_base/doc4llmMain/Config/langchain.json`
-> 
+>
 > **核心配置**：
 > - Playwright: 启用 + 强制 + 有头模式（headless=false）
 > - 代理: `http://127.0.0.1:7890`
 > - 输出目录: `/Users/zorro/project/md_docs_base/LangChain_Docs@latest/`
-> 
+>
 > **测试 URL**: `https://docs.langchain.com/oss/python/langchain/retrieval`
 > **执行命令**: `python -m doc4llm -u <URL> -mode 4 -config /path/to/langchain.json`
-> 
+>
 > **预计工作量**：小型测试任务
 > **执行方式**：直接命令行测试
 
@@ -356,17 +356,12 @@ python -m doc4llm \
    pip install -r /Users/zorro/project/doc4llm/requirements.txt
    ```
 
-3. **Python 环境**：
-   ```bash
-   conda activate k8s
-   ```
-
-4. **工作目录**：
+3. **工作目录**：
    ```bash
    cd /Users/zorro/project/md_docs_base/doc4llmMain
    ```
 
-5. **配置文件**：
+4. **配置文件**：
    ```bash
    ls -la /Users/zorro/project/md_docs_base/doc4llmMain/Config/langchain.json
    ls -la /Users/zorro/project/md_docs_base/doc4llmMain/Config/headers.json
