@@ -1,0 +1,37 @@
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://dolphinscheduler.apache.org/python/main/api.html
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 10
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'github.com', 'www.w3.org', 'www.baidu.com'}
+=== 白域名单: {'docs.DolpinScheduler.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8', 'cache-control': 'no-cache', 'pragma': 'no-cache', 'priority': 'u=0, i', 'referer': 'https://dolphinscheduler.apache.org/python/main/concept.html', 'sec-ch-ua': '"Not(A:Brand";v="8", "Chromium";v="144", "Google Chrome";v="144"', 'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': '"macOS"', 'sec-fetch-dest': 'document', 'sec-fetch-mode': 'navigate', 'sec-fetch-site': 'same-origin', 'sec-fetch-user': '?1', 'upgrade-insecure-requests': '1', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'}
+=== 实时文件: results/DolpinScheduler/DolpinScheduler_url_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.woff2', '.xlsx', '.otf', '.ico', '.tiff', '.dmg', '.gz', '.jpg', '.wav', '.wmv', '.exe', '.txt', '.pdf', '.7z', '.apk', '.webp', '.ppt', '.js', '.dll', '.jpeg', '.doc', '.flv', '.pptx', '.png', '.avi', '.mkv', '.bmp', '.bz2', '.json', '.woff', '.gif', '.zip', '.webm', '.xls', '.rar', '.ogg', '.tar', '.swf', '.css', '.iso', '.mp3', '.bin', '.xml', '.map', '.ttf', '.docx', '.mp4', '.mov', '.flac', '.aac', '.eot'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/python/main/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: False
+=== Playwright超时: 30
+=== Playwright无头: True
+==============================================
+=== 单页面爬取模式已启用 ===
+=== 文档输出目录: /Users/zorro/project/md_docs_base/DolpinScheduler_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 爬取单个页面: https://dolphinscheduler.apache.org/python/main/api.html ===

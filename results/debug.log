@@ -67,3 +67,6 @@ Call log:
 2026-02-03 19:09:31,607 DEBUG Mermaid 渲染完成
 2026-02-03 19:09:33,736 DEBUG Playwright 获取成功，HTML 长度: 826659 字符
 2026-02-03 19:09:35,030 DEBUG 保存文件成功: md_docs/Claude_Code_Docs@latest/Retrieval - Docs by LangChain/docContent.md
+2026-02-04 16:45:49,417 DEBUG 配置初始化完成: 起始URL: https://dolphinscheduler.apache.org/python/main/api.html 基础域名: apache.org 代理: None 最大深度: 1 最大URL数: 5000 线程数: 10 调试: True
+2026-02-04 16:45:49,418 DEBUG Starting new HTTPS connection (1): dolphinscheduler.apache.org:443
+2026-02-04 16:45:49,633 DEBUG https://dolphinscheduler.apache.org:443 "GET /python/main/api.html HTTP/1.1" 200 88096

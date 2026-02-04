@@ -989,21 +989,64 @@ class DocUrlCrawler(DebugMixin):
         # 尝试解码 URL 编码的锚点名称
         decoded_anchor_name = unquote(anchor_name)
 
-        # 检测锚点的层级级别（先尝试解码后的名称，再尝试原始名称）
-        level = self._determine_anchor_level(decoded_anchor_name, id_to_element, soup)
+        # 检测锚点的层级级别和标题文本（先尝试解码后的名称，再尝试原始名称）
+        result = self._determine_anchor_level(decoded_anchor_name, id_to_element, soup)
+        level = result[0]
+        anchor_title = result[1] if len(result) > 1 else decoded_anchor_name
         if level == 4:  # 如果解码后找不到，尝试原始名称
-            level = self._determine_anchor_level(anchor_name, id_to_element, soup)
+            result = self._determine_anchor_level(anchor_name, id_to_element, soup)
+            level = result[0]
+            anchor_title = result[1] if len(result) > 1 else anchor_name
 
         # 解码锚点文本中的 URL 编码字符
         decoded_text = unquote(anchor_text) if anchor_text else anchor_name
 
         anchor_links.append(
-            {"name": anchor_name, "text": decoded_text, "url": full_url, "level": level}
+            {"name": anchor_name, "text": decoded_text, "url": full_url, "level": level, "title": anchor_title}
         )
+
+    def _parse_python_namespace(self, anchor_name: str) -> tuple[int, str, str]:
+        """
+        解析 Python 命名空间格式，判断层级
+
+        层级判断规则：
+        - 无点（单个标识符）: level 1 (例如 "Engine", "Core")
+        - 一个点（类.方法）: level 2 (例如 "Task._get_attr")
+        - 两个及以上点（命名空间.类.方法）: level 3 (例如 "pydolphinscheduler.core.Task._get_attr")
+
+        Args:
+            anchor_name: 锚点名称
+
+        Returns:
+            tuple: (level, class_name, member_name)
+        """
+        # 空字符串检查
+        if not anchor_name or not anchor_name.strip():
+            return (1, anchor_name, "")
+
+        # 检查是否包含点或下划线（Python 命名空间特征）
+        if '.' not in anchor_name:
+            # 没有点，可能是单个标识符
+            return (1, anchor_name, "")
+
+        parts = anchor_name.split('.')
+        if len(parts) == 2:
+            # 类.方法 或 命名空间.类
+            second = parts[1]
+            # 如果第二部分是方法（以括号或下划线开头），则是类.方法
+            if second.startswith('_') or '(' in second:
+                return (2, parts[0], parts[1])
+            else:
+                return (2, parts[1], "")  # 命名空间.类
+        elif len(parts) >= 3:
+            # 完整命名空间，取最后两部分作为类.方法
+            return (3, parts[-2], parts[-1])
+
+        return (1, anchor_name, "")
 
     def _determine_anchor_level(
         self, anchor_name: str, id_to_element: dict, soup: BeautifulSoup
-    ) -> int:
+    ) -> Tuple[int, str]:
         """
         判断锚点的层级级别
 
@@ -1021,7 +1064,7 @@ class DocUrlCrawler(DebugMixin):
             soup: BeautifulSoup 对象
 
         Returns:
-            int: 层级级别 (1-4)
+            Tuple[int, str]: (层级级别 (1-4), 标题文本)
         """
         try:
             # 尝试找到锚点对应的元素
@@ -1035,21 +1078,58 @@ class DocUrlCrawler(DebugMixin):
                     heading = element.find(["h1", "h2", "h3", "h4", "h5", "h6"])
                     if heading:
                         tag_name = heading.name
+                        title_text = heading.get_text(strip=True)
                         self._debug_print(
-                            f"section '{anchor_name}' 内的标题: {tag_name}"
+                            f"section '{anchor_name}' 内的标题: {tag_name}, 文本: {title_text[:30]}"
                         )
+                    else:
+                        title_text = anchor_name
+                else:
+                    # 从元素中提取显示文本
+                    title_text = element.get_text(strip=True)
+                    # 如果元素没有文本，尝试查找第一个子元素的文本
+                    if not title_text and element.children:
+                        for child in element.children:
+                            if hasattr(child, 'get_text'):
+                                title_text = child.get_text(strip=True)
+                                if title_text:
+                                    break
+                    # 如果还是没有文本，使用 id 名称
+                    if not title_text:
+                        title_text = anchor_name
 
                 # 根据标签判断层级
                 if tag_name == "h2":
-                    return 1
+                    return (1, title_text)
                 elif tag_name == "h3":
-                    return 2
+                    return (2, title_text)
                 elif tag_name == "h4":
-                    return 3
+                    return (3, title_text)
                 elif tag_name in ["h5", "h6"]:
-                    return 4
+                    return (4, title_text)
 
-            # 如果找不到对应元素，尝试通过锚点名称的命名规则判断
+            # ========== 新增：Python 命名空间解析 ==========
+            # 如果找不到对应元素，尝试通过 Python 命名空间格式判断层级
+            # 锚点名称如 "pydolphinscheduler.core.Task._get_attr" 表示 命名空间.类.方法 结构
+            ns_level, class_name, member_name = self._parse_python_namespace(anchor_name)
+            if ns_level > 1:
+                # 构建标题文本
+                if member_name:
+                    # 类.方法 格式
+                    title_text = f"{class_name}.{member_name}"
+                    # 移除方法名后的括号和返回类型
+                    title_text = self._clean_method_title(title_text)
+                elif class_name:
+                    title_text = class_name
+                else:
+                    title_text = anchor_name
+                self._debug_print(
+                    f"Python命名空间解析: '{anchor_name}' -> 类={class_name}, 成员={member_name}, 层级={ns_level}, 标题={title_text}"
+                )
+                return (ns_level, title_text)
+            # ==============================================
+
+            # 尝试通过锚点名称的命名规则判断
             # 优先检查 fuzzy_match 配置：如果锚点匹配 fuzzy_match 模式，默认为 level 1
             filters = self.config.toc_url_filters or {}
             fuzzy_match = filters.get("fuzzy_match", [])
@@ -1063,36 +1143,63 @@ class DocUrlCrawler(DebugMixin):
 
                     # 特殊处理：如果 pattern 是 "#"，表示所有锚点都是 level 1
                     if pattern_lower == "#":
-                        return 1
+                        return (1, anchor_name)
 
                     # 检查锚点名称是否匹配
                     if pattern_lower in anchor_name.lower():
                         self._debug_print(
                             f"fuzzy_match 匹配锚点名称: '{anchor_name}' 匹配模式 '{pattern}'，设为 level 1"
                         )
-                        return 1
+                        return (1, anchor_name)
 
             if any(
                 prefix in anchor_name.lower()
                 for prefix in ["chapter", "section", "part"]
             ):
-                return 1
+                return (1, anchor_name)
             elif any(
                 prefix in anchor_name.lower()
                 for prefix in ["sub", "subsection", "topic"]
             ):
-                return 2
+                return (2, anchor_name)
             elif any(
                 prefix in anchor_name.lower() for prefix in ["item", "detail", "note"]
             ):
-                return 3
+                return (3, anchor_name)
 
             # 默认为第四级
-            return 4
+            return (4, anchor_name)
 
         except Exception as e:
             self._debug_print(f"判断锚点层级时出错: {e}")
-            return 4
+            return (4, anchor_name)
+
+    def _clean_method_title(self, title_text: str) -> str:
+        """
+        清理方法标题文本，移除括号内容
+
+        例如：
+        - "_get_attr() → set[str]" -> "_get_attr"
+        - "process(name: str, value: int)" -> "process"
+
+        Args:
+            title_text: 原始标题文本
+
+        Returns:
+            str: 清理后的标题文本
+        """
+        if not title_text:
+            return title_text
+
+        # 移除方法签名括号内容
+        import re
+
+        # 匹配形如 "name()" 或 "name() → return_type"
+        cleaned = re.sub(r'\([^)]*\)', '', title_text)
+        # 移除 " → return_type" 部分
+        cleaned = re.sub(r'\s*→\s*.*$', '', cleaned)
+
+        return cleaned.strip()
 
     def _match_anchor_pattern(self, anchor_name: str, anchor_text: str) -> bool:
         """

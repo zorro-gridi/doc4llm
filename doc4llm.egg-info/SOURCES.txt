@@ -18,6 +18,7 @@ requirements.txt
 ./doc4llm/crawler/DocContentCrawler.py
 ./doc4llm/crawler/DocUrlCrawler.py
 ./doc4llm/crawler/__init__.py
+./doc4llm/crawler/api_doc_formatter.py
 ./doc4llm/doc_rag/__init__.py
 ./doc4llm/doc_rag/main.py
 ./doc4llm/doc_rag/minimax_sdk_test.py
@@ -36,6 +37,7 @@ requirements.txt
 ./doc4llm/doc_rag/query_optimizer/query_optimizer.py
 ./doc4llm/doc_rag/query_router/__init__.py
 ./doc4llm/doc_rag/query_router/query_router.py
+./doc4llm/doc_rag/reader/api_doc_reader.py
 ./doc4llm/doc_rag/reader/doc_reader_api.py
 ./doc4llm/doc_rag/reader/doc_reader_cli.py
 ./doc4llm/doc_rag/scene_output/__init__.py
@@ -123,6 +125,7 @@ doc4llm/convertor/__init__.py
 doc4llm/crawler/DocContentCrawler.py
 doc4llm/crawler/DocUrlCrawler.py
 doc4llm/crawler/__init__.py
+doc4llm/crawler/api_doc_formatter.py
 doc4llm/doc_rag/__init__.py
 doc4llm/doc_rag/main.py
 doc4llm/doc_rag/minimax_sdk_test.py
@@ -141,6 +144,7 @@ doc4llm/doc_rag/query_optimizer/__init__.py
 doc4llm/doc_rag/query_optimizer/query_optimizer.py
 doc4llm/doc_rag/query_router/__init__.py
 doc4llm/doc_rag/query_router/query_router.py
+doc4llm/doc_rag/reader/api_doc_reader.py
 doc4llm/doc_rag/reader/doc_reader_api.py
 doc4llm/doc_rag/reader/doc_reader_cli.py
 doc4llm/doc_rag/scene_output/__init__.py
@@ -211,6 +215,7 @@ doc4llm/tool/md_doc_retrieval/test/test.py
 doc4llm/tool/md_doc_retrieval/test/test_modelscope_matcher.py
 doc4llm/tool/md_doc_retrieval/test/test_transformer_matcher.py
 tests/test_agentic_matcher.py
+tests/test_api_doc_formatter.py
 tests/test_bm25_matcher.py
 tests/test_doc_content_extraction.py
 tests/test_doc_extractor.py

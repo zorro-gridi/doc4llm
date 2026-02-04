@@ -17,7 +17,7 @@ from urllib.parse import urlparse, urljoin
 from typing import List, Dict, Set, Optional, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 # Playwright 导入（可选依赖）
 try:
@@ -49,6 +49,7 @@ from doc4llm.filter.config import FilterConfigLoader
 from doc4llm.convertor.MarkdownConverter import MarkdownConverter
 from doc4llm.convertor.MermaidParser import MermaidParser
 from doc4llm.link_processor.LinkProcessor import LinkProcessor
+from doc4llm.crawler.api_doc_formatter import APIDocEnhancer
 
 
 class DocContentCrawler:
@@ -98,6 +99,9 @@ class DocContentCrawler:
 
         self.markdown_converter = MarkdownConverter()
         self.mermaid_parser = MermaidParser()
+        
+        # 初始化API文档增强器
+        self.api_enhancer = APIDocEnhancer(config, debug_mode=self.debug_mode)
 
         # 统计信息
         self.stats = {
@@ -870,6 +874,13 @@ class DocContentCrawler:
             str: Markdown内容
         """
         try:
+            # 步骤1: API文档增强处理
+            enhanced_html, is_enhanced, api_info = self.api_enhancer.enhance_api_content(html_content, url)
+            
+            if is_enhanced:
+                self._debug_print(f"检测到API文档，已增强 {api_info.get('total_items', 0)} 个API项")
+                html_content = enhanced_html
+            
             soup = BeautifulSoup(html_content, "html.parser")
 
             # 转换相对链接为绝对链接
@@ -902,6 +913,13 @@ class DocContentCrawler:
                     markdown_content, mermaid_map
                 )
 
+            # 步骤2: API文档Markdown增强处理
+            if is_enhanced and api_info:
+                markdown_content = self.api_enhancer.enhance_markdown_content(
+                    markdown_content, api_info, url
+                )
+                self._debug_print("已增强API文档的Markdown标题结构")
+
             # 过滤内容结束标识（如 "Next steps" 后的内容）
             markdown_content = self.content_filter.filter_content_end_markers(
                 markdown_content
@@ -922,7 +940,18 @@ class DocContentCrawler:
             # 添加元数据头部
             header = f"# {page_title}\n\n"
             header += f"> **原文链接**: {url}\n\n"
+            
+            # 如果是API文档，添加API信息
+            if is_enhanced and api_info:
+                header += f"> **API项目数**: {api_info.get('total_items', 0)}\n\n"
+            
             header += "---\n\n"
+
+            # 在Markdown中注入锚点标题（仅对非API文档或API增强失败的情况）
+            if not is_enhanced:
+                markdown_content = self._inject_anchor_headings(
+                    markdown_content, soup, url
+                )
 
             return header + markdown_content
 
@@ -930,6 +959,495 @@ class DocContentCrawler:
             self._debug_print(f"转换Markdown时出错: {e}")
             # 返回基本格式
             return f"# {page_title}\n\n原文链接: {url}\n\n转换失败，请查看原网页。"
+
+    def _inject_anchor_headings(
+        self, markdown_content: str, soup: BeautifulSoup, base_url: str
+    ) -> str:
+        """
+        在Markdown内容中为每个带id的元素注入对应的Markdown标题
+
+        标题格式（无编号，完整命名空间）：
+        - ## <一级标题> (level 1, h2)
+        - ### <二级标题> (level 2, h3)
+        - #### <三级标题> (level 3, h4)
+        - ##### <四级标题> (level 4, h5+)
+
+        用于解决docContent.md中类和方法没有标题层级的问题，
+        使其能与docTOC.md中的锚点对应，支持extract_section_by_title()定位。
+
+        Args:
+            markdown_content: 原始Markdown内容
+            soup: BeautifulSoup解析后的HTML
+            base_url: 基础URL
+
+        Returns:
+            str: 注入锚点标题后的Markdown内容
+        """
+        try:
+            # 获取所有带id的元素
+            elements_with_id = soup.find_all(id=True)
+
+            if not elements_with_id:
+                return markdown_content
+
+            self._debug_print(f"发现 {len(elements_with_id)} 个带id的元素")
+
+            # 构建 id -> 元素 的映射
+            id_to_element = {}
+            for elem in elements_with_id:
+                elem_id = elem.get("id", "")
+                if elem_id:
+                    id_to_element[elem_id] = elem
+
+            # 用于存储需要注入的标题列表
+            # 每个元素: (position_index, level, title_text, anchor_name)
+            anchor_headings = []
+
+            # 用于跟踪已注入的锚点，避免重复
+            injected_anchors = set()
+
+            for elem in elements_with_id:
+                elem_id = elem.get("id", "")
+
+                # 跳过已处理的锚点
+                if elem_id in injected_anchors:
+                    continue
+
+                # 获取元素类型和层级
+                level, title_text = self._determine_anchor_level_for_element(
+                    elem, elem_id, id_to_element
+                )
+
+                if level is None or level == 4:
+                    # 对于 level 4 的元素，只注入类级别的锚点
+                    # 检查是否是类级别的元素（通过id格式判断）
+                    if not self._is_class_level_element(elem_id):
+                        continue
+
+                # 跳过没有有意义标题的元素
+                if not title_text or len(title_text) < 2:
+                    continue
+
+                # 避免标题重复
+                title_key = f"{level}:{title_text}"
+                if title_key in injected_anchors:
+                    continue
+
+                # 尝试在Markdown中找到该元素对应的位置
+                position_index = self._find_element_position_in_markdown(
+                    markdown_content, elem, elem_id, level
+                )
+
+                if position_index is not None:
+                    anchor_headings.append(
+                        {
+                            "position": position_index,
+                            "level": level,
+                            "title": title_text,
+                            "anchor": elem_id,
+                        }
+                    )
+                    injected_anchors.add(title_key)
+                    self._debug_print(
+                        f"准备注入标题: level={level}, text={title_text[:30]}, pos={position_index}"
+                    )
+
+            if not anchor_headings:
+                return markdown_content
+
+            # 按位置排序
+            anchor_headings.sort(key=lambda x: x["position"], reverse=True)
+
+            # 注入标题
+            for heading in anchor_headings:
+                heading_markdown = self._format_heading_markdown(
+                    heading["level"], heading["title"], heading["anchor"]
+                )
+
+                # 在指定位置插入标题
+                markdown_content = (
+                    markdown_content[: heading["position"]]
+                    + heading_markdown
+                    + markdown_content[heading["position"] :]
+                )
+
+                self._debug_print(
+                    f"已注入标题: {heading['title'][:30]} (level {heading['level']})"
+                )
+
+            return markdown_content
+
+        except Exception as e:
+            self._debug_print(f"注入锚点标题时出错: {e}")
+            return markdown_content
+
+    def _determine_anchor_level_for_element(
+        self, element: BeautifulSoup, anchor_name: str, id_to_element: dict, heading_element: Optional[BeautifulSoup] = None
+    ) -> Tuple[Optional[int], Optional[str]]:
+        """
+        判断HTML元素的锚点层级和标题文本
+
+        支持两种HTML结构：
+        1. id 在元素内部：<dt id="Engine"><span class="sig-name">Engine</span></dt>
+        2. id 是兄弟元素：<span id="core"></span><h2>Core</h2>
+
+        Args:
+            element: BeautifulSoup元素
+            anchor_name: 锚点名称（id）
+            id_to_element: id到元素的映射
+            heading_element: 可选，已找到的heading元素（结构2时传入）
+
+        Returns:
+            Tuple[Optional[int], Optional[str]]: (层级级别, 标题文本)
+        """
+        try:
+            tag_name = element.name
+
+            # 如果已传入 heading_element（结构2），直接使用它
+            if heading_element is not None:
+                tag_name = heading_element.name
+                title_text = heading_element.get_text(strip=True)
+            # 特殊处理：如果是section元素，查找其中的第一个标题
+            elif tag_name == "section":
+                heading = element.find(["h1", "h2", "h3", "h4", "h5", "h6"])
+                if heading:
+                    tag_name = heading.name
+                    title_text = heading.get_text(strip=True)
+                else:
+                    title_text = self._extract_display_text(element)
+            else:
+                # 尝试从元素自身提取文本（结构1）
+                title_text = self._extract_display_text(element)
+
+                # 如果元素自身没有文本，尝试查找后续的兄弟heading元素（结构2）
+                if not title_text or len(title_text) < 2:
+                    next_heading = self._find_next_heading_sibling(element)
+                    if next_heading:
+                        tag_name = next_heading.name
+                        title_text = next_heading.get_text(strip=True)
+
+            # 如果仍然没有文本，使用锚点名称
+            if not title_text:
+                title_text = anchor_name
+
+            # 根据标签判断层级
+            if tag_name == "h2":
+                return (1, title_text)
+            elif tag_name == "h3":
+                return (2, title_text)
+            elif tag_name == "h4":
+                return (3, title_text)
+            elif tag_name in ["h5", "h6"]:
+                return (4, title_text)
+
+            # 对于其他元素，尝试通过Python命名空间格式判断
+            ns_level, class_name, member_name = self._parse_python_namespace(anchor_name)
+            if ns_level > 1:
+                if member_name:
+                    title_text = f"{class_name}.{member_name}"
+                    title_text = self._clean_method_title(title_text)
+                elif class_name:
+                    title_text = class_name
+                return (ns_level, title_text)
+
+            # 无命名空间的简单id，根据id判断层级
+            # 单个标识符（如 "Engine"）-> level 2 (###)
+            # 简单单词（如 "core"）-> level 1 (##)
+            if '.' not in anchor_name:
+                # 检查是否是类名或模块名（首字母大写或包含大写字母）
+                if anchor_name and (anchor_name[0].isupper() or any(c.isupper() for c in anchor_name)):
+                    return (2, title_text)  # ### 类名
+                else:
+                    return (1, title_text)  # ## 模块名/简单id
+
+            return (None, title_text)
+
+        except Exception as e:
+            self._debug_print(f"判断元素层级时出错: {e}")
+            return (None, anchor_name)
+
+    def _extract_display_text(self, element: BeautifulSoup) -> str:
+        """
+        从元素中提取显示文本
+
+        Args:
+            element: BeautifulSoup元素
+
+        Returns:
+            str: 显示文本
+        """
+        try:
+            # 首先尝试获取元素的直接文本
+            text = element.get_text(strip=True)
+
+            if text:
+                # 清理文本，移除过多空白
+                import re
+                text = re.sub(r'\s+', ' ', text)
+                return text[:200]  # 限制文本长度
+
+            # 如果元素没有文本，查找第一个有文本的子元素
+            for child in element.descendants:
+                if hasattr(child, 'get_text'):
+                    child_text = child.get_text(strip=True)
+                    if child_text and len(child_text) > 2:
+                        import re
+                        child_text = re.sub(r'\s+', ' ', child_text)
+                        return child_text[:200]
+
+            return ""
+        except Exception:
+            return ""
+
+    def _find_next_heading_sibling(self, element: BeautifulSoup) -> Optional[Tag]:
+        """
+        查找元素后续的兄弟heading元素
+
+        用于处理 id 是兄弟元素的结构：
+        <span id="core"></span><h2>Core</h2>
+
+        Args:
+            element: 当前BeautifulSoup元素
+
+        Returns:
+            Tag: 找到的heading元素，或None
+        """
+        try:
+            # 遍历后续兄弟元素
+            for sibling in element.next_siblings:
+                # 只处理Tag元素
+                if isinstance(sibling, Tag):
+                    # 检查是否是heading元素
+                    if sibling.name in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
+                        return sibling
+                    # 如果遇到其他非空内容元素，停止查找
+                    # （说明id和heading不是紧邻的兄弟）
+                    if sibling.name and sibling.get_text(strip=True):
+                        # 检查是否有文本内容
+                        text = sibling.get_text(strip=True)
+                        if text and len(text) > 1:
+                            break
+            return None
+        except Exception:
+            return None
+
+    def _parse_python_namespace(self, anchor_name: str) -> tuple[int, str, str]:
+        """
+        解析Python命名空间格式，判断层级
+
+        层级判断规则：
+        - 无点（单个标识符）: level 1 (例如 "Engine", "Core")
+        - 一个点（类.方法）: level 2 (例如 "Task._get_attr")
+        - 两个及以上点（命名空间.类.方法）: level 3 (例如 "pydolphinscheduler.core.Task._get_attr")
+
+        Args:
+            anchor_name: 锚点名称
+
+        Returns:
+            tuple: (level, class_name, member_name)
+        """
+        # 空字符串检查
+        if not anchor_name or not anchor_name.strip():
+            return (1, anchor_name, "")
+
+        # 检查是否包含点（Python命名空间特征）
+        if '.' not in anchor_name:
+            return (1, anchor_name, "")
+
+        parts = anchor_name.split('.')
+        if len(parts) == 2:
+            second = parts[1]
+            # 如果第二部分是方法（以括号或下划线开头），则是类.方法
+            if second.startswith('_') or '(' in second:
+                return (2, parts[0], parts[1])
+            else:
+                return (2, parts[1], "")  # 命名空间.类
+        elif len(parts) >= 3:
+            # 完整命名空间，取最后两部分作为类.方法
+            return (3, parts[-2], parts[-1])
+
+        return (1, anchor_name, "")
+
+    def _clean_method_title(self, title_text: str) -> str:
+        """
+        清理方法标题文本，移除括号内容
+
+        例如：
+        - "_get_attr() → set[str]" -> "_get_attr"
+        - "process(name: str, value: int)" -> "process"
+
+        Args:
+            title_text: 原始标题文本
+
+        Returns:
+            str: 清理后的标题文本
+        """
+        if not title_text:
+            return title_text
+
+        import re
+
+        # 匹配形如 "name()" 或 "name() → return_type"
+        cleaned = re.sub(r'\([^)]*\)', '', title_text)
+        # 移除 " → return_type" 部分
+        cleaned = re.sub(r'\s*→\s*.*$', '', cleaned)
+
+        return cleaned.strip()
+
+    def _is_class_level_element(self, anchor_name: str) -> bool:
+        """
+        判断锚点是否是类级别的元素
+
+        类级别的元素特征：
+        - 包含完整命名空间（如 pydolphinscheduler.core.Engine）
+        - 包含类名（如 Engine, Task）
+        - 包含方法名（如 _get_attr）
+
+        Args:
+            anchor_name: 锚点名称
+
+        Returns:
+            bool: 是否是类级别的元素
+        """
+        if not anchor_name:
+            return False
+
+        # 跳过太短的锚点
+        if len(anchor_name) < 3:
+            return False
+
+        # 跳过包含空格的锚点（可能是复合名称）
+        if ' ' in anchor_name:
+            return False
+
+        # 跳过以数字开头的锚点
+        if anchor_name[0].isdigit():
+            return False
+
+        # 检查是否是API相关的锚点模式
+        api_patterns = [
+            r'^[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)+$',  # 命名空间.类 或 命名空间.类.方法
+            r'^[a-zA-Z_][a-zA-Z0-9_]*$',  # 单个标识符（可能是类名）
+        ]
+
+        import re
+        for pattern in api_patterns:
+            if re.match(pattern, anchor_name):
+                return True
+
+        return False
+
+    def _find_element_position_in_markdown(
+        self,
+        markdown_content: str,
+        element: BeautifulSoup,
+        anchor_name: str,
+        level: int,
+    ) -> Optional[int]:
+        """
+        在Markdown内容中找到元素对应的位置
+
+        策略：
+        1. 查找锚点标记 <!-- anchor:id --> 的位置
+        2. 查找 id="anchor_name" 的位置（在HTML注释中）
+        3. 查找包含锚点名称的段落位置
+
+        Args:
+            markdown_content: Markdown内容
+            element: BeautifulSoup元素
+            anchor_name: 锚点名称
+            level: 层级
+
+        Returns:
+            int: 插入位置，失败返回None
+        """
+        try:
+            # 策略1：查找锚点标记
+            anchor_markers = [
+                f'<!-- anchor:{anchor_name} -->',
+                f'<!--anchor:{anchor_name}-->',
+                f'[#{anchor_name}]:',
+                f'<a id="{anchor_name}">',
+                f'<a id="{anchor_name}"',
+            ]
+
+            for marker in anchor_markers:
+                pos = markdown_content.find(marker)
+                if pos != -1:
+                    # 找到标记，定位到行尾
+                    line_end = markdown_content.find('\n', pos)
+                    if line_end != -1:
+                        return line_end + 1
+                    return pos + len(marker)
+
+            # 策略2：查找包含锚点名称的段落开头
+            # 查找形如 "... anchor_name ..." 的位置
+            import re
+
+            # 查找包含锚点名称的段落（以换行开头，后面跟非空内容）
+            pattern = rf'\n([^#\n]*{re.escape(anchor_name)}[^#\n]*)'
+            matches = list(re.finditer(pattern, markdown_content))
+
+            for match in matches:
+                # 检查是否在代码块内
+                before = markdown_content[:match.start()]
+                if before.count('```') % 2 == 0:  # 不在代码块内
+                    return match.start() + 1
+
+            # 策略3：查找元素类型相关的位置
+            # 对于Python API文档，尝试找到类/方法定义的位置
+            if level >= 2:
+                # 查找类名或方法名出现的位置
+                class_name = anchor_name.split('.')[-1] if '.' in anchor_name else anchor_name
+                if class_name:
+                    pattern = rf'\n([^#\n]*{re.escape(class_name)}[^#\n]*)'
+                    matches = list(re.finditer(pattern, markdown_content))
+                    for match in matches:
+                        before = markdown_content[:match.start()]
+                        if before.count('```') % 2 == 0:
+                            return match.start() + 1
+
+            return None
+
+        except Exception as e:
+            self._debug_print(f"查找元素位置时出错: {e}")
+            return None
+
+    def _format_heading_markdown(
+        self, level: int, title_text: str, anchor: str = ""
+    ) -> str:
+        """
+        格式化Markdown标题
+
+        Args:
+            level: 层级 (1-4)
+            title_text: 标题文本
+            anchor: 锚点名称（可选）
+
+        Returns:
+            str: Markdown标题格式
+        """
+        # 根据层级选择标题前缀
+        if level == 1:
+            prefix = "##"
+        elif level == 2:
+            prefix = "###"
+        elif level == 3:
+            prefix = "####"
+        else:
+            prefix = "#####"
+
+        # 清理标题文本
+        import re
+        title_text = re.sub(r'\s+', ' ', title_text).strip()
+
+        # 如果有锚点，添加到标题末尾
+        if anchor:
+            heading = f"{prefix} {title_text} {{#{anchor}}}\n\n"
+        else:
+            heading = f"{prefix} {title_text}\n\n"
+
+        return heading
 
     def _save_markdown_file(self, content: str, filepath: str) -> bool:
         """

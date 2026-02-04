@@ -867,3 +867,133 @@ Playwright 获取失败，回退到原始 HTML: https://docs.langchain.com/oss/p
 === 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
 === 所有输出将同时记录到 results/output.out 文件中
 === 扫描开始时间: 2026-02-03 19:10:11
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-04 12:29:32
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://dolphinscheduler.apache.org/python/main/api.html
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.baidu.com', 'github.com', 'www.w3.org', 'claude.com'}
+=== 白域名单: {'code.claude.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/url_extration_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.pdf', '.webm', '.woff', '.flac', '.bin', '.ico', '.zip', '.woff2', '.jpg', '.mp3', '.tiff', '.ogg', '.tar', '.js', '.ppt', '.svg', '.otf', '.dmg', '.map', '.rar', '.iso', '.json', '.mp4', '.wmv', '.pptx', '.swf', '.dll', '.xml', '.mov', '.eot', '.xlsx', '.avi', '.7z', '.txt', '.apk', '.ttf', '.css', '.bmp', '.jpeg', '.doc', '.exe', '.webp', '.mkv', '.gif', '.flv', '.gz', '.bz2', '.png', '.wav', '.xls', '.aac', '.docx'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/docs/en/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: False
+=== Playwright超时: 30
+=== Playwright无头: True
+==============================================
+=== 锚点链接爬取模式已启用 ===
+=== 文档输出目录: md_docs/Claude_Code_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 第一步：执行URL扫描 ===
+开始扫描: https://dolphinscheduler.apache.org/python/main/api.html
+扫描器已就绪，开始扫描目标: https://dolphinscheduler.apache.org/python/main/api.html
+配置: 最大深度=5, 最大URL数=10000, 线程数=30
+[深度:0] [200] [1413747] [HTML] [API — apache-dolphinscheduler ] https://dolphinscheduler.apache.org/python/main/api.html [0.88s] -> [内网IPX1，IP地址X1，OSS云存储桶X1]
+
+============================================================
+异步提取完成统计
+============================================================
+已入队任务: 1
+已处理任务: 1
+内容提取成功: 0
+内容提取失败: 0
+TOC提取成功: 1
+TOC提取失败: 0
+无锚点页面: 0
+输出目录: md_docs/Claude_Code_Docs@latest
+平均处理时间: 1.665秒/任务
+============================================================
+
+
+
+扫描完成! 共扫描 1 个URL 
+完整报告已保存至: results/dolphinscheduler.apache.org_20260204_122949.csv 
+============================================== 
+==============================================
+未发现危险链接
+==============================================
+总耗时: 17.25秒 | 平均速度: 0.1 URL/秒
+扫描结束!
+=== 第二步：从CSV文件提取锚点链接 ===
+从CSV文件读取到 0 个URL
+没有找到有效的URL
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-04 12:30:33
+=== 正在初始化扫描器...
+==============================================
+=== 开始链接: https://dolphinscheduler.apache.org/python/main/api.html
+=== 代理设置: None
+=== 延迟设置: 0.1
+=== 最大线程: 30
+=== 请求超时: 20
+=== 最大深度: 5
+=== 黑域名单: {'www.w3.org', 'claude.com', 'github.com', 'www.baidu.com'}
+=== 白域名单: {'code.claude.com'}
+=== 请求的头: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1'}
+=== 实时文件: results/url_extration_list.csv
+=== 彩色输出: True
+=== 详细输出: True
+=== 跳过扩展: {'.webm', '.otf', '.bz2', '.pdf', '.xml', '.zip', '.swf', '.dll', '.bmp', '.avi', '.js', '.jpg', '.bin', '.apk', '.mov', '.iso', '.exe', '.ico', '.gz', '.pptx', '.css', '.wmv', '.7z', '.ttf', '.rar', '.eot', '.map', '.woff2', '.doc', '.svg', '.json', '.aac', '.mp3', '.ogg', '.xls', '.docx', '.ppt', '.dmg', '.txt', '.tiff', '.woff', '.webp', '.mp4', '.tar', '.png', '.jpeg', '.flv', '.flac', '.wav', '.mkv', '.gif', '.xlsx'}
+=== 最大请求: 10000
+=== 智能拼接: True
+=== 调试模式: 0
+=== 扫描范围: 0
+=== 危险过滤: 1
+=== 危险接口: ['/del', '/delete', '/insert', '/logout', '/loginout', '/remove', '/drop', '/shutdown', '/stop', '/poweroff', '/restart', '/rewrite', '/terminate', '/deactivate', '/halt', '/disable']
+=== 允许接口: ['/docs/en/']
+=== 开启重复: 0
+=== 自定地址: []
+=== 自定路径: []
+=== 自定API: []
+=== 启用fuzz: 0
+=== Playwright启用: True
+=== Playwright强制: False
+=== Playwright超时: 30
+=== Playwright无头: True
+==============================================
+=== 文档爬取模式已启用 ===
+=== 文档输出目录: md_docs/Claude_Code_Docs@latest
+=== 文档版本: latest
+=== 最大爬取深度: 10
+=== 第一步：执行URL扫描 ===
+开始扫描: https://dolphinscheduler.apache.org/python/main/api.html
+扫描器已就绪，开始扫描目标: https://dolphinscheduler.apache.org/python/main/api.html
+配置: 最大深度=5, 最大URL数=10000, 线程数=30
+[深度:0] [200] [1413747] [HTML] [API — apache-dolphinscheduler ] https://dolphinscheduler.apache.org/python/main/api.html [0.48s] -> [内网IPX1，IP地址X1，OSS云存储桶X1]
+转换了 162 个相对链接为绝对链接
+找到主要内容区域: <div>
+==============================================
+=== doc4llm v1.7.4 ===
+=== BY: Zorro  GitHub: https://github.com/zorro-gridi/doc4llm
+=== 重复的URL不会重复扫描, 结果返回相同的URL不会重复展示
+=== 所有输出将同时记录到 results/output.out 文件中
+=== 扫描开始时间: 2026-02-04 12:44:58

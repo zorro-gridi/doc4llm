@@ -1,0 +1,229 @@
+{
+  "start_url": "https://dolphinscheduler.apache.org/python/main/start.html",
+  "proxy": null,
+  "delay": 0.1,
+  "max_workers": 10,
+  "timeout": 20,
+  "max_depth": 5,
+  "blacklist_domains": [
+    "www.w3.org",
+    "www.baidu.com",
+    "github.com"
+  ],
+  "whitelist_domains": [
+    "docs.DolpinScheduler.com"
+  ],
+  "headers_path": "/Users/zorro/project/md_docs_base/doc4llmMain/Config/headers/DolpinScheduler.json",
+  "output_file": "results/DolpinScheduler/DolpinScheduler_url_list.csv",
+  "color_output": true,
+  "verbose": true,
+  "extension_blacklist": [
+    ".css",
+    ".js",
+    ".map",
+    ".xml",
+    ".json",
+    ".txt",
+    ".woff",
+    ".woff2",
+    ".ttf",
+    ".eot",
+    ".otf",
+    ".gif",
+    ".png",
+    ".jpg",
+    ".webp",
+    ".jpeg",
+    ".bmp",
+    ".tiff",
+    ".ico",
+    ".mp4",
+    ".mp3",
+    ".avi",
+    ".mov",
+    ".wmv",
+    ".flv",
+    ".mkv",
+    ".webm",
+    ".wav",
+    ".ogg",
+    ".aac",
+    ".flac",
+    ".pdf",
+    ".doc",
+    ".docx",
+    ".xls",
+    ".xlsx",
+    ".ppt",
+    ".pptx",
+    ".zip",
+    ".rar",
+    ".7z",
+    ".tar",
+    ".gz",
+    ".bz2",
+    ".swf",
+    ".exe",
+    ".dll",
+    ".bin",
+    ".dmg",
+    ".apk",
+    ".iso"
+  ],
+  "max_urls": 10000,
+  "smart_concatenation": true,
+  "debug_mode": 0,
+  "is_duplicate": 0,
+  "url_scope_mode": 0,
+  "danger_filter_enabled": 1,
+  "danger_api_list": [
+    "/del",
+    "/delete",
+    "/insert",
+    "/logout",
+    "/loginout",
+    "/remove",
+    "/drop",
+    "/shutdown",
+    "/stop",
+    "/poweroff",
+    "/restart",
+    "/rewrite",
+    "/terminate",
+    "/deactivate",
+    "/halt",
+    "/disable"
+  ],
+  "allowed_api_list": [
+    "/python/main/"
+  ],
+  "custom_base_url": [
+    "https://dolphinscheduler.apache.org"
+  ],
+  "path_route": [
+
+  ],
+  "api_route": [
+
+  ],
+  "fuzz": 0,
+  "exclude_fuzzy": [
+    "/blog/",
+    "/news/",
+    "/community/",
+    "/forum/",
+    "contributing/",
+    "#"
+  ],
+  "title_filter_list": [
+    "Page Not Found"
+  ],
+  "title_cleanup_patterns": [
+    " — apache-dolphinscheduler 4.1.0-dev documentation"
+  ],
+  "status_code_filter": [
+    404,
+    503,
+    502,
+    504,
+    403,
+    401,
+    500
+  ],
+  "mode": 0,
+  "force_scan": 0,
+  "extract_image_list": null,
+  "results_dir": "results/DolpinScheduler",
+  "doc_dir": "/Users/zorro/project/md_docs_base",
+  "doc_name": "DolpinScheduler_Docs",
+  "doc_version": "latest",
+  "toc_url_filters": {
+    "subdomains": [
+
+    ],
+    "fuzzy_match": [
+      "#"
+    ],
+    "exclude_fuzzy": [
+      "_some_anchor_name"
+    ]
+  },
+  "doc_max_depth": 10,
+  "doc_timeout": 30,
+  "doc_toc_selector": null,
+  "toc_filter": {
+    "merge_mode": "extend",
+    "toc_class_patterns": [
+
+    ],
+    "toc_link_class_patterns": [],
+    "toc_parent_class_patterns": [],
+    "content_area_patterns": [
+        "li.toctree-l1.current"
+    ],
+    "non_toc_link_patterns": [],
+    "toc_end_markers": [
+      "See also",
+      "Related articles",
+      "Further reading",
+      "Next steps"
+    ]
+  },
+  "content_filter": {
+    "merge_mode": "extend",
+    "documentation_preset": null,
+    "non_content_selectors": [
+        "ul.wy-breadcrumbs"
+    ],
+    "force_remove_selectors": [
+        "footer"
+    ],
+    "fuzzy_keywords": [],
+    "log_levels": [],
+    "meaningless_content": [
+        "to clipboard"
+    ],
+    "content_end_markers": [
+      "Next steps"
+    ],
+    "content_preserve_selectors": [
+        ".document"
+    ],
+    "code_container_selectors": []
+  },
+  "output_log_file": "results/DolpinScheduler/output.out",
+  "debug_log_file": "results/DolpinScheduler/debug.log",
+  "log_max_lines": 10000,
+  "enable_inline_extraction": 1,
+  "playwright": {
+    "enabled": true,
+    "force": false,
+    "timeout": 30,
+    "headless": true
+  },
+  "stealth": {
+    "enabled": true,
+    "platform": "darwin",
+    "screen_width": 1920,
+    "screen_height": 1080,
+    "device_scale_factor": 1,
+    "timezone": "Asia/Shanghai",
+    "locale": "zh-CN"
+  },
+  "cookies": {
+    "file": null,
+    "inline": []
+  },
+  "api_enhancement": {
+    "enabled": true,
+    "detect_patterns": [
+      "dolphinscheduler",
+      "api.html",
+      "/api/",
+      "sphinx"
+    ],
+    "python_api_support": true,
+    "auto_generate_headings": true,
+    "preserve_original_structure": true
+  }
+}
