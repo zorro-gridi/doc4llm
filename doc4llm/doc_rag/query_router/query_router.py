@@ -25,6 +25,10 @@ from doc4llm.doc_rag.params_parser.output_parser import extract_json_from_codebl
 from doc4llm.llm.anthropic import invoke
 
 
+# 获取当前文件所在目录
+_QUERY_ROUTER_DIR = Path(__file__).parent
+
+
 class QueryRouterValidationError(Exception):
     """查询路由验证失败异常"""
     pass
@@ -47,7 +51,7 @@ class QueryRouterConfig:
     model: str = "MiniMax-M2.1"
     max_tokens: int = 20000
     temperature: float = 0.1
-    prompt_template_path: str = "doc4llm/doc_rag/query_router/prompt_template/query_router_template.md"
+    prompt_template_path: str = str(_QUERY_ROUTER_DIR / "prompt_template" / "query_router_template.md")
     max_retries: int = 2
     retry_on_empty_fields: bool = True
     silent: bool = False

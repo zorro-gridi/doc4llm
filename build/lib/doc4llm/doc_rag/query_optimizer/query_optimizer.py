@@ -25,6 +25,10 @@ from doc4llm.doc_rag.params_parser.output_parser import extract_json_from_codebl
 from doc4llm.llm.anthropic import invoke
 
 
+# 获取当前文件所在目录
+_QUERY_OPTIMIZER_DIR = Path(__file__).parent
+
+
 @dataclass
 class QueryOptimizerConfig:
     """
@@ -43,8 +47,8 @@ class QueryOptimizerConfig:
     model: str = "MiniMax-M2.1"
     max_tokens: int = 20000
     temperature: float = 0.1
-    prompt_template_path: str = "doc4llm/doc_rag/query_optimizer/prompt_template/query_optimizer_prompt.md"
-    doc_sets_base_path: str = "doc4llm/md_docs_base"
+    prompt_template_path: str = str(_QUERY_OPTIMIZER_DIR / "prompt_template" / "query_optimizer_prompt.md")
+    doc_sets_base_path: str = str(_QUERY_OPTIMIZER_DIR.parent.parent / "md_docs_base")
     max_retries: int = 2
     retry_on_empty_fields: bool = True
     silent: bool = False

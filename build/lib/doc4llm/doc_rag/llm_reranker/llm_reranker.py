@@ -24,6 +24,10 @@ from doc4llm.doc_rag.params_parser.output_parser import extract_json_from_codebl
 from doc4llm.llm.anthropic import invoke
 
 
+# 获取当前文件所在目录
+_LLM_RERANKER_DIR = Path(__file__).parent
+
+
 @dataclass
 class LLMRerankerConfig:
     """
@@ -42,7 +46,7 @@ class LLMRerankerConfig:
     # model: str = "MiniMax-M2.1-lightning"
     max_tokens: int = 20000
     temperature: float = 0.1
-    prompt_template_path: str = "doc4llm/doc_rag/llm_reranker/prompt_template/llm_reranker_template.md"
+    prompt_template_path: str = str(_LLM_RERANKER_DIR / "prompt_template" / "llm_reranker_template.md")
     filter_threshold: float = 0.5
     silent: bool = False
 

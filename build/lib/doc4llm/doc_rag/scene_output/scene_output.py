@@ -29,6 +29,10 @@ from typing import Any, Dict, Optional, Union
 from doc4llm.llm.anthropic import invoke
 
 
+# 获取当前文件所在目录
+_SCENE_OUTPUT_DIR = Path(__file__).parent
+
+
 @dataclass
 class SceneOutputConfig:
     """
@@ -43,7 +47,7 @@ class SceneOutputConfig:
     model: str = "MiniMax-M2.1"
     max_tokens: int = 20000
     temperature: float = 0.3
-    prompt_template_path: str = "doc4llm/doc_rag/scene_output/prompt_template/scene_output_template.md"
+    prompt_template_path: str = str(_SCENE_OUTPUT_DIR / "prompt_template" / "scene_output_template.md")
 
 
 @dataclass
